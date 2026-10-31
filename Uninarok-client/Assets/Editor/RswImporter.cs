@@ -4,11 +4,12 @@ using System.IO;
 using UnityEditor.AssetImporters;
 using UnityEngine;
 using Utilities.Services;
+using UnityEditor;
 
 // Atalho para evitar colisão de escopo com o 'UnityEngine.Model' se houver
 using RswModel = GRF.FileFormats.RswFormat.RswObjects.Model;
 
-namespace UnityEditor
+namespace Uninarok.Editor
 {
     [ScriptedImporter(1, "rsw")]
     public class RswImporter : ScriptedImporter
