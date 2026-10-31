@@ -83,17 +83,29 @@ namespace Uninarok.Editor
                 rsmMaterials.Add(i, mat);
             }
 
+            var meshesGameObjects = new Dictionary<string, GameObject>();
             // Construção geométrica dos Submeshes
             foreach (var rsmMesh in rsmData.Meshes)
             {
-                var isMainMesh = rsmData.MainMesh == rsmMesh;
-
-                GameObject subMeshGo = new GameObject(rsmMesh.Name);
-                subMeshGo.transform.SetParent(modelRoot.transform);
+                var parentName = rsmMesh.ParentName;
+                GameObject subMeshGo = null;
+                if (string.IsNullOrEmpty(parentName))
+                {
+                    subMeshGo = modelRoot;
+                }
+                else
+                {
+                    subMeshGo = new GameObject(rsmMesh.Name);
+                    if (meshesGameObjects.TryGetValue(parentName, out var parent))
+                    {
+                        subMeshGo.transform.parent = parent.transform;
+                    }
+                }
+                meshesGameObjects[rsmMesh.Name] = subMeshGo;
 
                 // Setup mesh's position, rotation and scale
-                var subMeshGlobalPos = rsmMesh.LocalPosition.ToVector3NegativeY() * 0.1f;
-                var subMeshLocalPos = rsmMesh.GlobalPosition.ToVector3NegativeY() * 0.1f;
+                var subMeshGlobalPos = rsmMesh.GlobalPosition.ToVector3NegativeY();
+                var subMeshLocalPos = rsmMesh.LocalPosition.ToVector3NegativeY();
                 var subMeshRotation = Quaternion.AngleAxis(rsmMesh.GlobalRotationAngle * Mathf.Rad2Deg, new Vector3(rsmMesh.GlobalRotationAxis.X, rsmMesh.GlobalRotationAxis.Y, rsmMesh.GlobalRotationAxis.Z));
                 
                 subMeshGo.transform.position = subMeshGlobalPos;
@@ -118,20 +130,20 @@ namespace Uninarok.Editor
                 var eulerRotation = Quaternion.Euler(angles.X, -angles.Y, angles.Z);
                 for (var i = 0; i < meshTransformedVertices.Length; ++i)
                 {
-                    var originalVertice = rsmMesh.Vertices[i];
-
-                    // Apply scale
-                    originalVertice.X *= scale.X;
-                    originalVertice.Y *= -scale.Y;
-                    originalVertice.Z *= -scale.Z;
-
-                    // Apply position
-                    originalVertice.X += subMeshLocalPos.x;
-                    originalVertice.Y += -subMeshLocalPos.y;
-                    originalVertice.Z += subMeshLocalPos.z;
+                    var originalVertice = rsmMesh.Vertices[i].ToVector3();
 
                     // Apply rotation
-                    meshTransformedVertices[i] = eulerRotation * (originalVertice.ToVector3() * 0.1f);
+                    originalVertice = eulerRotation * originalVertice;
+
+                    // Apply scale
+                    //originalVertice.x *= scale.X;
+                    //originalVertice.y *= -scale.Y;
+                    //originalVertice.z *= -scale.Z;
+
+                    // Apply position
+                    originalVertice -= subMeshGlobalPos;
+
+                    meshTransformedVertices[i] = originalVertice * 0.1f;
                 }
 
                 int currentVertexIndex = 0;
