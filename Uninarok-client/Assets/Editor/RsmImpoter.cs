@@ -9,6 +9,7 @@ using GRF;
 using GRF.Core;
 using UnityEditor;
 using Utilities.Services;
+using GRF.Graphics;
 
 namespace Uninarok.Editor
 {
@@ -32,7 +33,7 @@ namespace Uninarok.Editor
 
             // Determina dinamicamente o Shader correto baseado na Pipeline ativa do projeto (URP vs Built-in)
             // TODO: Can be turned into a useful static function
-            Shader defaultShader = Shader.Find("Universal Render Pipeline/Lit");
+            Shader defaultShader = Shader.Find("Universal Render Pipeline/Unlit");
             if (defaultShader == null)
             {
                 defaultShader = Shader.Find("Standard"); // Fallback caso use a pipeline antiga
@@ -64,6 +65,9 @@ namespace Uninarok.Editor
                     // No URP o mapa principal chama-se "_BaseMap". No Standard chama-se "_MainTex"
                     if (mat.HasProperty("_BaseMap")) mat.SetTexture("_BaseMap", texture);
                     else mat.SetTexture("_MainTex", texture);
+
+                    // Alpha
+                    mat.SetFloat("_AlphaClip", 1);
                     // Enable drawing on both sides of vertices
                     //TODO: Enable when drawing in both faces, figure out where it is in the rsm
                     mat.SetFloat("_Cull", 0f);
@@ -88,29 +92,34 @@ namespace Uninarok.Editor
             foreach (var rsmMesh in rsmData.Meshes)
             {
                 var parentName = rsmMesh.ParentName;
-                GameObject subMeshGo = null;
-                if (string.IsNullOrEmpty(parentName))
-                {
-                    subMeshGo = modelRoot;
-                }
-                else
-                {
-                    subMeshGo = new GameObject(rsmMesh.Name);
-                    if (meshesGameObjects.TryGetValue(parentName, out var parent))
-                    {
-                        subMeshGo.transform.parent = parent.transform;
-                    }
-                }
+                var subMeshGo = new GameObject(rsmMesh.Name);
                 meshesGameObjects[rsmMesh.Name] = subMeshGo;
 
                 // Setup mesh's position, rotation and scale
-                var subMeshGlobalPos = rsmMesh.GlobalPosition.ToVector3NegativeY();
-                var subMeshLocalPos = rsmMesh.LocalPosition.ToVector3NegativeY();
-                var subMeshRotation = Quaternion.AngleAxis(rsmMesh.GlobalRotationAngle * Mathf.Rad2Deg, new Vector3(rsmMesh.GlobalRotationAxis.X, rsmMesh.GlobalRotationAxis.Y, rsmMesh.GlobalRotationAxis.Z));
-                
-                subMeshGo.transform.position = subMeshGlobalPos;
-                subMeshGo.transform.rotation = subMeshRotation;
-                subMeshGo.transform.localScale = rsmMesh.GlobalScale.ToVector3();
+                var subMeshLocalPos = rsmMesh.LocalPosition;
+                var globalRotationMatrix = TkMatrix3.Identity;
+                if (rsmMesh.GlobalRotationAxis.Length != 0 && rsmMesh.GlobalRotationAngle != 0)
+                {
+                    TkMatrix3.CreateFromAxisAngle(rsmMesh.GlobalRotationAxis, rsmMesh.GlobalRotationAngle, out globalRotationMatrix);
+                }
+
+                var tfMatrix = rsmMesh.TransformationMatrix;
+                var localRotation = tfMatrix.ExtractRotation().ToEulerAngles() * Mathf.Rad2Deg;
+                var localScale = tfMatrix.ExtractScale();
+                if (!string.IsNullOrEmpty(parentName) && meshesGameObjects.TryGetValue(parentName, out var parent))
+                {
+                    subMeshGo.transform.SetParent(parent.transform, false);
+                }
+                else
+                {
+                    subMeshGo.transform.SetParent(modelRoot.transform, false);
+                }
+                //subMeshGo.transform.localPosition = subMeshLocalPos * 0.1f;
+                //subMeshGo.transform.localRotation = Quaternion.Euler(localRotation.ToVector3());
+                //subMeshGo.transform.localScale = localScale.ToVector3();
+
+                var globalRotation = rsmMesh.GlobalRotationAxis * (rsmMesh.GlobalRotationAngle * Mathf.Rad2Deg);
+                Debug.LogError($"GP:{rsmMesh.GlobalPosition} | LP:{subMeshLocalPos} | GR:{globalRotation} | LR:{localRotation} | GS:{rsmMesh.GlobalScale} | LS:{localScale}");
 
                 // Listas finais que serão enviadas ao Unity Mesh
                 List<Vector3> finalVertices = new List<Vector3>();
@@ -121,29 +130,31 @@ namespace Uninarok.Editor
 
                 // Aplica matriz de transformacao
                 var meshTransformedVertices = new Vector3[rsmMesh.Vertices.Count];
-                var mat = rsmMesh.TransformationMatrix;
-
-                var angles = mat.ExtractRotation().ToEulerAngles() * Mathf.Rad2Deg;
-                var scale = mat.ExtractScale();
                 
                 //TODO: Try to apply rotation directly in vertices
-                var eulerRotation = Quaternion.Euler(angles.X, -angles.Y, angles.Z);
+                var eulerRotation = Quaternion.Euler(localRotation.X, -localRotation.Y, localRotation.Z);
                 for (var i = 0; i < meshTransformedVertices.Length; ++i)
                 {
-                    var originalVertice = rsmMesh.Vertices[i].ToVector3();
+                    var originalVertice = rsmMesh.Vertices[i];
 
-                    // Apply rotation
-                    originalVertice = eulerRotation * originalVertice;
+                    // Apply local rotation and scale from the transformation matrix
+                    originalVertice = originalVertice * tfMatrix;
 
-                    // Apply scale
-                    //originalVertice.x *= scale.X;
-                    //originalVertice.y *= -scale.Y;
-                    //originalVertice.z *= -scale.Z;
+                    if (string.IsNullOrEmpty(parentName))
+                    {
+                        // Apply position
+                        var globalPos = new TkVector3(rsmMesh.GlobalPosition.X, -rsmMesh.GlobalPosition.Y, rsmMesh.GlobalPosition.Z);
 
-                    // Apply position
-                    originalVertice -= subMeshGlobalPos;
+                        originalVertice = originalVertice * globalRotationMatrix; // Rotation
+                        originalVertice *= rsmMesh.GlobalScale;
+                        originalVertice -= globalPos;
+                        originalVertice += subMeshLocalPos;
+                    }
 
-                    meshTransformedVertices[i] = originalVertice * 0.1f;
+                    var unityVertice = new Vector3(originalVertice.X, -originalVertice.Y, originalVertice.Z) * 0.1f;
+
+                    meshTransformedVertices[i] = unityVertice;
+                    //meshTransformedVertices[i] = originalVertice.ToVector3();
                 }
 
                 int currentVertexIndex = 0;
@@ -162,15 +173,14 @@ namespace Uninarok.Editor
                     // face.TextureVertexIds -> os índices de mapeamento de textura equivalentes
                     for (int i = 0; i < 3; i++)
                     {
-                        var vertexOrder = new int[] { 0, 1, 2 };
+                        var vertexOrder = new int[] { 0, 2, 1 };
                         var mappedIndex = vertexOrder[i];
 
                         int vIndex = face.VertexIds[mappedIndex];
                         int uvIndex = face.TextureVertexIds[mappedIndex];
 
-                        // Pega a posição 3D original do RSM
-                        var rsmVert = meshTransformedVertices[vIndex];
-                        Vector3 unityPos = new Vector3(rsmVert.x, rsmVert.y, rsmVert.z);
+                        // Pega a posição 3D transformada do RSM
+                        Vector3 unityPos = meshTransformedVertices[vIndex];
 
                         // Pega a coordenada UV original do RSM
                         var rsmUv = rsmMesh.TextureVertices[uvIndex];

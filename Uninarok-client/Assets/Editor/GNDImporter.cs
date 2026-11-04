@@ -27,7 +27,7 @@ namespace Uninarok.Editor
 
             // TODO: Can be turned into a useful static function
             // TODO: Duplicate in RsmImporter
-            Shader defaultShader = Shader.Find("Universal Render Pipeline/Lit");
+            Shader defaultShader = Shader.Find("Universal Render Pipeline/Unlit");
             if (defaultShader == null)
             {
                 defaultShader = Shader.Find("Standard"); // Fallback caso use a pipeline antiga

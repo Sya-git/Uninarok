@@ -49,7 +49,7 @@ namespace Uninarok.Editor
 
                             // Posicionamento espacial do mundo do Ragnarok escalonado para proporção da Unity
                             float scaleFactor = 0.1f;
-                            spawnedModel.transform.localPosition = new Vector3(rsmModelData.Position.X, -rsmModelData.Position.Y, rsmModelData.Position.Z) * scaleFactor;
+                            spawnedModel.transform.position = new Vector3(rsmModelData.Position.X, -rsmModelData.Position.Y, rsmModelData.Position.Z) * scaleFactor;
                             spawnedModel.transform.rotation = Quaternion.Euler(rsmModelData.Rotation.X, rsmModelData.Rotation.Y, rsmModelData.Rotation.Z);
                             spawnedModel.transform.localScale = new Vector3(rsmModelData.Scale.X, rsmModelData.Scale.Y, rsmModelData.Scale.Z);
                         }
