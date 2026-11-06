@@ -6,9 +6,9 @@ namespace Uninarok.Networking
         public readonly int AuthCode;
         public readonly uint UserLevel;
         public readonly byte Sex;
-        public readonly RagnarokServerEndpoint CharacterServer;
+        public readonly UninarokServerEndpoint CharacterServer;
 
-        public RagnarokLoginSession(uint accountId, int authCode, uint userLevel, byte sex, RagnarokServerEndpoint characterServer)
+        public RagnarokLoginSession(uint accountId, int authCode, uint userLevel, byte sex, UninarokServerEndpoint characterServer)
         {
             AccountId = accountId;
             AuthCode = authCode;

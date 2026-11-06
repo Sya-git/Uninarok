@@ -1,5 +1,4 @@
 using System;
-using System.Buffers.Binary;
 using System.IO;
 
 namespace Uninarok.Networking.Packets
@@ -27,7 +26,10 @@ namespace Uninarok.Networking.Packets
 
             public static int GetCharacterCount(ReadOnlySpan<byte> packet)
             {
-                if (packet.Length < HeaderSize || BinaryPrimitives.ReadUInt16LittleEndian(packet) != PacketId)
+                if (packet.Length < HeaderSize)
+                    throw new InvalidDataException("Invalid character list packet.");
+                var reader = new PacketReader(packet);
+                if (reader.ReadUInt16() != PacketId)
                     throw new InvalidDataException("Invalid character list packet.");
                 int payloadLength = packet.Length - HeaderSize;
                 if (payloadLength % CharacterInfoSize != 0)
@@ -42,14 +44,17 @@ namespace Uninarok.Networking.Packets
                     throw new InvalidDataException("The character list is empty.");
 
                 byte firstSlot = 0;
+                var reader = new PacketReader(packet);
+                reader.Skip(HeaderSize + 104);
                 for (int i = 0; i < count; i++)
                 {
-                    int offset = HeaderSize + i * CharacterInfoSize + 104;
-                    ushort slot = BinaryPrimitives.ReadUInt16LittleEndian(packet.Slice(offset, 2));
+                    ushort slot = reader.ReadUInt16();
                     if (i == 0)
                         firstSlot = (byte)slot;
                     if (slot == requestedSlot)
                         return requestedSlot;
+                    if (i + 1 < count)
+                        reader.Skip(CharacterInfoSize - sizeof(ushort));
                 }
                 return firstSlot;
             }
@@ -63,9 +68,13 @@ namespace Uninarok.Networking.Packets
 
             public static byte ReadSlot(ReadOnlySpan<byte> packet)
             {
-                if (packet.Length < Size || BinaryPrimitives.ReadUInt16LittleEndian(packet) != PacketId)
+                if (packet.Length < Size)
                     throw new InvalidDataException("Invalid character-created packet.");
-                return (byte)BinaryPrimitives.ReadUInt16LittleEndian(packet.Slice(SlotOffset, 2));
+                var reader = new PacketReader(packet);
+                if (reader.ReadUInt16() != PacketId)
+                    throw new InvalidDataException("Invalid character-created packet.");
+                reader.Skip(SlotOffset - reader.Offset);
+                return (byte)reader.ReadUInt16();
             }
         }
 

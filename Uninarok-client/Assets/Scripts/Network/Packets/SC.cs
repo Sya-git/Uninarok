@@ -1,5 +1,4 @@
 using System;
-using System.Buffers.Binary;
 using System.IO;
 
 namespace Uninarok.Networking.Packets
@@ -32,9 +31,12 @@ namespace Uninarok.Networking.Packets
 
             public static int GetPacketLength(ReadOnlySpan<byte> header)
             {
-                if (header.Length < HeaderSize || BinaryPrimitives.ReadUInt16LittleEndian(header) != PacketId)
+                if (header.Length < HeaderSize)
                     throw new InvalidDataException("Invalid SC_ACK_HASH packet header.");
-                int length = BinaryPrimitives.ReadUInt16LittleEndian(header.Slice(2, 2));
+                var reader = new PacketReader(header);
+                if (reader.ReadUInt16() != PacketId)
+                    throw new InvalidDataException("Invalid SC_ACK_HASH packet header.");
+                int length = reader.ReadUInt16();
                 if (length < HeaderSize)
                     throw new InvalidDataException($"Invalid packet length {length} for 0x{PacketId:X4}.");
                 return length;

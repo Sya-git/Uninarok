@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using Uninarok.Networking.Packets.In;
+using Uninarok.Networking.Packets.Out;
 
 namespace Uninarok.Networking
 {
@@ -41,12 +43,12 @@ namespace Uninarok.Networking
         }
     }
 
-    public readonly struct RagnarokServerEndpoint
+    public readonly struct UninarokServerEndpoint
     {
         public readonly IPAddress Address;
         public readonly int Port;
 
-        public RagnarokServerEndpoint(IPAddress address, int port)
+        public UninarokServerEndpoint(IPAddress address, int port)
         {
             Address = address;
             Port = port;
@@ -64,7 +66,7 @@ namespace Uninarok.Networking
         private static short[] CreatePacketLengths()
         {
             var lengths = new short[ushort.MaxValue + 1];
-            lengths[Packets.CA.LOGIN.PacketId] = Packets.CA.LOGIN.Size;
+            lengths[CA.LOGIN.PacketId] = CA.LOGIN.Size;
             lengths[0x0065] = 17;
             lengths[0x0066] = 3;
             lengths[0x006A] = 23;
@@ -88,148 +90,113 @@ namespace Uninarok.Networking
 
         public static void WriteLogin(Span<byte> packet, string username, string password)
         {
-            var packetLength = GetPacketLength(Packets.CA.LOGIN.PacketId);
+            var packetLength = GetPacketLength(CA.LOGIN.PacketId);
             RequireLength(packet, packetLength);
             packet.Slice(0, packetLength).Clear();
-            var loginPack = new Packets.CA.LOGIN
+            var loginPack = new CA.LOGIN
             {
                 AccountName = new Unity.Collections.FixedString32Bytes(username),
                 AccountPassword = new Unity.Collections.FixedString32Bytes(password)
             };
-            loginPack.Serialize(packet);
-
-            //BinaryPrimitives.WriteUInt16LittleEndian(packet, (ushort)RagnarokPacketId.Login);
-            //BinaryPrimitives.WriteUInt32LittleEndian(packet.Slice(2), PacketVersion);
-            //WriteFixedAscii(packet.Slice(6, 24), username);
-            //WriteFixedAscii(packet.Slice(30, 24), password);
+            loginPack.Serialize().Span.CopyTo(packet);
         }
 
         public static void WriteCharacterServerEnter(Span<byte> packet, uint accountId, int authCode, uint userLevel, byte sex)
         {
             RequireLength(packet, 17);
             packet.Slice(0, 17).Clear();
-            BinaryPrimitives.WriteUInt16LittleEndian(packet, (ushort)RagnarokPacketId.CharacterServerEnter);
-            BinaryPrimitives.WriteUInt32LittleEndian(packet.Slice(2), accountId);
-            BinaryPrimitives.WriteInt32LittleEndian(packet.Slice(6), authCode);
-            BinaryPrimitives.WriteUInt32LittleEndian(packet.Slice(10), userLevel);
-            packet[16] = sex;
+            new CH.ENTER(accountId, authCode, userLevel, sex).Serialize().Span.CopyTo(packet);
         }
 
         public static void WriteRequestCharacterList(Span<byte> packet)
         {
             RequireLength(packet, 2);
-            BinaryPrimitives.WriteUInt16LittleEndian(packet, (ushort)RagnarokPacketId.RequestCharacterList);
+            var writer = new Packets.PacketWriter(packet);
+            writer.WriteUInt16((ushort)RagnarokPacketId.RequestCharacterList);
         }
 
         public static void WriteCreateCharacter(Span<byte> packet, string name, byte slot, ushort hairColor, ushort hairStyle, ushort jobClass, byte sex)
         {
             RequireLength(packet, 36);
             packet.Slice(0, 36).Clear();
-            BinaryPrimitives.WriteUInt16LittleEndian(packet, (ushort)RagnarokPacketId.CreateCharacter);
-            WriteFixedAscii(packet.Slice(2, 24), name);
-            packet[26] = slot;
-            BinaryPrimitives.WriteUInt16LittleEndian(packet.Slice(27), hairColor);
-            BinaryPrimitives.WriteUInt16LittleEndian(packet.Slice(29), hairStyle);
-            BinaryPrimitives.WriteUInt16LittleEndian(packet.Slice(31), jobClass);
-            packet[35] = sex;
+            new CH.MAKE_CHAR(name, slot, hairColor, hairStyle, jobClass, sex).Serialize(packet);
         }
 
         public static void WriteSelectCharacter(Span<byte> packet, byte slot)
         {
             RequireLength(packet, 3);
-            BinaryPrimitives.WriteUInt16LittleEndian(packet, (ushort)RagnarokPacketId.SelectCharacter);
-            packet[2] = slot;
+            new CH.SELECT_CHAR(slot).Serialize(packet);
         }
 
         public static void WriteMapEnter(Span<byte> packet, uint accountId, uint characterId, int authCode, uint tick, byte sex)
         {
             RequireLength(packet, 19);
             packet.Slice(0, 19).Clear();
-            BinaryPrimitives.WriteUInt16LittleEndian(packet, (ushort)RagnarokPacketId.MapEnter);
-            BinaryPrimitives.WriteUInt32LittleEndian(packet.Slice(2), accountId);
-            BinaryPrimitives.WriteUInt32LittleEndian(packet.Slice(6), characterId);
-            BinaryPrimitives.WriteInt32LittleEndian(packet.Slice(10), authCode);
-            BinaryPrimitives.WriteUInt32LittleEndian(packet.Slice(14), tick);
-            packet[18] = sex;
+            new Packets.CZ.ENTER_MAP(accountId, characterId, authCode, tick, sex).Serialize(packet);
         }
 
-        public static bool TryGetCharacterServer(byte[] packet, int length, int serverIndex, out RagnarokServerEndpoint endpoint)
+        public static bool TryGetCharacterServer(byte[] packet, int length, int serverIndex, out UninarokServerEndpoint endpoint)
         {
             endpoint = default;
-            if (length < LoginListOffset || packet.Length < length || packet[0] != 0xC4 || packet[1] != 0x0A)
+            if (length < LoginListOffset || packet.Length < length)
                 return false;
 
-            int serverCount = (length - LoginListOffset) / LoginServerEntryLength;
-            if (serverCount == 0)
+            try
+            {
+                var login = new AC.ACCEPT_LOGIN(packet.AsSpan(0, length));
+                endpoint = login.ServersEndpointList;
+                return true;
+            }
+            catch (InvalidDataException)
+            {
                 return false;
-
-            int index = serverIndex >= 0 && serverIndex < serverCount ? serverIndex : 0;
-            int offset = LoginListOffset + index * LoginServerEntryLength;
-            var address = new IPAddress(new[] { packet[offset], packet[offset + 1], packet[offset + 2], packet[offset + 3] });
-            int port = BinaryPrimitives.ReadUInt16LittleEndian(packet.AsSpan(offset + 4, 2));
-            if (port == 0)
-                return false;
-            endpoint = new RagnarokServerEndpoint(address, port);
-            return true;
+            }
         }
 
         public static int GetCharacterCount(byte[] packet, int length)
         {
-            if (packet.Length < length || length < 4 || packet[0] != 0x9D || packet[1] != 0x09)
+            if (packet.Length < length || length < 4)
                 throw new InvalidDataException("Invalid character list packet.");
-            int payloadLength = length - 4;
-            if (payloadLength % CharacterInfoLength != 0)
-                throw new InvalidDataException("Character list entry size does not match Renewal PACKETVER 20190530.");
-            return payloadLength / CharacterInfoLength;
+            return Packets.HC.ACK_CHARINFO_PER_PAGE.GetCharacterCount(packet.AsSpan(0, length));
         }
 
         public static byte FindCharacterSlot(byte[] packet, int length, byte requestedSlot)
         {
-            int count = GetCharacterCount(packet, length);
-            if (count == 0)
-                throw new InvalidDataException("The character list is empty.");
-
-            byte firstSlot = 0;
-            for (int i = 0; i < count; i++)
-            {
-                int offset = 4 + i * CharacterInfoLength + 104;
-                ushort slot = BinaryPrimitives.ReadUInt16LittleEndian(packet.AsSpan(offset, 2));
-                if (i == 0)
-                    firstSlot = (byte)slot;
-                if (slot == requestedSlot)
-                    return requestedSlot;
-            }
-            return firstSlot;
+            if (length < 4 || packet.Length < length)
+                throw new InvalidDataException("Invalid character list packet.");
+            return Packets.HC.ACK_CHARINFO_PER_PAGE.FindCharacterSlot(packet.AsSpan(0, length), requestedSlot);
         }
 
-        public static bool TryGetMapEndpoint(byte[] packet, int length, out RagnarokServerEndpoint endpoint)
+        public static bool TryGetMapEndpoint(byte[] packet, int length, out UninarokServerEndpoint endpoint)
         {
             endpoint = default;
-            if (length < 28 || packet.Length < length || packet[0] != 0xC5 || packet[1] != 0x0A)
+            if (length < 28 || packet.Length < length)
                 return false;
-            var address = new IPAddress(new[] { packet[22], packet[23], packet[24], packet[25] });
-            int port = BinaryPrimitives.ReadUInt16LittleEndian(packet.AsSpan(26, 2));
+            var reader = new Packets.PacketReader(packet.AsSpan(0, length));
+            if (reader.ReadUInt16() != (ushort)RagnarokPacketId.MapServerRedirect)
+                return false;
+            reader.Skip(20);
+            var address = new IPAddress(new[] { reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte() });
+            int port = reader.ReadUInt16();
             if (port == 0)
                 return false;
-            endpoint = new RagnarokServerEndpoint(address, port);
+            endpoint = new UninarokServerEndpoint(address, port);
             return true;
         }
 
-        public static uint ReadAccountId(byte[] packet) => BinaryPrimitives.ReadUInt32LittleEndian(packet.AsSpan(8, 4));
-        public static int ReadAuthCode(byte[] packet) => BinaryPrimitives.ReadInt32LittleEndian(packet.AsSpan(4, 4));
-        public static uint ReadUserLevel(byte[] packet) => BinaryPrimitives.ReadUInt32LittleEndian(packet.AsSpan(12, 4));
-        public static byte ReadSex(byte[] packet) => packet[46];
-        public static uint ReadCharacterId(byte[] packet) => BinaryPrimitives.ReadUInt32LittleEndian(packet.AsSpan(2, 4));
-        public static byte ReadCreatedCharacterSlot(byte[] packet) => (byte)BinaryPrimitives.ReadUInt16LittleEndian(packet.AsSpan(106, 2));
+        public static uint ReadAccountId(byte[] packet) => new AC.ACCEPT_LOGIN(packet).AccountId;
+        public static int ReadAuthCode(byte[] packet) => new AC.ACCEPT_LOGIN(packet).AuthCode;
+        public static uint ReadUserLevel(byte[] packet) => new AC.ACCEPT_LOGIN(packet).UserLevel;
+        public static byte ReadSex(byte[] packet) => new AC.ACCEPT_LOGIN(packet).Sex;
 
-        private static void WriteFixedAscii(Span<byte> destination, string value)
+        public static uint ReadCharacterId(byte[] packet)
         {
-            if (string.IsNullOrEmpty(value))
-                return;
-            int count = Math.Min(value.Length, destination.Length);
-            for (int i = 0; i < count; i++)
-                destination[i] = value[i] <= 0x7F ? (byte)value[i] : (byte)'?';
+            var reader = new Packets.PacketReader(packet);
+            reader.Skip(2);
+            return reader.ReadUInt32();
         }
+
+        public static byte ReadCreatedCharacterSlot(byte[] packet) => Packets.HC.ACCEPT_MAKECHAR.ReadSlot(packet);
 
         private static void RequireLength(Span<byte> packet, int required)
         {
@@ -320,7 +287,7 @@ namespace Uninarok.Networking
         {
             while (count > 0)
             {
-                int received = await _stream.ReadAsync(_buffer, offset, count, token).ConfigureAwait(false);
+                var received = await _stream.ReadAsync(_buffer, offset, count, token).ConfigureAwait(false);
                 if (received == 0)
                     throw new EndOfStreamException("The server closed the connection.");
                 offset += received;

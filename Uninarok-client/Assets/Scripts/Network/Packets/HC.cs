@@ -1,12 +1,13 @@
 using System;
-using System.Buffers.Binary;
 using System.IO;
 using System.Net;
+using Unity.Scripting.LifecycleManagement;
 
 namespace Uninarok.Networking.Packets
 {
     public static class HC
     {
+        [NoAutoStaticsCleanup]
         public struct ACK_CHARINFO_PER_PAGE
         {
             public const ushort PacketId = 0x099D;
@@ -16,7 +17,10 @@ namespace Uninarok.Networking.Packets
 
             public static int GetCharacterCount(ReadOnlySpan<byte> packet)
             {
-                if (packet.Length < HeaderSize || BinaryPrimitives.ReadUInt16LittleEndian(packet) != PacketId)
+                if (packet.Length < HeaderSize)
+                    throw new InvalidDataException("Invalid character list packet.");
+                var reader = new PacketReader(packet);
+                if (reader.ReadUInt16() != PacketId)
                     throw new InvalidDataException("Invalid character list packet.");
                 int payloadLength = packet.Length - HeaderSize;
                 if (payloadLength % CharacterInfoSize != 0)
@@ -31,16 +35,34 @@ namespace Uninarok.Networking.Packets
                     throw new InvalidDataException("The character list is empty.");
 
                 byte firstSlot = 0;
+                var reader = new PacketReader(packet);
+                reader.Skip(HeaderSize + 104);
                 for (int i = 0; i < count; i++)
                 {
-                    int offset = HeaderSize + i * CharacterInfoSize + 104;
-                    ushort slot = BinaryPrimitives.ReadUInt16LittleEndian(packet.Slice(offset, 2));
+                    ushort slot = reader.ReadUInt16();
                     if (i == 0)
                         firstSlot = (byte)slot;
                     if (slot == requestedSlot)
                         return requestedSlot;
+                    if (i + 1 < count)
+                        reader.Skip(CharacterInfoSize - sizeof(ushort));
                 }
                 return firstSlot;
+            }
+
+            public delegate void CharacterInfoPageDelegate(in ACK_CHARINFO_PER_PAGE packet);
+            private static event CharacterInfoPageDelegate OnCharacterInfoPageReceived;
+            public static void Subscribe(CharacterInfoPageDelegate callback)
+            {
+                OnCharacterInfoPageReceived += callback;
+            }
+            public static void Unsubscribe(CharacterInfoPageDelegate callback)
+            {
+                OnCharacterInfoPageReceived -= callback;
+            }
+            internal static void CallCharacterInfoPageReceived(in ACK_CHARINFO_PER_PAGE packet)
+            {
+                OnCharacterInfoPageReceived?.Invoke(in packet);
             }
         }
 
@@ -52,9 +74,13 @@ namespace Uninarok.Networking.Packets
 
             public static byte ReadSlot(ReadOnlySpan<byte> packet)
             {
-                if (packet.Length < Size || BinaryPrimitives.ReadUInt16LittleEndian(packet) != PacketId)
+                if (packet.Length < Size)
                     throw new InvalidDataException("Invalid character-created packet.");
-                return (byte)BinaryPrimitives.ReadUInt16LittleEndian(packet.Slice(SlotOffset, 2));
+                var reader = new PacketReader(packet);
+                if (reader.ReadUInt16() != PacketId)
+                    throw new InvalidDataException("Invalid character-created packet.");
+                reader.Skip(SlotOffset - reader.Offset);
+                return (byte)reader.ReadUInt16();
             }
         }
 
@@ -75,25 +101,34 @@ namespace Uninarok.Networking.Packets
             public static uint ReadCharacterId(ReadOnlySpan<byte> packet)
             {
                 RequirePacket(packet);
-                return BinaryPrimitives.ReadUInt32LittleEndian(packet.Slice(CharacterIdOffset, 4));
+                var reader = new PacketReader(packet);
+                reader.Skip(CharacterIdOffset);
+                return reader.ReadUInt32();
             }
 
-            public static bool TryGetMapEndpoint(ReadOnlySpan<byte> packet, out RagnarokServerEndpoint endpoint)
+            public static bool TryGetMapEndpoint(ReadOnlySpan<byte> packet, out UninarokServerEndpoint endpoint)
             {
                 endpoint = default;
-                if (packet.Length < Size || BinaryPrimitives.ReadUInt16LittleEndian(packet) != PacketId)
+                if (packet.Length < Size)
                     return false;
-                var address = new IPAddress(new[] { packet[MapAddressOffset], packet[MapAddressOffset + 1], packet[MapAddressOffset + 2], packet[MapAddressOffset + 3] });
-                int port = BinaryPrimitives.ReadUInt16LittleEndian(packet.Slice(MapPortOffset, 2));
+                var reader = new PacketReader(packet);
+                if (reader.ReadUInt16() != PacketId)
+                    return false;
+                reader.Skip(MapAddressOffset - reader.Offset);
+                var address = new IPAddress(new[] { reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte() });
+                int port = reader.ReadUInt16();
                 if (port == 0)
                     return false;
-                endpoint = new RagnarokServerEndpoint(address, port);
+                endpoint = new UninarokServerEndpoint(address, port);
                 return true;
             }
 
             private static void RequirePacket(ReadOnlySpan<byte> packet)
             {
-                if (packet.Length < Size || BinaryPrimitives.ReadUInt16LittleEndian(packet) != PacketId)
+                if (packet.Length < Size)
+                    throw new InvalidDataException("Invalid map server redirect packet.");
+                var reader = new PacketReader(packet);
+                if (reader.ReadUInt16() != PacketId)
                     throw new InvalidDataException("Invalid map server redirect packet.");
             }
         }

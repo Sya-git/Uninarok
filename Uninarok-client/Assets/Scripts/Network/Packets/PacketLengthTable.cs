@@ -1,4 +1,6 @@
 using System;
+using Uninarok.Networking.Packets.In;
+using Uninarok.Networking.Packets.Out;
 
 namespace Uninarok.Networking.Packets
 {

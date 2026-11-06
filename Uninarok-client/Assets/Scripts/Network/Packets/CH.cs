@@ -1,7 +1,6 @@
 using System;
-using System.Buffers.Binary;
 
-namespace Uninarok.Networking.Packets
+namespace Uninarok.Networking.Packets.Out
 {
     public static class CH
     {
@@ -23,14 +22,17 @@ namespace Uninarok.Networking.Packets
                 Sex = sex;
             }
 
-            public void Serialize(Span<byte> buffer)
+            public Memory<byte> Serialize()
             {
-                PacketSerialization.RequireSize(buffer, Size);
-                BinaryPrimitives.WriteUInt16LittleEndian(buffer, PacketId);
-                BinaryPrimitives.WriteUInt32LittleEndian(buffer.Slice(2), AccountId);
-                BinaryPrimitives.WriteInt32LittleEndian(buffer.Slice(6), AuthCode);
-                BinaryPrimitives.WriteUInt32LittleEndian(buffer.Slice(10), UserLevel);
-                buffer[16] = Sex;
+                var buffer = new Memory<byte>(new byte[Size]);
+                var writer = new PacketWriter(buffer.Span);
+                writer.WriteUInt16(PacketId);
+                writer.WriteUInt32(AccountId);
+                writer.WriteInt32(AuthCode);
+                writer.WriteUInt32(UserLevel);
+                writer.Skip(2);
+                writer.WriteByte(Sex);
+                return buffer;
             }
         }
 
@@ -49,8 +51,9 @@ namespace Uninarok.Networking.Packets
             public void Serialize(Span<byte> buffer)
             {
                 PacketSerialization.RequireSize(buffer, Size);
-                BinaryPrimitives.WriteUInt16LittleEndian(buffer, PacketId);
-                buffer[2] = Slot;
+                var writer = new PacketWriter(buffer);
+                writer.WriteUInt16(PacketId);
+                writer.WriteByte(Slot);
             }
         }
 
@@ -80,13 +83,15 @@ namespace Uninarok.Networking.Packets
             {
                 PacketSerialization.RequireSize(buffer, Size);
                 buffer.Slice(0, Size).Clear();
-                BinaryPrimitives.WriteUInt16LittleEndian(buffer, PacketId);
-                PacketSerialization.WriteAscii(buffer.Slice(2, 24), Name);
-                buffer[26] = Slot;
-                BinaryPrimitives.WriteUInt16LittleEndian(buffer.Slice(27), HairColor);
-                BinaryPrimitives.WriteUInt16LittleEndian(buffer.Slice(29), HairStyle);
-                BinaryPrimitives.WriteUInt16LittleEndian(buffer.Slice(31), JobClass);
-                buffer[35] = Sex;
+                var writer = new PacketWriter(buffer);
+                writer.WriteUInt16(PacketId);
+                writer.WriteAscii(Name, 24);
+                writer.WriteByte(Slot);
+                writer.WriteUInt16(HairColor);
+                writer.WriteUInt16(HairStyle);
+                writer.WriteUInt16(JobClass);
+                writer.Skip(2);
+                writer.WriteByte(Sex);
             }
         }
     }

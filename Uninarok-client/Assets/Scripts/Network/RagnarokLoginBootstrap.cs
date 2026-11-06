@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Uninarok.Networking.Packets.In;
 using UnityEngine;
 
 namespace Uninarok.Networking
@@ -52,6 +53,8 @@ namespace Uninarok.Networking
         public LoginState State { get; private set; }
         public bool HasEnteredMap => State == LoginState.MapReady;
 
+        private UninarokTcpConnection _currentConnection;
+
         private async void Start()
         {
             if (string.IsNullOrWhiteSpace(loginHost) || loginPort < 1 || loginPort > ushort.MaxValue)
@@ -64,7 +67,7 @@ namespace Uninarok.Networking
             _shutdown.CancelAfter(TimeSpan.FromSeconds(Math.Max(1f, timeoutSeconds)));
             try
             {
-                await LoginAsync(_shutdown.Token);
+                //await LoginAsync(_shutdown.Token);
             }
             catch (OperationCanceledException)
             {
@@ -76,6 +79,26 @@ namespace Uninarok.Networking
             }
         }
 
+        private void OnEnable()
+        {
+            AC.ACCEPT_LOGIN.Register(OnLoginAccepted);
+        }
+
+        private void OnDisable()
+        {
+            AC.ACCEPT_LOGIN.Unregister(OnLoginAccepted);
+        }
+
+        private void OnLoginAccepted(in AC.ACCEPT_LOGIN packet)
+        {
+            
+        }
+
+        private async void StartLogin()
+        {
+            //_currentConnection = UninarokTcpConnection.ConnectAsync(loginHost, loginPort);
+        }
+
         private async Task LoginAsync(CancellationToken cancellationToken)
         {
             State = LoginState.ConnectingToLogin;
@@ -83,7 +106,7 @@ namespace Uninarok.Networking
             int authCode;
             uint userLevel;
             byte accountSex;
-            RagnarokServerEndpoint characterEndpoint;
+            UninarokServerEndpoint characterEndpoint;
 
             using (RagnarokTcpConnection login = await RagnarokTcpConnection.ConnectAsync(loginHost, loginPort, cancellationToken))
             {
@@ -92,6 +115,7 @@ namespace Uninarok.Networking
                 await login.SendAsync(_sendBuffer, 55, cancellationToken);
 
                 RagnarokPacket response = await login.ReadPacketAsync(cancellationToken);
+                var loginAccepted = new AC.ACCEPT_LOGIN(response.Buffer);
                 RequirePacket(response, RagnarokPacketId.LoginAccepted, "Login server rejected or returned an unsupported response");
                 if (!RagnarokPacketCodec.TryGetCharacterServer(response.Buffer, response.Length, characterServerIndex, out characterEndpoint))
                     throw new InvalidDataException("The login response contains no usable character server entry.");
@@ -143,7 +167,7 @@ namespace Uninarok.Networking
 
                 RagnarokPacket redirect = await character.ReadPacketAsync(cancellationToken);
                 RequirePacket(redirect, RagnarokPacketId.MapServerRedirect, "Character selection failed or the character server sent an unsupported response");
-                if (!RagnarokPacketCodec.TryGetMapEndpoint(redirect.Buffer, redirect.Length, out RagnarokServerEndpoint mapEndpoint))
+                if (!RagnarokPacketCodec.TryGetMapEndpoint(redirect.Buffer, redirect.Length, out UninarokServerEndpoint mapEndpoint))
                     throw new InvalidDataException("The character server returned an invalid map server address.");
 
                 string mapHost = string.IsNullOrWhiteSpace(mapServerHostOverride)

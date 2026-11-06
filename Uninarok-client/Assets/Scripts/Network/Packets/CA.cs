@@ -1,8 +1,7 @@
 using System;
-using System.Buffers.Binary;
 using Unity.Collections;
 
-namespace Uninarok.Networking.Packets
+namespace Uninarok.Networking.Packets.Out
 {
     public static class CA
     {
@@ -23,26 +22,27 @@ namespace Uninarok.Networking.Packets
                 AccountPassword = new FixedString32Bytes(accountPassword);
                 ClientType = clientType;
             }
-            public void Serialize(Span<byte> buffer)
+            public Memory<byte> Serialize()
             {
-                if (buffer.Length < Size)
-                    throw new ArgumentException($"Buffer size is too small. Expected at least {Size} bytes.");
-                
-                BinaryPrimitives.WriteUInt16LittleEndian(buffer, PacketId);
-                BinaryPrimitives.WriteUInt32LittleEndian(buffer[sizeof(uint)..], (uint)RagnarokPacketCodec.PacketVersion);
-                var offset = sizeof(uint) + sizeof(ushort);
+                var buffer = new Memory<byte>(new byte[Size]);
+                var writer = new PacketWriter(buffer.Span);
+
+                writer.WriteUInt16(PacketId);
+                writer.WriteUInt32((uint)RagnarokPacketCodec.PacketVersion);
 
                 // Serialize AccountName
                 for (int i = 0; i < 24; i++)
                 {
-                    buffer[offset + i] = (i < AccountName.Length) ? (byte)AccountName[i] : (byte)'\0';
+                    writer.WriteByte((i < AccountName.Length) ? (byte)AccountName[i] : (byte)'\0');
                 }
                 // Serialize AccountPassword
                 for (int i = 0; i < 24; i++)
                 {
-                    buffer[offset + 24 + i] = (i < AccountPassword.Length) ? (byte)AccountPassword[i] : (byte)'\0';
+                    writer.WriteByte((i < AccountPassword.Length) ? (byte)AccountPassword[i] : (byte)'\0');
                 }
-                buffer[offset + 48] = (byte)ClientType;
+                writer.WriteByte((byte)ClientType);
+                
+                return buffer;
             }
         }
     }
