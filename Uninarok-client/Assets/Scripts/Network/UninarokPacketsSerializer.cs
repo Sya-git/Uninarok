@@ -1,4 +1,6 @@
+using JetBrains.Annotations;
 using System;
+using Uninarok.Networking.Packets;
 using UnityEngine;
 
 namespace Uninarok.Networking
@@ -8,6 +10,7 @@ namespace Uninarok.Networking
         private readonly byte[] _packetBytes = new byte[ushort.MaxValue];
         private int _currentReadIndex;
         private int _currentWriteIndex;
+        private int _ignoredBytesAmount;
         private readonly object _lock = new object();
 
         public void AppendData(byte[] data, int length)
@@ -32,6 +35,12 @@ namespace Uninarok.Networking
                 // TODO: Length bigger than buffer size, etc
             }
         }
+
+        public void IgnoreBytes(int amount)
+        {
+            _ignoredBytesAmount += amount;
+        }
+
         public void ProcessPackages()
         {
             lock (_lock)
@@ -43,48 +52,58 @@ namespace Uninarok.Networking
                         break;
 
                     var packetId = System.BitConverter.ToUInt16(_packetBytes, _currentReadIndex);
-                    _currentReadIndex += 2;
-                    remainingBytes = GetBufferOffset();
+                    //_currentReadIndex += 2;
+                    //remainingBytes = GetBufferOffset();
 
                     // Check if this is a valid packet ID (non-zero)
                     if (packetId == 0)
                     {
                         Debug.LogError("Received packet with ID 0. Disconnecting.");
                         // TODO: Handle invalid packet ID (e.g., disconnect the client)
-                        continue;
+                        break;
                     }
 
-                    int packetLength = Packets.PacketLengthTable.GetLength(packetId);
-                    if (packetLength == 0)
+                    if (_ignoredBytesAmount > 0)
+                    {
+                        Debug.Log($"Ignoring {_ignoredBytesAmount} bytes for package with id {packetId:X4}");
+                        _currentReadIndex += _ignoredBytesAmount;
+                        _ignoredBytesAmount = 0;
+                    }
+
+                    int packetLength = UninarokNetworkingRouter.GetLength(packetId);
+                    if (packetLength == -2)
                     {
                         Debug.LogError($"Unknown packet ID: 0x{packetId:X4}. Disconnecting.");
                         // TODO: Handle unknown packet ID (e.g., disconnect the client)
                         break;
                     }
 
+                    // Check if the packet is fixed-size or variable-size
+                    var isFixedSizePacket = packetLength > 0;
+
                     // Check if we have enough bytes to read the length for variable-length packets
-                    if (remainingBytes < 2)
+                    if (!isFixedSizePacket && remainingBytes < 2)
                     {
-                        _currentReadIndex -= 2; // Move back the read index to re-read the packet ID next time
+                        // _currentReadIndex -= 2; // Move back the read index to re-read the packet ID next time
                         break;
                     }
 
-                    // Check if the packet is fixed-size or variable-size
-                    var isFixedSizePacket = packetLength > 0;
                     if (!isFixedSizePacket)
                     {
-                        packetLength = System.BitConverter.ToUInt16(_packetBytes, _currentReadIndex);
+                        packetLength = System.BitConverter.ToUInt16(_packetBytes, _currentReadIndex + 2);
                     }
 
                     if (remainingBytes < packetLength)
                     {
                         // Not enough data for a complete packet, wait for more data
-                        _currentReadIndex -= isFixedSizePacket ? 2 : 4; // Move back the read index to re-read the packet ID and length next time
+                        // _currentReadIndex -= 2; // Move back the read index to re-read the packet ID and length next time
                         break;
                     }
-
-                    var packetData = new byte[packetLength];
-                    Buffer.BlockCopy(_packetBytes, _currentReadIndex, packetData, 0, packetLength);
+                    //TODO: Check gc
+                    var packetDataOffset = isFixedSizePacket ? 2 : 4;
+                    var packetData = new byte[packetLength - packetDataOffset];
+                    // _currentReadIndex +4 to ignore packet id and size
+                    Buffer.BlockCopy(_packetBytes, _currentReadIndex + packetDataOffset, packetData, 0, packetLength - packetDataOffset);
                     _currentReadIndex += packetLength;
 
                     // Reseta o buffer de leitura se todos os dados foram processados
@@ -93,8 +112,16 @@ namespace Uninarok.Networking
                         _currentReadIndex = 0;
                         _currentWriteIndex = 0;
                     }
+                    else if (_currentReadIndex > _currentWriteIndex)
+                    {
+                        Debug.LogError("WTF");
+                        _currentReadIndex = 0;
+                        _currentWriteIndex = 0;
+                    }
+                    Debug.LogError(packetLength - packetData.Length);
 
-                    UninarokPackageRouter.RoutePacket(packetId, packetData);
+                    Debug.Log($"Received packet with id 0x{packetId:X4} ({(PacketIds)packetId})");
+                    UninarokNetworkingRouter.RoutePacket(packetId, packetData);
                 }
             }
         }

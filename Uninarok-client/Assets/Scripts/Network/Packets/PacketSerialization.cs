@@ -1,5 +1,6 @@
 using System;
 using System.Buffers.Binary;
+using Unity.Collections;
 
 namespace Uninarok.Networking.Packets
 {
@@ -21,7 +22,7 @@ namespace Uninarok.Networking.Packets
         }
     }
 
-    internal ref struct PacketReader
+    public ref struct PacketReader
     {
         private readonly ReadOnlySpan<byte> _buffer;
 
@@ -40,25 +41,88 @@ namespace Uninarok.Networking.Packets
             return value;
         }
 
-        public ushort ReadUInt16()
+        public void Read(out byte value)
+        {
+            value = ReadByte();
+        }
+
+        public ushort ReadUshort()
         {
             ushort value = BinaryPrimitives.ReadUInt16LittleEndian(_buffer.Slice(Offset, sizeof(ushort)));
             Offset += sizeof(ushort);
             return value;
         }
 
-        public int ReadInt32()
+        public void Read(out ushort value)
+        {
+            value = ReadUshort();
+        }
+
+        public short ReadShort()
+        {
+            short value = BinaryPrimitives.ReadInt16LittleEndian(_buffer.Slice(Offset, sizeof(short)));
+            Offset += sizeof(short);
+            return value;
+        }
+
+        public void Read(out short value)
+        {
+            value = ReadShort();
+        }
+
+        public int ReadInt()
         {
             int value = BinaryPrimitives.ReadInt32LittleEndian(_buffer.Slice(Offset, sizeof(int)));
             Offset += sizeof(int);
             return value;
         }
 
-        public uint ReadUInt32()
+        public void Read(out int value)
+        {
+            value = ReadInt();
+        }
+
+        public uint ReadUint()
         {
             uint value = BinaryPrimitives.ReadUInt32LittleEndian(_buffer.Slice(Offset, sizeof(uint)));
             Offset += sizeof(uint);
             return value;
+        }
+
+        public void Read(out uint value)
+        {
+            value = ReadUint();
+        }
+
+        public FixedString32Bytes ReadChars(int amount)
+        {
+            var bytes = _buffer.Slice(Offset, amount);
+            var text = new FixedString32Bytes();
+
+            for(var i=0;i<bytes.Length;++i)
+            {
+                if (bytes[i] == 0) continue;
+
+                text.Append((char)bytes[i]);
+            }
+            // Copia o bloco de memória inteiro de uma vez
+            //unsafe
+            //{
+            //    fixed (byte* ptr = bytes)
+            //    {
+            //        if (ptr != 0)
+            //        { 
+            //            text.Append(ptr, bytes.Length); 
+            //        }
+            //    }
+            //}
+            Offset += amount;
+            return text;
+        }
+
+        public void Read(out FixedString32Bytes value, int amount)
+        {
+            value = ReadChars(amount);
         }
 
         public ReadOnlySpan<byte> ReadBytes(int count)
@@ -68,9 +132,14 @@ namespace Uninarok.Networking.Packets
             return value;
         }
 
+        public void ReadBytes(out ReadOnlySpan<byte> value, int amount)
+        {
+            value = ReadBytes(amount);
+        }
+
         public void Skip(int count)
         {
-            _ = ReadBytes(count);
+            Offset += count;
         }
     }
 
@@ -86,25 +155,25 @@ namespace Uninarok.Networking.Packets
             Offset = 0;
         }
 
-        public void WriteByte(byte value)
+        public void Write(byte value)
         {
             _buffer[Offset] = value;
             Offset++;
         }
 
-        public void WriteUInt16(ushort value)
+        public void Write(ushort value)
         {
             BinaryPrimitives.WriteUInt16LittleEndian(_buffer.Slice(Offset, sizeof(ushort)), value);
             Offset += sizeof(ushort);
         }
 
-        public void WriteInt32(int value)
+        public void Write(int value)
         {
             BinaryPrimitives.WriteInt32LittleEndian(_buffer.Slice(Offset, sizeof(int)), value);
             Offset += sizeof(int);
         }
 
-        public void WriteUInt32(uint value)
+        public void Write(uint value)
         {
             BinaryPrimitives.WriteUInt32LittleEndian(_buffer.Slice(Offset, sizeof(uint)), value);
             Offset += sizeof(uint);
@@ -126,9 +195,9 @@ namespace Uninarok.Networking.Packets
         {
             int count = Math.Min(value == null ? 0 : value.Length, width);
             for (int i = 0; i < count; i++)
-                WriteByte(value[i] <= 0x7F ? (byte)value[i] : (byte)'?');
+                Write(value[i] <= 0x7F ? (byte)value[i] : (byte)'?');
             for (int i = count; i < width; i++)
-                WriteByte(0);
+                Write((byte)'\0');
         }
     }
 }

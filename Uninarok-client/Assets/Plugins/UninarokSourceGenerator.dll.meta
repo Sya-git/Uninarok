@@ -1,0 +1,37 @@
+fileFormatVersion: 2
+guid: 969e0db6dc843044f9774b523ff73550
+PluginImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  iconMap: {}
+  executionOrder: {}
+  defineConstraints: []
+  isPreloaded: 0
+  isOverridable: 0
+  isExplicitlyReferenced: 0
+  validateReferences: 1
+  platformData:
+  - first:
+      Any: 0
+    second:
+      enabled: 0
+      settings: {}
+  - first:
+      Editor: 0
+    second:
+      enabled: 0
+      settings:
+        CPU: AnyCPU
+        OS: AnyOS
+  - first:
+      Standalone: 0
+    second:
+      enabled: 0
+      settings:
+        CPU: AnyCPU
+        OS: AnyOS
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  labels:
+  - RoslynAnalyzer

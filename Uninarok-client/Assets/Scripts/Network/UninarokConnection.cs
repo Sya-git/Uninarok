@@ -1,5 +1,6 @@
 using System;
 using System.Buffers.Binary;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
@@ -16,6 +17,8 @@ namespace Uninarok.Networking
         // Mantemos o buffer único estático por conexão para reuso completo
         private readonly byte[] _buffer = new byte[ushort.MaxValue];
         private CancellationTokenSource _readCancellationTokenSource = new CancellationTokenSource();
+        private CancellationTokenSource _writeCancellationTokenSource = new CancellationTokenSource();
+        private CancellationTokenSource _connectionCancellationTokenSource = new CancellationTokenSource();
 
         public bool IsConnected => _client.Connected;
 
@@ -32,6 +35,7 @@ namespace Uninarok.Networking
             var client = new TcpClient { NoDelay = true };
             try
             {
+                UnityEngine.Debug.LogError($"Connecting to: {host}:{port}");
                 // O bootstrap de conexão pode usar Task comum sem problemas, pois roda uma única vez.
                 var connectTask = client.ConnectAsync(host, port);
                 var cancellationTask = Task.Delay(Timeout.Infinite, token);
@@ -41,9 +45,9 @@ namespace Uninarok.Networking
                     try { await connectTask.ConfigureAwait(false); } catch { }
                     token.ThrowIfCancellationRequested();
                 }
-
+                UnityEngine.Debug.LogError($"Awating to: {host}:{port}");
                 await connectTask.ConfigureAwait(false);
-
+                UnityEngine.Debug.LogError($"Connected to: {host}:{port}");
                 return new UninarokTcpConnection(client);
             }
             catch
@@ -53,16 +57,28 @@ namespace Uninarok.Networking
             }
         }
 
+        public void IgnoreBytes(int amount)
+        {
+            _serializer.IgnoreBytes(amount);
+        }
+
         public async ValueTask SendAsync(Memory<byte> buffer, CancellationToken token)
         {
-            await _stream.WriteAsync(buffer, token).ConfigureAwait(false);
+            if (token == CancellationToken.None)
+            {
+                await _stream.WriteAsync(buffer, _writeCancellationTokenSource.Token).ConfigureAwait(false);
+            }
+            else
+            {
+                await _stream.WriteAsync(buffer, token).ConfigureAwait(false);
+            }
         }
 
         private async ValueTask ReadAsync(CancellationToken token)
         {
             while (!token.IsCancellationRequested)
             {
-                var received = await _stream.ReadAsync(_buffer, 0, _buffer.Length).ConfigureAwait(false);
+                var received = await _stream.ReadAsync(_buffer, 0, _buffer.Length, token).ConfigureAwait(false);
                 if (received > 0)
                 {
                     _serializer.AppendData(_buffer, received);
@@ -79,55 +95,22 @@ namespace Uninarok.Networking
             _serializer.ProcessPackages();
         }
 
-        public async ValueTask<RagnarokPacket> ReadPacketAsync(CancellationToken token)
-        {
-            await ReadExactlyAsync(0, 2, token).ConfigureAwait(false);
-            ushort id = BinaryPrimitives.ReadUInt16LittleEndian(_buffer);
-
-            int length = RagnarokPacketCodec.GetPacketLength(id);
-            bool isVariableLength = length == -1;
-
-            if (isVariableLength)
-            {
-                await ReadExactlyAsync(2, 2, token).ConfigureAwait(false);
-                length = BinaryPrimitives.ReadUInt16LittleEndian(_buffer.AsSpan(2, 2));
-                if (length < 4)
-                    throw new InvalidDataException($"Invalid packet length {length} for 0x{id:X4}.");
-            }
-            else if (length == 0)
-            {
-                throw new InvalidDataException($"Unsupported packet 0x{id:X4}.");
-            }
-
-            if (length > _buffer.Length)
-                throw new InvalidDataException($"Packet 0x{id:X4} exceeds the receive buffer.");
-
-            await ReadExactlyAsync(2, length - 2, token).ConfigureAwait(false);
-
-            return new RagnarokPacket(id, length, _buffer);
-        }
-
-        private async ValueTask ReadExactlyAsync(int offset, int count, CancellationToken token)
-        {
-            while (count > 0)
-            {
-                var memoryBuffer = new Memory<byte>(_buffer, offset, count);
-                var received = await _stream.ReadAsync(memoryBuffer, token).ConfigureAwait(false);
-
-                if (received == 0)
-                    throw new EndOfStreamException("The server closed the connection.");
-
-                offset += received;
-                count -= received;
-            }
-        }
-
         public void Dispose()
         {
             _stream?.Dispose();
             _client?.Dispose();
-            _readCancellationTokenSource.Cancel();
-            _readCancellationTokenSource.Dispose();
+            if (_readCancellationTokenSource != null)
+            { 
+                _readCancellationTokenSource.Cancel(); 
+                _readCancellationTokenSource.Dispose();
+                _readCancellationTokenSource = null;
+            }
+            if (_writeCancellationTokenSource != null)
+            {
+                _writeCancellationTokenSource.Cancel();
+                _writeCancellationTokenSource.Dispose();
+                _writeCancellationTokenSource = null;
+            }
         }
     }
 }

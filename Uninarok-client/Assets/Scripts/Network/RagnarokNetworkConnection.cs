@@ -59,31 +59,6 @@ namespace Uninarok.Networking
             return _stream.WriteAsync(buffer, 0, length, cancellationToken);
         }
 
-        public async Task<RagnarokPacket> ReceivePacketAsync(CancellationToken cancellationToken)
-        {
-            await ReadExactlyAsync(0, 2, cancellationToken).ConfigureAwait(false);
-            ushort packetId = BinaryPrimitives.ReadUInt16LittleEndian(_receiveBuffer);
-            int packetLength = PacketLengthTable.GetLength(packetId);
-            bool variableLength = packetLength == -1;
-            if (packetLength == 0)
-                throw new InvalidDataException($"Unsupported packet 0x{packetId:X4}.");
-
-            int headerLength = 2;
-            if (variableLength)
-            {
-                await ReadExactlyAsync(2, 2, cancellationToken).ConfigureAwait(false);
-                packetLength = BinaryPrimitives.ReadUInt16LittleEndian(_receiveBuffer.AsSpan(2, 2));
-                headerLength = 4;
-                if (packetLength < headerLength)
-                    throw new InvalidDataException($"Invalid packet length {packetLength} for 0x{packetId:X4}.");
-            }
-
-            if (packetLength > _receiveBuffer.Length)
-                throw new InvalidDataException($"Packet 0x{packetId:X4} exceeds the receive buffer.");
-
-            await ReadExactlyAsync(headerLength, packetLength - headerLength, cancellationToken).ConfigureAwait(false);
-            return new RagnarokPacket(packetId, packetLength, _receiveBuffer);
-        }
 
         private async Task ReadExactlyAsync(int offset, int count, CancellationToken cancellationToken)
         {

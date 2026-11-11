@@ -1,12 +1,14 @@
 using System;
+using Uninarok.Networking.Packets.Attributes;
+using Unity.Collections;
 
 namespace Uninarok.Networking.Packets.Out
 {
     public static class CH
     {
-        public struct ENTER
+        [OutPacket(PacketIds.CH_ENTER, CH_ENTER.Size)]
+        public struct CH_ENTER
         {
-            public const ushort PacketId = 0x0065;
             public const short Size = 17;
 
             public uint AccountId;
@@ -14,7 +16,7 @@ namespace Uninarok.Networking.Packets.Out
             public uint UserLevel;
             public byte Sex;
 
-            public ENTER(uint accountId, int authCode, uint userLevel, byte sex)
+            public CH_ENTER(uint accountId, int authCode, uint userLevel, byte sex)
             {
                 AccountId = accountId;
                 AuthCode = authCode;
@@ -26,19 +28,19 @@ namespace Uninarok.Networking.Packets.Out
             {
                 var buffer = new Memory<byte>(new byte[Size]);
                 var writer = new PacketWriter(buffer.Span);
-                writer.WriteUInt16(PacketId);
-                writer.WriteUInt32(AccountId);
-                writer.WriteInt32(AuthCode);
-                writer.WriteUInt32(UserLevel);
+                writer.Write((ushort)PacketIds.CH_ENTER);
+                writer.Write(AccountId);
+                writer.Write(AuthCode);
+                writer.Write(UserLevel);
                 writer.Skip(2);
-                writer.WriteByte(Sex);
+                writer.Write(Sex);
                 return buffer;
             }
         }
 
+        [OutPacket(PacketIds.SELECT_CHAR, SELECT_CHAR.Size)]
         public struct SELECT_CHAR
         {
-            public const ushort PacketId = 0x0066;
             public const short Size = 3;
 
             public byte Slot;
@@ -52,21 +54,25 @@ namespace Uninarok.Networking.Packets.Out
             {
                 PacketSerialization.RequireSize(buffer, Size);
                 var writer = new PacketWriter(buffer);
-                writer.WriteUInt16(PacketId);
-                writer.WriteByte(Slot);
+                writer.Write((ushort)PacketIds.SELECT_CHAR);
+                writer.Write(Slot);
             }
         }
 
+        [OutPacket(PacketIds.MAKE_CHAR, MAKE_CHAR.Size)]
         public struct MAKE_CHAR
         {
-            public const ushort PacketId = 0x0A39;
             public const short Size = 36;
+            private const byte NameSize = 24;
+            // S 0x0a39 <name>.24B <slot>.B <hair color>.W <hair style>.W <starting job class ID>.W <Unknown>.(W or 2 B's)??? <sex>.B
 
+            //TODO: GC
             public string Name;
             public byte Slot;
             public ushort HairColor;
             public ushort HairStyle;
-            public ushort JobClass;
+            public int JobClass;
+            //public ushort Unknown; ?
             public byte Sex;
 
             public MAKE_CHAR(string name, byte slot, ushort hairColor, ushort hairStyle, ushort jobClass, byte sex)
@@ -76,23 +82,34 @@ namespace Uninarok.Networking.Packets.Out
                 HairColor = hairColor;
                 HairStyle = hairStyle;
                 JobClass = jobClass;
+                //Unknown = 0;
                 Sex = sex;
             }
 
-            public void Serialize(Span<byte> buffer)
+            public void Serialize(Memory<byte> buffer)
             {
-                PacketSerialization.RequireSize(buffer, Size);
-                buffer.Slice(0, Size).Clear();
-                var writer = new PacketWriter(buffer);
-                writer.WriteUInt16(PacketId);
-                writer.WriteAscii(Name, 24);
-                writer.WriteByte(Slot);
-                writer.WriteUInt16(HairColor);
-                writer.WriteUInt16(HairStyle);
-                writer.WriteUInt16(JobClass);
-                writer.Skip(2);
-                writer.WriteByte(Sex);
+                PacketSerialization.RequireSize(buffer.Span, Size);
+                buffer.Slice(0, Size).Span.Clear();
+
+                var writer = new PacketWriter(buffer.Span);
+                writer.Write((ushort)PacketIds.MAKE_CHAR);
+                writer.WriteAscii(Name, NameSize);
+                writer.Write(Slot);
+                writer.Write(HairColor);
+                writer.Write(HairStyle);
+                writer.Write(JobClass);
+                //writer.Skip(Unknown);
+                writer.Write(Sex);
             }
+        }
+
+
+        //TODO: PINCODE SYSTEM
+        public struct PINCODE_SET_NEW
+        {
+
+            public int AccountId;
+
         }
     }
 }
