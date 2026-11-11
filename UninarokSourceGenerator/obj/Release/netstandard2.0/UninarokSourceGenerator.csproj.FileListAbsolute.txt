@@ -1,0 +1,9 @@
+E:\Dev\Uninarok\Uninarok-client\Assets\Plugins\Release\netstandard2.0\UninarokSourceGenerator.deps.json
+E:\Dev\Uninarok\Uninarok-client\Assets\Plugins\Release\netstandard2.0\UninarokSourceGenerator.dll
+E:\Dev\Uninarok\Uninarok-client\Assets\Plugins\Release\netstandard2.0\UninarokSourceGenerator.pdb
+E:\Dev\Uninarok\UninarokSourceGenerator\obj\Release\netstandard2.0\UninarokSourceGenerator.csproj.AssemblyReference.cache
+E:\Dev\Uninarok\UninarokSourceGenerator\obj\Release\netstandard2.0\UninarokSourceGenerator.GeneratedMSBuildEditorConfig.editorconfig
+E:\Dev\Uninarok\UninarokSourceGenerator\obj\Release\netstandard2.0\UninarokSourceGenerator.csproj.CoreCompileInputs.cache
+E:\Dev\Uninarok\UninarokSourceGenerator\obj\Release\netstandard2.0\UninarokSourceGenerator.sourcelink.json
+E:\Dev\Uninarok\UninarokSourceGenerator\obj\Release\netstandard2.0\UninarokSourceGenerator.dll
+E:\Dev\Uninarok\UninarokSourceGenerator\obj\Release\netstandard2.0\UninarokSourceGenerator.pdb
