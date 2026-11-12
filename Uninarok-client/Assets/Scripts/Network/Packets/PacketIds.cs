@@ -4,9 +4,8 @@
     {
         // IN
         // AC
-        ACCEPT_LOGIN = 0x0AC4, // 0x006A
-        REFUSE_LOGIN = 0x0081, //0x006B, // 0x006A?
-        //REFUSE_LOGIN_R2 = 0x083E,
+        ACCEPT_LOGIN = 0x0AC4,
+        REFUSE_LOGIN = 0x0081,
         REFUSE_LOGIN_R3 = 0x0B02,
 
         // HC
@@ -15,17 +14,16 @@
         HC_REFUSE_ENTER = 0x006C,
         PINCODE_LOGINSTATE = 0x08B9,
         PINCODE_LOGINSTATE2 = 0x0AE9,
-        //ACK_CHARINFO_PER_PAGE = 0x099D,
         NOTIFY_ZONESVR = 0x0AC5,
-        CHAR_CREATION_FAILED = 0x006E, // WILL CHANGE IN LATER PACKET VERS
-        CHAR_CREATION_SUCCESS = 0x006D, // WILL CHANGE IN LATER PACKET VERS, 0x0B6F
+        CHAR_CREATION_FAILED = 0x006E,
+        CHAR_CREATION_SUCCESS = 0x006D,
 
         // SC
-        NOTIFY_BAN = 0x0AC6, // 0x0081?
+        NOTIFY_BAN = 0x0AC6,
         ACK_HASH = 0x01DC,
 
         // ZC
-        ACCEPT_ENTER = 0x0283, // 0x02EB
+        ACCEPT_ENTER = 0x0283,
         INVENTORY_EXPANSION_INFO = 0x0B18,
         OVERWEIGHT_PERCENT = 0x0ADE,
         AUTH_OK = 0x02EB,
@@ -42,7 +40,7 @@
         MAKE_CHAR = 0x0A39,
 
         // CZ
-        CZ_ENTER = 0x0923, //TODO: cagado
+        CZ_ENTER = 0x0923,
         CZ_ENTER2 = 0x0436,
         CZ_PACKET_DB = 0x0368,
         CZ_REQUEST_TIME2 = 0x0187,
