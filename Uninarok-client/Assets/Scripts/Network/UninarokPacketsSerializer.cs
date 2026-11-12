@@ -52,13 +52,11 @@ namespace Uninarok.Networking
                         break;
 
                     var packetId = System.BitConverter.ToUInt16(_packetBytes, _currentReadIndex);
-                    //_currentReadIndex += 2;
-                    //remainingBytes = GetBufferOffset();
 
                     // Check if this is a valid packet ID (non-zero)
                     if (packetId == 0)
                     {
-                        Debug.LogError("Received packet with ID 0. Disconnecting.");
+                        Debug.LogError($"Received packet with ID 0 and size {remainingBytes}. Disconnecting.");
                         // TODO: Handle invalid packet ID (e.g., disconnect the client)
                         break;
                     }
@@ -69,42 +67,47 @@ namespace Uninarok.Networking
                         _currentReadIndex += _ignoredBytesAmount;
                         _ignoredBytesAmount = 0;
                     }
-
-                    int packetLength = UninarokNetworkingRouter.GetLength(packetId);
-                    if (packetLength == -2)
+                    else
                     {
-                        Debug.LogError($"Unknown packet ID: 0x{packetId:X4}. Disconnecting.");
-                        // TODO: Handle unknown packet ID (e.g., disconnect the client)
-                        break;
-                    }
+                        int packetLength = UninarokNetworkingRouter.GetLength(packetId);
+                        if (packetLength == -2)
+                        {
+                            Debug.LogError($"Unknown packet ID: 0x{packetId:X4}. Disconnecting.");
+                            // TODO: Handle unknown packet ID (e.g., disconnect the client)
+                            break;
+                        }
 
-                    // Check if the packet is fixed-size or variable-size
-                    var isFixedSizePacket = packetLength > 0;
+                        // Check if the packet is fixed-size or variable-size
+                        var isFixedSizePacket = packetLength > 0;
 
-                    // Check if we have enough bytes to read the length for variable-length packets
-                    if (!isFixedSizePacket && remainingBytes < 2)
-                    {
-                        // _currentReadIndex -= 2; // Move back the read index to re-read the packet ID next time
-                        break;
-                    }
+                        // Check if we have enough bytes to read the length for variable-length packets
+                        if (!isFixedSizePacket && remainingBytes < 2)
+                        {
+                            // _currentReadIndex -= 2; // Move back the read index to re-read the packet ID next time
+                            break;
+                        }
 
-                    if (!isFixedSizePacket)
-                    {
-                        packetLength = System.BitConverter.ToUInt16(_packetBytes, _currentReadIndex + 2);
-                    }
+                        if (!isFixedSizePacket)
+                        {
+                            packetLength = System.BitConverter.ToUInt16(_packetBytes, _currentReadIndex + 2);
+                        }
 
-                    if (remainingBytes < packetLength)
-                    {
-                        // Not enough data for a complete packet, wait for more data
-                        // _currentReadIndex -= 2; // Move back the read index to re-read the packet ID and length next time
-                        break;
+                        if (remainingBytes < packetLength)
+                        {
+                            // Not enough data for a complete packet, wait for more data
+                            // _currentReadIndex -= 2; // Move back the read index to re-read the packet ID and length next time
+                            break;
+                        }
+                        //TODO: Check gc
+                        var packetDataOffset = isFixedSizePacket ? 2 : 4;
+                        var packetData = new byte[packetLength - packetDataOffset];
+                        // _currentReadIndex +4 to ignore packet id and size
+                        Buffer.BlockCopy(_packetBytes, _currentReadIndex + packetDataOffset, packetData, 0, packetLength - packetDataOffset);
+                        _currentReadIndex += packetLength;
+
+                        Debug.Log($"Packet received: 0x{packetId:X4} ({(PacketIds)packetId})");
+                        UninarokNetworkingRouter.RoutePacket(packetId, packetData);
                     }
-                    //TODO: Check gc
-                    var packetDataOffset = isFixedSizePacket ? 2 : 4;
-                    var packetData = new byte[packetLength - packetDataOffset];
-                    // _currentReadIndex +4 to ignore packet id and size
-                    Buffer.BlockCopy(_packetBytes, _currentReadIndex + packetDataOffset, packetData, 0, packetLength - packetDataOffset);
-                    _currentReadIndex += packetLength;
 
                     // Reseta o buffer de leitura se todos os dados foram processados
                     if (_currentReadIndex == _currentWriteIndex)
@@ -118,10 +121,6 @@ namespace Uninarok.Networking
                         _currentReadIndex = 0;
                         _currentWriteIndex = 0;
                     }
-                    Debug.LogError(packetLength - packetData.Length);
-
-                    Debug.Log($"Received packet with id 0x{packetId:X4} ({(PacketIds)packetId})");
-                    UninarokNetworkingRouter.RoutePacket(packetId, packetData);
                 }
             }
         }

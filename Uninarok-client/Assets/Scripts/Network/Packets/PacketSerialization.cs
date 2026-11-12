@@ -179,6 +179,18 @@ namespace Uninarok.Networking.Packets
             Offset += sizeof(uint);
         }
 
+        public void Write(long value)
+        {
+            BinaryPrimitives.WriteInt64LittleEndian(_buffer.Slice(Offset, sizeof(long)), value);
+            Offset += sizeof(long);
+        }
+
+        public void Write(ulong value)
+        {
+            BinaryPrimitives.WriteUInt64LittleEndian(_buffer.Slice(Offset, sizeof(long)), value);
+            Offset += sizeof(ulong);
+        }
+
         public void WriteBytes(ReadOnlySpan<byte> value)
         {
             value.CopyTo(_buffer.Slice(Offset, value.Length));

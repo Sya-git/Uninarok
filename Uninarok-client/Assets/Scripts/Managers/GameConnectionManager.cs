@@ -32,11 +32,12 @@ namespace Uninarok.Managers
         private GameState _currentGameState;
         private static GameConnectionManager _inst;
 
-        private UninarokTcpConnection _connection;
+        private TcpConnection _connection;
         private CancellationTokenSource _cancellationToken = new CancellationTokenSource();
 
         private string _currentMapIp;
         private short _currentMapPort;
+        private int _currentCharId;
 
         #region UNITY EVENTS
         private void Awake()
@@ -88,6 +89,7 @@ namespace Uninarok.Managers
         {
             _currentMapIp = $"{structData.IpAddress[0]}.{structData.IpAddress[1]}.{structData.IpAddress[2]}.{structData.IpAddress[3]}";
             _currentMapPort = structData.Port;
+            _currentCharId = structData.CharId;
         }
         #endregion
 
@@ -106,22 +108,23 @@ namespace Uninarok.Managers
 
         private async void ConnectToMapAsync(string host, int port)
         {
-            _connection = await UninarokTcpConnection.ConnectAsync(host, port, _cancellationToken.Token);
+            _connection = await TcpConnection.ConnectAsync(host, port, _cancellationToken.Token);
 
             //TODO: wait for loading
-            var packetVersion = new CZ.CZ_PACKET_DB
-            {
-                PacketVer = (uint)LoginManager.PacketVersion
-            };
-            await _connection.SendAsync(packetVersion.Serialize(), CancellationToken.None);
-            _sendPing = true;
-            return;
-            var enterMap = new CZ.CZ_ENTER()
+            //var packetVersion = new CZ.CZ_PACKET_DB
+            //{
+            //    PacketVer = (uint)LoginManager.PacketVersion
+            //};
+            //await _connection.SendAsync(packetVersion.Serialize(), CancellationToken.None);
+            // _sendPing = true;
+            // return;
+            var enterMap = new CZ.CZ_ENTER2()
             {
                 AccountId = LoginManager.Instance.AccountId,
                 AuthCode = LoginManager.Instance.AuthCode,
+                CharId = _currentCharId,
                 Sex = LoginManager.Instance.Sex,
-                UserLevel = LoginManager.Instance.UserLevel
+                Timestamp = (uint)Time.fixedUnscaledDeltaTime
             };
             await _connection.SendAsync(enterMap.Serialize(), CancellationToken.None);
         }

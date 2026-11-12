@@ -10,7 +10,6 @@
         REFUSE_LOGIN_R3 = 0x0B02,
 
         // HC
-        SKIPPABLE_BYTES_UNKNOWN = 0x8481,
         HC_SLOTS_INFO = 0x082D,
         HC_CHAR_DATA = 0x006B,
         HC_REFUSE_ENTER = 0x006C,
@@ -26,7 +25,10 @@
         ACK_HASH = 0x01DC,
 
         // ZC
-        ACCEPT_ENTER = 0x02EB,
+        ACCEPT_ENTER = 0x0283, // 0x02EB
+        INVENTORY_EXPANSION_INFO = 0x0B18,
+        OVERWEIGHT_PERCENT = 0x0ADE,
+        AUTH_OK = 0x02EB,
         REFUSE_ENTER = 0x0074,
         ZC_ACK_PING = 0x0188,
 
@@ -41,6 +43,7 @@
 
         // CZ
         CZ_ENTER = 0x0923, //TODO: cagado
+        CZ_ENTER2 = 0x0436,
         CZ_PACKET_DB = 0x0368,
         CZ_REQUEST_TIME2 = 0x0187,
     }

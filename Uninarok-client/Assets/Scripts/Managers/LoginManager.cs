@@ -12,8 +12,8 @@ namespace Uninarok.Login
     [NoAutoStaticsCleanup]
     public class LoginManager : MonoBehaviour
     {
-        public static int PacketVersion = 20190530;
-        // Versoes a considerar: 20200401, 20220406
+        public static int PacketVersion = 20220406;
+        // Versoes a considerar: 20200401, 20220406, 20190530
         public enum LoginState
         {
             None,
@@ -47,13 +47,14 @@ namespace Uninarok.Login
         [SerializeField] private int loginTimeout = 15;
         public static LoginManager Instance { get; private set; }
 
-        private UninarokTcpConnection _connection;
+        private TcpConnection _connection;
         public uint AccountId { get; private set; }
         public int AuthCode { get; private set; }
         public uint UserLevel { get; private set; }
         public uint LastLoginIP { get; private set; }
         public string LastLoginTime { get; private set; }
         public byte Sex { get; private set; }
+        public uint CurrentCharacterId { get; private set; }
         private AC.ACCEPT_LOGIN2.UninarokServerEndpoint[] _serverList;
         public LoginState CurrentState
         {
@@ -91,6 +92,7 @@ namespace Uninarok.Login
             UninarokPackageDispatcher.Subscribe<HC.CHAR_CREATION_FAILED>(OnCharacterCreationFailed);
             UninarokPackageDispatcher.Subscribe<HC.PINCODE_LOGINSTATE>(OnPincodeState);
             UninarokPackageDispatcher.Subscribe<HC.NOTIFY_ZONESVR>(OnZoneServerInfoReceived);
+            //UninarokPackageDispatcher.Subscribe<HC.enter>
         }
 
         private void OnDisable()
@@ -256,7 +258,7 @@ namespace Uninarok.Login
             var _timeOut = new CancellationTokenSource();
             _timeOut.CancelAfter(loginTimeout * 1000); // Convert seconds to milliseconds
 
-            _connection = await UninarokTcpConnection.ConnectAsync(host, port, _timeOut.Token);
+            _connection = await TcpConnection.ConnectAsync(host, port, _timeOut.Token);
             // Send login request
             var loginRequest = new CA.LOGIN(username, password, '0');
 
@@ -268,7 +270,7 @@ namespace Uninarok.Login
         {
             var timeout = new CancellationTokenSource();
             timeout.CancelAfter(loginTimeout * 1000); // Convert seconds to milliseconds
-            _connection = await UninarokTcpConnection.ConnectAsync(host, port, timeout.Token);
+            _connection = await TcpConnection.ConnectAsync(host, port, timeout.Token);
 
             // Send character server enter request
             var characterServerEnterRequest = new CH.CH_ENTER(AccountId, AuthCode, UserLevel, Sex);

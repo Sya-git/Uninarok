@@ -41,6 +41,33 @@ namespace Uninarok.Networking.Packets
             }
         }
 
+        [OutPacket(PacketIds.CZ_ENTER2, Size)]
+        public struct CZ_ENTER2
+        {
+            public const byte Size = 23-4;
+            public uint AccountId;
+            public int CharId;
+            public int AuthCode;
+            public uint Timestamp;
+            public byte Sex;
+
+            public Memory<byte> Serialize()
+            {
+                var buffer = new Memory<byte>(new byte[Size]);
+                var writer = new PacketWriter(buffer.Span);
+
+                writer.Write((ushort)PacketIds.CZ_ENTER2);
+                writer.Write(AccountId);
+                writer.Write(CharId);
+                writer.Write(AuthCode);
+                //writer.Write(0); // Skip 4 bytes, maybe auth code is long
+                writer.Write(Timestamp);
+                writer.Write(Sex);
+
+                return buffer;
+            }
+        }
+
         [OutPacket(PacketIds.CZ_REQUEST_TIME2, Size)]
         public struct CZ_REQUEST_TIME2
         {

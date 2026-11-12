@@ -1,29 +1,12 @@
 using System;
-using System.Collections.Immutable;
-using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Reflection.Metadata;
 using Uninarok.Networking.Packets.Attributes;
 using Unity.Collections;
-using static Uninarok.Networking.Packets.HC.PINCODE_LOGINSTATE;
 
 namespace Uninarok.Networking.Packets
 {
     public static class HC
     {
-        [InPacket(PacketIds.SKIPPABLE_BYTES_UNKNOWN, Size)]
-        public struct SKIPPABLE_BYTES_UNKNOWN
-        {
-            public const byte Size = 4;
-
-            public SKIPPABLE_BYTES_UNKNOWN(ReadOnlySpan<byte> data)
-            {
-
-            }
-        }
-
         [InPacket(PacketIds.HC_REFUSE_ENTER, Size)]
         public struct HC_REFUSE_ENTER
         {
