@@ -2,7 +2,7 @@ using System.Threading;
 using Uninarok.Login;
 using Uninarok.Managers;
 using UnityEngine;
-using AccountSex = Uninarok.Networking.Packets.In.AC.AccountSex;
+using AccountSex = Uninarok.Networking.Packets.In.LoginServer.AccountSex;
 
 namespace Uninarok.Networking
 {

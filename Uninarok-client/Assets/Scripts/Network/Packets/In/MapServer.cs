@@ -3,10 +3,10 @@ using Uninarok.Networking.Packets.Attributes;
 
 namespace Uninarok.Networking.Packets
 {
-    public static class ZC
+    public static partial class MapServer
     {
-        [InPacket(PacketIds.ACCEPT_ENTER, Size)]
-        public struct ACCEPT_ENTER
+        [InPacket(PacketIds.MAP_ACCEPT_ENTER, Size)]
+        public struct MAP_ACCEPT_ENTER
         {
             // Another int which i don't know what does, maybe should ignore the second int
             public const short Size = 6;
@@ -18,11 +18,26 @@ namespace Uninarok.Networking.Packets
             //public byte YSize; // visibility?
 
 
-            public ACCEPT_ENTER(ReadOnlySpan<byte> data)
+            public MAP_ACCEPT_ENTER(ReadOnlySpan<byte> data)
             {
                 var reader = new PacketReader(data);
 
                 reader.Read(out Id);
+            }
+        }
+
+        [InPacket(PacketIds.MAP_REFUSE_ENTER, Size)]
+        public struct MAP_REFUSE_ENTER
+        {
+            public const ushort PacketId = 0x0074;
+            public const short Size = 3;
+            public byte Reason;
+
+            public MAP_REFUSE_ENTER(ReadOnlySpan<byte> data)
+            {
+                var reader = new PacketReader(data);
+
+                reader.Read(out Reason);
             }
         }
 
@@ -41,13 +56,13 @@ namespace Uninarok.Networking.Packets
         }
 
         [InPacket(PacketIds.OVERWEIGHT_PERCENT, Size)]
-        public struct OVERWEIGHT_PERCENT
+        public struct OVERWEIGHT_PERCENT_INFO
         {
             public const short Size = 6;
 
             public uint Percentage;
 
-            public OVERWEIGHT_PERCENT(ReadOnlySpan<byte> data)
+            public OVERWEIGHT_PERCENT_INFO(ReadOnlySpan<byte> data)
             {
                 var writer = new PacketReader(data);
 
@@ -85,30 +100,18 @@ namespace Uninarok.Networking.Packets
             }
         }
 
-        [InPacket(PacketIds.REFUSE_ENTER, Size)]
-        public struct REFUSE_ENTER
-        {
-            public const ushort PacketId = 0x0074;
-            public const short Size = 3;
-
-            public REFUSE_ENTER(ReadOnlySpan<byte> data)
-            {
-
-            }
-        }
-
-        [InPacket(PacketIds.ZC_ACK_PING, Size)]
-        public struct ZC_ACK_PING
+        [InPacket(PacketIds.HEARTBEAT_RESPONSE, Size)]
+        public struct HEARTBEAT_RESPONSE
         {
             public const short Size = 6;
 
-            public uint Tick;
+            public uint Timestamp;
 
-            public ZC_ACK_PING(ReadOnlySpan<byte> data)
+            public HEARTBEAT_RESPONSE(ReadOnlySpan<byte> data)
             {
                 var reader = new PacketReader(data);
 
-                reader.Read(out Tick);
+                reader.Read(out Timestamp);
             }
         }
     }

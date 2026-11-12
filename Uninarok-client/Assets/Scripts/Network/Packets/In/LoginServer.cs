@@ -6,31 +6,17 @@ using Unity.Collections;
 
 namespace Uninarok.Networking.Packets.In
 {
-    public static class AC
+    public static class LoginServer
     {
-        public enum AccountSex
+        public enum AccountSex : byte
         {
             SEX_FEMALE = 0,
             SEX_MALE = 1,
             SEX_SERVER = 2
         }
-        public static char ToChar(this AccountSex sex)
-        {
-            return sex switch
-            {
-                AccountSex.SEX_FEMALE => 'F',
-                AccountSex.SEX_MALE => 'M',
-                AccountSex.SEX_SERVER => 'S',
-                _ => (char)byte.MaxValue,
-            };
-        }
-        public static byte ToConvertedByte(this AccountSex sex)
-        {
-            return (byte)sex.ToChar();
-        }
 
         [InPacket(PacketIds.ACCEPT_LOGIN, Size)]
-        public struct ACCEPT_LOGIN2
+        public struct ACCEPT_LOGIN
         {
             public const short Size = -1;
 
@@ -78,7 +64,7 @@ namespace Uninarok.Networking.Packets.In
             public byte TwitterFlag { get; }
             private UninarokServerEndpoint[] ServerList;
 
-            public ACCEPT_LOGIN2(ReadOnlySpan<byte> data)
+            public ACCEPT_LOGIN(ReadOnlySpan<byte> data)
             {
                 var reader = new PacketReader(data);
                 //if (packetLength > data.Length)
@@ -117,8 +103,8 @@ namespace Uninarok.Networking.Packets.In
         /// <summary>
         /// Recusa quando se tenta fazer o login usando _M e _F em uma conta já criada?
         /// </summary>
-        [InPacket(PacketIds.REFUSE_LOGIN_R3, Size)]
-        public struct REFUSE_LOGIN_R3
+        [InPacket(PacketIds.REFUSE_LOGIN_3, Size)]
+        public struct REFUSE_LOGIN_3
         {
             public const byte Size = 26;
             private const byte BlockDateSize = 20;
@@ -126,7 +112,7 @@ namespace Uninarok.Networking.Packets.In
             public int ErrorCode;
             public FixedString32Bytes BlockDate;
 
-            public REFUSE_LOGIN_R3(ReadOnlySpan<byte> data)
+            public REFUSE_LOGIN_3(ReadOnlySpan<byte> data)
             {
                 var reader = new PacketReader(data);
 

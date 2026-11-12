@@ -5,16 +5,41 @@ using Unity.Collections;
 
 namespace Uninarok.Networking.Packets
 {
-    public static class HC
+    public static class CharacterServer
     {
-        [InPacket(PacketIds.HC_REFUSE_ENTER, Size)]
-        public struct HC_REFUSE_ENTER
+        [InPacket(PacketIds.MAP_ENTER_REQUEST_ACCEPTED, Size)]
+        public struct MAP_ENTER_REQUEST_ACCEPTED
+        {
+            public const byte Size = 156;
+            private const byte MapNameSize = 16;
+            public const byte DnsHostSize = 128;
+
+            public int CharId;
+            public FixedString32Bytes MapName;
+            public byte[] IpAddress; // TODO: GC
+            public short Port;
+            public FixedString32Bytes DnsHost;
+
+            public MAP_ENTER_REQUEST_ACCEPTED(ReadOnlySpan<byte> data)
+            {
+                var reader = new PacketReader(data);
+
+                reader.Read(out CharId);
+                reader.Read(out MapName, MapNameSize);
+                IpAddress = reader.ReadBytes(4).ToArray();
+                reader.Read(out Port);
+                reader.Read(out DnsHost, DnsHostSize);
+            }
+        }
+
+        [InPacket(PacketIds.MAP_ENTER_REQUEST_REFUSED, Size)]
+        public struct MAP_ENTER_REQUEST_REFUSED
         {
             public const byte Size = 1;
 
             public byte ErrorCode;
 
-            public HC_REFUSE_ENTER(ReadOnlySpan<byte> data)
+            public MAP_ENTER_REQUEST_REFUSED(ReadOnlySpan<byte> data)
             {
                 var reader = new PacketReader(data);
                 
@@ -22,8 +47,8 @@ namespace Uninarok.Networking.Packets
             }
         }
 
-        [InPacket(PacketIds.HC_SLOTS_INFO, Size)]
-        public struct HC_SLOTS_INFO
+        [InPacket(PacketIds.CHARACTER_SLOTS_INFO, Size)]
+        public struct CHARACTER_SLOTS_INFO
         {
             public const short Size = -1;
             private const short UnusedBytesSize = 20;
@@ -35,7 +60,7 @@ namespace Uninarok.Networking.Packets
             public byte CharSlots3;
             public Memory<byte> UnusedBytes;
 
-            public HC_SLOTS_INFO(ReadOnlySpan<byte> data)
+            public CHARACTER_SLOTS_INFO(ReadOnlySpan<byte> data)
             {
                 var reader = new PacketReader(data);
 
@@ -48,13 +73,13 @@ namespace Uninarok.Networking.Packets
             }
         }
 
-        [InPacket(PacketIds.HC_CHAR_DATA, Size)]
-        public struct HC_CHAR_DATA
+        [InPacket(PacketIds.CHARACTER_DATA, Size)]
+        public struct CHARACTER_DATA
         {
             public const short Size = -1;
             public struct CharInfo
             {
-                public const byte Size = 155; // Size: 155? 
+                public const byte Size = 155;
                 private const byte NameSize = 24;
                 private const byte MapNameSize = 16;
 
@@ -162,7 +187,7 @@ namespace Uninarok.Networking.Packets
             public byte[] UnknownBytes;
             public CharInfo[] CharsInfo;
 
-            public HC_CHAR_DATA(ReadOnlySpan<byte> data)
+            public CHARACTER_DATA(ReadOnlySpan<byte> data)
             {
                 var reader = new PacketReader(data);
 
@@ -198,33 +223,8 @@ namespace Uninarok.Networking.Packets
             }
         }
 
-        [InPacket(PacketIds.NOTIFY_ZONESVR, Size)]
-        public struct NOTIFY_ZONESVR
-        {
-            public const byte Size = 156;
-            private const byte MapNameSize = 16;
-            public const byte DnsHostSize = 128;
-
-            public int CharId;
-            public FixedString32Bytes MapName;
-            public byte[] IpAddress; // TODO: GC
-            public short Port;
-            public FixedString32Bytes DnsHost;
-
-            public NOTIFY_ZONESVR(ReadOnlySpan<byte> data)
-            {
-                var reader = new PacketReader(data);
-
-                reader.Read(out CharId);
-                reader.Read(out MapName, MapNameSize);
-                IpAddress = reader.ReadBytes(4).ToArray();
-                reader.Read(out Port);
-                reader.Read(out DnsHost, DnsHostSize);
-            }
-        }
-
-        [InPacket(PacketIds.CHAR_CREATION_FAILED, Size)]
-        public struct CHAR_CREATION_FAILED
+        [InPacket(PacketIds.CHARACTER_CREATION_FAILED, Size)]
+        public struct CHARACTER_CREATION_FAILED
         {
             public enum CharCreationFailedReason : byte
             {
@@ -238,7 +238,7 @@ namespace Uninarok.Networking.Packets
 
             public byte ErrorCode;
 
-            public CHAR_CREATION_FAILED(ReadOnlySpan<byte> data)
+            public CHARACTER_CREATION_FAILED(ReadOnlySpan<byte> data)
             {
                 var reader = new PacketReader(data);
 
@@ -246,16 +246,16 @@ namespace Uninarok.Networking.Packets
             }
         }
 
-        [InPacket(PacketIds.CHAR_CREATION_SUCCESS, Size)]
-        public struct CHAR_CREATION_SUCCESS
+        [InPacket(PacketIds.CHARACTER_CREATION_SUCCESS, Size)]
+        public struct CHARACTER_CREATION_SUCCESS
         {
             public const byte Size = 157;
 
-            public HC_CHAR_DATA.CharInfo CharInfo;
+            public CHARACTER_DATA.CharInfo CharInfo;
 
-            public CHAR_CREATION_SUCCESS(ReadOnlySpan<byte> data)
+            public CHARACTER_CREATION_SUCCESS(ReadOnlySpan<byte> data)
             {
-                CharInfo = new HC_CHAR_DATA.CharInfo(data);
+                CharInfo = new CHARACTER_DATA.CharInfo(data);
             }
         }
 
@@ -275,28 +275,6 @@ namespace Uninarok.Networking.Packets
                 reader.Read(out PincodeSeed);
                 reader.Read(out AccountId);
                 reader.Read(out State);
-            }
-        }
-
-        [InPacket(PacketIds.PINCODE_LOGINSTATE2, Size)]
-        public struct PINCODE_LOGINSTATE2
-        {
-            // Seems to be used only by kRO
-            public const byte Size = 13;
-
-            public int PincodeSeed;
-            public int AccountId;
-            public short State;
-            public byte Flag;
-
-            public PINCODE_LOGINSTATE2(ReadOnlySpan<byte> data)
-            {
-                var reader = new PacketReader(data);
-
-                reader.Read(out PincodeSeed);
-                reader.Read(out AccountId);
-                reader.Read(out State);
-                reader.Read(out Flag);
             }
         }
     }

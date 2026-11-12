@@ -1,13 +1,12 @@
 using System;
 using Uninarok.Networking.Packets.Attributes;
-using Unity.Collections;
 
 namespace Uninarok.Networking.Packets.Out
 {
-    public static class CH
+    public static partial class CharacterServer
     {
-        [OutPacket(PacketIds.CH_ENTER, CH_ENTER.Size)]
-        public struct CH_ENTER
+        [OutPacket(PacketIds.CHARACTER_SERVER_REQUEST_ENTRY, Size)]
+        public struct CHARACTER_SERVER_REQUEST_ENTRY
         {
             public const short Size = 17;
 
@@ -16,7 +15,7 @@ namespace Uninarok.Networking.Packets.Out
             public uint UserLevel;
             public byte Sex;
 
-            public CH_ENTER(uint accountId, int authCode, uint userLevel, byte sex)
+            public CHARACTER_SERVER_REQUEST_ENTRY(uint accountId, int authCode, uint userLevel, byte sex)
             {
                 AccountId = accountId;
                 AuthCode = authCode;
@@ -28,7 +27,7 @@ namespace Uninarok.Networking.Packets.Out
             {
                 var buffer = new Memory<byte>(new byte[Size]);
                 var writer = new PacketWriter(buffer.Span);
-                writer.Write((ushort)PacketIds.CH_ENTER);
+                writer.Write((ushort)PacketIds.CHARACTER_SERVER_REQUEST_ENTRY);
                 writer.Write(AccountId);
                 writer.Write(AuthCode);
                 writer.Write(UserLevel);
@@ -38,14 +37,14 @@ namespace Uninarok.Networking.Packets.Out
             }
         }
 
-        [OutPacket(PacketIds.SELECT_CHAR, SELECT_CHAR.Size)]
-        public struct SELECT_CHAR
+        [OutPacket(PacketIds.SELECT_CHARACTER, Size)]
+        public struct SELECT_CHARACTER
         {
             public const short Size = 3;
 
             public byte Slot;
 
-            public SELECT_CHAR(byte slot)
+            public SELECT_CHARACTER(byte slot)
             {
                 Slot = slot;
             }
@@ -54,13 +53,13 @@ namespace Uninarok.Networking.Packets.Out
             {
                 PacketSerialization.RequireSize(buffer, Size);
                 var writer = new PacketWriter(buffer);
-                writer.Write((ushort)PacketIds.SELECT_CHAR);
+                writer.Write((ushort)PacketIds.SELECT_CHARACTER);
                 writer.Write(Slot);
             }
         }
 
-        [OutPacket(PacketIds.MAKE_CHAR, MAKE_CHAR.Size)]
-        public struct MAKE_CHAR
+        [OutPacket(PacketIds.CREATE_CHARACTER, Size)]
+        public struct CREATE_CHARACTER
         {
             public const short Size = 36;
             private const byte NameSize = 24;
@@ -75,7 +74,7 @@ namespace Uninarok.Networking.Packets.Out
             //public ushort Unknown; ?
             public byte Sex;
 
-            public MAKE_CHAR(string name, byte slot, ushort hairColor, ushort hairStyle, ushort jobClass, byte sex)
+            public CREATE_CHARACTER(string name, byte slot, ushort hairColor, ushort hairStyle, ushort jobClass, byte sex)
             {
                 Name = name;
                 Slot = slot;
@@ -92,7 +91,7 @@ namespace Uninarok.Networking.Packets.Out
                 buffer.Slice(0, Size).Span.Clear();
 
                 var writer = new PacketWriter(buffer.Span);
-                writer.Write((ushort)PacketIds.MAKE_CHAR);
+                writer.Write((ushort)PacketIds.CREATE_CHARACTER);
                 writer.WriteAscii(Name, NameSize);
                 writer.Write(Slot);
                 writer.Write(HairColor);

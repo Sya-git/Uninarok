@@ -55,7 +55,7 @@ namespace Uninarok.Login
         public string LastLoginTime { get; private set; }
         public byte Sex { get; private set; }
         public uint CurrentCharacterId { get; private set; }
-        private AC.ACCEPT_LOGIN2.UninarokServerEndpoint[] _serverList;
+        private Networking.Packets.In.LoginServer.ACCEPT_LOGIN.UninarokServerEndpoint[] _serverList;
         public LoginState CurrentState
         {
             get => _currentState;
@@ -82,31 +82,31 @@ namespace Uninarok.Login
 
         private void OnEnable()
         {
-            UninarokPackageDispatcher.Subscribe<AC.ACCEPT_LOGIN2>(OnAcceptLogin);
-            UninarokPackageDispatcher.Subscribe<AC.REFUSE_LOGIN>(OnLoginRefused);
-            UninarokPackageDispatcher.Subscribe<AC.REFUSE_LOGIN_R3>(OnLoginRefused);
-            UninarokPackageDispatcher.Subscribe<HC.HC_REFUSE_ENTER>(OnCharacterRefuse);
+            UninarokPackageDispatcher.Subscribe<Networking.Packets.In.LoginServer.ACCEPT_LOGIN>(OnAcceptLogin);
+            UninarokPackageDispatcher.Subscribe<Networking.Packets.In.LoginServer.REFUSE_LOGIN>(OnLoginRefused);
+            UninarokPackageDispatcher.Subscribe<Networking.Packets.In.LoginServer.REFUSE_LOGIN_3>(OnLoginRefused);
+            UninarokPackageDispatcher.Subscribe<Networking.Packets.CharacterServer.MAP_ENTER_REQUEST_REFUSED>(OnCharacterRefuse);
 
-            UninarokPackageDispatcher.Subscribe<HC.HC_CHAR_DATA>(OnCharData);
-            UninarokPackageDispatcher.Subscribe<HC.CHAR_CREATION_SUCCESS>(OnCharacterCreationSuccess);
-            UninarokPackageDispatcher.Subscribe<HC.CHAR_CREATION_FAILED>(OnCharacterCreationFailed);
-            UninarokPackageDispatcher.Subscribe<HC.PINCODE_LOGINSTATE>(OnPincodeState);
-            UninarokPackageDispatcher.Subscribe<HC.NOTIFY_ZONESVR>(OnZoneServerInfoReceived);
+            UninarokPackageDispatcher.Subscribe<Networking.Packets.CharacterServer.CHARACTER_DATA>(OnCharData);
+            UninarokPackageDispatcher.Subscribe<Networking.Packets.CharacterServer.CHARACTER_CREATION_SUCCESS>(OnCharacterCreationSuccess);
+            UninarokPackageDispatcher.Subscribe<Networking.Packets.CharacterServer.CHARACTER_CREATION_FAILED>(OnCharacterCreationFailed);
+            UninarokPackageDispatcher.Subscribe<Networking.Packets.CharacterServer.PINCODE_LOGINSTATE>(OnPincodeState);
+            UninarokPackageDispatcher.Subscribe<Networking.Packets.CharacterServer.MAP_ENTER_REQUEST_ACCEPTED>(OnZoneServerInfoReceived);
             //UninarokPackageDispatcher.Subscribe<HC.enter>
         }
 
         private void OnDisable()
         {
-            UninarokPackageDispatcher.Unsubscribe<AC.ACCEPT_LOGIN2>(OnAcceptLogin);
-            UninarokPackageDispatcher.Unsubscribe<AC.REFUSE_LOGIN>(OnLoginRefused);
-            UninarokPackageDispatcher.Unsubscribe<AC.REFUSE_LOGIN_R3>(OnLoginRefused);
-            UninarokPackageDispatcher.Unsubscribe<HC.HC_REFUSE_ENTER>(OnCharacterRefuse);
+            UninarokPackageDispatcher.Unsubscribe<Networking.Packets.In.LoginServer.ACCEPT_LOGIN>(OnAcceptLogin);
+            UninarokPackageDispatcher.Unsubscribe<Networking.Packets.In.LoginServer.REFUSE_LOGIN>(OnLoginRefused);
+            UninarokPackageDispatcher.Unsubscribe<Networking.Packets.In.LoginServer.REFUSE_LOGIN_3>(OnLoginRefused);
+            UninarokPackageDispatcher.Unsubscribe<Networking.Packets.CharacterServer.MAP_ENTER_REQUEST_REFUSED>(OnCharacterRefuse);
 
-            UninarokPackageDispatcher.Unsubscribe<HC.HC_CHAR_DATA>(OnCharData);
-            UninarokPackageDispatcher.Unsubscribe<HC.CHAR_CREATION_SUCCESS>(OnCharacterCreationSuccess);
-            UninarokPackageDispatcher.Unsubscribe<HC.CHAR_CREATION_FAILED>(OnCharacterCreationFailed);
-            UninarokPackageDispatcher.Unsubscribe<HC.PINCODE_LOGINSTATE>(OnPincodeState);
-            UninarokPackageDispatcher.Unsubscribe<HC.NOTIFY_ZONESVR>(OnZoneServerInfoReceived);
+            UninarokPackageDispatcher.Unsubscribe<Networking.Packets.CharacterServer.CHARACTER_DATA>(OnCharData);
+            UninarokPackageDispatcher.Unsubscribe<Networking.Packets.CharacterServer.CHARACTER_CREATION_SUCCESS>(OnCharacterCreationSuccess);
+            UninarokPackageDispatcher.Unsubscribe<Networking.Packets.CharacterServer.CHARACTER_CREATION_FAILED>(OnCharacterCreationFailed);
+            UninarokPackageDispatcher.Unsubscribe<Networking.Packets.CharacterServer.PINCODE_LOGINSTATE>(OnPincodeState);
+            UninarokPackageDispatcher.Unsubscribe<Networking.Packets.CharacterServer.MAP_ENTER_REQUEST_ACCEPTED>(OnZoneServerInfoReceived);
         }
 
         private void OnDestroy()
@@ -118,7 +118,7 @@ namespace Uninarok.Login
         }
 
         #region PACKET CALLBACKS
-        private void OnAcceptLogin(in AC.ACCEPT_LOGIN2 packet)
+        private void OnAcceptLogin(in Networking.Packets.In.LoginServer.ACCEPT_LOGIN packet)
         {
             Debug.Log($"Login accepted! AuthCode: {packet.AuthCode}, AccountId: {packet.AccountId}, UserLevel: {packet.UserLevel}, LastLoginIP: {packet.LastLoginIP}, LastLoginTime: {packet.LastLoginTimeString}, Sex: {packet.Sex}");
             Debug.Log($"First server info: {packet.ServersEndpointList[0].Address}:{packet.ServersEndpointList[0].Port} ({packet.ServersEndpointList[0].ServerName}))");
@@ -130,7 +130,7 @@ namespace Uninarok.Login
             LastLoginTime = packet.LastLoginTimeString.ToString();
             Sex = packet.Sex;
             //TODO: Needs to be a list
-            _serverList = new AC.ACCEPT_LOGIN2.UninarokServerEndpoint[packet.ServersEndpointList.Length];
+            _serverList = new Networking.Packets.In.LoginServer.ACCEPT_LOGIN.UninarokServerEndpoint[packet.ServersEndpointList.Length];
             packet.ServersEndpointList.CopyTo(_serverList, 0);
 
             CurrentState = LoginState.OnServerSelection;
@@ -138,7 +138,7 @@ namespace Uninarok.Login
             _connection.Dispose();
         }
 
-        private void OnCharData(in HC.HC_CHAR_DATA packet)
+        private void OnCharData(in Networking.Packets.CharacterServer.CHARACTER_DATA packet)
         {
             if (packet.CharsInfo.Length == 0)
             {
@@ -150,33 +150,33 @@ namespace Uninarok.Login
             }
         }
 
-        private void OnPincodeState(in HC.PINCODE_LOGINSTATE structData)
+        private void OnPincodeState(in Networking.Packets.CharacterServer.PINCODE_LOGINSTATE structData)
         {
             PinState = (PincodeState)structData.State;
         }
 
-        private void OnCharacterRefuse(in HC.HC_REFUSE_ENTER refuseData)
+        private void OnCharacterRefuse(in Networking.Packets.CharacterServer.MAP_ENTER_REQUEST_REFUSED refuseData)
         {
             Debug.LogError($"Login to character map refused with reason: {refuseData.ErrorCode}");
         }
 
-        private void OnCharacterCreationFailed(in HC.CHAR_CREATION_FAILED packet)
+        private void OnCharacterCreationFailed(in Networking.Packets.CharacterServer.CHARACTER_CREATION_FAILED packet)
         {
-            Debug.LogError($"Character could not be created: {(HC.CHAR_CREATION_FAILED.CharCreationFailedReason)packet.ErrorCode}");
+            Debug.LogError($"Character could not be created: {(Networking.Packets.CharacterServer.CHARACTER_CREATION_FAILED.CharCreationFailedReason)packet.ErrorCode}");
         }
 
-        private void OnCharacterCreationSuccess(in HC.CHAR_CREATION_SUCCESS packet)
+        private void OnCharacterCreationSuccess(in Networking.Packets.CharacterServer.CHARACTER_CREATION_SUCCESS packet)
         {
             Debug.LogError($"Character {packet.CharInfo.Name} created successfully");
         }
 
-        private void OnZoneServerInfoReceived(in HC.NOTIFY_ZONESVR packet)
+        private void OnZoneServerInfoReceived(in Networking.Packets.CharacterServer.MAP_ENTER_REQUEST_ACCEPTED packet)
         {
             Debug.LogError($"Received zone server info: {packet.IpAddress}:{packet.Port}, {packet.MapName}, {packet.DnsHost}");
             CurrentState = LoginState.Playing;
         }
 
-        private void OnLoginRefused(in AC.REFUSE_LOGIN_R3 packet)
+        private void OnLoginRefused(in Networking.Packets.In.LoginServer.REFUSE_LOGIN_3 packet)
         {
             Debug.LogWarning($"Login denied! Error code: {packet.ErrorCode}");
             // Handle the login denial logic here, e.g., show an error message to the user
@@ -187,7 +187,7 @@ namespace Uninarok.Login
             _connection = null;
         }
 
-        private void OnLoginRefused(in AC.REFUSE_LOGIN packet)
+        private void OnLoginRefused(in Networking.Packets.In.LoginServer.REFUSE_LOGIN packet)
         {
             Debug.LogWarning($"Login denied! Error code");
             // Handle the login denial logic here, e.g., show an error message to the user
@@ -239,7 +239,7 @@ namespace Uninarok.Login
 
         }
 
-        public void CreateCharacter(string charName, byte slot, ushort hairColor, ushort hairStyle, ushort job, AC.AccountSex sex)
+        public void CreateCharacter(string charName, byte slot, ushort hairColor, ushort hairStyle, ushort job, Networking.Packets.In.LoginServer.AccountSex sex)
         {
             // TODO: GC
             CurrentState = LoginState.CreatingCharacter;
@@ -260,7 +260,7 @@ namespace Uninarok.Login
 
             _connection = await TcpConnection.ConnectAsync(host, port, _timeOut.Token);
             // Send login request
-            var loginRequest = new CA.LOGIN(username, password, '0');
+            var loginRequest = new Networking.Packets.Out.LoginServer.REQUEST_LOGIN(username, password, '0');
 
             // TODO: Add a cancellation token to the SendAsync method to handle timeouts or cancellations if needed.
             await _connection.SendAsync(loginRequest.Serialize(), CancellationToken.None);
@@ -273,15 +273,15 @@ namespace Uninarok.Login
             _connection = await TcpConnection.ConnectAsync(host, port, timeout.Token);
 
             // Send character server enter request
-            var characterServerEnterRequest = new CH.CH_ENTER(AccountId, AuthCode, UserLevel, Sex);
+            var characterServerEnterRequest = new Networking.Packets.Out.CharacterServer.CHARACTER_SERVER_REQUEST_ENTRY(AccountId, AuthCode, UserLevel, Sex);
             _connection.IgnoreBytes(4);
             await _connection.SendAsync(characterServerEnterRequest.Serialize(), CancellationToken.None);
         }
 
         private async void SendCreateCharacterAsync(string charName, byte slot, ushort hairColor, ushort hairStyle, ushort job, byte sex)
         {
-            var packet = new CH.MAKE_CHAR(charName, slot, hairColor, hairStyle, job, sex);
-            var bytes = new Memory<byte>(new byte[CH.MAKE_CHAR.Size]);
+            var packet = new Networking.Packets.Out.CharacterServer.CREATE_CHARACTER(charName, slot, hairColor, hairStyle, job, sex);
+            var bytes = new Memory<byte>(new byte[Networking.Packets.Out.CharacterServer.CREATE_CHARACTER.Size]);
             packet.Serialize(bytes);
 
             await _connection.SendAsync(bytes, CancellationToken.None);
@@ -289,8 +289,8 @@ namespace Uninarok.Login
 
         private async void SendSelectCharacterAsync(byte slotIndex)
         {
-            var packet = new CH.SELECT_CHAR(slotIndex);
-            var bytes = new Memory<byte>(new byte[CH.SELECT_CHAR.Size]);
+            var packet = new Networking.Packets.Out.CharacterServer.SELECT_CHARACTER(slotIndex);
+            var bytes = new Memory<byte>(new byte[Networking.Packets.Out.CharacterServer.SELECT_CHARACTER.Size]);
             packet.Serialize(bytes.Span);
 
             await _connection.SendAsync(bytes, CancellationToken.None);

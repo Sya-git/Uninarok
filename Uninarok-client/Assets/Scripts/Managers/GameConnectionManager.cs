@@ -47,16 +47,16 @@ namespace Uninarok.Managers
 
         private void OnEnable()
         {
-            UninarokPackageDispatcher.Subscribe<HC.NOTIFY_ZONESVR>(OnZoneServerInfoReceived);
+            UninarokPackageDispatcher.Subscribe<CharacterServer.MAP_ENTER_REQUEST_ACCEPTED>(OnZoneServerInfoReceived);
 
-            UninarokPackageDispatcher.Subscribe<ZC.ZC_ACK_PING>(OnZonePing);
+            UninarokPackageDispatcher.Subscribe<MapServer.HEARTBEAT_RESPONSE>(OnZonePing);
         }  
 
         private void OnDisable()
         {
-            UninarokPackageDispatcher.Subscribe<HC.NOTIFY_ZONESVR>(OnZoneServerInfoReceived);
+            UninarokPackageDispatcher.Subscribe<CharacterServer.MAP_ENTER_REQUEST_ACCEPTED>(OnZoneServerInfoReceived);
 
-            UninarokPackageDispatcher.Unsubscribe<ZC.ZC_ACK_PING>(OnZonePing);
+            UninarokPackageDispatcher.Unsubscribe<MapServer.HEARTBEAT_RESPONSE>(OnZonePing);
         }
 
         private void OnDestroy()
@@ -80,12 +80,12 @@ namespace Uninarok.Managers
         #endregion
 
         #region Callbacks
-        private void OnZonePing(in ZC.ZC_ACK_PING structData)
+        private void OnZonePing(in MapServer.HEARTBEAT_RESPONSE structData)
         {
-            Debug.Log($"Ping received with timestamp {structData.Tick}");
+            Debug.Log($"Ping received with timestamp {structData.Timestamp}");
         }
 
-        private void OnZoneServerInfoReceived(in HC.NOTIFY_ZONESVR structData)
+        private void OnZoneServerInfoReceived(in CharacterServer.MAP_ENTER_REQUEST_ACCEPTED structData)
         {
             _currentMapIp = $"{structData.IpAddress[0]}.{structData.IpAddress[1]}.{structData.IpAddress[2]}.{structData.IpAddress[3]}";
             _currentMapPort = structData.Port;
@@ -118,7 +118,7 @@ namespace Uninarok.Managers
             //await _connection.SendAsync(packetVersion.Serialize(), CancellationToken.None);
             // _sendPing = true;
             // return;
-            var enterMap = new CZ.CZ_ENTER2()
+            var enterMap = new MapServer.REQUEST_ENTER_MAP()
             {
                 AccountId = LoginManager.Instance.AccountId,
                 AuthCode = LoginManager.Instance.AuthCode,
@@ -148,11 +148,11 @@ namespace Uninarok.Managers
 
         private async void SendTickAsync()
         {
-            var ping = new CZ.CZ_REQUEST_TIME2()
+            var ping = new MapServer.MAP_HEARTBEAT()
             {
                 Timestamp = (uint)Time.unscaledTime
             };
-            var bytes = new byte[CZ.CZ_REQUEST_TIME2.Size];
+            var bytes = new byte[MapServer.MAP_HEARTBEAT.Size];
 
             await _connection.SendAsync(new Memory<byte>(bytes), CancellationToken.None);
         }
