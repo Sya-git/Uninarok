@@ -309,6 +309,20 @@ public static class RoMaterialFactory
 | Blend | 1 | 0 | n/a | SrcAlpha/OneMinusSrcAlpha | 0 | 3000 | `_SURFACE_TYPE_TRANSPARENT` |
 
   Two-sided sets `_Cull` = 0 (URP Lit flips the back-face normal for lighting when culling is off), otherwise `_Cull` = 2.
+
+  Also set by `Setup`, because URP 17.7 writes these on save and a material without them would be rewritten on every run (found in T5.3):
+
+  | Setting | Value |
+  |---|---|
+  | `_MainTex` and `_Color` | same as `_BaseMap` and `_BaseColor` |
+  | `doubleSidedGI` | true when two-sided |
+  | `_AlphaToMask` | 1 for Cutout, else 0 |
+  | `_SrcBlendAlpha` / `_DstBlendAlpha` | One/Zero when opaque, One/OneMinusSrcAlpha for Blend |
+  | `MOTIONVECTORS` pass | disabled |
+  | `DepthOnly` and `SHADOWCASTER` passes | disabled for Blend, enabled otherwise |
+  | `RenderType` tag | `Opaque`, `TransparentCutout` or `Transparent` |
+
+  `_BlendModePreserveSpecular` = 0 and `_ALPHAPREMULTIPLY_ON` off, so Blend keeps the table's SrcAlpha/OneMinusSrcAlpha. With URP's default of 1, URP switches the material to premultiplied One/OneMinusSrcAlpha.
 - A key whose texture is missing is built with the placeholder texture (§4.12) and the issue is reported once.
 - Every material is recorded in the ledger under the category `material`: the entry's source is the texture's Ragnarok path plus the key suffix, its hash is the texture's source hash, and its output is the `.mat` path. Several models and maps may ask for one material without owning it (added while writing PLAN-0003).
 - When a material is saved, URP adds the `RenderType` override tag and disables the `MOTIONVECTORS` shader pass. Found in T4.4. A freshly built material without them never compares equal to the saved one, so it would be rewritten on every run. The factory therefore also sets both explicitly, through the public `Material.SetOverrideTag` and `SetShaderPassEnabled`, to the values URP would set for the mode. T5.3 checks that a second `GetOrCreate` is `Skipped`.

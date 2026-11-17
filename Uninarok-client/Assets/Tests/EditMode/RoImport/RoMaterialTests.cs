@@ -19,7 +19,6 @@ namespace Uninarok.RoImport.Tests
 {
     // SPEC-0002 FR-9: materials are lit, shared and de-duplicated; a two-sided face renders from both sides.
     // Plan 4.6 (property table), D10, D11. Writes under Assets/__RoImportTests. TASKS T5.1.
-    [Ignore("pending T5.3")]
     public class RoMaterialTests
     {
         const string Texture = "texture/a.bmp";

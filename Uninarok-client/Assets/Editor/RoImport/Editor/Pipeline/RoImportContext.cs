@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using Uninarok.RoImport.Core.Imaging;
+using Uninarok.RoImport.Core.Materials;
+using Uninarok.RoImport.Core.Paths;
+using Uninarok.RoImport.Editor.Materials;
 using Uninarok.RoImport.Core.Output;
 using Uninarok.RoImport.Core.Results;
 using Uninarok.RoImport.Core.Source;
@@ -58,6 +62,31 @@ namespace Uninarok.RoImport.Editor.Pipeline
         {
             foreach (var ledger in _ledgers.Values) ledger.Save();
         }
+
+        /// <summary>
+        /// The converted texture of a Ragnarok texture path, for materials (FR-6). Minimal form (T5.3): loads an already
+        /// converted texture and reports <see cref="RoIssueCode.TextureMissing"/> once when there is none. T6.2 replaces this
+        /// with conversion on demand.
+        /// </summary>
+        public RoResult<Texture2D> Texture(RoPath path, string referrer = null)
+        {
+            string key = "texture:" + path.Canonical;
+            if (TryGetMemo(key, out Texture2D done)) return RoResult<Texture2D>.Skipped(done);
+
+            var texture = Writer.Load<Texture2D>(RoOutputPaths.Texture(Roots, path));
+            if (texture == null)
+            {
+                const string why = "the texture has not been converted";
+                Report.Warn(RoIssueCode.TextureMissing, path.Canonical, referrer, why);
+                return RoResult<Texture2D>.Failed(new RoIssue(RoIssueCode.TextureMissing, path.Canonical, referrer, why));
+            }
+            Memo(key, texture);
+            return RoResult<Texture2D>.Skipped(texture);
+        }
+
+        /// <summary>The shared material of a key, created or updated on demand (plan 4.6, FR-6, FR-9).</summary>
+        public RoResult<Material> Material(RoMaterialKey key, string referrer = null) =>
+            RoMaterialFactory.GetOrCreate(this, key, referrer);
 
         /// <summary>A result already produced in this run, by key (e.g. <c>texture:texture/a.bmp</c>).</summary>
         internal bool TryGetMemo<T>(string key, out T value)
