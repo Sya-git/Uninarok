@@ -81,7 +81,7 @@
 
 - [x] **T5.1** Add `Core/Materials/` (`RoSurface`, `RoMaterialKey` with `Equals`, `GetHashCode`, `Suffix`) and `RoMaterialTests` (failing, ignored): one key requested 1000 times yields one material asset; keys differing in texture, surface or two-sidedness give different materials; each mode matches the property table of plan §4.6 (`_Surface`, `_AlphaClip`, `_Cutoff`, `_Cull`, `_ZWrite`, blend factors, queue, keywords, `_Metallic`, `_Smoothness`); a two-sided material has `_Cull` = 0. (FR-9)
   *Done when:* the tests compile and are ignored with `pending T5.3`.
-- [ ] **T5.2** Add `Editor/Pipeline/RoImportContext` (source, writer, report, roots, PNG codec, `Force`, per-category ledgers, per-run memo and in-progress set) as a plain class with the members of plan §4.10 that exist so far (`Texture` and `Material` are added in T6.2 and T5.3). (FR-2, FR-6)
+- [x] **T5.2** Add `Editor/Pipeline/RoImportContext` (source, writer, report, roots, PNG codec, `Force`, per-category ledgers, per-run memo and in-progress set) as a plain class with the members of plan §4.10 that exist so far (`Texture` and `Material` are added in T6.2 and T5.3). (FR-2, FR-6)
   *Done when:* the project compiles; a test constructs a context over the fixture source and the throwaway root.
 - [ ] **T5.3** Implement `Editor/Materials/RoMaterialFactory` (`GetOrCreate`, `SurfaceFor`, explicit property setup in one method, `ShaderMissing` handling) and wire `RoImportContext.Material`. (FR-9, FR-6)
   *Done when:* `[Ignore]` removed and `RoMaterialTests` pass.

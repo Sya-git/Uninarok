@@ -433,6 +433,11 @@ public static class RoConverterRegistry { public static IRoConverter For(RoJobKi
 public sealed class RoImportOptions { public bool Force; public bool ShowProgress = true; public RoOutputRoots Roots; }
 ```
 
+- `RoImportContext` (T5.2):
+  - Constructor: `(IRoSource source, RoOutputRoots roots, string ledgerFolder = RoLedger.DefaultFolder, RoReport report = null)`, so tests keep ledgers out of the project.
+  - It owns its writer (over the roots) and a `RoPngCodec`, and `SaveLedgers()` saves every ledger the run loaded.
+  - The memo (`TryGetMemo`/`Memo`) and the in-progress set (`TryEnter`/`Exit`) are internal.
+  - `Texture` comes in two steps. T5.3 adds it in a minimal form that loads an already converted texture and reports `TextureMissing` otherwise. T6.2 replaces that with conversion on demand.
 - Every conversion starts from a Ragnarok path string and returns a result; nothing needs a window or a selection (FR-2). Tests and scripts call `RoImport.*` directly.
 - **Dependencies on demand (FR-6).** A converter asks `ctx.Texture(...)`/`ctx.Material(...)` (and later `ctx.Model(...)` from the map plan) for what it needs. Each call checks the ledger, converts if missing or stale, and records itself as a dependency of the caller. A per-run memo makes repeat requests free; an in-progress set breaks a dependency cycle with a `DependencyCycle` issue (cycles do not occur in these formats; the guard prevents an endless loop).
 - **No implicit conversion (FR-3).** The importer has no `AssetPostprocessor`, no `ScriptedImporter` and no `InitializeOnLoad` converter. Source files are not assets (§4.2), so copying them triggers nothing. The old importers (`BmpImporter`, a postprocessor on every `.bmp`, and the others) are compiled out by T0.2 and deleted later (§7, D15).
