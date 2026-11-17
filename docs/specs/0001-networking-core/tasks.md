@@ -31,7 +31,7 @@
 - [x] **T1.1** Write failing `PacketReaderWriterTests`: little-endian primitives, `ReadSpan`, `Skip`, `Remaining`, overrun throws `PacketFormatException`, zero allocation on the happy path.
 - [x] **T1.2** Implement `PacketReader`, `PacketWriter`, `PacketFormatException` in `Core/Wire/` (plan §4.1).
   *Done when:* T1.1 passes.
-- [ ] **T1.3** Write failing `WireTextTests`: NUL termination, zero fill, truncation, Windows-1252 round trip including 0x80–0x9F, capacity check. *(FR-6)*
+- [x] **T1.3** Write failing `WireTextTests`: NUL termination, zero fill, truncation, Windows-1252 round trip including 0x80–0x9F, capacity check. *(FR-6)*
 - [ ] **T1.4** Implement `WireText` with the hand-written Windows-1252 table, one overload per `FixedString*` size in use (plan §4.2).
   *Done when:* T1.3 passes.
 - [ ] **T1.5** Implement the shared data types of `docs/data/` (`AccountSex`, `CharInfo`, `UninarokDirection`, `UninarokPosition`, `UninarokMoveData`) in `Runtime/Data/` with `Read`/`Write` and `DataTypeTests` from the vectors in each doc. *(FR-18)*
