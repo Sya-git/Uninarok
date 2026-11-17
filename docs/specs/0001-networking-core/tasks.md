@@ -109,7 +109,7 @@
 
 - [x] **T6.1** Add `SessionContext` (`ServerEndpoint` already exists since T4.6), `CharacterSlots`, `MapEndpoint`, `MapEntry`, `CharacterDraft`, `FlowState`, `FailureCode`, `FlowFailure`, `IServerManager`, `LoginRefusal`, `PinState`, and `FakeClock` in tests (plan §4.9). *(FR-12)*
   *Done when:* compiles.
-- [ ] **T6.2** Write failing `LoginManagerTests` (`FakeNetworkClient`): `REQUEST_LOGIN` bytes sent on `OnConnected`, credentials cleared after; `ACCEPT_LOGIN` fills `Context` and `Servers` and raises `Accepted`; each of the three refusal packets raises `Refused` once; no subscription after `Exit`. *(FR-9, FR-11, FR-12, FR-20)*
+- [x] **T6.2** Write failing `LoginManagerTests` (`FakeNetworkClient`): `REQUEST_LOGIN` bytes sent on `OnConnected`, credentials cleared after; `ACCEPT_LOGIN` fills `Context` and `Servers` and raises `Accepted`; each of the three refusal packets raises `Refused` once; no subscription after `Exit`. *(FR-9, FR-11, FR-12, FR-20)*
 - [ ] **T6.3** Implement `LoginManager`.
   *Done when:* T6.2 passes.
 - [ ] **T6.4** Write failing `CharacterManagerTests`: `SkipNextBytes(4)` is called before `CHARACTER_SERVER_REQUEST_ENTRY` is sent; `PinState` is `Unknown` after `Enter`; char list fills `Context.Characters`; creation success adds a character; creation failure exposes the reason; map assignment with port 40000 stores 40000; refusal exposes the reason; ping every 12 s with `AccountId`, none after `Exit`, keepalive `Tick` allocates nothing. *(FR-3, FR-12, FR-13, FR-14)*
