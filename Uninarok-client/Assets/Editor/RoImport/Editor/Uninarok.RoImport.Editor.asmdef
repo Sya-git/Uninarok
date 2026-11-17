@@ -1,0 +1,20 @@
+{
+    "name": "Uninarok.RoImport.Editor",
+    "rootNamespace": "Uninarok.RoImport.Editor",
+    "references": [
+        "Uninarok.RoImport.Core"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "GRF.dll", "Encryption.dll", "ErrorManager.dll", "Utilities.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

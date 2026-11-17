@@ -19,7 +19,7 @@
 
 ## Phase 0: Prepare
 
-- [ ] **T0.1** Add `com.unity.test-framework` to `Packages/manifest.json`. Create the three assembly definitions (`Core`, `Editor`, and `Assets/Tests/EditMode/RoImport/` tests) as in plan §3 (`includePlatforms: ["Editor"]`, `Core` and `Editor` with `overrideReferences` and the four GRF DLLs, `InternalsVisibleTo` for the tests) and one trivial passing test. (FR-13, FR-14)
+- [x] **T0.1** Add `com.unity.test-framework` to `Packages/manifest.json`. Create the three assembly definitions (`Core`, `Editor`, and `Assets/Tests/EditMode/RoImport/` tests) as in plan §3 (`includePlatforms: ["Editor"]`, `Core` and `Editor` with `overrideReferences` and the four GRF DLLs, `InternalsVisibleTo` for the tests) and one trivial passing test. (FR-13, FR-14)
   *Done when:* the project compiles with no new warnings and the batch test command runs one test and passes.
 - [ ] **T0.2** Hide the source folder: with Unity closed, rename `Assets/Editor/GRF Resources` to `Assets/Editor/GRF Resources~`, delete `GRF Resources.meta` and any `.meta` files left inside; reopen Unity. Ask the owner what to do with `Assets/Res/` (move out the same way or delete) and record the answer in the commit message. (FR-15)
   *Done when:* Unity shows no import progress on reopening, the folder is not in the Project window, `AssetDatabase.AssetPathToGUID("Assets/Editor/GRF Resources~/data/texture/...")` is empty for a known file (checked in the console), and the decision on `Assets/Res/` is recorded.
