@@ -1,0 +1,14 @@
+*     text=auto
+*.c   diff=cpp
+*.cpp diff=cpp
+*.sh  text eol=lf
+*.bat text eol=crlf
+
+/script-checker text eol=lf
+/athena-start   text eol=lf
+
+# libconfig generated files
+3rdparty/libconfig/grammar.c linguist-generated=true
+3rdparty/libconfig/grammar.h linguist-generated=true
+3rdparty/libconfig/scanner.c linguist-generated=true
+3rdparty/libconfig/scanner.h linguist-generated=true

@@ -1,0 +1,103 @@
+name: build
+
+on: workflow_call
+
+env:
+  MYSQL_DATABASE: 'ragnarok'
+  MYSQL_USER: 'ragnarok'
+  MYSQL_PASSWORD: 'ragnarok'
+  MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+  DEBIAN_COMMON_PACKAGES: make git python3 libzstd-dev python3-venv cmake
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        # Testing the oldest and newest supported version of gcc/clang on our supported platofrms
+        CC: ["clang-21", "gcc-15"]
+        RENEWAL: [""]
+        CLIENT_TYPE: ["", "-DENABLE_PACKETVER_RE=ON", "-DENABLE_PACKETVER_ZERO=ON"]
+        HTTPLIB: ["", "-DWITH_HTTP_PARSER=llhttp"]
+        SANITIZER: [""]
+        PACKET_VERSION: ["-DPACKETVER=20100105", "-DPACKETVER=20171018"]
+        LTO: ["", "-DENABLE_LTO=ON"]
+        exclude:
+          - PACKET_VERSION: "-DPACKETVER=20100105"
+            CLIENT_TYPE: "-DENABLE_PACKETVER_ZERO=ON"
+        include:
+          - CXX: 'g++-15'
+            CC: 'gcc-15'
+          - CXX: 'clang++-21'
+            CC: 'clang-21'
+
+    # github.head_ref will stop previous runs in the same PR (if in a PR)
+    # github.run_id is a fallback when outside a PR (e.g. every merge in master will run, and previous won't stop)
+    concurrency:
+      group: build-${{ github.head_ref || github.run_id }}_${{ matrix.CC }}_${{ matrix.RENEWAL }}_${{ matrix.CLIENT_TYPE }}_${{ matrix.HTTPLIB }}_${{ matrix.SANITIZER }}_${{ matrix.PACKET_VERSION}}_${{ matrix.LTO }}
+      cancel-in-progress: true
+
+    container:
+      image: ubuntu:26.04
+    services:
+      mariadb:
+        image: mariadb:latest
+        ports:
+          - 33306:3306
+        env:
+          MYSQL_DATABASE: 'ragnarok'
+          MYSQL_USER: 'ragnarok'
+          MYSQL_PASSWORD: 'ragnarok'
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s
+          --health-timeout=2s
+          --health-retries=3
+    env:
+      INSTALL_PACKAGES: ${{ matrix.CC }} ${{ matrix.CXX }} mariadb-client
+      SQLHOST: mariadb
+      CC: ${{ matrix.CC }}
+      CXX: ${{ matrix.CXX }}
+      CONFIGURE_FLAGS: -DCMAKE_C_COMPILER=${{ matrix.CC }} -DCMAKE_CXX_COMPILER=${{ matrix.CXX }} -DCMAKE_BUILD_TYPE=Debug -DENABLE_WERROR=ON -DENABLE_BUILDBOT=ON ${{ matrix.RENEWAL }} ${{ matrix.HTTPLIB }} ${{ matrix.CLIENT_TYPE }} ${{ matrix.SANITIZER }} ${{ matrix.PACKET_VERSION }} -DENABLE_EPOLL=ON -DBUILD_HPMHOOKING=ON
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: info
+        run: |
+          uname -a
+
+      - uses: actions/cache/restore@v6
+        name: restore conan cache
+        id: cache
+        with:
+          path: ~/.conan2
+          key: ${{ runner.os }}-${{ matrix.CC }}-${{ hashFiles('conanfile.py') }}
+
+      - name: install packages
+        run: |
+          ./tools/ci/retry.sh apt-get update
+          ./tools/ci/retry.sh apt-get install -y -qq $INSTALL_PACKAGES $DEBIAN_COMMON_PACKAGES
+
+      - name: init database
+        run: |
+          ./tools/ci/travis.sh importdb ragnarok ragnarok ragnarok $SQLHOST
+
+      - name: get plugins
+        run: |
+          ./tools/ci/travis.sh getplugins || true
+
+      - name: build
+        run: |
+          ./tools/ci/travis.sh prepareenv
+          source .venv/bin/activate
+          ./tools/ci/travis.sh build $CONFIGURE_FLAGS
+
+        # for run default config will show warnings
