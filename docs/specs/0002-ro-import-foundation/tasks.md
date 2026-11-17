@@ -98,7 +98,7 @@
   *Done when:* the tests compile and are ignored with `pending T6.4`.
 - [x] **T6.4** Implement `Editor/Pipeline/RoImport` (`Texture(string)`, `Material(...)`, `Run`) and `RoBatch` per plan §4.10: deterministic job order, `LockReloadAssemblies` in `try/finally` (no batch-wide `StartAssetEditing`, D18), cancelable progress bar, chunks of 200 with `SaveAssets`, ledger and hash-cache save and unload, per-job exception catch (logged once with `LogError` as `Unexpected`), summary log. (FR-2, FR-5, FR-10, FR-11)
   *Done when:* `[Ignore]` removed and `RoIdempotencyTests` and `RoDeterminismTests` pass.
-- [ ] **T6.5** Add `RoBatchTests`: a batch over the fixture folder with the corrupt file, the unsupported file and a missing file finishes the rest, lists each failure exactly once in the summary and produces no `LogError` (`LogAssert.NoUnexpectedReceived`); a forced exception in a test converter yields one `Unexpected` failure and one error log and does not stop the batch; cancel after the first item saves the ledger and a rerun converts the remaining items and skips the first. (FR-10, FR-11, FR-5)
+- [x] **T6.5** Add `RoBatchTests`: a batch over the fixture folder with the corrupt file, the unsupported file and a missing file finishes the rest, lists each failure exactly once in the summary and produces no `LogError` (`LogAssert.NoUnexpectedReceived`); a forced exception in a test converter yields one `Unexpected` failure and one error log and does not stop the batch; cancel after the first item saves the ledger and a rerun converts the remaining items and skips the first. (FR-10, FR-11, FR-5)
   *Done when:* the tests pass.
 
 ## Phase 7: Editor entry points
