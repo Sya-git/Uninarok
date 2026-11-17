@@ -8,11 +8,9 @@
 | **Plan** | plan.md _(written after approval)_ |
 | **Tasks** | tasks.md _(written after plan approval)_ |
 
-> This file defines **what** and **why**. It contains no class names, file paths or library choices. Those live in `plan.md`. Shared rules (units, textures, materials, idempotency, batches) are in SPEC-0002.
-
 ## 1. Why
 
-RSM models are the props and buildings of every map. Today most import fine, but some come out with wrong rotation or offset, mesh data is bloated by one vertex per face corner, and lighting shows hard facets on curved surfaces. Models must look and sit exactly as in the original client, and be efficient enough to place by the thousand.
+RSM models are the props and buildings of every map. Models must look and sit exactly as in the original client, and be efficient enough to place by the thousand.
 
 ## 2. Goals
 
