@@ -537,6 +537,8 @@ namespace Uninarok.Networking.Managers
     {
         public CharacterManager(INetworkClient client, SessionContext context, NetworkSettings settings);
         public PinState PinState { get; }                     // Unknown on Enter, never a default zero
+        public int LastCreationFailure { get; }               // reason code of the last CHARACTER_CREATION_FAILED, -1 when none (FR-13)
+        public int LastMapEnterRefusal { get; }               // reason code of the last MAP_ENTER_REQUEST_REFUSED, -1 when none
         public event Action<PinState> PinStateChanged;
         public event Action CharactersReceived;               // Context.Characters filled
         public event Action CreationSucceeded;                // character added to Context.Characters
@@ -546,7 +548,8 @@ namespace Uninarok.Networking.Managers
         public void RequestCreate(in CharacterDraft draft);   // CREATE_CHARACTER
         public void RequestSelect(byte slot);                 // SELECT_CHARACTER
         // OnConnected: client.SkipNextBytes(4) BEFORE sending CHARACTER_SERVER_REQUEST_ENTRY (FR-3)
-        // Tick: CHARACTER_SERVER_PING (AccountId) every CharacterKeepaliveSeconds while entered and connected
+        // Tick: CHARACTER_SERVER_PING (AccountId) every CharacterKeepaliveSeconds from OnConnected until Exit.
+        //   The first Tick after OnConnected schedules the first ping; a long gap sends one ping, not a burst.
     }
 
     public sealed class ZoneManager : IServerManager

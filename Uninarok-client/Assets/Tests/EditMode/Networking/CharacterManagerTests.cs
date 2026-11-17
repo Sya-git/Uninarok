@@ -1,4 +1,3 @@
-#if PENDING_T6_5 // T6.4: enabled (guard removed) by T6.5 when CharacterManager exists.
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -392,4 +391,3 @@ namespace Uninarok.Networking.Tests
         }
     }
 }
-#endif
