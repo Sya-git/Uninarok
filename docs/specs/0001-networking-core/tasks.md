@@ -141,10 +141,12 @@
 - [ ] **T9.1** Record captures (T5.7) of a full login, a char-server session, and at least 60 s of map traffic. Confirm the char server prefix is 4 bytes for PACKETVER 20220406.
   *Done when:* `.bin` files exist under `Assets/Tests/EditMode/Networking/Captures/`.
 - [ ] **T9.2** Generate `*.expected.txt` from the whole-buffer run (`skip=N`, then `id,payloadLen,crc32`), review by hand, commit.
+  *(Tooling ready: menu `Uninarok/Networking/Write Capture Expectations` writes `*.expected.txt` for captures that have none. Needs the real captures of T9.1, so unticked.)*
 - [ ] **T9.3** Add `CaptureReplayTests` over chunk sizes {1,2,3,7,64,whole}. *(FR-1, FR-17)*
   *Done when:* all captures × chunk sizes pass, and consumed bytes equal file length minus skip with no fault.
+  *(Harness ready: `CaptureReplayTests` replays every `Captures/*.bin` with chunk sizes 1, 2, 3, 7, 64 and whole, and is proven on a generated stream. It currently skips because no real capture exists; unticked until T9.1/T9.2.)*
 - [ ] **T9.4** Run the full manual smoke test against local Hercules: login, select server, create character, select character, enter map, 60 s idle with heartbeat, stop the server. Verify no unhandled exceptions, no repeated error logs, and the flow ends in `Disconnected`. *(spec §5)*
-- [ ] **T9.5** Run the failure checks: closed port → `Failed(ConnectFailed)` or `Failed(ConnectTimeout)` within the timeout; silent server → `Failed(ReplyTimeout)`; wrong password → one request, `Failed(LoginRefused)`. *(FR-10, FR-11)*
+- [x] **T9.5** Run the failure checks: closed port → `Failed(ConnectFailed)` or `Failed(ConnectTimeout)` within the timeout; silent server → `Failed(ReplyTimeout)`; wrong password → one request, `Failed(LoginRefused)`. *(FR-10, FR-11)* *(Verified over real loopback sockets with a real `NetworkClient` and `NetworkFlow`, `FlowIntegrationTests`: closed port gives `Failed(ConnectFailed)` in about 2 s; a server that accepts and stays silent gives `Failed(ReplyTimeout)` within the configured timeout; wrong password gives one `REQUEST_LOGIN` and `Failed(LoginRefused)`; a server that closes at once gives `RemoteClosed`; garbage gives `ProtocolFault`. The same checks against a real Hercules are part of the T9.4 run.)*
 - [ ] **T9.6** Repeat the T8.2 capture after all phases and compare. *(FR-6)*
   *Done when:* numbers are in the PR.
 - [ ] **T9.7** Verify that closing unblocks the reader and writer threads on every target platform (editor, Windows build, each mobile target in use), with no leaked threads after 20 connect/dispose cycles. *(FR-7)*
