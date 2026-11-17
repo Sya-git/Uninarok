@@ -68,7 +68,7 @@
 - [x] **T3.6** Write failing `OutgoingTests`: 10 000 sends arrive complete and in order; 4 concurrent sender threads produce no partial or interleaved packets; `Send<T>` of a fixed test packet allocates 0 bytes after warm-up; a throwing `Serialize` leaves no partial bytes; backlog overflow closes with `Error` and returns `false`. *(FR-6, FR-8)*
 - [x] **T3.7** Implement the outbox, writer buffer swap, idle flag, `AutoResetEvent` wake-up, writer thread, `MaxSendBacklogBytes`, `Send<T>` and `Send(ReadOnlySpan<byte>)`. *(FR-6, FR-8)*
   *Done when:* T3.4 and T3.6 pass.
-- [ ] **T3.8** Handle ownership on exit: the last exiting thread disposes `_outSignal` and the socket. Stress test: 100 connect/dispose cycles with no exception and no leaked thread. *(FR-7)*
+- [x] **T3.8** Handle ownership on exit: the last exiting thread disposes `_outSignal` and the socket. Stress test: 100 connect/dispose cycles with no exception and no leaked thread. *(FR-7)*
   *Done when:* stress test passes.
 
 ## Phase 4: Packets, length table and generated router (FR-4, FR-6, FR-18, FR-19)
