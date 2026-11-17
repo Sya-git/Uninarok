@@ -6,6 +6,7 @@
         "UnityEditor.TestRunner",
         "Uninarok.Networking.Core",
         "Uninarok.Networking",
+        "Uninarok.Networking.Editor",
         "Unity.Collections"
     ],
     "includePlatforms": [

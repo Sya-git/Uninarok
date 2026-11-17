@@ -73,7 +73,7 @@
 
 ## Phase 4: Packets, length table and generated router (FR-4, FR-6, FR-18, FR-19)
 
-- [ ] **T4.1** Add `InPacketAttribute`/`OutPacketAttribute` in `Core/Protocol/` and `HerculesPacketTableGenerator` (Editor menu) that turns `fixtures/hercules-packetlen-20220406.json` into `Core/Protocol/HerculesPacketTable.g.cs` (plan §4.8). Generate and commit the table. *(FR-18, FR-19)*
+- [x] **T4.1** Add `InPacketAttribute`/`OutPacketAttribute` in `Core/Protocol/` and `HerculesPacketTableGenerator` (Editor menu) that turns `fixtures/hercules-packetlen-20220406.json` into `Core/Protocol/HerculesPacketTable.g.cs` (plan §4.8). Generate and commit the table. *(FR-18, FR-19)*
   *Done when:* the table compiles and `GetLength(0x0064) == 55`, `GetLength(0x006B) == -1`, `GetLength(0x0000) == -2`.
 - [ ] **T4.2** Copy the fixture to `Tests/EditMode/Networking/Fixtures/` and add `PacketTableTests` (generated table equals the fixture; no invalid values). *(FR-18)*
   *Done when:* test passes.
