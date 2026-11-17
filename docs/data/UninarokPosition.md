@@ -61,7 +61,7 @@ namespace Uninarok.Networking.Data
 
 - `Read` never throws for any 3 bytes (every bit pattern is valid). It throws `PacketFormatException` only if fewer than 3 bytes remain.
 - `Write` masks out-of-range values (`X`/`Y` to 10 bits, `Direction` to 4 bits), like Hercules. It never throws.
-- No allocation. Lives in the engine-free Core assembly.
+- No allocation. Lives in `Runtime/Data` (assembly `Uninarok.Networking`, plan section 3).
 
 ## Test vectors
 

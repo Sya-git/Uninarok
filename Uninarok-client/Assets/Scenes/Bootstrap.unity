@@ -383,53 +383,6 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!1 &507987361
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 507987363}
-  - component: {fileID: 507987362}
-  m_Layer: 0
-  m_Name: LoginManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &507987362
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 507987361}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a3c5e66500033942bab87bd9f51de24, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Uninarok.Login.LoginManager
-  loginHost: 127.0.0.1
-  loginPort: 6900
-  loginTimeout: 1500
---- !u!4 &507987363
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 507987361}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 644.0646, y: 282.3248, z: 636.43524}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -482,51 +435,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1562520187
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1562520189}
-  - component: {fileID: 1562520188}
-  m_Layer: 0
-  m_Name: GameConnectionManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1562520188
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1562520187}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3dfeb623d7a9cd8499077016a7eadeb3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Uninarok.Managers.GameConnectionManager
-  pingDelay: 5
---- !u!4 &1562520189
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1562520187}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 644.0646, y: 282.3248, z: 636.43524}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1746140156
 GameObject:
   m_ObjectHideFlags: 0
@@ -536,7 +444,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1746140158}
-  - component: {fileID: 1746140157}
+  - component: {fileID: 1746140160}
+  - component: {fileID: 1746140159}
   m_Layer: 0
   m_Name: Bootstrap
   m_TagString: Untagged
@@ -544,32 +453,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1746140157
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1746140156}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0fd827cbdcc144f4d9a01194823146cd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Uninarok.Networking.RagnarokLoginBootstrap
-  loginHost: 127.0.0.1
-  loginPort: 6900
-  accountName: testeAdmin2
-  accountPassword: teste123#$
-  characterServerIndex: 0
-  characterServerHostOverride: 
-  characterSlot: 0
-  characterName: Boneca2
-  jobClass: 0
-  hairColor: 0
-  hairStyle: 0
-  sex: 0
-  mapServerHostOverride: 
-  timeoutSeconds: 20
 --- !u!4 &1746140158
 Transform:
   m_ObjectHideFlags: 0
@@ -585,6 +468,49 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1746140159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1746140156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b24c56f031e09347b1a3c4d324421d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Uninarok.Networking::Uninarok.Networking.Dev.DevAutoLogin
+  serverIndex: 0
+  characterSlot: 0
+  maxLoginAttempts: 1
+  characterName: DevHero
+  createSlot: 0
+  hairColor: 1
+  hairStyle: 1
+  jobClass: 0
+  sex: 1
+--- !u!114 &1746140160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1746140156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0efebfcbb8c5cf64c936a7958bb7321a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Uninarok.Networking::Uninarok.Networking.Client.NetworkClient
+  loginHost: 127.0.0.1
+  loginPort: 6900
+  maxPacketsPerFrame: 256
+  tracePackets: 1
+  settings:
+    ConnectSeconds: 15
+    ReplySeconds: 15
+    MapLoadSeconds: 60
+    MapKeepaliveSeconds: 10
+    CharacterKeepaliveSeconds: 12
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -593,5 +519,3 @@ SceneRoots:
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 1746140158}
-  - {fileID: 507987363}
-  - {fileID: 1562520189}

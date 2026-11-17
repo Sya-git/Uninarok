@@ -1,0 +1,38 @@
+namespace Uninarok.Networking.Packets
+{
+    /// <summary>
+    /// Packet IDs for PACKETVER 20220406 (Hercules). One constant per implemented packet, named as its doc in
+    /// docs/specs/0001-networking-core/Packets. IDs are unique per direction; the generator and a test enforce it.
+    /// </summary>
+    public static class PacketIds
+    {
+        // Login server
+        public const ushort REQUEST_LOGIN = 0x0064;                  // out
+        public const ushort LOGIN_REFUSAL = 0x006A;                  // in
+        public const ushort LOGIN_SERVER_NOTICE = 0x0081;            // in
+        public const ushort ACCEPT_LOGIN = 0x0AC4;                   // in
+        public const ushort REFUSE_LOGIN_3 = 0x0B02;                 // in
+
+        // Character server
+        public const ushort CHARACTER_SERVER_REQUEST_ENTRY = 0x0065; // out
+        public const ushort SELECT_CHARACTER = 0x0066;               // out
+        public const ushort CHARACTER_DATA = 0x006B;                 // in
+        public const ushort MAP_ENTER_REQUEST_REFUSED = 0x006C;      // in
+        public const ushort CHARACTER_CREATION_SUCCESS = 0x0B6F;     // in (0x006D before PACKETVER_MAIN_NUM 20201007)
+        public const ushort CHARACTER_CREATION_FAILED = 0x006E;      // in
+        public const ushort CHARACTER_SERVER_PING = 0x0187;          // out
+        public const ushort CHARACTER_SLOTS_INFO = 0x082D;           // in
+        public const ushort PINCODE_LOGINSTATE = 0x08B9;             // in
+        public const ushort CREATE_CHARACTER = 0x0A39;               // out
+        public const ushort MAP_ENTER_REQUEST_ACCEPTED = 0x0AC5;     // in
+
+        // Map server
+        public const ushort MAP_ENTRY_REFUSAL = 0x0074;              // in
+        public const ushort MAP_LOADED = 0x007D;                     // out
+        public const ushort SERVER_HEARTBEAT_RESPONSE = 0x007F;      // in
+        public const ushort MAP_ENTRY_ACCEPTANCE = 0x0283;           // in
+        public const ushort AUTHENTICATION_ACCEPTED = 0x02EB;        // in
+        public const ushort HEARTBEAT_REQUEST = 0x0360;              // out
+        public const ushort REQUEST_ENTER_MAP = 0x0436;              // out
+    }
+}

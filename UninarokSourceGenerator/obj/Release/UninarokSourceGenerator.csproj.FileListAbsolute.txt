@@ -1,5 +1,0 @@
-E:\Dev\Uninarok\Uninarok-client\Assets\Plugins\UninarokSourceGenerator.dll
-E:\Dev\Uninarok\UninarokSourceGenerator\obj\Release\UninarokSourceGenerator.csproj.AssemblyReference.cache
-E:\Dev\Uninarok\UninarokSourceGenerator\obj\Release\UninarokSourceGenerator.GeneratedMSBuildEditorConfig.editorconfig
-E:\Dev\Uninarok\UninarokSourceGenerator\obj\Release\UninarokSourceGenerator.csproj.CoreCompileInputs.cache
-E:\Dev\Uninarok\UninarokSourceGenerator\obj\Release\UninarokSourceGenerator.dll

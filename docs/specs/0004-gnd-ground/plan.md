@@ -1,0 +1,313 @@
+# PLAN-0004: GND Ground
+
+| | |
+|---|---|
+| **Implements** | [spec.md](spec.md) (SPEC-0004) |
+| **Status** | Approved |
+| **Audience** | Architects, senior developers, AI agents |
+
+> This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. Shared rules (paths, units and axes, textures, materials, ledger, results, batch) come from [PLAN-0002](../0002-ro-import-foundation/plan.md) and are used here, not restated. The reference maps are in [`../0003-rsm-models/reference-models.md`](../0003-rsm-models/reference-models.md) §4.
+
+## 1. Constraints and assumptions
+
+- Code lives in the editor assemblies of PLAN-0002 under `Core/Gnd/`, `Core/Formats/` (adapter) and `Editor/Gnd/`; main thread only.
+- **GND files are read by the GRF library** (the `Gnd` class of `GRF.dll`) through one adapter, `RoGndReader`, in `Core/Formats/`. No code of ours parses GND bytes (PLAN-0002 §1). After the adapter everything works on our own data type `RoGnd` (§4.1), so every rule is testable without the library and without data files.
+- The GRF members the old importer used are `Header.Width`, `Header.Height`, `Header.ProportionRatio`, `Textures`, `Tiles` (`TextureIndex`, `TexCoords[0..3]`) and `Cubes` (`BottomLeft`, `BottomRight`, `TopLeft`, `TopRight`, `TileUp`, `TileFront`, `TileSide`); GRF also has lightmap and tile colour members, which are not read (nothing is baked, see below). The mapping of each to a file field is verified by task T0.2 before a rule depends on it.
+- The format facts used here come from the community GND document (`rdw-archive/RagnarokFileFormats`, `GND.MD`, which the owner named as the reference for every GND doubt) and the old importer: cubes are stored bottom (south) row first and left (west) to right, like pixels of a bitmap, so the index is `row * width + column`; each cube has four corner heights (bottom-left, bottom-right, top-left, top-right) and three surface ids, **top**, **north wall** and **east wall**; a cube's south, west and bottom sides come from its neighbours' surfaces; a surface is a tile with four texture coordinate pairs; a surface id of `-1` means none; each surface is two GAT cells wide. The points that document leaves open (§4.3, §4.2) are verified by T0.3.
+- The shared map-space rules (cube to world, centre offset, row direction) are defined once here, in `RoMapSpace` (§4.2), and are used by PLAN-0005 (GAT) and PLAN-0006 (RSW).
+- Outputs are written through `RoAssetWriter`, in place, owned by ledger category `ground` (PLAN-0002 §4.7, §4.8). Materials come from `RoMaterialFactory` (PLAN-0002 §4.6).
+- Gizmos and the picking tool are editor-only code (SPEC-0002 FR-14). They read the ground again from the source through the same adapter (§4.7); no extra data file is generated.
+- OQ-2 of the spec is **answered by the owner: nothing is baked, Unity's real-time lighting and shadows are used**. FR-8 (the file's baked ground lighting) is therefore not implemented; the lightmap members of the file are ignored.
+
+## 2. Architecture
+
+Satisfies FR-1, FR-2, FR-3, FR-6.
+
+```
+ map/x.gnd ──(IRoSource)──> bytes
+                             │
+                   RoGndReader (GRF adapter)                       Core/Formats
+                             │
+                             ▼
+                   RoGnd  (our data: header, tiles, cubes)         Core/Gnd
+                             │
+      ┌──────────────────────┼───────────────────────────────┐
+      ▼                      ▼                               ▼
+  RoMapSpace            RoGndSurfaces                   RoGndChunker
+  (cube ↔ world)        (tops, walls: quads)            (16 x 16 cubes per chunk)
+      └──────────────────────┴──────────────┬────────────────┘
+                                            ▼
+                         RoGndMeshBuilder  (vertices, uv, normals, uv2, submeshes)
+                                            │  plain arrays
+                                            ▼
+                    RoGndConverter  (Editor/Gnd: ctx, materials, meshes, prefab, ledger)
+                    meshes ── prefab "Ground"        (gizmos read the source again, §4.7)
+```
+
+Data flow for one request `RoImport.Ground("prontera")` (the ground of the map named `prontera`, source `map/prontera.gnd`, the map files being in the data root's `map` folder, to be confirmed by T0.1):
+
+1. Ledger check (source hash, rules version, texture dependencies): current → `Skipped`.
+2. Read through GRF into `RoGnd`; failure is one `CorruptFile` issue and no output.
+3. Build the list of top and wall quads from the cube grid (§4.3), compute welded normals over the whole map, cut the map into chunks, and build one mesh per chunk (§4.4).
+4. Resolve each texture through `ctx.Texture` and its material through `ctx.Material` (shared per texture, FR-6).
+5. Write chunk meshes, build and save the `Ground` prefab, record outputs and dependencies in the ledger.
+
+Because normals and corner positions are computed on the whole map and only then cut into chunks, a chunk border can never open a crack or a lighting seam (FR-3, FR-7).
+
+## 3. Assemblies and file layout
+
+Satisfies FR-6, FR-9.
+
+| Path (under `Assets/Editor/RoImport/`) | Contents | Assembly |
+|---|---|---|
+| `Core/Formats/RoGndReader.cs` | adapter: GRF `Gnd` → `RoGnd` (the only GND code that touches GRF types) | `Uninarok.RoImport.Core` |
+| `Core/Gnd/Data/` | `RoGnd`, `RoGndTile`, `RoGndCube` | Core |
+| `Core/Gnd/Space/` | `RoMapSpace` (shared with PLAN-0005 and PLAN-0006) | Core |
+| `Core/Gnd/Surfaces/` | `RoGndRules`, `RoGndSurfaces`, `RoGndQuad` | Core |
+| `Core/Gnd/Mesh/` | `RoGndChunker`, `RoGndMeshBuilder`, `RoGndMeshData` | Core |
+| `Core/Gnd/Debug/` | `RoGndPicker` (ray to cube) | Core |
+| `Editor/Gnd/` | `RoGndConverter` (`IRoConverter`), `RoGndPrefabBuilder`, `RoGndOutputPaths` | `Uninarok.RoImport.Editor` |
+| `Editor/Gnd/Gizmos/` | `RoGndGizmos` (`DrawGizmo` methods), `RoGndSceneTools` (hover data, layer overlay), `RoGndGizmoSettings`, `RoGndSourceCache` | Editor |
+| `Assets/Tests/EditMode/RoImport/Gnd/` | tests; synthetic maps built in code | `Uninarok.RoImport.Tests` |
+
+Output paths (through `RoOutputPaths.Mirror`, PLAN-0002 §4.5), for a source `map/<name>.gnd`:
+
+| Output | Path |
+|---|---|
+| Ground prefab | `Art/Imported/map/<name>/<name>_ground.prefab` (root `Ground`, one child `Chunk_<cx>_<cz>` per chunk) |
+| Chunk mesh | `Art/Imported/map/<name>/ground/chunk_<cx>_<cz>.asset` |
+
+## 4. Component contracts
+
+### 4.1 Reading: `RoGndReader` and the data type `RoGnd`
+
+Satisfies FR-4, FR-5.
+
+```csharp
+public sealed class RoGnd
+{
+    public int VersionMajor, VersionMinor;
+    public int Width, Height;                      // cubes along x and along rows; from the header, never assumed equal
+    public float Zoom;                             // cube edge in Ragnarok units (ProportionRatio; 10 for the reference maps)
+    public IReadOnlyList<string> Textures;         // as stored, relative to texture/
+    public IReadOnlyList<RoGndTile> Tiles;
+    public IReadOnlyList<RoGndCube> Cubes;         // Width * Height entries, index = row * Width + column
+}
+public readonly struct RoGndTile { public Vector2 Uv00, Uv10, Uv01, Uv11; public int Texture; }
+public readonly struct RoGndCube { public float H00, H10, H01, H11; public int TileUp, TileFront, TileSide; }   // -1 = none
+public static class RoGndReader { public static bool TryRead(RoPath path, byte[] bytes, out RoGnd gnd, out string reason); }
+```
+
+- Names follow the grid: `H00` is the corner at the low column and low row, `H10` the next column, `H01` the next row, `H11` both. The format document names these corners bottom-left (south-west), bottom-right, top-left and top-right (north-east), so GRF's `BottomLeft`, `BottomRight`, `TopLeft`, `TopRight` map to `H00`, `H10`, `H01`, `H11`; the tile's coordinates are stored in the same order (all U values, then all V values: bottom-left, bottom-right, top-left, top-right) and go to `Uv00`, `Uv10`, `Uv01`, `Uv11`. T0.2 confirms both against raw header and cube values. Heights are in Ragnarok units, **unconverted** (Y points down, so a higher ground has a lower number).
+- `Width` and `Height` come from the header, and every index is `row * Width + column`. The old importer used `rightCubeIndex + z * height` for the neighbour, which is correct only on square maps; that expression does not exist in the new code, and the row/column count is covered by tests on non-square maps (FR-4).
+- Tile id `-1` means none; `0` is a valid tile. Every comparison is `>= 0`.
+- A tile index or texture index outside its table is reported as `GndBadIndex` once per map (with a count) and treated as none.
+- The adapter never throws; a rejected read returns `false` with GRF's reason.
+- **Versions.** The format has unversioned, 1.5, 1.7, 1.8 and 1.9 files; they differ in the lightmap and water parts, which this plan does not use, so the geometry rules are the same for all of them. A version GRF cannot read is reported once as `UnsupportedGndVersion` (§4.6). The cube and tile fields of the versions the data uses are checked in T0.1/T0.2. The texture-coordinate V axis of the file points down; the conversion to Unity's texture space is the one of PLAN-0002 §4.4 and is checked by T0.3.
+- **Mapping check (T0.2).** The task prints the header and the first and last cubes of each reference map through GRF and compares them with the raw values of the same files (width, height, zoom, a handful of cubes), then writes into this section one row per `RoGnd` field with the GRF member that supplies it.
+
+### 4.2 Map space: `RoMapSpace` (shared contract)
+
+Satisfies FR-4, FR-5. Also used by PLAN-0005 and PLAN-0006.
+
+```csharp
+public readonly struct RoMapSpace
+{
+    public RoMapSpace(int width, int height, float zoom);
+    public int Width { get; } public int Height { get; } public float Zoom { get; }          // cubes, cubes, RO units
+    public Vector3 CornerRo(int column, int row, float roHeight);                            // RO-space position of the grid corner (column, row)
+    public Vector3 CornerUnity(int column, int row, float roHeight);                         // RoSpace.Point(CornerRo(...))
+    public Vector3 CentreOffsetRo { get; }                                                   // (Width * Zoom / 2, 0, Height * Zoom / 2)
+    public Vector3 FromRswRo(Vector3 rswPosition);                                           // RSW position (relative to the centre) → RO map space
+    public bool TryCubeAtUnity(Vector3 unityPosition, out int column, out int row);
+    public static (int cubeColumn, int cubeRow) CubeOfGatCell(int gatColumn, int gatRow);   // GAT is 2x resolution: cell / 2
+}
+```
+
+- `CornerRo(column, row, h) = (column · Zoom, h, row · Zoom · RowSign)` where `RowSign` is `+1` or `-1` and is one constant, `RoMapSpace.RowDirection`. The format document says only that row 0 is the south edge and rows grow to the north; which Ragnarok axis that is, it does not say, so the constant is **verified by T0.3** against the reference viewer and against the placement of RSW objects in PLAN-0006 (the old importer assumed a plain row index; the data decides). Everything else (GAT cells, RSW positions, gizmos, picking) derives from this one function.
+- The cube edge is `Zoom` taken from the header, not a constant (FR-5): a synthetic map with `Zoom = 5` yields cubes of 0.5 Unity units; heights keep their own scale (`RoSpace.Point`), so a ground cube of the default zoom is exactly 1 unit wide, as SPEC-0002 FR-7 requires.
+- `CentreOffsetRo` is the translation RSW positions are relative to; PLAN-0006 uses `FromRswRo` and verifies it on the ground-contact sample.
+- `RoMapSpace` is pure and takes only numbers, so PLAN-0005 and PLAN-0006 test against it directly.
+
+### 4.3 Surfaces: `RoGndRules`, `RoGndSurfaces`
+
+Satisfies FR-1, FR-2, FR-3.
+
+```csharp
+public enum RoGndFace { Top, FrontWall, SideWall }
+public readonly struct RoGndQuad { public RoGndFace Face; public int Column, Row; public int Tile; public Vector3 P00, P10, P01, P11; /* RO space */ }
+public static class RoGndSurfaces { public static IEnumerable<RoGndQuad> Enumerate(RoGnd gnd, RoGndRules rules, RoReport report); }
+```
+
+- **Top (FR-1).** A cube with `TileUp >= 0` produces one quad whose corners are the cube's four heights at the four grid corners; the tile's four texture coordinates go to the matching corners (`Uv00` to the `H00` corner, and so on). A cube with `TileUp < 0` produces nothing: a visible gap (FR-1).
+- **Front wall (the file's north wall).** A cube with `TileFront >= 0` and a cube in the next row produces a wall at the shared row edge, from this cube's `H01`/`H11` (its edge at the next row) to the next-row cube's `H00`/`H10` (its edge at this row). The wall belongs to the cube that carries `TileFront` and uses that tile (FR-2).
+- **Side wall (the file's east wall).** A cube with `TileSide >= 0` and a cube in the next column produces a wall at the shared column edge, from this cube's `H10`/`H11` to the next-column cube's `H00`/`H01`, with the tile `TileSide` of this cube.
+- **Only where heights differ (FR-2).** The format document says the client draws a wall only when the neighbour is higher or lower and the surface is textured; so a wall is emitted only if the heights differ at the shared edge by more than `Epsilon` (0.0001 Ragnarok units) at one end or both. When they are equal at one end the quad degenerates to a triangle: the zero-area triangle is not emitted. No wall is emitted when its tile is `-1`.
+- **Edges (FR-2).** The last row has no front neighbour and the last column no side neighbour; those walls are skipped without reading outside the grid and without a warning (an expected condition).
+- **Rules table `RoGndRules`** holds the choices that the data must confirm (T0.3), each as one named constant:
+  1. the diagonal that splits a top quad into two triangles (the format document says the original client connects the bottom-right corner to the top-left corner, and that the other diagonal gives slope glitches: so the candidate is `H10`–`H01`, **not** the `H00`–`H11` the old importer used; T0.3 confirms it on a sloped area),
+  2. which way a wall faces (candidate: toward the side whose ground is lower, so that the outer face of a cliff is visible and the back is culled),
+  3. the UV corner order of the tile for walls (candidate: as for tops),
+  4. `RowDirection` (§4.2).
+  A rules change touches this one place and the tests that pin it; it never touches the builder's structure.
+- **No overlaps and no cracks (FR-3).** Every quad takes its corner positions from one function (`RoMapSpace.CornerUnity` with the height of the cube that owns the corner), so the same corner always yields the same bit pattern: two quads that share a corner height share the exact vertex position. Walls take their top edge from the owning cube and their bottom edge from the neighbour, so they meet both tops exactly. Only top and wall quads exist; no other face is created, so no face is duplicated. The expected triangle count is therefore `2 · (cubes with TileUp ≥ 0) + 2 · (walls that pass the height test)` minus the degenerate triangles, and the tests check it against an oracle written separately from the builder.
+
+### 4.4 Meshes: `RoGndChunker`, `RoGndMeshBuilder`
+
+Satisfies FR-3, FR-6, FR-7.
+
+```csharp
+public sealed class RoGndMeshData
+{
+    public int ChunkColumn, ChunkRow;
+    public Vector3[] Positions; public Vector3[] Normals; public Vector2[] Uvs; public Vector2[] Uvs2;   // Unity space, chunk-local origin
+    public IReadOnlyList<RoGndSubmesh> Submeshes;                       // one per texture used in the chunk, ascending texture index
+    public Vector3 Origin;                                              // chunk object position, Unity space
+}
+public sealed class RoGndSubmesh { public int Texture; public int[] Triangles; }
+public static class RoGndMeshBuilder
+{
+    public const int ChunkSize = 16;                                    // cubes per chunk edge
+    public static IReadOnlyList<RoGndMeshData> Build(RoGnd gnd, RoGndRules rules, RoReport report);
+}
+```
+
+- **Chunks (FR-6).** The map is cut into blocks of `ChunkSize` × `ChunkSize` cubes; a quad belongs to the chunk of its cube (a wall belongs to the chunk of its owning cube). A 200 × 200 map has at most 169 chunks. Each chunk is one mesh, one renderer and one object, so Unity's frustum culling skips chunks out of view (FR-6), and the vertex count per chunk (at most 256 tops and 512 walls, four vertices each) stays below 65,536, so indices are 16-bit. The size is a constant; a map of any size just has more chunks (no map-size limit).
+- **One material per texture (FR-6).** A chunk's submeshes are one per distinct texture in ascending order; the materials are the shared ones of PLAN-0002 (`RoMaterialKey(texture, surface, false)`), so every chunk of every map that uses a texture uses one material.
+- **Vertices and welding.** A vertex is `(position, uv, normal)`. Equal vertices within a chunk merge (same key approach as PLAN-0003 §4.6: exact float bit patterns, `-0` normalized), which matters only where two tiles share a corner and a coordinate.
+- **Normals (FR-7), computed on the whole map before cutting.**
+  1. Each top corner is identified by its grid corner `(column, row)` and its height bits: corners of neighbouring cubes with equal coordinates and equal height are one **welded corner**; at a cliff the heights differ, so the corners stay separate.
+  2. The normal of a welded corner is the sum of the face normals of all top triangles that touch it, **weighted by the corner angle**, normalized. Flat ground gives exactly `up` everywhere (no grid pattern) and a slope gives a continuous gradient.
+  3. Wall faces keep their own flat face normal (a wall is a plane; smoothing it into the ground would shade the cliff wrongly).
+  4. Chunk borders use the same welded normals because they are computed before the cut.
+- **Winding.** The quads are built in Ragnarok space and converted with `RoSpace.Point`; winding is reversed once with `RoSpace.ReverseWinding` (PLAN-0002 §4.3) and the top faces are checked by test to face up and each wall to face its lower side.
+- **Second UV set (`Uvs2`)** (not used for lighting the ground in real time; it exists only so a person who chooses to bake in Unity later has a stable unwrap, SPEC-0006 FR-6): every quad gets its own cell in a regular grid inside the chunk's `[0,1]` square, sorted in quad order (tops first by cube index, then walls), cell size `1 / ceil(sqrt(quadCount))`, each quad's corners inset by a fixed margin. No two quads overlap in `Uvs2`, and the result is deterministic. This replaces Unity's own unwrapping, whose output is not guaranteed stable across editor versions.
+- **Chunk origin.** Each chunk object is positioned at the Unity position of its first corner and its vertices are relative to it, so meshes keep small coordinates and a chunk can be moved or batched.
+- All of this is pure: arrays in, arrays out.
+
+### 4.5 Materials and textures
+
+Satisfies FR-6.
+
+- Tile `Texture` indices refer to `RoGnd.Textures`; each is parsed as `RoPath.Parse("texture").Combine(name)` and requested with `ctx.Texture` then `ctx.Material(new RoMaterialKey(texture, RoMaterialFactory.SurfaceFor(analysis), false))` (PLAN-0002 §4.4, §4.6). Ground faces are one-sided; a missing texture gives the placeholder and one warning naming the texture and the map.
+- Lit materials carry no baked ground shadow: lighting and shadows are Unity's real time ones (owner decision on OQ-2).
+
+### 4.6 Converter and prefab: `RoGndConverter`, `RoGndPrefabBuilder`
+
+Satisfies FR-1, FR-6 (uses SPEC-0002 FR-5, FR-6, FR-10, FR-16).
+
+```csharp
+public sealed class RoGndConverter : IRoConverter        // registers RoJobKind.Ground
+{
+    public const int RulesVersion = 1;
+    public RoResult<UnityEngine.Object> Convert(RoImportContext ctx, RoPath path);   // returns the ground prefab
+}
+```
+
+- `RoJobKind.Ground` is added to the enum and `RoConverterRegistry`, with the wrapper `RoImport.Ground(string mapName)` and `RoImportContext.Ground(RoPath)` so the map converter of PLAN-0006 requests the ground on demand (SPEC-0002 FR-6).
+- The prefab has a root `Ground` and one `Chunk_<cx>_<cz>` child per chunk, each with `MeshFilter`, `MeshRenderer` (materials in submesh order, shadow receiving on, light probes off), and static editor flags for lightmap contribution, batching and occlusion (SPEC-0006 FR-6). The root has no transform of its own: chunks are positioned in map space, so the map scene (PLAN-0006) places the prefab at the origin.
+- The ledger entry (category `ground`) lists as outputs the prefab and every chunk mesh; as dependencies the source hash of every texture the ground uses. All outputs are written only after the whole ground is built in memory (no partial output on failure); meshes are upserted in place, so references from a committed map scene survive a re-conversion.
+- Expected conditions are warnings (PLAN-0002 §4.9), with new `RoIssueCode` values `GndBadIndex` and `UnsupportedGndVersion` (a version GRF reads but this plan has no rules row for is reported once and gives no output). No version is guessed; the three reference maps fix the first row of the table.
+- The menu and window gain the kind `Ground` and `Tools/Ragnarok/Convert All Grounds` (`Enumerate("map/")`, extension `.gnd`).
+
+### 4.7 Gizmos and picking: `RoGndGizmos`, `RoGndSceneTools`, `RoGndSourceCache`
+
+Satisfies FR-9.
+
+- **Where the data comes from.** No extra file is generated. The gizmos read the cube table of the selected map from the source, through the same path as the conversion (`IRoSource` + `RoGndReader` → `RoGnd`), on first use, and keep it in `RoGndSourceCache` (one map at a time, dropped when the selection leaves the map and on domain reload). The map name is taken from the chunk mesh's asset path. If the source folder is absent, the gizmos draw nothing and show one line in the overlay panel saying the source data is not available (no error).
+- **What gets a gizmo.** No custom component is added to scene objects (a component from an editor-only assembly cannot ship in a scene, and a runtime marker would put importer-related types in builds, FR-14). The drawing hangs on the mesh itself:
+  - `[DrawGizmo(GizmoType.Selected | GizmoType.InSelectionHierarchy, typeof(MeshFilter))]` is attached to a static method; the method returns immediately unless the mesh asset path is a ground chunk (`…/ground/chunk_<cx>_<cz>.asset`), from which it derives the map name and chunk and draws that chunk. Selecting the `Ground` object, a chunk or the map object that contains them draws, because `InSelectionHierarchy` covers selected ancestors. Nothing is drawn, and the source is not read, when nothing from the map is selected.
+  - For a selected region the gizmo draws only chunks within a distance of the scene camera (`RoGndGizmoSettings.Radius`, default 64 cubes) so a large map costs a bounded number of lines.
+- **Layers (FR-9), each switchable** in an overlay panel (`UnityEditor.Overlays`) named "Ragnarok Ground", values stored in `EditorPrefs`: grid lines of the cubes; cube coordinates (`column,row` labels, drawn only within a smaller radius); corner heights; face kind (top, front wall, side wall) as colours with the tile and texture name; cubes without a top tile (gaps) highlighted.
+- **Hover and selection data (FR-9).** `RoGndSceneTools` listens to `SceneView.duringSceneGui`; for the chunk(s) in range it intersects the mouse ray with the grid using `RoGndPicker` (a pure grid walk with ray–triangle tests against the top quads and walls) and shows, next to the cursor, the cube's `(column, row)`, four heights, the three tile ids with their texture names and the face under the cursor. Clicking pins the data in the panel.
+- **No cost in builds or when not selected.** All gizmo code is in the editor assembly, behind the selection test above.
+- `RoGndPicker` is pure and tested (§6); the drawing methods are checked manually.
+
+## 5. Threading and lifecycle
+
+Satisfies FR-6.
+
+- Main thread, synchronous, inside the batch of PLAN-0002 §4.10. `Core/Gnd` is arrays and structs; `RoGnd` holds the cube table as arrays (a 200 × 200 map is 40,000 cubes, a few MB) and is released after each map.
+- The ground mesh data for a whole map is built in memory first (so normals are map-wide), then written chunk by chunk and released.
+- The gizmo caches the source cube table of one map and drops it when the selection leaves the map or on domain reload.
+- At runtime nothing of this plan runs: the player has the prefab, meshes and materials only.
+
+## 6. Test plan
+
+Satisfies every FR of the spec. EditMode NUnit tests in `Uninarok.RoImport.Tests` (command in `CLAUDE.md` §2). Tests needing the real data set are marked `[Category("NeedsData")]` and are ignored with a message when the source folder is absent; pure tests build `RoGnd` objects in code.
+
+| Test class | FR | Checks |
+|---|---|---|
+| `RoMapSpaceTests` | 4, 5 | corner positions; `Zoom = 5` gives 0.5-unit cubes and `Zoom = 10` exactly 1 unit; the centre offset; cube lookup round trips; GAT cell to cube is `/ 2`; `RowDirection` pinned |
+| `RoGndSurfacesTests` | 1, 2 | a flat map has tops only and no walls; a step has exactly one wall per differing edge, with the owning cube's tile; a wall with `-1` produces nothing; equal heights at one end produce a triangle, not a quad; a cube with `TileUp = -1` is a gap; tile id `0` is a valid tile; edge cubes read no neighbour outside the grid and give no warning; `H00..H11` land on the right grid corners |
+| `RoGndNonSquareTests` | 4 | a 5 × 3 map and a 3 × 5 map: the cube at column 4 row 2 (and its neighbours) comes out at the expected position and uses the expected tile; the old `column + row * height` index would fail (regression guard) |
+| `RoGndCrackTests` | 3 | for every pair of neighbouring cubes whose shared-corner heights are equal the converted positions are bit-identical; walls meet the top edges exactly; the triangle count equals the independent oracle `2 · tops + 2 · walls − degenerate`; no two triangles have identical vertex sets |
+| `RoGndNormalsTests` | 7 | flat ground gives `up` at every vertex, including across chunk borders; a ramp gives a continuous normal field with no jump at cube borders; a cliff top corner is not smoothed into the lower ground; wall normals are flat |
+| `RoGndWindingTests` | 1, 2, 3 | every top triangle faces up; every wall faces its lower side; mesh has no inside-out faces |
+| `RoGndChunkTests` | 6 | a 40 × 33 map gives 3 × 3 chunks with the right cube ranges; a quad belongs to the chunk of its cube; a wall at a chunk border is in its owner's chunk and meets the neighbour's top exactly; indices are 16-bit; submeshes are one per texture in ascending order; the two chunks that use one texture reference the same material (through the context) |
+| `RoGndUv2Tests` | (0006 FR-6) | no two quads overlap in `Uvs2`; all coordinates are in `[0,1]`; deterministic across runs |
+| `RoGndPickerTests` | 9 | `RoGndPicker` returns the right cube and face for rays from above and from the side, and nothing for a ray that misses |
+| `RoGndWriterTests` | 6 | a synthetic map converts to the prefab and chunk meshes at the paths of §3; the prefab has one chunk per chunk with static flags; materials are the shared ones; a missing texture gives the placeholder and one warning |
+| `RoGndIdempotencyTests` | (0002 FR-5, FR-16) | second conversion is `Skipped`; a forced second conversion leaves every mesh byte-identical and every GUID unchanged; the prefab and a scene that references a chunk mesh keep their references |
+| `RoGndReaderTests` (`NeedsData`) | 4, 5 | the three reference maps read through GRF with widths and heights 156 × 196, 134 × 150, 200 × 200 and the expected zoom; the cube table length equals `Width · Height`; a truncated copy returns false with a reason and never throws |
+| `RoGndReferenceTests` (`NeedsData`) | 1–6 | each reference map converts with no failure; the chunk and triangle counts equal the oracle computed from the raw table; the largest map converts within the batch; a second batch skips everything |
+
+**Manual checks** (recorded in the PR with screenshots):
+
+- FR-1, FR-2, FR-4: each reference map, top-down and from the side, against the reference viewer, including a cliff, a gap and sloped ground; the non-square maps (prontera, izlude) are not rotated or mirrored.
+- FR-3: top-down and side views show no light leaks along cube and chunk borders.
+- FR-6: with the scene camera moved away from a region, the stats window shows its chunks no longer drawn.
+- FR-7: a flat area shows even lighting, a slope a smooth gradient.
+- FR-9: selecting the `Ground` object of a reference map shows the grid; hovering a cube shows its data; each layer switches off; deselecting costs nothing (Profiler shows no gizmo time); with the source folder renamed away the gizmos draw nothing and show the one-line notice.
+- Lighting: the ground reacts to a real time light and casts and receives real time shadows (no baked data involved).
+
+## 7. Migration and compatibility
+
+- `GNDImporter.cs` (a `ScriptedImporter` on `.gnd`) is deleted by the last task of this plan. Once the source folder is hidden from Unity (PLAN-0002 §7) it no longer fires and is inert. Its logic is not carried over: the old index, tile-id, wall and shader bugs are replaced by §4.1 to §4.5.
+- The shared helpers of `UtilExtensions.cs` that only the GND importer used are deleted with it; the file itself is deleted when no importer uses it (PLAN-0003 §7 lists the order).
+- `Assets/Scripts/MapData.cs` is not used here; PLAN-0005 decides its replacement.
+- PLAN-0006 requests the ground through `ctx.Ground(...)`, instantiates the prefab at the map origin and uses `RoMapSpace`. The contract between the plans: the prefab path of §3, a root with no transform of its own, and the `RoMapSpace` of §4.2.
+- Chunk meshes are covered by the LFS rule `Art/Imported/**/*.asset` of PLAN-0002 §7.
+
+## 8. Decisions
+
+| # | Decision | Alternatives rejected |
+|---|---|---|
+| D1 | GRF reads the GND; our own `RoGnd` is the input of every rule; rules are tested on synthetic maps | Parsing GND ourselves (owner decision: read through GRF); building meshes directly from GRF types (untestable without data) |
+| D2 | One `RoMapSpace` for cube, world and centre rules, shared by GND, GAT and RSW; row direction is one verified constant | Each importer carrying its own convention (the cause of mismatches between ground, walkability and models) |
+| D3 | Corner positions from one function and one height per owning cube, so shared corners are bit-identical; walls take both edges from the owners | Computing wall corners from neighbours' averages or re-deriving positions per face (hairline cracks) |
+| D4 | Normals welded by (grid corner, height) over the whole map, angle-weighted, walls flat | `Mesh.RecalculateNormals` per chunk (splits at every vertex that is not shared, which is the old grid pattern and seams at chunk borders) |
+| D5 | 16 × 16 cube chunks, one mesh and renderer per chunk, one material per texture | One mesh for the whole map (no culling, 32-bit indices); one mesh per cube (draw-call count) |
+| D6 | Second UV set from a regular cell grid per chunk, computed by us | `Unwrapping.GenerateSecondaryUVSet` (not guaranteed stable across editor versions, breaks byte-identical output) |
+| D7 | Gizmos hang on `MeshFilter` and chunk mesh paths; the data is read again from the source through GRF | A scene component for gizmos (cannot live in an editor-only assembly, a runtime marker would put importer types in builds); a generated debug data file (owner did not approve it) |
+| D8 | Picking is our own, pure and tested | Unity's physics picking against the meshes (cannot return the cube, its heights or its tile ids) |
+| D9 | The rules table of §4.3 (diagonal, wall facing, UV corner order, row direction) is verified by T0.3 against the reference viewer before any builder code | Choosing from memory of other loaders without checking |
+| D10 | FR-8 is not implemented: owner answered OQ-2 with real time lighting only | A baked-shadow shader and lightmap atlas |
+
+Items for the owner: none open.
+
+## 9. Risks
+
+| Risk | Mitigation |
+|---|---|
+| The row direction, diagonal, wall facing or UV order differ from the candidates | T0.3 compares every rule with the reference viewer on the three reference maps before implementation; each rule is one constant with a pinning test |
+| GRF's `BottomLeft`/`TopLeft` naming is not the grid order assumed | T0.2 checks the mapping against raw values of real cubes |
+| A map larger than 200 × 200 appears in the full data | Chunking has no size limit; the batch converts every map and reports each failure once |
+| Gizmo drawing for a large selected area is slow | Distance radius and the cap of labelled cubes; manual Profiler check in the task list |
+| Some maps use non-default zoom | `Zoom` comes from the header; synthetic test with `Zoom = 5`; T0.2 lists the zoom of every reference map |
+| The source folder is absent when someone selects a ground | Gizmos draw nothing and show one notice line; conversion output is unaffected |
+| A wall facing rule is wrong for walls viewed from the high side in the original client | T0.3 checks cliffs from both sides; fallback is two-sided wall submeshes, decided by the owner |
+
+## 10. Traceability
+
+| FR | Plan sections |
+|---|---|
+| FR-1 | 4.1, 4.3, 6 |
+| FR-2 | 4.3, 6 |
+| FR-3 | 4.3, 4.4, 6 |
+| FR-4 | 4.1, 4.2, 6 |
+| FR-5 | 4.1, 4.2, 6 |
+| FR-6 | 4.4, 4.5, 4.6, 6 |
+| FR-7 | 4.4, 6 |
+| FR-8 | Not implemented (owner decision, §1) |
+| FR-9 | 4.7, 6 |

@@ -6,9 +6,9 @@
 | **Hercules packet name** | `ZC_NOTIFY_TIME` |
 | **Packet ID** | `0x007F` |
 | **Declared size** | 6 bytes, including the 2-byte packet ID |
-| **Status** | documented |
+| **Status** | verified |
 | **Frequency** | warm |
-| **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no; `clif_notify_time`, `clif.cpp` (4-byte tick at offset 2) |
+| **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no; `clif_notify_time`, `clif.cpp` (4-byte tick at offset 2) Real server 2026-11-17 (Hercules built for 20220406): decoded from the captures `Login/Character/Map-20261117-124252.bin` with nothing left over (`RealCaptureDecodeTests`). |
 | **Allocates** | no |
 
 **Hercules usage:** Sent by Hercules in response to a client time request.

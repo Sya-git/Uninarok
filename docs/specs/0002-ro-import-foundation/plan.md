@@ -15,7 +15,7 @@
 - Output roots (spec §6 leaves the folders to this plan): `Assets/Art/Imported/` for visual assets, `Assets/Data/` for data assets (the existing `Assets/Data/Map/` is kept for map data). The art root is assumed to sit under `Assets/`; the owner wrote it as `Art/Imported/`.
 - Source root: the folder `Assets/Editor/GRF Resources~/data` (§4.2, decision D2). Ragnarok paths are relative to `data`.
 - The unit of conversion is one **source file** (a Ragnarok path). One source file produces one or more outputs; the ledger (§4.8) records which.
-- Dependencies: the Unity Test Framework (`com.unity.test-framework`, first-party, added to `Packages/manifest.json`; PLAN-0001 adds the same package). No third-party library is referenced by the foundation. The existing GRF library (`GRF.dll`, `Encryption.dll`, `ErrorManager.dll`, `Utilities.dll` in `Assets/Editor/Library/`) is used only by the format plans through the editor assembly (§3); the foundation reads folders, not GRF archives.
+- Dependencies: the Unity Test Framework (`com.unity.test-framework`, first-party, added to `Packages/manifest.json`; PLAN-0001 adds the same package). No new third-party library is added. **The existing GRF library** (GRFEditor's `GRF.dll`, with `Encryption.dll`, `ErrorManager.dll`, `Utilities.dll`, in `Assets/Editor/Library/`) **reads every Ragnarok file format** (images now; RSM, RSW, GND, GAT, SPR, ACT and PAL in the format plans). Importer code never parses file bytes itself (no `BinaryReader`, no hand-written decoders): it hands the bytes to GRF through a thin adapter in `Core/Formats/` (§4.4) and works with the result. The foundation reads files from a folder on disk, not from GRF archives (spec §3); locating a file and reading its bytes is plain file access, interpreting them is GRF's job.
 - Generated assets are committed (spec §6). Large binary outputs (meshes, textures) are covered by Git LFS path rules (§7).
 - The reference data is the folder `Assets/Editor/GRF Resources~/data` with the maps and models listed in `0003-rsm-models/reference-models.md`.
 
@@ -65,7 +65,8 @@ Root: `Uninarok-client/Assets/Editor/RoImport/`. The folder sits under `Editor/`
 | `Core/Paths/` | `RoPath`, `RoPathException` | `Uninarok.RoImport.Core` (`includePlatforms: ["Editor"]`) |
 | `Core/Source/` | `IRoSource`, `RoSourceFile`, `RoFolderSource`, `RoHashCache` | Core |
 | `Core/Space/` | `RoUnits`, `RoSpace` | Core |
-| `Core/Imaging/` | `RoImage`, `RoBmpDecoder`, `RoTgaDecoder`, `RoImageDecoder`, `RoColorKey`, `RoTextureAnalysis`, `RoTextureUsage` | Core |
+| `Core/Formats/` | `RoImageReader` (adapter over the GRF image classes; the only code in the foundation that touches GRF types; the format plans add their adapters here) | Core |
+| `Core/Imaging/` | `RoImage`, `RoColorKey`, `RoTextureAnalysis`, `RoTextureUsage` | Core |
 | `Core/Materials/` | `RoSurface`, `RoMaterialKey` | Core |
 | `Core/Output/` | `RoOutputRoots`, `RoOutputPaths` | Core |
 | `Core/Results/` | `RoStatus`, `RoResult<T>`, `RoIssueCode`, `RoIssue`, `RoReport` | Core |
@@ -77,7 +78,7 @@ Root: `Uninarok-client/Assets/Editor/RoImport/`. The folder sits under `Editor/`
 | `Uninarok-client/Assets/Tests/EditMode/RoImport/` | tests, `Fixtures~/` (a folder Unity ignores) | `Uninarok.RoImport.Tests` (Editor platform; references Core, Editor, test framework) |
 
 - `Uninarok.RoImport.Core` references `UnityEngine` for math (`Vector3`, `Matrix4x4`) but never `UnityEditor`. A test (§6) checks the compiled assembly's references so the rule cannot rot.
-- `Uninarok.RoImport.Editor` references the format library through `overrideReferences: true` and `precompiledReferences: ["GRF.dll", "Encryption.dll", "ErrorManager.dll", "Utilities.dll"]`. The foundation does not call it.
+- `Core` and `Editor` reference the format library through `overrideReferences: true` and `precompiledReferences: ["GRF.dll", "Encryption.dll", "ErrorManager.dll", "Utilities.dll"]` (the DLLs are editor-only, so both assemblies stay editor-only). Only types under `Core/Formats/` may use GRF types; the rest of the code sees our own types (`RoImage`, and the data types of the format plans).
 - Namespaces follow folders: `Uninarok.RoImport.Core.*`, `Uninarok.RoImport.Editor.*`.
 - No `AssetPostprocessor`, `ScriptedImporter` or `[InitializeOnLoad]` conversion hook exists in either assembly (FR-3, tested).
 - `Core` and `Editor` declare `InternalsVisibleTo("Uninarok.RoImport.Tests")`.
@@ -185,13 +186,13 @@ Satisfies FR-8.
 ```csharp
 public sealed class RoImage { public int Width, Height; public byte[] Rgba32; /* top row first */ public bool SourceHadAlpha; }
 
-public static class RoImageDecoder
+public static class RoImageReader                                 // Core/Formats/: adapter over GRF
 {
     public static bool IsSupportedExtension(string extension);    // ".bmp", ".png", ".tga"
-    public static bool TryDecode(RoPath path, byte[] bytes, IRoPngCodec png,
-                                 out RoImage image, out string reason);
+    public static bool TryRead(RoPath path, byte[] bytes, IRoPngCodec png,
+                               out RoImage image, out string reason);
 }
-public interface IRoPngCodec { bool TryDecode(byte[] png, out RoImage image); byte[] Encode(RoImage image); }
+public interface IRoPngCodec { bool TryDecode(byte[] png, out RoImage image); byte[] Encode(RoImage image); }   // Unity ImageConversion: encodes every output; decodes PNG only if GRF cannot (§4.4)
 
 public enum RoTextureAlpha { None, Keyed, Partial }
 public static class RoColorKey
@@ -204,7 +205,9 @@ public enum RoTextureUsage { World, Ui }
 public static class RoTextureUsageRules { public static RoTextureUsage For(RoPath path); }
 ```
 
-- Decoders: `RoBmpDecoder` (1, 4, 8-bit paletted, 24 and 32-bit, bottom-up and top-down) and `RoTgaDecoder` (24 and 32-bit, uncompressed and RLE, either origin) are written in `Core` with plain `byte[]`, so they are tested without the editor. PNG goes through `IRoPngCodec`, implemented in the editor layer by `ImageConversion` (`RoPngCodec`). The extension picks the decoder; the magic bytes are checked and a mismatch is a `CorruptFile` issue.
+- **Reading uses GRF, not our own decoders.** `RoImageReader` calls the GRF image classes (`GrfImage` and its BMP and TGA support) to decode the bytes, then converts the result to our `RoImage` (RGBA, top row first, `SourceHadAlpha` set from the file's pixel format). Paletted BMPs keep their palette index information only as far as GRF exposes it; the key color is applied on RGBA (below). The extension picks the format; a read that GRF rejects (bad header, truncated data) is a `CorruptFile` issue with GRF's reason, never an exception to the caller.
+- **PNG:** read with GRF if its image classes decode PNG in Unity's runtime; otherwise through `IRoPngCodec` (Unity's `ImageConversion`, which is Unity's own decoder, not code of ours). Which of the two applies is recorded in this section by task T0.4 (§7). **Encoding** the output PNG always uses `ImageConversion` (`RoPngCodec`, editor layer).
+- The exact GRF members used (loading from bytes, width and height, pixel format, conversion to RGBA) are written into this section by T0.4 from the shipped `GRF.dll`; until then only the adapter's contract above is fixed.
 - An extension outside the three gives one `UnsupportedTextureFormat` issue naming the file and its referrer, and the placeholder (§4.12) is returned (FR-8, FR-10).
 - **Color key.** For an image with no real alpha (`SourceHadAlpha == false`: BMP, 24-bit TGA, PNG without alpha), any pixel within `Tolerance` of the key color per channel gets alpha 0. The result is `Keyed` if any pixel was keyed, otherwise `None`. An image with real alpha is not keyed; it is `Partial` if it has alpha values between 1 and 254, else `None`.
 - **Bleed.** After keying, the RGB of every alpha-0 pixel is replaced by the average of its nearest non-transparent neighbors (repeated passes until filled, capped at the image size). Without it, bilinear filtering and mip chains blend the key color into the edge, which is the pink fringe FR-8 forbids.
@@ -231,6 +234,7 @@ public sealed class RoOutputRoots
 {
     public string Art  = "Assets/Art/Imported";
     public string Data = "Assets/Data";
+    public string Scenes = "Assets/Scenes/Maps";          // generated map scenes and the hand-made additive scenes (§4.13)
 }
 public static class RoOutputPaths
 {
@@ -239,6 +243,8 @@ public static class RoOutputPaths
     public static string Material(RoOutputRoots r, RoMaterialKey key);                      // Art/_materials/<texture path>__<mode>.mat
     public static string Placeholder(RoOutputRoots r, string name);                          // Art/_placeholders/<name>
     public static string Data(RoOutputRoots r, string kind, string name, string extension);  // Data/<kind>/<name>.asset
+    public static string Scene(RoOutputRoots r, string mapName);                              // Scenes/<name>.unity (generated scene, ledger-owned)
+    public static string AdditiveScene(RoOutputRoots r, string mapName);                      // Scenes/<name>.additive.unity (hand-made, never written)
 }
 ```
 
@@ -280,6 +286,7 @@ public static class RoMaterialFactory
 
   Two-sided sets `_Cull` = 0 (URP Lit flips the back-face normal for lighting when culling is off), otherwise `_Cull` = 2.
 - A key whose texture is missing is built with the placeholder texture (§4.12) and the issue is reported once.
+- Every material is recorded in the ledger under the category `material`: the entry's source is the texture's Ragnarok path plus the key suffix, its hash is the texture's source hash, and its output is the `.mat` path. Several models and maps may ask for one material without owning it (added while writing PLAN-0003).
 - Materials are written through `RoAssetWriter.UpsertObject`, so an existing material keeps its GUID and references. A user's manual edit of a generated material is overwritten when its inputs change (spec §6: only FR-12 layers survive).
 
 ### 4.7 Writing assets: `RoAssetWriter`
@@ -425,7 +432,7 @@ Satisfies FR-12.
 
 - The foundation guarantees two things; the format plans use them:
   1. Converters write, overwrite or delete **only** paths owned by a ledger entry (§4.8), never other files, even under the output roots.
-  2. A reserved area outside both output roots, `Assets/Scenes/Maps/`, is never written by the importer. PLAN-0006 puts each map's additive scene there (`<map>.additive.unity`) and loads it together with the generated scene.
+  2. The scenes folder `Assets/Scenes/Maps/` (the third root, `RoOutputRoots.Scenes`) holds two kinds of file side by side, and the importer treats them differently: the **generated** map scene `<map>.unity` is owned by a ledger entry and is rewritten by conversion (owner decision on SPEC-0006 OQ-2); the **additive** scene `<map>.additive.unity` is hand-made and is never created, written, renamed or deleted by the importer, even though it sits in the same folder. The importer never writes any other file in this folder (rule 1). PLAN-0006 loads the two together.
 - Re-converting a map rewrites the generated scene and map data only. The additive scene is untouched, so its custom objects remain. The reference check is by name and path of the custom object, so a regenerated generated scene must not rename or move the objects the additive scene refers to; PLAN-0006 defines which references are stable.
 
 ### 4.14 Editor-only and build exclusion
@@ -441,7 +448,7 @@ Satisfies FR-14, FR-15, FR-3.
 
 Satisfies FR-5, FR-10.
 
-- Everything runs on the main thread, synchronously, inside one editor call. No `Task`, no thread pool. Pure `Core` code (decoders, keying) allocates managed arrays only and could be parallelized later without changing a contract (D12).
+- Everything runs on the main thread, synchronously, inside one editor call. No `Task`, no thread pool. Pure `Core` code (keying, bleeding, path and space rules; GRF adapters) allocates managed arrays only and could be parallelized later without changing a contract (D12).
 - Domain reload: `LockReloadAssemblies` is held for the duration of a batch. If the editor is closed or crashes mid-batch the ledger holds every finished chunk; the next run skips them.
 - `RoFolderSource` builds its index lazily on first use and is owned by the context of one run; the `RoHashCache` file is loaded and saved around each run.
 - Memory: decoded images (`byte[]`) are released after each texture; the chunked `UnloadUnusedAssetsImmediate` of §4.10 frees Unity objects. A 4096 x 4096 RGBA source needs about 64 MB transiently; Ragnarok textures are far smaller.
@@ -455,7 +462,7 @@ Satisfies FR-13 and every acceptance row of spec §4. Tests are EditMode NUnit t
 | `RoPathTests` | FR-1 | `data\texture\a.bmp`, `DATA/Texture/a.bmp` and `texture/a.bmp` are equal; Korean folder name composed and decomposed are equal; rejects `..`, drive letters, empty |
 | `RoFolderSourceTests` | FR-1, FR-15 | a temp folder with mixed-case and Korean-named files: lookups by either form return the same disk file; duplicate-by-case gives one `SourceDuplicate` issue; the default source root name ends with `~` and `AssetDatabase.AssetPathToGUID` of a file inside it is empty |
 | `RoSpaceTests` | FR-7 | `Matrix` of a rotation has determinant +1 and round-trips; `Point` of a 10-unit RO cube edge is 1 unit; `Direction` is not scaled; `ReverseWinding` swaps each triple once; a known RO point and rotation map to the expected Unity values (table in the test) |
-| `RoBmpDecoderTests`, `RoTgaDecoderTests`, `RoPngCodecTests` | FR-8 | synthesized 8-bit, 24-bit and 32-bit images decode to the expected pixels, bottom-up and top-down, RLE; corrupt header gives `CorruptFile`, never an exception |
+| `RoImageReaderTests`, `RoPngCodecTests` | FR-8 | the fixture BMP (8-bit paletted and 24-bit), TGA (32-bit with alpha) and PNG decode through GRF (or through `IRoPngCodec` for PNG if T0.4 says so) to the expected pixels at known coordinates; the corrupt fixture returns false with a reason and never throws; an encode then decode round trip of a small image is lossless |
 | `RoColorKeyTests` | FR-8 | key-color and near-key pixels (within tolerance) get alpha 0; others do not; real-alpha images are not keyed; after bleed no alpha-0 pixel's RGB is within tolerance of the key; bilinear sample at a keyed edge of a green-on-magenta image has no magenta hue |
 | `RoTextureConverterTests` | FR-8, FR-10 | a BMP, a PNG and a TGA each convert to a PNG with the right import settings per usage; `.dds` gives one `UnsupportedTextureFormat` warning and returns the placeholder; a missing texture gives one warning naming referrer and file |
 | `RoMaterialTests` | FR-9 | 1000 requests with one key give one material asset; keys differing in surface or two-sidedness give different materials; property table of §4.6 per mode (`_Cull`, `_AlphaClip`, keywords, queue) |
@@ -463,7 +470,7 @@ Satisfies FR-13 and every acceptance row of spec §4. Tests are EditMode NUnit t
 | `RoDeterminismTests` | FR-16, FR-4 | convert, snapshot the SHA-256 of every file under the output root except `.meta`, delete the root, convert again, snapshot again: identical; a second run in place also leaves every `.meta` byte-identical; two sources with the same file name in different Ragnarok folders give two outputs and no collision |
 | `RoLedgerTests` | FR-5, FR-12 | ledger file is sorted and byte-identical after a reload and save; a changed source hash or rules version makes the entry stale; the converter never deletes or rewrites a file that is not owned by a ledger entry (a hand-made asset in the root survives; the additive area is untouched) |
 | `RoBatchTests` | FR-10, FR-11 | a batch with a corrupt file and a missing file finishes the rest, lists each failure once, and produces no `LogError` (`LogAssert.NoUnexpectedReceived`); cancel saves the ledger and a rerun resumes |
-| `RoArchitectureTests` | FR-3, FR-13, FR-14 | no type in the importer assemblies derives from `AssetPostprocessor`, `ScriptedImporter` or has `InitializeOnLoad`; the `Core` assembly's referenced assemblies do not include `UnityEditor.*`; the asmdefs of the importer and tests have `includePlatforms == ["Editor"]` |
+| `RoArchitectureTests` | FR-3, FR-13, FR-14 | no type in the importer assemblies derives from `AssetPostprocessor`, `ScriptedImporter` or has `InitializeOnLoad`; the `Core` assembly's referenced assemblies do not include `UnityEditor.*`; the asmdefs of the importer and tests have `includePlatforms == ["Editor"]`; no C# file of the importer assemblies outside `Core/Formats/` uses `BinaryReader`, `BitConverter`, `MemoryStream`-based parsing or references a GRF type (text search over the source files), so no file format is parsed outside GRF and its adapters |
 
 **Manual checks** (recorded in the task's evidence, with screenshots where visual):
 
@@ -478,6 +485,7 @@ Satisfies FR-13 and every acceptance row of spec §4. Tests are EditMode NUnit t
 - **Old data location.** `Assets/Res/` (the earlier copy of the data used by the old importers) is visible to Unity and imports every file in it. After the reference data is in the new folder it should be moved out the same way or deleted. This plan does not delete it; the first task lists it for the owner's decision.
 - **Old importers.** `BmpImporter.cs` (an `AssetPostprocessor` on all `.bmp` files) is removed by the texture-converter task, because it conflicts with FR-3 and FR-8. `AssetPostProcessor.cs` is reviewed in the same task and removed if it serves only the old pipeline. `RsmImpoter.cs`, `RswImporter.cs`, `GNDImporter.cs` and `GatImporter.cs` are `ScriptedImporter`s on source extensions; once the source folder is hidden they no longer fire and are inert. Each is deleted by the task of the plan that replaces it (0003, 0004, 0005, 0006), not here. `RsmImpoter.bkp.cs` and `UtilExtensions.cs` are handled by the same tasks.
 - **Git LFS.** `.gitattributes` already tracks `*.png`, `*.spr`, `*.act`, `*.rsw`, `*.gat`, `*.grf`, `*.jpg` and audio. A task adds `Uninarok-client/Assets/Art/Imported/**/*.asset filter=lfs diff=lfs merge=lfs -text` for generated meshes. Materials and the ledger JSON stay as text for readable diffs. Whether the source data set itself is committed is outside this plan; the `~` folder works either way.
+- **GRF verification.** T0.4 proves the GRF image classes load the fixture images inside the Unity editor and records the members used (§4.4).
 - **Test framework.** `com.unity.test-framework` is added to `Packages/manifest.json` (shared with PLAN-0001).
 - **Map data class.** The existing runtime `Assets/Scripts/MapData.cs` stays as it is; PLAN-0005 decides how it becomes the map data asset.
 
@@ -491,7 +499,7 @@ Satisfies FR-13 and every acceptance row of spec §4. Tests are EditMode NUnit t
 | D4 | GUIDs are assigned by Unity at first import; outputs are updated in place, and committed outputs are pulled, not regenerated elsewhere | Choosing GUIDs ourselves by writing `.meta` files (owner decision: let Unity create them and refresh; more fragile across Unity versions) |
 | D5 | Committed JSON ledger per category plus a local, uncommitted hash cache | Ledger in `AssetImporter.userData` (meshes and materials have no importer); only file timestamps (not stable across git checkouts); rehashing the data set on every run |
 | D6 | Coordinate change by conjugating full matrices with `diag(1,-1,1)`; winding reversed once | Per-axis Euler sign tweaks (the likely cause of the wrong rotations in the reference models); mirroring through negative scale (breaks lighting and physics) |
-| D7 | All textures output as PNG (color key and bleed baked in), BMP and TGA decoded by our own small decoders, PNG decoded by Unity | Keep the original BMP/TGA as assets (no real alpha, magenta fringe at mip levels); use image classes from `GRF.dll` (couples the foundation to a library not verified to run in Unity's profile for about 200 lines of work); `UnityWebRequestTexture` (no BMP or TGA support) |
+| D7 | All textures output as PNG (color key and bleed baked in). **Files are read through the GRF library** (image classes for BMP and TGA, and for PNG if it works in Unity; otherwise Unity's `ImageConversion`); output PNG is encoded by Unity | Hand-written BMP/TGA decoders (owner decision: use the GRF library to read the data; duplicated work and a rare-variant risk); keep the original BMP/TGA as assets (no real alpha, magenta fringe at mip levels); `UnityWebRequestTexture` (no BMP or TGA support) |
 | D8 | Texture usage (`World`/`Ui`) decided by the source path | A usage argument per call (one file could be converted twice with different settings and collide) |
 | D9 | Output paths are the canonical lowercase Ragnarok path | Keep original letter case (two machines or file systems disagree; Ragnarok paths are case-insensitive) |
 | D10 | Material properties set explicitly per mode in one method | `BaseShaderGUI` helper methods (internal API, moves between URP versions) |
@@ -514,7 +522,7 @@ Items marked for the owner's approval: D2 (the folder rename), the art output ro
 | URP property names change in a later URP version | One method sets them (§4.6); a test compares the table per mode, so an upgrade fails loudly |
 | `Assets/Res` and the old importers keep importing or confusing the project | Listed in §7; the first task asks the owner what to do with `Assets/Res` |
 | The owner relies on the visible `GRF Resources` folder in the Project window | Window shows the source path and offers Browse; the folder is one rename to undo, and the setting can point anywhere |
-| Hand-written BMP/TGA decoders miss a rare variant in the data | The whole-game texture batch lists each unreadable file once; unsupported variants are added with a test, not guessed |
+| GRF image classes behave differently in Unity's Mono runtime than in GRFEditor (`Utilities.dll` references `System.Drawing`), or do not decode PNG or a TGA variant | T0.4 loads every fixture through GRF in the editor before any adapter is written; PNG falls back to Unity's decoder; a variant GRF cannot read is listed once by the batch and reported to the GRF library's maintainer or worked around in the adapter, never by a private decoder |
 
 ## 10. Traceability
 

@@ -6,9 +6,9 @@
 | **Hercules packet name** | `CZ_REQUEST_TIME2` (`CZ_REQUEST_TIME` in older packet versions) |
 | **Packet ID** | `0x0360` |
 | **Declared size** | 6 bytes, including the 2-byte packet ID |
-| **Status** | documented |
+| **Status** | verified |
 | **Frequency** | warm |
-| **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no; handler `clif->pTickSend` (offset 2) registered at 0x0360 in `packets_shuffle_main.h` |
+| **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no; handler `clif->pTickSend` (offset 2) registered at 0x0360 in `packets_shuffle_main.h` Real server 2026-11-17 (Hercules built for 20220406): accepted by the server during a full login to map and 62 s in game (`Captures/`). |
 | **Allocates** | no |
 
 **Packet ID note:** `0x0360` (20220406); legacy `0x007E`

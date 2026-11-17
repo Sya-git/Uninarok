@@ -1,0 +1,8 @@
+# Backlog
+
+Unrelated issues noticed while working. One line each (file, symptom). Never fixed inline in another change.
+
+- `Uninarok-client/Assets/Scenes/Bootstrap.unity`: references `DevAutoLogin`, whose type is compiled out of release players (SPEC-0001 FR-15), so a release player carries a missing-script component. Strip it from scenes at build time (`IProcessSceneWithReport` or a build preprocessor) when the build is not a development build.
+- `Uninarok-client/Assets/Scripts/Networking/Runtime/Dev/NetworkProbe.cs`: no mobile build target exists in the project, so the socket-thread cleanup (close wakes blocked threads, plan D17) is verified only on the Windows editor and player; run the `threads` probe on each mobile target when one is added.
+- `docs/specs/0001-networking-core/Packets/CATALOG.md` and the not-yet-verified packet docs: two packet IDs/layouts turned out to depend on `PACKETVER` (`CHARACTER_CREATION_SUCCESS` is `0x0B6F` from `PACKETVER_MAIN_NUM 20201007`, and `CharInfo` is 175 bytes); check each newly implemented packet against `src/*/packets*_struct.h` and a real capture, not only the length table. `HC_ACK_CHANGE_CHARACTER_SLOT` (`0x0b70`) and `HC_UPDATE_CHARINFO` (`0x0b71`) are version-dependent and not implemented yet.
+- `docs/specs/0001-networking-core/fixtures/hercules-packetlen-20220406.json`: the table is extracted from the Hercules length table and was right for every packet seen in the real captures (32 map IDs), but it is a client-era table; keep verifying server-to-client lengths against real captures as packets are added.

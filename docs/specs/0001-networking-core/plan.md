@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [spec.md](spec.md) (SPEC-0001) |
-| **Status** | Draft |
+| **Status** | Implemented |
 | **Audience** | Architects, senior developers, AI agents |
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. Packet IDs, sizes and field layouts come from the packets reference ([`Packets/`](Packets/Packet-Implementation.md)), which is normative for its topic.
@@ -15,7 +15,7 @@
 - Hercules framing: little-endian `ushort` packet ID, then either a fixed total length or (variable) a `ushort` total length that includes the 4-byte header.
 - Length contract: `-1` variable, `-2` unknown, `>= 2` fixed total length including the header. `0`, `1` and values below `-1` never appear in a table (the table generator rejects them).
 - The payload handed to an incoming packet constructor **excludes** the ID and length fields.
-- Dependencies: Unity Test Framework (NUnit) and `com.unity.collections` (`FixedString*`). Both are first-party Unity packages already resolved in the project; they become direct dependencies in `Packages/manifest.json`. `System.Buffers.Binary` from the BCL. No third-party libraries.
+- Dependencies: Unity Test Framework (NUnit) and `com.unity.collections` (`FixedString*`). Both are first-party Unity packages already resolved in the project; they become direct dependencies in `Packages/manifest.json`. `System.Buffers.Binary` from the BCL. No third-party libraries. Build-time tooling outside Unity (not shipped): the generator project uses `Microsoft.CodeAnalysis.CSharp` 4.5.0 (the editor compiles with Roslyn 5.6, which binds a 4.x reference), and its test project (`Tools/Uninarok.Networking.Generator.Tests`) uses NUnit, `NUnit3TestAdapter` and `Microsoft.NET.Test.Sdk` (D18).
 - **GC policy (FR-6):** the main thread allocates nothing per packet in steady state, in either direction. Unity's GC is global and stop-the-world (incremental mode softens it), so socket-thread allocations also matter. See §4.10.
 
 ## 2. Architecture
@@ -64,15 +64,16 @@ Root: `Uninarok-client/Assets/Scripts/Networking/`.
 | `Core/Protocol/` | `InPacketAttribute`, `OutPacketAttribute`, `HerculesPacketTable.g.cs` (generated, §4.8) | Core |
 | `Runtime/Text/` | `WireText` (`FixedString*` read/write, Windows-1252 table) | `Uninarok.Networking` (references Core, `Unity.Collections`) |
 | `Runtime/Data/` | `AccountSex`, `CharInfo`, `UninarokPosition`, `UninarokDirection`, `UninarokMoveData` (one per `docs/data/*.md`; `UninarokDirection` is described in `UninarokPosition.md`) | `Uninarok.Networking` |
-| `Runtime/Packets/` | `PacketIds`, `In/{Login,Character,Map}/*.cs`, `Out/{Login,Character,Map}/*.cs`, one struct per file | `Uninarok.Networking` |
+| `Runtime/Packets/` | `PacketIds`, `ProtocolInfo` (`PacketVersion`, default client type), `In/{Login,Character,Map}/*.cs`, `Out/{Login,Character,Map}/*.cs`, one struct per file | `Uninarok.Networking` |
 | `Runtime/Packets/Generator/` | `Uninarok.Networking.Generator.dll` (Roslyn source generator, asset label `RoslynAnalyzer`, excluded from all platforms) | applies to `Uninarok.Networking` and assemblies that reference it |
-| `Runtime/Client/` | `INetworkClient`, `NetworkClient`, `ConnectionStatus`, `Subscriptions`, `NetLog`, `IClock`, `UnityClock`, `NetworkSettings` | `Uninarok.Networking` |
+| `Runtime/Client/` | `INetworkClient`, `NetworkClient`, `ConnectionStatus`, `Subscriptions`, `NetLog`, `NetProfiling`, `CaptureTee`, `IClock`, `UnityClock`, `NetworkSettings` | `Uninarok.Networking` |
 | `Runtime/Flow/` | `NetworkFlow`, `FlowState`, `FailureCode`, `FlowFailure`, `SessionContext`, `ServerEndpoint`, `CharacterSlots`, `MapEndpoint`, `MapEntry`, `CharacterDraft` | `Uninarok.Networking` |
 | `Runtime/Managers/` | `IServerManager`, `LoginManager`, `CharacterManager`, `ZoneManager`, `LoginRefusal`, `PinState` | `Uninarok.Networking` |
-| `Runtime/Dev/` | `DevAutoLogin` (whole file inside `#if UNITY_EDITOR \|\| DEVELOPMENT_BUILD`) | `Uninarok.Networking` |
+| `Runtime/Dev/` | `DevAutoLogin`, `DevAutoLoginDriver`, `DevCredentials`, `NetworkProbe` (player-side measurement: `-uninarok-probe baseline\|network\|threads`); every file entirely inside `#if UNITY_EDITOR \|\| DEVELOPMENT_BUILD` | `Uninarok.Networking` |
 | `Editor/` | `HerculesPacketTableGenerator` (menu item, §4.8) | `Uninarok.Networking.Editor` (Editor only) |
 | `Uninarok-client/Assets/Tests/EditMode/Networking/` | tests, `Fixtures/`, `Captures/*.bin` + `*.expected.txt` | `Uninarok.Networking.Tests` (EditMode; references Core and `Uninarok.Networking`) |
 | `Tools/Uninarok.Networking.Generator/` (repo root) | Roslyn generator source project (`netstandard2.0`, `Microsoft.CodeAnalysis.CSharp` version supported by the Unity editor in use); build output copied to `Runtime/Packets/Generator/` | outside Unity |
+| `Tools/Uninarok.Networking.Generator.Tests/` (repo root) | NUnit project (`net10.0`) that compiles `Core` from source and runs the generator in memory (`CSharpGeneratorDriver`) over test compilations; run with `dotnet test` | outside Unity |
 
 `Uninarok.Networking` declares `InternalsVisibleTo("Uninarok.Networking.Tests")`. Namespaces follow folders: `Uninarok.Networking.Core.*`, `Uninarok.Networking.Text`, `Uninarok.Networking.Data`, `Uninarok.Networking.Packets.*`, `Uninarok.Networking.Client`, `Uninarok.Networking.Flow`, `Uninarok.Networking.Managers`.
 
@@ -94,6 +95,7 @@ namespace Uninarok.Networking.Core.Wire
         public void ReadBytes(Span<byte> destination);
         public ReadOnlySpan<byte> ReadSpan(int count);   // view, valid only while the payload is
         public void Skip(int count);
+        public void EnsureConsumed();                    // throws PacketFormatException if bytes are left: incoming packet constructors call it last
     }
     public ref struct PacketWriter
     {
@@ -311,7 +313,7 @@ private void WriteLoop()                                      // dedicated threa
 - **Idle flag:** the signal is set only on the idle → busy transition, under the buffer's lock: no lost wake-up, no redundant signals.
 - **Closure (D6):** `_closure` is set once with `Interlocked.CompareExchange(ref _closure, info, null)`. Every close path (0-byte read, I/O error, sink overflow, backlog overflow, `Close`, `Dispose`) goes through `Close`, which also calls `_outSignal.Set()` to wake the writer.
 - **Shutdown-quiet (FR-7):** exceptions raised while `_closure != null` are swallowed by the filters above; any other exception becomes `Close(Error, message)`.
-- **Waking blocked threads:** `Close` calls `socket.Shutdown(SocketShutdown.Both)` (inside try/catch) before closing the socket, because closing alone does not reliably wake a blocked `Receive` on every platform. `_outSignal` and the socket are disposed by the last thread to exit (`Interlocked.Decrement` on a live-thread counter), never by `Close`/`Dispose`, so a waiting thread never touches a disposed handle.
+- **Waking blocked threads (D17):** `Close` calls `socket.Shutdown(SocketShutdown.Both)` and then closes the socket (`TcpClient.Dispose`), both inside try/catch. Measured on Unity 6000.7.0b7 (Mono, Windows editor): `Shutdown` alone does **not** wake a thread blocked in `Receive`; closing the handle does, and the reader sees a `SocketException`. That exception is swallowed by the shutdown-quiet filter because `_closure` is already set before the socket is closed. A thread that touches the closed socket afterwards gets `ObjectDisposedException` or `SocketException`, handled by the same filter. Only `_outSignal` (the `AutoResetEvent`) is still disposed by the last thread to exit (`Interlocked.Decrement` on a live-thread counter), so the writer never waits on a disposed handle.
 - **Allocation:** `Send<T>` is generic over a struct, so there is no boxing. `AutoResetEvent.Set()`, `Socket.Send` and `Socket.Receive` do not allocate. A non-`readonly` struct passed by `in` may be copied defensively on the stack (not GC).
 - **Trace capture (optional, `UNINAROK_NET_TRACE`):** the `NetworkClient` wraps the sink with a tee that appends received bytes to `Application.persistentDataPath/captures/{role}-{yyyyMMdd-HHmmss}.bin` for replay fixtures (Core stays engine-free; the tee lives in Runtime).
 
@@ -447,7 +449,7 @@ public sealed class Subscriptions
 }
 ```
 
-Managers create the handler delegates once in their constructor and keep them in fields, so `Enter`/`Exit` cycles allocate nothing after the first.
+Managers create the handler delegates once in their constructor and keep them in fields. `Clear` unsubscribes but keeps its entries, so the next `Add` of the same handler reuses the entry: `Subscriptions` itself allocates nothing after the first `Enter`/`Exit` cycle (the dispatcher's copy-on-write handler arrays still allocate, at setup time).
 
 **`NetLog` (FR-16).** `[Conditional("UNINAROK_NET_TRACE")] Trace(...)` for per-packet tracing, so the call and its arguments disappear without the define. `ReportClosure(role, info)`: `LogWarning` for `RemoteClosed`, `LogError` for `Error`, `ProtocolFault` and `ConnectFailed`, nothing for `LocalDispose`. `HandlerError` → `Debug.LogException`. `DecodeError(id, e)` → `LogError` with the ID. State changes log at `Log`. Nothing informational uses `LogError`.
 
@@ -488,7 +490,7 @@ namespace Uninarok.Networking.Flow
         // character server
         public readonly List<CharInfo> Characters = new();
         public CharacterSlots Slots;                 // from CHARACTER_SLOTS_INFO
-        public uint CharacterId; public byte SelectedSlot;
+        public int CharacterId; public byte SelectedSlot;   // CharacterId is int, like CharInfo.CharId and MAP_ENTER_REQUEST_ACCEPTED.CharId
         // map server
         public MapEndpoint Map;                      // where to connect
         public MapEntry Entry;                       // what AUTHENTICATION_ACCEPTED reported
@@ -527,12 +529,16 @@ namespace Uninarok.Networking.Managers
         public void SetCredentials(string user, string password);   // held until OnConnected sends REQUEST_LOGIN, then cleared
     }
 
-    public enum PinState { Unknown = -1, /* server values per PINCODE_LOGINSTATE doc */ }
+    // Values from Hercules pincode_login_response: Ok 0, Ask 1, NotSet 2, Expired 3, RestrictPassword 5, Unused 7, Wrong 8.
+    public enum PinState { Unknown = -1, Ok = 0, Ask = 1, NotSet = 2, Expired = 3, RestrictPassword = 5, Unused = 7, Wrong = 8 }
+    // LoginRefusal { Source (Refusal | Refuse3 | ServerNotice), ErrorCode (int), BlockDate (FixedString64Bytes) }
 
     public sealed class CharacterManager : IServerManager
     {
         public CharacterManager(INetworkClient client, SessionContext context, NetworkSettings settings);
         public PinState PinState { get; }                     // Unknown on Enter, never a default zero
+        public int LastCreationFailure { get; }               // reason code of the last CHARACTER_CREATION_FAILED, -1 when none (FR-13)
+        public int LastMapEnterRefusal { get; }               // reason code of the last MAP_ENTER_REQUEST_REFUSED, -1 when none
         public event Action<PinState> PinStateChanged;
         public event Action CharactersReceived;               // Context.Characters filled
         public event Action CreationSucceeded;                // character added to Context.Characters
@@ -542,7 +548,8 @@ namespace Uninarok.Networking.Managers
         public void RequestCreate(in CharacterDraft draft);   // CREATE_CHARACTER
         public void RequestSelect(byte slot);                 // SELECT_CHARACTER
         // OnConnected: client.SkipNextBytes(4) BEFORE sending CHARACTER_SERVER_REQUEST_ENTRY (FR-3)
-        // Tick: CHARACTER_SERVER_PING (AccountId) every CharacterKeepaliveSeconds while entered and connected
+        // Tick: CHARACTER_SERVER_PING (AccountId) every CharacterKeepaliveSeconds from OnConnected until Exit.
+        //   The first Tick after OnConnected schedules the first ping; a long gap sends one ping, not a burst.
     }
 
     public sealed class ZoneManager : IServerManager
@@ -655,7 +662,7 @@ Satisfies FR-6.
 
 **Measuring:**
 1. EditMode: `Is.Not.AllocatingGCMemory()` over main-thread operations: `PacketFramer.Process` with a stub router, `TcpConnection.Send<T>` for a fixed packet, `PacketDispatcher.Dispatch<T>` with subscribers, a manager keepalive `Tick`. This constraint observes the main thread only.
-2. Development build, Unity Profiler: GC Alloc per frame on the main thread in-game idle and during a packet burst. Socket threads register with `Profiler.BeginThreadProfiling("Uninarok.Net", "Read"/"Write")` (from a Runtime hook, since Core is engine-free) so their allocations show in the CPU module.
+2. Development build, Unity Profiler: GC Alloc per frame on the main thread in-game idle and during a packet burst. Socket threads register with `Profiler.BeginThreadProfiling("Uninarok.Net", "{role}.Read"/"{role}.Write")` so their allocations show in the CPU module. Core is engine-free, so `TcpConnection` exposes two static hooks (`SocketThreadStarted(name)`, `SocketThreadStopping()`, called on the socket threads, exceptions swallowed) and `Runtime/Client/NetProfiling` installs the Profiler calls into them (editor and development builds only; `NetworkClient` installs it before the first connection).
 
 ## 5. Threading and lifecycle
 
@@ -698,6 +705,7 @@ Satisfies FR-17, FR-20 and verifies FR-1 to FR-19.
 | `FlowTransitionTests` (`FakeNetworkClient`, `FakeClock`) | FR-10, FR-11, FR-13, FR-20: table-driven valid and invalid transitions; every deadline; refusal sends exactly one request; `Reset` |
 | `CaptureReplayTests` | FR-1: each `Captures/*.bin` replayed with chunk sizes {1,2,3,7,64,whole} against `*.expected.txt` (`skip=N` header, then `id,payloadLen,crc32` per packet) |
 | `PumpOwnershipTests` | FR-5, FR-20: source scan shows `Process` called only from `NetworkClient` and tests, and `TcpConnection` used only by `NetworkClient` and Core tests |
+| `GeneratorTests` (`Tools/Uninarok.Networking.Generator.Tests`, `dotnet test`) | FR-4, FR-18: router generated for `[InPacket]` structs and compiles; handled IDs sorted; unhandled ID returns `false`; malformed payload reaches `onDecodeError`; diagnostics for duplicate ID, size 0/1/below -1, missing `(ReadOnlySpan<byte>)` constructor, `[OutPacket]` without `IOutgoingPacket`, non-readonly struct; no generated file without packets |
 
 `FakeNetworkClient : INetworkClient` (test assembly) records sent packets as bytes (by calling `Serialize`), lets tests raise `Connected`/`Disconnected`, and delivers incoming packets through a real `PacketDispatcher`.
 
@@ -707,7 +715,9 @@ CLI (adjust path/version): `Unity -batchmode -projectPath Uninarok-client -runTe
 
 ## 7. Migration and compatibility
 
-Not applicable: there is no previous version to migrate from. Scenes that need networking add a `NetworkClient` (and, in development, `DevAutoLogin`).
+The pre-existing prototype networking is removed, not migrated (decided 2026-11-17): `Assets/Scripts/Network/` (packets, `TcpConnection`, serializer, dispatcher, bootstrap), its two consumers in `Assets/Scripts/Managers/` (`GameConnectionManager`, `LoginManager`), the `UninarokSourceGenerator` project and its DLL in `Assets/Plugins/`. Their `MonoBehaviour`s were stripped from the `Bootstrap` scene, which keeps an empty `Bootstrap` object for `NetworkClient` and, in development, `DevAutoLogin` (phase 7). Nothing else referenced them. Git history keeps the old code.
+
+Scenes that need networking add a `NetworkClient` (and, in development, `DevAutoLogin`).
 
 ### 7.1 Development auto-login — `DevAutoLogin`
 Satisfies FR-15.
@@ -744,13 +754,15 @@ Every serialized field (`serverIndex`, `characterSlot`, draft fields, `maxLoginA
 | D14 | `NetworkFlow` orchestrates; managers only speak their server's protocol and raise events | Managers handing off to each other directly (each would know the next server and the timeouts; the state machine would be spread over three classes) |
 | D15 | Windows-1252 through a hand-written table in `WireText` | `System.Text.Encoding.CodePages` (extra dependency, allocating APIs in places) |
 | D16 | Dev credentials read from `EditorPrefs` or a local file outside the repository | Serialized fields in the scene (credentials committed in plain text) |
+| D17 | `Close` shuts the socket down and then closes it, so a blocked `Receive` is woken on Mono; closure is recorded first so the resulting exception is silent | Shutdown only with the socket disposed by the last thread (measured: Mono's blocked `Receive` is not woken by `Shutdown`); `Poll` loop with timeout (also not woken by `Shutdown`, adds wake-ups) |
+| D18 | The generator has its own `dotnet test` project (NUnit, in-memory generator driver, Core compiled from source) | Testing the generator only through Unity compilation (cannot assert diagnostics or run on a clean compilation); a Unity-side test that loads Roslyn into the editor domain (fragile) |
 
 ## 9. Risks
 
 | Risk | Mitigation |
 |---|---|
 | Char server echo is not exactly 4 bytes for this PACKETVER | Verify with real captures (T9.1) before relying on `SkipNextBytes(4)` |
-| A blocked `Receive` is not woken by close on some platform (Linux, Android, iOS) | `Shutdown(Both)` before close; verify on each target platform (T9.7); fallback `SocketAsyncEventArgs` (D9) |
+| A blocked `Receive` is not woken by close on some platform (Linux, Android, iOS) | `Shutdown(Both)` then close the socket (D17: verified on the Windows editor, where `Shutdown` alone is not enough); verify on each target platform (T9.7); fallback `SocketAsyncEventArgs` (D9) |
 | Unity's supported Roslyn version limits the generator API | Generator targets `netstandard2.0` and the `Microsoft.CodeAnalysis` version documented for the editor in use (T4.3) |
 | Generic interface calls (`INetworkClient.Send<T>`) allocate on first use under Mono or IL2CPP | Covered by the allocation tests after warm-up; if not, managers take `NetworkClient`'s send through a sealed class instead of the interface |
 | Per-I/O allocation claims depend on Unity's runtime | Profiler measurement in T9.6; D9 is contained inside `TcpConnection` |

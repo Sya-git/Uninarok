@@ -53,7 +53,7 @@ public readonly struct UninarokMoveData
 }
 ```
 
-Same rules as `UninarokPosition`: no allocation, lives in Core, out-of-range values are masked on write.
+Same rules as `UninarokPosition`: no allocation, lives in `Runtime/Data` (assembly `Uninarok.Networking`, plan section 3), out-of-range values are masked on write.
 
 ## Test vectors
 

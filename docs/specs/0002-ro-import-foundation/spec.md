@@ -8,8 +8,6 @@
 | **Plan** | plan.md _(written after approval)_ |
 | **Tasks** | tasks.md _(written after plan approval)_ |
 
-> This file defines **what** and **why**. It contains no class names, file paths or library choices. Those live in `plan.md`.
-
 Part of the importer family: 0002 foundation (this), 0003 models (RSM), 0004 ground (GND), 0005 map data (GAT), 0006 map scene (RSW), 0007 sprites (SPR/ACT/PAL). Requirements shared by all of them live here.
 
 ## 1. Why
@@ -40,7 +38,7 @@ Priority: **M** = must, **S** = should.
 | FR-1 | M | Source files are read from a configured folder on disk. A file is found by its Ragnarok path regardless of letter case, slash direction or Korean folder names. | Requesting `data\texture\...` and `DATA/Texture/...` for the same file returns the same file. A texture in a Korean-named folder is found. |
 | FR-2 | M | Every conversion can be started from code by Ragnarok path without any UI, and returns the resulting asset(s) or a clear failure. The editor offers the same conversions from a menu, for one item and for a batch. | A test script converts a model and a map by path. The menu converts a selected list. |
 | FR-3 | M | Converting a file never happens implicitly (copying a file or opening the project triggers nothing). | Placing a source file in the project creates no generated asset. |
-| FR-4 | M | Outputs (meshes, materials, textures, prefabs, scenes, data) are standalone project assets, never read-only parts of another asset, stored in two areas (data assets in the project's data area, all visual assets in its imported-art area) in a layout that mirrors the Ragnarok path. | A material of an imported model can be edited and saved. Two files with the same name in different Ragnarok folders do not collide. |
+| FR-4 | M | Outputs (meshes, materials, textures, prefabs, scenes, data) are standalone project assets, never read-only parts of another asset, stored in three areas (data assets in the project's data area, all visual assets in its imported-art area, and map scenes in the project's map scenes folder, where hand-made additive scenes also live) in a layout that mirrors the Ragnarok path. | A material of an imported model can be edited and saved. Two files with the same name in different Ragnarok folders do not collide. |
 | FR-5 | M | Converting the same input twice is idempotent: no duplicates, and objects that reference an output (scenes, prefabs, data) keep their references. Unchanged inputs are skipped. | Converting a map twice leaves the same asset set, identities and references unchanged. The second run reports "skipped". |
 | FR-6 | M | Dependencies are converted on demand. Asking for a map converts its models, textures and materials that are missing. | Converting a map in an empty output folder yields a complete, working map. |
 | FR-7 | M | One shared coordinate and unit convention is used everywhere: Ragnarok content appears with correct handedness (not mirrored, not inside-out), correct up direction, and at a fixed scale where one ground cube is exactly one Unity unit wide. | A reference model and a reference map match the reference viewer side by side, including text on signs reading correctly. A ground cube measures 1 unit. |

@@ -1,0 +1,112 @@
+using System;
+using Uninarok.Networking.Client;
+using Uninarok.Networking.Core.Dispatch;
+using Uninarok.Networking.Flow;
+using Uninarok.Networking.Packets.In.Map;
+using Uninarok.Networking.Packets.Out.Map;
+
+namespace Uninarok.Networking.Managers
+{
+    /// <summary>
+    /// Protocol logic of the map server (SPEC-0001 FR-6, FR-9, FR-14, FR-20; plan 4.9). Requests entry, stores what the
+    /// server reports, announces that the map finished loading, and sends the keepalive once the session is in game.
+    /// It never changes flow state and never touches a socket.
+    /// </summary>
+    public sealed class ZoneManager : IServerManager
+    {
+        private readonly INetworkClient _client;
+        private readonly SessionContext _context;
+        private readonly IClock _clock;
+        private readonly NetworkSettings _settings;
+        private readonly Subscriptions _subscriptions;
+
+        private readonly PacketHandler<AUTHENTICATION_ACCEPTED> _onAuthenticated;
+        private readonly PacketHandler<MAP_ENTRY_REFUSAL> _onRefusal;
+        private readonly PacketHandler<SERVER_HEARTBEAT_RESPONSE> _onHeartbeatResponse;
+
+        // The keepalive starts at SendMapLoaded (the session is InGame, spec section 6) and stops at Exit.
+        private bool _heartbeatActive;
+        private long _nextHeartbeatAt;
+
+        public ZoneManager(INetworkClient client, SessionContext context, IClock clock, NetworkSettings settings)
+        {
+            _client = client ?? throw new ArgumentNullException(nameof(client));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _clock = clock ?? throw new ArgumentNullException(nameof(clock));
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            _subscriptions = new Subscriptions(client);
+            _onAuthenticated = OnAuthenticated;
+            _onRefusal = OnRefusal;
+            _onHeartbeatResponse = OnHeartbeatResponse;
+        }
+
+        /// <summary>AUTHENTICATION_ACCEPTED was stored in <c>Context.Entry</c>.</summary>
+        public event Action Authenticated;
+
+        /// <summary>The map server refused the entry (MAP_ENTRY_REFUSAL), with its reason code.</summary>
+        public event Action<byte> EnterRefused;
+
+        public void Enter()
+        {
+            _heartbeatActive = false;
+            _subscriptions.Add(_onAuthenticated);
+            _subscriptions.Add(_onRefusal);
+            _subscriptions.Add(_onHeartbeatResponse);
+        }
+
+        public void Exit()
+        {
+            _subscriptions.Clear();
+            _heartbeatActive = false;
+        }
+
+        /// <summary>The connection is up: request entry with the session values and the client tick.</summary>
+        public void OnConnected()
+        {
+            _client.Send(new REQUEST_ENTER_MAP(_context.AccountId, _context.CharacterId, _context.AuthCode,
+                                               (uint)_clock.NowMs, _context.Sex));
+        }
+
+        /// <summary>The game finished loading the map: send <c>MAP_LOADED</c> and start the heartbeat.</summary>
+        public void SendMapLoaded()
+        {
+            _client.Send(new MAP_LOADED());
+            _heartbeatActive = true;
+            _nextHeartbeatAt = _clock.NowMs + IntervalMs();
+        }
+
+        /// <summary>
+        /// <c>HEARTBEAT_REQUEST</c> with the monotonic millisecond timestamp every <c>MapKeepaliveSeconds</c>, only after
+        /// <see cref="SendMapLoaded"/>. A long gap sends one heartbeat, not a burst. Allocates nothing.
+        /// </summary>
+        public void Tick(long nowMs)
+        {
+            if (!_heartbeatActive || nowMs < _nextHeartbeatAt) return;
+
+            _client.Send(new HEARTBEAT_REQUEST((uint)nowMs));
+            long interval = IntervalMs();
+            _nextHeartbeatAt += interval;
+            if (_nextHeartbeatAt <= nowMs) _nextHeartbeatAt = nowMs + interval;
+        }
+
+        private long IntervalMs()
+        {
+            long ms = (long)(_settings.MapKeepaliveSeconds * 1000f);
+            return ms > 0 ? ms : 10_000;
+        }
+
+        // ---- handlers ----
+
+        private void OnAuthenticated(in AUTHENTICATION_ACCEPTED p)
+        {
+            _context.Entry = new MapEntry(p.StartTimestamp, in p.Position, p.XSize, p.YSize);
+            Authenticated?.Invoke();
+        }
+
+        private void OnRefusal(in MAP_ENTRY_REFUSAL p) => EnterRefused?.Invoke(p.ErrorCode);
+
+        // The reply to HEARTBEAT_REQUEST carries the server tick; nothing consumes it yet, so it is only traced.
+        private void OnHeartbeatResponse(in SERVER_HEARTBEAT_RESPONSE p) =>
+            NetLog.Trace("heartbeat response " + p.ServerTimestamp);
+    }
+}
