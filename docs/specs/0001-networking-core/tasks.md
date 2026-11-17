@@ -97,7 +97,7 @@
 - [x] **T5.2** Add `INetworkClient`, `ConnectionStatus` and `Subscriptions`, with a `Subscriptions` test: 100 add/clear cycles leave handler counts unchanged. *(FR-9, FR-20)*
 - [x] **T5.3** Add `FakeNetworkClient` in the test assembly (records sent bytes, raises `Connected`/`Disconnected`, delivers packets through a real dispatcher). *(FR-20)*
   *Done when:* used by one test.
-- [ ] **T5.4** Write failing `NetworkClientTests` (plan §6): `Connected` raised once; closed port raises `Disconnected(ConnectFailed)`; refusal followed by server close delivers the refusal first; `Disconnect` raises nothing and logs nothing; reconnect from a handler stops the old stream; unknown ID closes with `ProtocolFault` and exactly one error log. *(FR-2, FR-7, FR-8)*
+- [x] **T5.4** Write failing `NetworkClientTests` (plan §6): `Connected` raised once; closed port raises `Disconnected(ConnectFailed)`; refusal followed by server close delivers the refusal first; `Disconnect` raises nothing and logs nothing; reconnect from a handler stops the old stream; unknown ID closes with `ProtocolFault` and exactly one error log. *(FR-2, FR-7, FR-8)*
 - [ ] **T5.5** Implement `NetworkClient` (plan §4.7): single instance, `DontDestroyOnLoad`, composition in `Awake`, `Connect`/`Disconnect` with framer `Stop` and stale-connect cleanup, `Pump` steps 1–4, `Send`, `SkipNextBytes`, `Subscribe`. Leave `Flow` construction to T6.8. *(FR-5, FR-7, FR-8)*
   *Done when:* T5.4 passes.
 - [ ] **T5.6** Write `PumpOwnershipTests` (source scan: `Process` only from `NetworkClient` and tests; `TcpConnection` only from `NetworkClient` and Core tests). *(FR-5, FR-20)*
