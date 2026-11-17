@@ -105,13 +105,8 @@ Subsystem rules (threading, allocation, packet formats and so on) live in that s
 - **Dependencies:** no new third-party libraries without a plan entry.
 - **Secrets:** never commit credentials. Dev-only credential fields must be stripped from release builds.
 
-### Commands (adjust paths to your Unity install)
-```
-# EditMode tests (batch)
-Unity -batchmode -projectPath . -runTests -testPlatform EditMode -testResults results.xml -quit
-
-# Local servers: start Hercules login/char/map before manual smoke tests
-```
+### Commands
+Use Unity-MCP to refresh unity solutions and run commands
 
 ### Definition of done (any task)
 Code compiles with no new warnings, relevant tests pass, "Done when" verified, checkbox ticked, commit follows the format in 1.4, no unrelated changes.
