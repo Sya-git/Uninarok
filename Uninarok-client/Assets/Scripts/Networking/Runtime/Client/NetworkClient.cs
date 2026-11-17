@@ -6,6 +6,7 @@ using Uninarok.Networking.Core.Dispatch;
 using Uninarok.Networking.Core.Framing;
 using Uninarok.Networking.Core.Protocol;
 using Uninarok.Networking.Core.Transport;
+using Uninarok.Networking.Flow;
 using Uninarok.Networking.Packets;
 
 namespace Uninarok.Networking.Client
@@ -39,6 +40,9 @@ namespace Uninarok.Networking.Client
 
         public static NetworkClient Instance { get; private set; }
 
+        /// <summary>The login, character and map flow. The game talks to the servers through it.</summary>
+        public NetworkFlow Flow { get; private set; }
+
         public ConnectionStatus Status => _status;
         public ConnectionRole Role => _role;
 
@@ -71,10 +75,16 @@ namespace Uninarok.Networking.Client
             EnsureInitialized();
         }
 
-        private void Update() => Pump();
+        // Pump first, so replies received this frame are seen before the flow checks its deadlines.
+        private void Update()
+        {
+            Pump();
+            Flow?.Tick();
+        }
 
         private void OnDestroy()
         {
+            Flow?.Dispose();
             Disconnect();
             if (Instance == this) Instance = null;
         }
@@ -84,6 +94,8 @@ namespace Uninarok.Networking.Client
             if (_dispatcher != null) return;
             _dispatcher = new PacketDispatcher(NetLog.HandlerError);
             _router = new GeneratedPacketRouter(_dispatcher, NetLog.DecodeError);
+            Flow = new NetworkFlow(this, new UnityClock(), settings,
+                                   new ServerEndpoint(loginHost, LoginPort, default, 0, 0, 0));
         }
 
         // ---- INetworkClient ----

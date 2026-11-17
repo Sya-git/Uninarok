@@ -1,4 +1,3 @@
-#if PENDING_T6_9 // T6.8: enabled (guard removed) by T6.9 when NetworkFlow exists.
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -797,4 +796,3 @@ namespace Uninarok.Networking.Tests
         }
     }
 }
-#endif

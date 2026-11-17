@@ -120,7 +120,7 @@
   *Done when:* T6.6 passes.
 - [x] **T6.8** Write failing `FlowTransitionTests` (`FakeNetworkClient`, `FakeClock`), table-driven from plan §4.9: every valid transition with its actions, every invalid command rejected with a warning, every deadline (`ConnectTimeout` vs `ReplyTimeout`, `MapLoadSeconds` after `Authenticated`), `CloseReason` → `FailureCode` mapping, `InGame` closure → `Disconnected`, wrong credentials send exactly one `REQUEST_LOGIN`, `Reset`. *(FR-10, FR-11, FR-13)*
 - [ ] **T6.9** Implement `NetworkFlow` (state, commands, manager activation, deadlines, `Tick`, `Dispose`) and construct it in `NetworkClient.Awake`. *(FR-10, FR-11, FR-20)*
-  *Done when:* T6.8 passes; a manual run against local Hercules reaches `CharSelection`.
+  *Done when:* T6.8 passes; a manual run against local Hercules reaches `CharSelection`. *(Automated half done: T6.8 passes, 51 flow tests. The manual run needs a local Hercules with its database and a test account; it is done with `DevAutoLogin` (phase 7) and T9.4, so this box stays unticked until then.)*
 
 ## Phase 7: Development auto-login (FR-15)
 
