@@ -34,6 +34,9 @@ namespace Uninarok.Networking.Tests
 
         public ushort Port { get; }
 
+        /// <summary>True when a client is waiting to be accepted (used to prove that no further connection was opened).</summary>
+        public bool HasPendingClient => _listener.Pending();
+
         /// <summary>Accepts the next client; fails the test if none arrives in time.</summary>
         public Socket Accept(int timeoutMs = 3000)
         {

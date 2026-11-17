@@ -124,8 +124,8 @@
 
 ## Phase 7: Development auto-login (FR-15)
 
-- [ ] **T7.1** Implement `DevAutoLogin` per plan §7.1: one action per state entry, `MapLoaded()` in `LoadingMap`, `maxLoginAttempts`, every field used, credentials from `EditorPrefs` or the local file. Add `NetworkClient` and `DevAutoLogin` to the bootstrap scene. *(FR-11, FR-15)*
-  *Done when:* a wrong-credentials run sends exactly one login request; the scene file contains no credentials.
+- [x] **T7.1** Implement `DevAutoLogin` per plan §7.1: one action per state entry, `MapLoaded()` in `LoadingMap`, `maxLoginAttempts`, every field used, credentials from `EditorPrefs` or the local file. Add `NetworkClient` and `DevAutoLogin` to the bootstrap scene. *(FR-11, FR-15)*
+  *Done when:* a wrong-credentials run sends exactly one login request; the scene file contains no credentials. *(Verified over real loopback sockets with a refusing login server: `DevAutoLoginIntegrationTests`; scene check: `BootstrapScene_ContainsTheDevTools_ButNoCredentials`. Against a real Hercules this is repeated in T9.5.)*
 - [ ] **T7.2** Wrap `DevAutoLogin` in `#if UNITY_EDITOR || DEVELOPMENT_BUILD`; build a release player and confirm the type is absent. *(FR-15)*
   *Done when:* the release build compiles and does not contain the type.
 
