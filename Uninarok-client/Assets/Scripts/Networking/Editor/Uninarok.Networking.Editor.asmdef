@@ -1,0 +1,19 @@
+{
+    "name": "Uninarok.Networking.Editor",
+    "rootNamespace": "Uninarok.Networking.Editor",
+    "references": [
+        "Uninarok.Networking.Core",
+        "Uninarok.Networking"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
