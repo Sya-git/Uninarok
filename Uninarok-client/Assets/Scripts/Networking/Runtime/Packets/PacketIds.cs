@@ -18,7 +18,7 @@ namespace Uninarok.Networking.Packets
         public const ushort SELECT_CHARACTER = 0x0066;               // out
         public const ushort CHARACTER_DATA = 0x006B;                 // in
         public const ushort MAP_ENTER_REQUEST_REFUSED = 0x006C;      // in
-        public const ushort CHARACTER_CREATION_SUCCESS = 0x006D;     // in
+        public const ushort CHARACTER_CREATION_SUCCESS = 0x0B6F;     // in (0x006D before PACKETVER_MAIN_NUM 20201007)
         public const ushort CHARACTER_CREATION_FAILED = 0x006E;      // in
         public const ushort CHARACTER_SERVER_PING = 0x0187;          // out
         public const ushort CHARACTER_SLOTS_INFO = 0x082D;           // in

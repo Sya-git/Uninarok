@@ -6,7 +6,7 @@ One row per documented packet (SPEC-0001, PACKETVER 20220406). Generated from th
 |---|---|---|---:|---|---|
 | Character server to client | `0x006B` | [CHARACTER_DATA](In/CharacterServer/CHARACTER_DATA.md) | variable | verified | cold |
 | Character server to client | `0x006C` | [MAP_ENTER_REQUEST_REFUSED](In/CharacterServer/MAP_ENTER_REQUEST_REFUSED.md) | 3 | implemented | cold |
-| Character server to client | `0x006D` | [CHARACTER_CREATION_SUCCESS](In/CharacterServer/CHARACTER_CREATION_SUCCESS.md) | 177 | implemented | cold |
+| Character server to client | `0x0B6F` | [CHARACTER_CREATION_SUCCESS](In/CharacterServer/CHARACTER_CREATION_SUCCESS.md) | 177 | implemented | cold |
 | Character server to client | `0x006E` | [CHARACTER_CREATION_FAILED](In/CharacterServer/CHARACTER_CREATION_FAILED.md) | 3 | implemented | cold |
 | Character server to client | `0x082D` | [CHARACTER_SLOTS_INFO](In/CharacterServer/CHARACTER_SLOTS_INFO.md) | variable | verified | cold |
 | Character server to client | `0x08B9` | [PINCODE_LOGINSTATE](In/CharacterServer/PINCODE_LOGINSTATE.md) | 12 | verified | cold |
