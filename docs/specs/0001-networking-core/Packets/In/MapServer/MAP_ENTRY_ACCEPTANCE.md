@@ -6,7 +6,7 @@
 | **Hercules packet name** | `ZC_NOTIFY_PLAYERID` |
 | **Packet ID** | `0x0283` |
 | **Declared size** | 6 bytes, including the 2-byte packet ID |
-| **Status** | documented |
+| **Status** | implemented |
 | **Frequency** | cold |
 | **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no; `clif_authok`-time sender, `clif.cpp` (4-byte ID at offset 2, total 6) |
 | **Allocates** | no |

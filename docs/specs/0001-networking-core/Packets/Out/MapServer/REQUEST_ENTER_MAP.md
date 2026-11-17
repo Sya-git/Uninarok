@@ -6,7 +6,7 @@
 | **Hercules packet name** | `CZ_ENTER2` |
 | **Packet ID** | `0x0436` |
 | **Declared size** | 23 bytes, including the 2-byte packet ID |
-| **Status** | documented |
+| **Status** | implemented |
 | **Frequency** | cold |
 | **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no; handler `clif->pWantToConnection` offsets 2, 6, 10, 18, 22 at 0x0436 in `packets_shuffle_main.h` |
 | **Allocates** | no |

@@ -6,7 +6,7 @@
 | **Hercules packet name** | `CZ_NOTIFY_ACTORINIT` (handler `clif_parse_LoadEndAck`) |
 | **Packet ID** | `0x007D` |
 | **Declared size** | 2 bytes total (header only, no payload) |
-| **Status** | documented |
+| **Status** | implemented |
 | **Frequency** | cold (once per map load) |
 | **Verified** | no (Hercules length table 20220406 lists 0x007D = 2; confirm with a capture) |
 | **Allocates** | no |

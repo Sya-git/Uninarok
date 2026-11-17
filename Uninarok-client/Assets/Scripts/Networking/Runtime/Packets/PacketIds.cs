@@ -25,5 +25,14 @@ namespace Uninarok.Networking.Packets
         public const ushort PINCODE_LOGINSTATE = 0x08B9;             // in
         public const ushort CREATE_CHARACTER = 0x0A39;               // out
         public const ushort MAP_ENTER_REQUEST_ACCEPTED = 0x0AC5;     // in
+
+        // Map server
+        public const ushort MAP_ENTRY_REFUSAL = 0x0074;              // in
+        public const ushort MAP_LOADED = 0x007D;                     // out
+        public const ushort SERVER_HEARTBEAT_RESPONSE = 0x007F;      // in
+        public const ushort MAP_ENTRY_ACCEPTANCE = 0x0283;           // in
+        public const ushort AUTHENTICATION_ACCEPTED = 0x02EB;        // in
+        public const ushort HEARTBEAT_REQUEST = 0x0360;              // out
+        public const ushort REQUEST_ENTER_MAP = 0x0436;              // out
     }
 }

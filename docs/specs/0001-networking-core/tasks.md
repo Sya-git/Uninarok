@@ -87,7 +87,7 @@
   *Done when:* decode, golden-byte, size and router tests pass for these packets.
 - [x] **T4.7** Same for the character-server packets in scope. *(FR-6, FR-18)*
   *Done when:* as T4.6.
-- [ ] **T4.8** Same for the map-server packets in scope. *(FR-6, FR-18)*
+- [x] **T4.8** Same for the map-server packets in scope. *(FR-6, FR-18)*
   *Done when:* as T4.6.
 
 ## Phase 5: Connection point (FR-5, FR-7, FR-8, FR-9, FR-16, FR-20)

@@ -82,6 +82,22 @@ namespace Uninarok.Networking.Tests
         }
 
         [Test]
+        public void EveryIncomingPacketInScope_IsRouted()
+        {
+            ushort[] expected =
+            {
+                PacketIds.LOGIN_REFUSAL, PacketIds.LOGIN_SERVER_NOTICE, PacketIds.ACCEPT_LOGIN, PacketIds.REFUSE_LOGIN_3,
+                PacketIds.CHARACTER_DATA, PacketIds.MAP_ENTER_REQUEST_REFUSED, PacketIds.CHARACTER_CREATION_SUCCESS,
+                PacketIds.CHARACTER_CREATION_FAILED, PacketIds.CHARACTER_SLOTS_INFO, PacketIds.PINCODE_LOGINSTATE,
+                PacketIds.MAP_ENTER_REQUEST_ACCEPTED,
+                PacketIds.MAP_ENTRY_REFUSAL, PacketIds.SERVER_HEARTBEAT_RESPONSE, PacketIds.MAP_ENTRY_ACCEPTANCE,
+                PacketIds.AUTHENTICATION_ACCEPTED,
+            };
+            var handled = GeneratedPacketRouter.HandledIds.ToArray();
+            CollectionAssert.AreEquivalent(expected, handled);
+        }
+
+        [Test]
         public void EveryHandledId_IsKnownToTheHerculesTable()
         {
             foreach (ushort id in GeneratedPacketRouter.HandledIds.ToArray())
