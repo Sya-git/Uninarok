@@ -41,7 +41,7 @@
 
 - [x] **T2.1** Add `IPacketLengthTable`, `IPacketRouter`, `IInboundSink` in `Core/Framing/` and test helpers `TableStub` (table-driven lengths) and `RecordingRouter` (records `(id, payload copy)`, configurable handled IDs).
   *Done when:* compiles; helpers used by one test.
-- [ ] **T2.2** Write failing `FramerFramingTests`: fixed, variable, split at every byte offset, coalesced, back-to-back. *(FR-1)*
+- [x] **T2.2** Write failing `FramerFramingTests`: fixed, variable, split at every byte offset, coalesced, back-to-back. *(FR-1)*
 - [ ] **T2.3** Write failing `FramerFaultTests`: unknown ID, ID 0, variable length < 4, invalid table length, cap exceeded, no routing after fault, single `FaultReason` with hex. *(FR-2)*
 - [ ] **T2.4** Write failing `FramerSkipTests`: skip split across chunks, skip of `00 00 00 00`, skip larger than available data. *(FR-3)*
 - [ ] **T2.5** Write failing `FramerLimitsTests` (cap 256 → 4 calls for 1000 packets; throwing router leaves state consistent; `Stop`; known-but-unhandled ID skipped) and `FramerConcurrencyTests` (`Append` not blocked while the router runs). *(FR-5, FR-19)*
