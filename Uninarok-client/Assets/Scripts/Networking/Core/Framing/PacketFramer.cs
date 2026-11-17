@@ -26,6 +26,7 @@ namespace Uninarok.Networking.Core.Framing
         private byte[] _work;
         private int _read;
         private int _write;
+        private int _skip;
         private bool _stopped;
         private bool _faulted;
         private string _faultReason;
@@ -73,6 +74,16 @@ namespace Uninarok.Networking.Core.Framing
         /// <summary>Why the stream faulted; null until then. Main thread.</summary>
         public string FaultReason => _faultReason;
 
+        /// <summary>
+        /// MAIN thread. The next <paramref name="count"/> bytes received are raw data, not packets (the char server's
+        /// 4-byte account-ID echo, FR-3). They are discarded before any header parsing, even when split across reads or
+        /// made of zeros. Call BEFORE sending the request that provokes them.
+        /// </summary>
+        public void SkipNextBytes(int count)
+        {
+            if (count > 0) _skip += count;
+        }
+
         /// <summary>MAIN thread. Ends processing after the current packet; later <see cref="Process"/> calls return 0.</summary>
         public void Stop() => _stopped = true;
 
@@ -91,6 +102,16 @@ namespace Uninarok.Networking.Core.Framing
             while (processed < maxPackets && !_stopped)
             {
                 int available = _write - _read;
+
+                if (_skip > 0)                            // raw bytes first, before any header parsing (FR-3)
+                {
+                    int skipped = Math.Min(_skip, available);
+                    _read += skipped;
+                    _skip -= skipped;
+                    if (_skip > 0) break;                 // more raw bytes still to come
+                    continue;
+                }
+
                 if (available < 2) break;
 
                 ushort id = (ushort)(_work[_read] | (_work[_read + 1] << 8));

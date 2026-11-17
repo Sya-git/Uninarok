@@ -50,7 +50,7 @@
   *Done when:* the buffer parts of T2.2 and T2.5 pass.
 - [x] **T2.8** Implement `Process` steps 1–3 with header handling, advance-then-route, unhandled skip, per-call cap and `Stop`. *(FR-1, FR-5, FR-19)*
   *Done when:* T2.2, T2.5 and T2.6 pass.
-- [ ] **T2.9** Implement `SkipNextBytes` and the skip step before header parsing. *(FR-3)*
+- [x] **T2.9** Implement `SkipNextBytes` and the skip step before header parsing. *(FR-3)*
   *Done when:* T2.4 passes.
 - [ ] **T2.10** Implement faults (`IsFaulted`, `FaultReason` with up to 32 hex bytes, stop parsing, return 0). *(FR-2)*
   *Done when:* T2.3 passes; all Phase 2 tests green.
