@@ -449,7 +449,7 @@ public sealed class Subscriptions
 }
 ```
 
-Managers create the handler delegates once in their constructor and keep them in fields, so `Enter`/`Exit` cycles allocate nothing after the first.
+Managers create the handler delegates once in their constructor and keep them in fields. `Clear` unsubscribes but keeps its entries, so the next `Add` of the same handler reuses the entry: `Subscriptions` itself allocates nothing after the first `Enter`/`Exit` cycle (the dispatcher's copy-on-write handler arrays still allocate, at setup time).
 
 **`NetLog` (FR-16).** `[Conditional("UNINAROK_NET_TRACE")] Trace(...)` for per-packet tracing, so the call and its arguments disappear without the define. `ReportClosure(role, info)`: `LogWarning` for `RemoteClosed`, `LogError` for `Error`, `ProtocolFault` and `ConnectFailed`, nothing for `LocalDispose`. `HandlerError` → `Debug.LogException`. `DecodeError(id, e)` → `LogError` with the ID. State changes log at `Log`. Nothing informational uses `LogError`.
 
