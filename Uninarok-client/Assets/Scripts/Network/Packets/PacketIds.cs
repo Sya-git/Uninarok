@@ -37,6 +37,6 @@
         // CZ
         REQUEST_ENTER_MAP = 0x0436,
         SEND_PACKET_VER = 0x0368,
-        MAP_HEARTBEAT = 0x0187,
+        MAP_HEARTBEAT = 0x007F,
     }
 }

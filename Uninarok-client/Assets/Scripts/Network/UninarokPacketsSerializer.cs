@@ -81,7 +81,7 @@ namespace Uninarok.Networking
                         var isFixedSizePacket = packetLength > 0;
 
                         // Check if we have enough bytes to read the length for variable-length packets
-                        if (!isFixedSizePacket && remainingBytes < 2)
+                        if (!isFixedSizePacket && remainingBytes < 4)
                         {
                             // _currentReadIndex -= 2; // Move back the read index to re-read the packet ID next time
                             break;

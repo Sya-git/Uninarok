@@ -84,9 +84,9 @@ namespace Uninarok.Networking.Packets
                 private const byte MapNameSize = 16;
 
                 public int CharId;
-                public uint BaseExp; //long?
+                public ulong BaseExp;
                 public int Zeny;
-                public uint JobExp; //long?
+                public ulong JobExp;
                 public int JobLevel;
                 public int Opt1;
                 public int Opt2;
@@ -120,7 +120,7 @@ namespace Uninarok.Networking.Packets
                 public byte Dex;
                 public byte Luk;
                 public short Slot;
-                public byte Rename;
+                public ushort Rename;
                 public FixedString32Bytes MapName;
                 public int DeleteName;
                 public int LookRobe;
@@ -130,13 +130,12 @@ namespace Uninarok.Networking.Packets
 
                 public CharInfo(ReadOnlySpan<byte> data)
                 {
-                    // TODO: Missing info
                     var reader = new PacketReader(data);
 
                     CharId = reader.ReadInt();
-                    BaseExp = reader.ReadUint();
+                    BaseExp = reader.ReadUint() | ((ulong)reader.ReadUint() << 32);
                     Zeny = reader.ReadInt();
-                    JobExp = reader.ReadUint();
+                    JobExp = reader.ReadUint() | ((ulong)reader.ReadUint() << 32);
                     JobLevel = reader.ReadInt(); // 24
                     Opt1 = reader.ReadInt();
                     Opt2 = reader.ReadInt();
@@ -169,7 +168,7 @@ namespace Uninarok.Networking.Packets
                     Dex = reader.ReadByte();
                     Luk = reader.ReadByte();
                     Slot = reader.ReadShort();
-                    Rename = reader.ReadByte();
+                    Rename = reader.ReadUshort();
                     MapName = reader.ReadChars(MapNameSize);
                     DeleteName = reader.ReadInt();
                     LookRobe = reader.ReadInt();

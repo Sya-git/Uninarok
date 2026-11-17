@@ -12,11 +12,6 @@ namespace Uninarok.Networking.Packets
             public const short Size = 6;
 
             public int Id;
-            //public uint StartTimestamp;
-            //public byte[] Transform; // compressed x, y, direction
-            //public byte XSize; // visibility?
-            //public byte YSize; // visibility?
-
 
             public MAP_ACCEPT_ENTER(ReadOnlySpan<byte> data)
             {
@@ -79,6 +74,32 @@ namespace Uninarok.Networking.Packets
             public short PosX, PosY, Direction;
             public byte XSize, YSize; // not used
             public short Font;
+
+            public struct GamePosition
+            {
+                public short X, Y;
+                public byte Direction;
+
+                public GamePosition(ReadOnlySpan<byte> data)
+                {
+                    var reader = new PacketReader(data);
+
+                    var compactedPos = reader.ReadBytes(3);
+
+                    X = (short)(((compactedPos[0] & 0xFF) << 2) | (compactedPos[1] >> 6));
+                    Y = (short)(((compactedPos[1] & 0x3F) << 4) | (compactedPos[2] >> 4));
+                    Direction = (byte)(compactedPos[2] & 0x0F);
+                }
+
+                public void Serialize(Span<byte> data)
+                {
+                    var writer = new PacketWriter(data);
+
+                    writer.Write((byte)(X >> 2));
+                    writer.Write((byte)((X << 6) | (byte)((Y >> 4) & 0x3F)));
+                    writer.Write((byte)((Y << 4) | (byte)(Direction & 0xF)));
+                }
+            }
 
             public AUTH_OK(ReadOnlySpan<byte> data)
             {
