@@ -92,7 +92,7 @@
 
 ## Phase 5: Connection point (FR-5, FR-7, FR-8, FR-9, FR-16, FR-20)
 
-- [ ] **T5.1** Add `NetLog` (`Trace` with `[Conditional("UNINAROK_NET_TRACE")]`, `ReportClosure`, `HandlerError`, `DecodeError`), `IClock`, `UnityClock` and `NetworkSettings`. *(FR-16)*
+- [x] **T5.1** Add `NetLog` (`Trace` with `[Conditional("UNINAROK_NET_TRACE")]`, `ReportClosure`, `HandlerError`, `DecodeError`), `IClock`, `UnityClock` and `NetworkSettings`. *(FR-16)*
   *Done when:* compiles; a test shows `Trace` calls are removed without the define (no allocation).
 - [ ] **T5.2** Add `INetworkClient`, `ConnectionStatus` and `Subscriptions`, with a `Subscriptions` test: 100 add/clear cycles leave handler counts unchanged. *(FR-9, FR-20)*
 - [ ] **T5.3** Add `FakeNetworkClient` in the test assembly (records sent bytes, raises `Connected`/`Disconnected`, delivers packets through a real dispatcher). *(FR-20)*
