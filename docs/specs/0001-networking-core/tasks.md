@@ -21,7 +21,7 @@
   *Done when:* spec section 6 states them.
 - [x] **T0.3** Decide the wire text encoding: Windows-1252 default, one constant (`spec.md` section 6).
   *Done when:* encoding stated in the packets reference and spec section 6.
-- [ ] **T0.4** Add `com.unity.collections` and `com.unity.test-framework` as direct dependencies in `Packages/manifest.json` (versions already resolved in `packages-lock.json`).
+- [x] **T0.4** Add `com.unity.collections` and `com.unity.test-framework` as direct dependencies in `Packages/manifest.json` (versions already resolved in `packages-lock.json`).
   *Done when:* the manifest lists both; the project compiles.
 - [ ] **T0.5** Create the assemblies of plan §3: `Uninarok.Networking.Core` (`noEngineReferences: true`), `Uninarok.Networking` (references Core and `Unity.Collections`, `InternalsVisibleTo` tests), `Uninarok.Networking.Editor`, `Uninarok.Networking.Tests` (EditMode). *(FR-17)*
   *Done when:* project compiles; an empty test runs in the Test Runner and in batch mode.
