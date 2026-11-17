@@ -709,7 +709,9 @@ CLI (adjust path/version): `Unity -batchmode -projectPath Uninarok-client -runTe
 
 ## 7. Migration and compatibility
 
-Not applicable: there is no previous version to migrate from. Scenes that need networking add a `NetworkClient` (and, in development, `DevAutoLogin`).
+The pre-existing prototype networking is removed, not migrated (decided 2026-11-17): `Assets/Scripts/Network/` (packets, `TcpConnection`, serializer, dispatcher, bootstrap), its two consumers in `Assets/Scripts/Managers/` (`GameConnectionManager`, `LoginManager`), the `UninarokSourceGenerator` project and its DLL in `Assets/Plugins/`. Their `MonoBehaviour`s were stripped from the `Bootstrap` scene, which keeps an empty `Bootstrap` object for `NetworkClient` and, in development, `DevAutoLogin` (phase 7). Nothing else referenced them. Git history keeps the old code.
+
+Scenes that need networking add a `NetworkClient` (and, in development, `DevAutoLogin`).
 
 ### 7.1 Development auto-login — `DevAutoLogin`
 Satisfies FR-15.
