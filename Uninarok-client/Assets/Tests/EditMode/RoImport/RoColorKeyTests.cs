@@ -9,7 +9,6 @@ namespace Uninarok.RoImport.Tests
 {
     // SPEC-0002 FR-8: the transparency color becomes real transparency, with no colored fringe when filtered.
     // Plan 4.4 (color key, bleed), D17. TASKS T3.3.
-    [Ignore("pending T3.4")]
     public class RoColorKeyTests
     {
         static readonly Color32 Magenta = new Color32(255, 0, 255, 255);
@@ -37,7 +36,8 @@ namespace Uninarok.RoImport.Tests
         [Test]
         public void KeyConstants_AreMagentaWithTolerance10()
         {
-            Assert.AreEqual((255, 0, 255, 10), (RoColorKey.KeyR, RoColorKey.KeyG, RoColorKey.KeyB, RoColorKey.Tolerance));
+            CollectionAssert.AreEqual(new byte[] { 255, 0, 255, 10 },
+                new[] { RoColorKey.KeyR, RoColorKey.KeyG, RoColorKey.KeyB, RoColorKey.Tolerance });
         }
 
         // Each case: a pixel and whether it is within the tolerance of the key on every channel.
