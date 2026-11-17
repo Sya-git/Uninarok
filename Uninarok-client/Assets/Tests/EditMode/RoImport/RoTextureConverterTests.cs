@@ -18,7 +18,6 @@ namespace Uninarok.RoImport.Tests
 {
     // SPEC-0002 FR-8 (transparency, usage settings, BMP/PNG/TGA, unsupported warns), FR-10 (one warning, placeholder),
     // FR-4 (mirrored paths, no collision by name), FR-5 (second run skipped). Plan 4.4, 4.5, 4.12. TASKS T6.1.
-    [Ignore("pending T6.2")]
     public class RoTextureConverterTests
     {
         RoOutputRoots _roots;

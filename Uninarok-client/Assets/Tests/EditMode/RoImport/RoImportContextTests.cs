@@ -92,6 +92,26 @@ namespace Uninarok.RoImport.Tests
         }
 
         [Test]
+        public void TexturesRequestedInsideAFrame_AreItsDependencies_WithTheirHashOrEmptyWhenMissing()
+        {
+            var ctx = new RoImportContext(new RoFolderSource(RoFolderSourceTests.FixtureRoot), _roots, _ledgerFolder);
+            ctx.Source.TryGetFile(RoPath.Parse("texture/a.bmp"), out var file);
+            UnityEngine.TestTools.LogAssert.Expect(UnityEngine.LogType.Warning, new System.Text.RegularExpressions.Regex("TextureMissing texture/nope.bmp"));
+
+            ctx.Texture(RoPath.Parse("texture/key8.bmp"));                   // before the frame: not a dependency
+            ctx.BeginDependencies();
+            ctx.Texture(RoPath.Parse("texture/a.bmp"), "model/m.rsm");
+            ctx.Texture(RoPath.Parse("texture/a.bmp"), "model/m.rsm");       // twice: listed once
+            ctx.Texture(RoPath.Parse("texture/nope.bmp"), "model/m.rsm");
+            var dependencies = ctx.EndDependencies();
+
+            Assert.AreEqual(2, dependencies.Length);
+            Assert.AreEqual(("texture/a.bmp", file.ContentHash()), (dependencies[0].Source, dependencies[0].Hash));
+            Assert.AreEqual(("texture/nope.bmp", ""), (dependencies[1].Source, dependencies[1].Hash), "missing: empty hash, never the placeholder");
+            Assert.Throws<InvalidOperationException>(() => ctx.EndDependencies());
+        }
+
+        [Test]
         public void InProgressSet_CatchesAReentry()
         {
             var ctx = new RoImportContext(new RoFolderSource(RoFolderSourceTests.FixtureRoot), _roots, _ledgerFolder);

@@ -452,6 +452,11 @@ public sealed class RoImportOptions { public bool Force; public bool ShowProgres
   - It owns its writer (over the roots) and a `RoPngCodec`, and `SaveLedgers()` saves every ledger the run loaded.
   - The memo (`TryGetMemo`/`Memo`) and the in-progress set (`TryEnter`/`Exit`) are internal.
   - `Texture` comes in two steps. T5.3 adds it in a minimal form that loads an already converted texture and reports `TextureMissing` otherwise. T6.2 replaces that with conversion on demand.
+- T6.2 details:
+  - `ctx.Texture` converts on demand through `RoTextureConverter`.
+  - A missing, unsupported or corrupt texture, or one whose output is owned by another source, is `Failed` with the placeholder as its `Value` and one warning. So the batch lists it, and whatever needed it still converts.
+  - Converters that depend on textures bracket their requests with `BeginDependencies()`/`EndDependencies()` to collect `(source, hash)` pairs for their ledger entry. A missing texture is recorded with an empty hash, never as the placeholder (§4.12).
+  - The texture converter stores the texture's `RoTextureAlpha` in the importer `userData` (`alpha=Keyed`). `RoTextureConverter.AlphaOf(path)` reads it back, so model converters can pick the surface (`SurfaceFor`) without decoding the texture again.
 - Every conversion starts from a Ragnarok path string and returns a result; nothing needs a window or a selection (FR-2). Tests and scripts call `RoImport.*` directly.
 - **Dependencies on demand (FR-6).** A converter asks `ctx.Texture(...)`/`ctx.Material(...)` (and later `ctx.Model(...)` from the map plan) for what it needs. Each call checks the ledger, converts if missing or stale, and records itself as a dependency of the caller. A per-run memo makes repeat requests free; an in-progress set breaks a dependency cycle with a `DependencyCycle` issue (cycles do not occur in these formats; the guard prevents an endless loop).
 - **No implicit conversion (FR-3).** The importer has no `AssetPostprocessor`, no `ScriptedImporter` and no `InitializeOnLoad` converter. Source files are not assets (§4.2), so copying them triggers nothing. The old importers (`BmpImporter`, a postprocessor on every `.bmp`, and the others) are compiled out by T0.2 and deleted later (§7, D15).

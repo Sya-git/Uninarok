@@ -63,25 +63,52 @@ namespace Uninarok.RoImport.Editor.Pipeline
             foreach (var ledger in _ledgers.Values) ledger.Save();
         }
 
+        sealed class TextureMemo
+        {
+            public RoResult<Texture2D> Result;
+            public string Hash;
+        }
+
+        readonly Stack<List<RoLedgerDependency>> _dependencyFrames = new Stack<List<RoLedgerDependency>>();
+
         /// <summary>
-        /// The converted texture of a Ragnarok texture path, for materials (FR-6). Minimal form (T5.3): loads an already
-        /// converted texture and reports <see cref="RoIssueCode.TextureMissing"/> once when there is none. T6.2 replaces this
-        /// with conversion on demand.
+        /// The texture of a Ragnarok path, converted on demand when missing or stale (plan 4.10, FR-6). Repeat requests in a
+        /// run are free. A missing, unsupported or corrupt texture is <see cref="RoStatus.Failed"/> with the placeholder as
+        /// its value and one warning naming the referrer. While a dependency frame is open, the texture is recorded in it.
         /// </summary>
         public RoResult<Texture2D> Texture(RoPath path, string referrer = null)
         {
             string key = "texture:" + path.Canonical;
-            if (TryGetMemo(key, out Texture2D done)) return RoResult<Texture2D>.Skipped(done);
-
-            var texture = Writer.Load<Texture2D>(RoOutputPaths.Texture(Roots, path));
-            if (texture == null)
+            if (!TryGetMemo(key, out TextureMemo memo))
             {
-                const string why = "the texture has not been converted";
-                Report.Warn(RoIssueCode.TextureMissing, path.Canonical, referrer, why);
-                return RoResult<Texture2D>.Failed(new RoIssue(RoIssueCode.TextureMissing, path.Canonical, referrer, why));
+                var result = RoTextureConverter.ConvertTexture(this, path, referrer, out string hash);
+                memo = new TextureMemo { Result = result, Hash = hash };
+                Memo(key, memo);
+                AddDependency(path, hash);
+                return result;
             }
-            Memo(key, texture);
-            return RoResult<Texture2D>.Skipped(texture);
+
+            AddDependency(path, memo.Hash);
+            return memo.Result.Status == RoStatus.Failed ? memo.Result : RoResult<Texture2D>.Skipped(memo.Result.Value);
+        }
+
+        /// <summary>Starts collecting the inputs a converter asks for (its ledger dependencies, plan 4.8). Frames nest.</summary>
+        public void BeginDependencies() => _dependencyFrames.Push(new List<RoLedgerDependency>());
+
+        /// <summary>Ends the innermost frame and returns its dependencies (each source once).</summary>
+        public RoLedgerDependency[] EndDependencies()
+        {
+            if (_dependencyFrames.Count == 0) throw new InvalidOperationException("EndDependencies without BeginDependencies.");
+            return _dependencyFrames.Pop().ToArray();
+        }
+
+        void AddDependency(RoPath path, string hash)
+        {
+            if (_dependencyFrames.Count == 0) return;
+            var frame = _dependencyFrames.Peek();
+            foreach (var d in frame)
+                if (d.Source == path.Canonical) return;
+            frame.Add(new RoLedgerDependency(path.Canonical, hash));
         }
 
         /// <summary>The shared material of a key, created or updated on demand (plan 4.6, FR-6, FR-9).</summary>
