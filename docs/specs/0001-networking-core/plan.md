@@ -66,7 +66,7 @@ Root: `Uninarok-client/Assets/Scripts/Networking/`.
 | `Runtime/Data/` | `AccountSex`, `CharInfo`, `UninarokPosition`, `UninarokDirection`, `UninarokMoveData` (one per `docs/data/*.md`; `UninarokDirection` is described in `UninarokPosition.md`) | `Uninarok.Networking` |
 | `Runtime/Packets/` | `PacketIds`, `ProtocolInfo` (`PacketVersion`, default client type), `In/{Login,Character,Map}/*.cs`, `Out/{Login,Character,Map}/*.cs`, one struct per file | `Uninarok.Networking` |
 | `Runtime/Packets/Generator/` | `Uninarok.Networking.Generator.dll` (Roslyn source generator, asset label `RoslynAnalyzer`, excluded from all platforms) | applies to `Uninarok.Networking` and assemblies that reference it |
-| `Runtime/Client/` | `INetworkClient`, `NetworkClient`, `ConnectionStatus`, `Subscriptions`, `NetLog`, `IClock`, `UnityClock`, `NetworkSettings` | `Uninarok.Networking` |
+| `Runtime/Client/` | `INetworkClient`, `NetworkClient`, `ConnectionStatus`, `Subscriptions`, `NetLog`, `NetProfiling`, `CaptureTee`, `IClock`, `UnityClock`, `NetworkSettings` | `Uninarok.Networking` |
 | `Runtime/Flow/` | `NetworkFlow`, `FlowState`, `FailureCode`, `FlowFailure`, `SessionContext`, `ServerEndpoint`, `CharacterSlots`, `MapEndpoint`, `MapEntry`, `CharacterDraft` | `Uninarok.Networking` |
 | `Runtime/Managers/` | `IServerManager`, `LoginManager`, `CharacterManager`, `ZoneManager`, `LoginRefusal`, `PinState` | `Uninarok.Networking` |
 | `Runtime/Dev/` | `DevAutoLogin` (whole file inside `#if UNITY_EDITOR \|\| DEVELOPMENT_BUILD`) | `Uninarok.Networking` |
@@ -662,7 +662,7 @@ Satisfies FR-6.
 
 **Measuring:**
 1. EditMode: `Is.Not.AllocatingGCMemory()` over main-thread operations: `PacketFramer.Process` with a stub router, `TcpConnection.Send<T>` for a fixed packet, `PacketDispatcher.Dispatch<T>` with subscribers, a manager keepalive `Tick`. This constraint observes the main thread only.
-2. Development build, Unity Profiler: GC Alloc per frame on the main thread in-game idle and during a packet burst. Socket threads register with `Profiler.BeginThreadProfiling("Uninarok.Net", "Read"/"Write")` (from a Runtime hook, since Core is engine-free) so their allocations show in the CPU module.
+2. Development build, Unity Profiler: GC Alloc per frame on the main thread in-game idle and during a packet burst. Socket threads register with `Profiler.BeginThreadProfiling("Uninarok.Net", "{role}.Read"/"{role}.Write")` so their allocations show in the CPU module. Core is engine-free, so `TcpConnection` exposes two static hooks (`SocketThreadStarted(name)`, `SocketThreadStopping()`, called on the socket threads, exceptions swallowed) and `Runtime/Client/NetProfiling` installs the Profiler calls into them (editor and development builds only; `NetworkClient` installs it before the first connection).
 
 ## 5. Threading and lifecycle
 

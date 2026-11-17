@@ -101,6 +101,7 @@ namespace Uninarok.Networking.Client
         private void EnsureInitialized()
         {
             if (_dispatcher != null) return;
+            NetProfiling.Install();                             // socket threads show up in the Profiler (T8.1)
             _dispatcher = new PacketDispatcher(NetLog.HandlerError);
             _router = new GeneratedPacketRouter(_dispatcher, NetLog.DecodeError);
             _flow = new NetworkFlow(this, new UnityClock(), settings,

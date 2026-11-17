@@ -14,6 +14,7 @@ namespace Uninarok.Networking.Tests
         const string FramerFile = "Networking/Core/Framing/PacketFramer.cs";
         const string ConnectionFile = "Networking/Core/Transport/TcpConnection.cs";
         const string ClientFile = "Networking/Runtime/Client/NetworkClient.cs";
+        const string ProfilingFile = "Networking/Runtime/Client/NetProfiling.cs";   // installs static thread hooks; never opens a connection
 
         static string ScriptsRoot => Path.Combine(Application.dataPath, "Scripts");
 
@@ -53,9 +54,19 @@ namespace Uninarok.Networking.Tests
         [Test]
         public void OnlyNetworkClient_UsesTcpConnection()
         {
+            var allowed = new[] { ConnectionFile, ClientFile, ProfilingFile };
             var users = FilesMatching(@"\bTcpConnection\b", ProductionSources());
-            CollectionAssert.AreEquivalent(new[] { ConnectionFile, ClientFile }, users,
-                "Only the connection point opens sockets (FR-20). Offenders: " + string.Join(", ", users.Except(new[] { ConnectionFile, ClientFile })));
+            CollectionAssert.AreEquivalent(allowed, users,
+                "Only the connection point opens sockets (FR-20). Offenders: " + string.Join(", ", users.Except(allowed)));
+        }
+
+        [Test]
+        public void NetProfiling_OnlyInstallsThreadHooks_ItNeverConnectsOrSends()
+        {
+            var profiling = ProductionSources().Where(f => f.Path == ProfilingFile).ToList();
+            Assert.AreEqual(1, profiling.Count);
+            Assert.IsFalse(Regex.IsMatch(profiling[0].Code, @"\b(ConnectAsync|Send|Close|Dispose)\b|new\s+TcpConnection"),
+                "NetProfiling may only set TcpConnection.SocketThreadStarted/Stopping");
         }
 
         [Test]

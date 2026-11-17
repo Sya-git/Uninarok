@@ -38,6 +38,16 @@ namespace Uninarok.Networking.Core.Transport
             _sink = sink;
         }
 
+        /// <summary>
+        /// Called on each socket thread as it starts, with the thread's name (for example <c>Uninarok.Net.Login.Read</c>).
+        /// Core is engine-free, so the Runtime assembly installs the Profiler registration here once, before any connection
+        /// opens (SPEC-0001 T8.1). Never touched from the socket threads except to call it.
+        /// </summary>
+        public static Action<string> SocketThreadStarted;
+
+        /// <summary>Called on each socket thread just before it exits, as the counterpart of <see cref="SocketThreadStarted"/>.</summary>
+        public static Action SocketThreadStopping;
+
         public ConnectionRole Role { get; }
 
         /// <summary>True once the connection closed, for any reason.</summary>
@@ -100,6 +110,7 @@ namespace Uninarok.Networking.Core.Transport
 
         private void ReadLoop()
         {
+            NotifyThreadStarted();
             try
             {
                 var buffer = new byte[32 * 1024];   // allocated once per connection
@@ -120,11 +131,12 @@ namespace Uninarok.Networking.Core.Transport
             }
             catch (Exception) when (IsClosed) { }   // our own shutdown: stay quiet (FR-7)
             catch (Exception e) { Close(CloseReason.Error, e.Message); }
-            finally { ThreadExited(); }
+            finally { NotifyThreadStopping(); ThreadExited(); }
         }
 
         private void WriteLoop()
         {
+            NotifyThreadStarted();
             try
             {
                 while (true)
@@ -136,7 +148,7 @@ namespace Uninarok.Networking.Core.Transport
             }
             catch (Exception) when (IsClosed) { }
             catch (Exception e) { Close(CloseReason.Error, e.Message); }
-            finally { ThreadExited(); }
+            finally { NotifyThreadStopping(); ThreadExited(); }
         }
 
         // Drains the outbox: swap buffers under the lock, write with no lock held, until it is empty.
@@ -247,6 +259,17 @@ namespace Uninarok.Networking.Core.Transport
 
         /// <summary>Closes as <see cref="CloseReason.LocalDispose"/> (silent). Idempotent.</summary>
         public void Dispose() => Close(CloseReason.LocalDispose, null);
+
+        // A hook that throws must never take a socket thread down.
+        private static void NotifyThreadStarted()
+        {
+            try { SocketThreadStarted?.Invoke(Thread.CurrentThread.Name); } catch (Exception) { }
+        }
+
+        private static void NotifyThreadStopping()
+        {
+            try { SocketThreadStopping?.Invoke(); } catch (Exception) { }
+        }
 
         // The last thread to leave releases the wake-up signal, so the writer never waits on a disposed handle.
         private void ThreadExited()
