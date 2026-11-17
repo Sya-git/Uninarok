@@ -1,0 +1,130 @@
+#if PENDING_T1_2 // T1.1: enabled (guard removed) by T1.2 when PacketReader/PacketWriter exist.
+using System;
+using NUnit.Framework;
+using Uninarok.Networking.Core.Wire;
+
+namespace Uninarok.Networking.Tests
+{
+    // SPEC-0001 FR-6, FR-18; plan 4.1.
+    public class PacketReaderWriterTests
+    {
+        [Test]
+        public void Reader_ReadsLittleEndianPrimitives()
+        {
+            byte[] data =
+            {
+                0x7F,                   // byte
+                0x34, 0x12,             // ushort 0x1234
+                0xFE, 0xFF,             // short -2
+                0x78, 0x56, 0x34, 0x12, // uint 0x12345678
+                0xFF, 0xFF, 0xFF, 0xFF  // int -1
+            };
+            var r = new PacketReader(data);
+            Assert.AreEqual(data.Length, r.Remaining);
+            Assert.AreEqual(0x7F, r.ReadByte());
+            Assert.AreEqual(0x1234, r.ReadUInt16());
+            Assert.AreEqual(-2, r.ReadInt16());
+            Assert.AreEqual(0x12345678u, r.ReadUInt32());
+            Assert.AreEqual(-1, r.ReadInt32());
+            Assert.AreEqual(0, r.Remaining);
+        }
+
+        [Test]
+        public void Reader_ReadBytes_ReadSpan_Skip()
+        {
+            byte[] data = { 1, 2, 3, 4, 5, 6, 7, 8 };
+            var r = new PacketReader(data);
+            Span<byte> dst = stackalloc byte[3];
+            r.ReadBytes(dst);
+            Assert.AreEqual(new byte[] { 1, 2, 3 }, dst.ToArray());
+            r.Skip(1);
+            Assert.AreEqual(4, r.Remaining);
+            Assert.AreEqual(new byte[] { 5, 6 }, r.ReadSpan(2).ToArray());
+            Assert.AreEqual(2, r.Remaining);
+            Assert.AreEqual(7, r.ReadByte());
+        }
+
+        [Test]
+        public void Reader_Overrun_ThrowsPacketFormatException()
+        {
+            byte[] data = { 1, 2, 3 };
+            Assert.Throws<PacketFormatException>(() => { var r = new PacketReader(data); r.ReadUInt32(); });
+            Assert.Throws<PacketFormatException>(() => { var r = new PacketReader(data); r.ReadInt32(); });
+            Assert.Throws<PacketFormatException>(() => { var r = new PacketReader(data); r.Skip(4); });
+            Assert.Throws<PacketFormatException>(() => { var r = new PacketReader(data); r.ReadSpan(4); });
+            Assert.Throws<PacketFormatException>(() =>
+            {
+                var r = new PacketReader(data);
+                Span<byte> dst = stackalloc byte[4];
+                r.ReadBytes(dst);
+            });
+            Assert.Throws<PacketFormatException>(() =>
+            {
+                var r = new PacketReader(data);
+                r.ReadUInt16(); r.ReadUInt16();
+            });
+            Assert.Throws<PacketFormatException>(() => { var r = new PacketReader(ReadOnlySpan<byte>.Empty); r.ReadByte(); });
+        }
+
+        [Test]
+        public void Reader_NegativeCount_Throws()
+        {
+            byte[] data = { 1, 2, 3 };
+            Assert.Throws<PacketFormatException>(() => { var r = new PacketReader(data); r.Skip(-1); });
+            Assert.Throws<PacketFormatException>(() => { var r = new PacketReader(data); r.ReadSpan(-1); });
+        }
+
+        [Test]
+        public void Writer_WritesLittleEndianPrimitives()
+        {
+            byte[] buf = new byte[13];
+            var w = new PacketWriter(buf);
+            w.WriteByte(0x7F);
+            w.WriteUInt16(0x1234);
+            w.WriteInt16(-2);
+            w.WriteUInt32(0x12345678u);
+            w.WriteInt32(-1);
+            Assert.AreEqual(13, w.Position);
+            Assert.AreEqual(new byte[] { 0x7F, 0x34, 0x12, 0xFE, 0xFF, 0x78, 0x56, 0x34, 0x12, 0xFF, 0xFF, 0xFF, 0xFF }, buf);
+        }
+
+        [Test]
+        public void Writer_WriteBytes_And_Skip_WritesZeros()
+        {
+            byte[] buf = { 9, 9, 9, 9, 9, 9 };
+            var w = new PacketWriter(buf);
+            w.WriteBytes(new byte[] { 1, 2 });
+            w.Skip(3);
+            Assert.AreEqual(5, w.Position);
+            Assert.AreEqual(new byte[] { 1, 2, 0, 0, 0, 9 }, buf);
+        }
+
+        [Test]
+        public void Writer_Overrun_ThrowsPacketFormatException()
+        {
+            byte[] buf = new byte[3];
+            Assert.Throws<PacketFormatException>(() => { var w = new PacketWriter(buf); w.WriteUInt32(1); });
+            Assert.Throws<PacketFormatException>(() => { var w = new PacketWriter(buf); w.WriteBytes(new byte[4]); });
+            Assert.Throws<PacketFormatException>(() => { var w = new PacketWriter(buf); w.Skip(4); });
+            Assert.Throws<PacketFormatException>(() => { var w = new PacketWriter(buf); w.WriteUInt16(1); w.WriteUInt16(2); });
+        }
+
+        [Test]
+        public void HappyPath_AllocatesNoManagedMemory()
+        {
+            byte[] src = new byte[16];
+            byte[] dst = new byte[16];
+            Assert.That(() =>
+            {
+                var w = new PacketWriter(dst);
+                w.WriteByte(1); w.WriteUInt16(2); w.WriteInt16(3); w.WriteUInt32(4); w.WriteInt32(5);
+                w.WriteBytes(new ReadOnlySpan<byte>(src, 0, 2)); w.Skip(2);
+
+                var r = new PacketReader(src);
+                r.ReadByte(); r.ReadUInt16(); r.ReadInt16(); r.ReadUInt32(); r.ReadInt32();
+                r.ReadSpan(2); r.Skip(2);
+            }, Is.Not.AllocatingGCMemory());
+        }
+    }
+}
+#endif

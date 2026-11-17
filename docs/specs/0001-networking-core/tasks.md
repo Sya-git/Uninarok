@@ -28,7 +28,7 @@
 
 ## Phase 1: Wire primitives and shared data (FR-6, FR-18)
 
-- [ ] **T1.1** Write failing `PacketReaderWriterTests`: little-endian primitives, `ReadSpan`, `Skip`, `Remaining`, overrun throws `PacketFormatException`, zero allocation on the happy path.
+- [x] **T1.1** Write failing `PacketReaderWriterTests`: little-endian primitives, `ReadSpan`, `Skip`, `Remaining`, overrun throws `PacketFormatException`, zero allocation on the happy path.
 - [ ] **T1.2** Implement `PacketReader`, `PacketWriter`, `PacketFormatException` in `Core/Wire/` (plan §4.1).
   *Done when:* T1.1 passes.
 - [ ] **T1.3** Write failing `WireTextTests`: NUL termination, zero fill, truncation, Windows-1252 round trip including 0x80–0x9F, capacity check. *(FR-6)*
