@@ -102,8 +102,8 @@
   *Done when:* T5.4 passes.
 - [x] **T5.6** Write `PumpOwnershipTests` (source scan: `Process` only from `NetworkClient` and tests; `TcpConnection` only from `NetworkClient` and Core tests). *(FR-5, FR-20)*
   *Done when:* test passes.
-- [ ] **T5.7** (Optional, `UNINAROK_NET_TRACE`) Add the capture tee that writes received bytes to `persistentDataPath/captures/{role}-{timestamp}.bin`.
-  *Done when:* a run against Hercules produces capture files.
+- [x] **T5.7** (Optional, `UNINAROK_NET_TRACE`) Add the capture tee that writes received bytes to `persistentDataPath/captures/{role}-{timestamp}.bin`.
+  *Done when:* a run against Hercules produces capture files. *(Verified here against a loopback server with `UNINAROK_NET_TRACE` defined: `Login-20261117-112049.bin` held the received bytes. The run against Hercules is T9.1.)*
 
 ## Phase 6: Managers and flow (FR-3, FR-9 to FR-14, FR-20)
 

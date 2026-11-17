@@ -33,6 +33,9 @@ namespace Uninarok.Networking.Client
         private CancellationTokenSource _pendingCts;
         private ConnectionRole _role;
         private ConnectionStatus _status = ConnectionStatus.Idle;
+#if UNINAROK_NET_TRACE
+        private CaptureTee _capture;
+#endif
 
         public static NetworkClient Instance { get; private set; }
 
@@ -96,6 +99,13 @@ namespace Uninarok.Networking.Client
             var cts = new CancellationTokenSource();
             _pendingCts = cts;
             IInboundSink sink = _framer;
+#if UNINAROK_NET_TRACE
+            // Record the received bytes for replay fixtures: persistentDataPath/captures/{role}-{timestamp}.bin
+            string capturePath = System.IO.Path.Combine(Application.persistentDataPath, "captures", CaptureTee.FileName(role.ToString(), DateTime.Now));
+            _capture = new CaptureTee(sink, capturePath);
+            sink = _capture;
+            NetLog.Trace("capturing to " + capturePath);
+#endif
             CancellationToken token = cts.Token;
             // Off the main thread: resolving a host name can block.
             _pending = Task.Run(() => TcpConnection.ConnectAsync(host, port, role, sink, token), token);
@@ -185,6 +195,10 @@ namespace Uninarok.Networking.Client
             _framer?.Stop();
             _framer = null;
             _status = ConnectionStatus.Idle;
+#if UNINAROK_NET_TRACE
+            _capture?.Dispose();
+            _capture = null;
+#endif
             var info = new CloseInfo(CloseReason.ConnectFailed, message);
             ConnectionRole role = _role;
             NetLog.ReportClosure(role, info);
@@ -236,6 +250,10 @@ namespace Uninarok.Networking.Client
             }
 
             _status = ConnectionStatus.Idle;
+#if UNINAROK_NET_TRACE
+            _capture?.Dispose();
+            _capture = null;
+#endif
         }
 
         // User event handlers must not break the pump.
