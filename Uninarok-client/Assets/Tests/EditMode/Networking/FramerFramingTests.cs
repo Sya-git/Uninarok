@@ -1,4 +1,3 @@
-#if PENDING_T2_8 // T2.2: enabled (guard removed) by T2.8.
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -136,4 +135,3 @@ namespace Uninarok.Networking.Tests
         }
     }
 }
-#endif

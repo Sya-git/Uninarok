@@ -1,4 +1,3 @@
-#if PENDING_T2_8 // T2.5: enabled (guard removed) by T2.8.
 using System;
 using NUnit.Framework;
 using Uninarok.Networking.Core.Framing;
@@ -100,4 +99,3 @@ namespace Uninarok.Networking.Tests
         }
     }
 }
-#endif

@@ -26,6 +26,9 @@ namespace Uninarok.Networking.Core.Framing
         private byte[] _work;
         private int _read;
         private int _write;
+        private bool _stopped;
+        private bool _faulted;
+        private string _faultReason;
 
         public PacketFramer(IPacketLengthTable lengths, IPacketRouter router, int maxBufferedBytes = DefaultMaxBufferedBytes)
         {
@@ -64,11 +67,67 @@ namespace Uninarok.Networking.Core.Framing
             return true;
         }
 
-        /// <summary>MAIN thread. Moves the inbox into the work buffer.</summary>
+        /// <summary>True once a protocol fault was found. Main thread.</summary>
+        public bool IsFaulted => _faulted;
+
+        /// <summary>Why the stream faulted; null until then. Main thread.</summary>
+        public string FaultReason => _faultReason;
+
+        /// <summary>MAIN thread. Ends processing after the current packet; later <see cref="Process"/> calls return 0.</summary>
+        public void Stop() => _stopped = true;
+
+        /// <summary>
+        /// MAIN thread. Frames up to <paramref name="maxPackets"/> packets and hands each to the router.
+        /// Returns the number of packets framed (routed or skipped); 0 once faulted or stopped.
+        /// The read position advances BEFORE routing, so if the router throws the framer is already consistent
+        /// and the exception propagates to the caller.
+        /// </summary>
         public int Process(int maxPackets)
         {
+            if (_faulted || _stopped || maxPackets <= 0) return 0;
             Drain();
-            return 0; // T2.8 implements parsing.
+
+            int processed = 0;
+            while (processed < maxPackets && !_stopped)
+            {
+                int available = _write - _read;
+                if (available < 2) break;
+
+                ushort id = (ushort)(_work[_read] | (_work[_read + 1] << 8));
+                if (id == 0) { Fault("Packet ID 0"); break; }
+
+                int length = _lengths.GetLength(id);
+                if (length == -2) { Fault("Unknown packet 0x" + id.ToString("X4")); break; }
+                if (length != -1 && length < 2) { Fault("Invalid table length " + length + " for packet 0x" + id.ToString("X4")); break; }
+
+                int header = 2;
+                if (length == -1)
+                {
+                    if (available < 4) break;
+                    length = _work[_read + 2] | (_work[_read + 3] << 8);
+                    if (length < 4) { Fault("Bad length " + length + " for packet 0x" + id.ToString("X4")); break; }
+                    header = 4;
+                }
+
+                if (available < length) break;           // wait for the rest of the packet
+
+                int payloadStart = _read + header;
+                int payloadLength = length - header;
+                _read += length;                          // advance first: the router may throw or call Stop
+                processed++;
+
+                // false = known ID without a handler: already skipped by its length (FR-19).
+                _router.Route(id, new ReadOnlySpan<byte>(_work, payloadStart, payloadLength));
+            }
+
+            if (_read == _write) { _read = 0; _write = 0; }
+            return processed;
+        }
+
+        private void Fault(string reason)
+        {
+            _faulted = true;
+            _faultReason = reason;
         }
 
         // Moves as much of the inbox as the cap allows into the work buffer. Lock is held only for the copy.

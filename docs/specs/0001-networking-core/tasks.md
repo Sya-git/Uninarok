@@ -48,7 +48,7 @@
 - [x] **T2.6** Write failing `FramerAllocTests` with `Is.Not.AllocatingGCMemory()` over 1000 fixed packets. *(FR-6)*
 - [x] **T2.7** Implement `PacketFramer` buffers: inbox/work double buffer, `Append` (returns `false` over cap), drain with compaction and doubling growth (plan §4.3, D1).
   *Done when:* the buffer parts of T2.2 and T2.5 pass.
-- [ ] **T2.8** Implement `Process` steps 1–3 with header handling, advance-then-route, unhandled skip, per-call cap and `Stop`. *(FR-1, FR-5, FR-19)*
+- [x] **T2.8** Implement `Process` steps 1–3 with header handling, advance-then-route, unhandled skip, per-call cap and `Stop`. *(FR-1, FR-5, FR-19)*
   *Done when:* T2.2, T2.5 and T2.6 pass.
 - [ ] **T2.9** Implement `SkipNextBytes` and the skip step before header parsing. *(FR-3)*
   *Done when:* T2.4 passes.

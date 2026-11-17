@@ -1,4 +1,3 @@
-#if PENDING_T2_8 // T2.2: enabled (guard removed) by T2.8 when PacketFramer.Process exists.
 using System;
 using System.Collections.Generic;
 using Uninarok.Networking.Core.Framing;
@@ -29,4 +28,3 @@ namespace Uninarok.Networking.Tests
         }
     }
 }
-#endif

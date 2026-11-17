@@ -1,4 +1,3 @@
-#if PENDING_T2_8 // T2.6: enabled (guard removed) by T2.8.
 using System;
 using NUnit.Framework;
 using Uninarok.Networking.Core.Framing;
@@ -29,7 +28,7 @@ namespace Uninarok.Networking.Tests
             framer.Process(100);
             framer.Append(Wire.Repeat(Wire.Fixed(A, 1, 2, 3, 4), 1000));
 
-            Assert.That(() => framer.Process(2000), UnityEngine.TestTools.Constraints.Is.Not.AllocatingGCMemory());
+            Assert.That(() => { framer.Process(2000); }, UnityEngine.TestTools.Constraints.Is.Not.AllocatingGCMemory());
             Assert.AreEqual(1010, router.Count);
         }
 
@@ -44,9 +43,8 @@ namespace Uninarok.Networking.Tests
             framer.Process(100);
             framer.Append(Wire.Repeat(Wire.Var(V, 1, 2, 3, 4, 5), 500));
 
-            Assert.That(() => framer.Process(2000), UnityEngine.TestTools.Constraints.Is.Not.AllocatingGCMemory());
+            Assert.That(() => { framer.Process(2000); }, UnityEngine.TestTools.Constraints.Is.Not.AllocatingGCMemory());
             Assert.AreEqual(510, router.Count);
         }
     }
 }
-#endif
