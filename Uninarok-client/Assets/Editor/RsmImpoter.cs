@@ -1,3 +1,5 @@
+// Old import pipeline, compiled out by SPEC-0002 T0.2 (plan D15). Deleted by the plan that replaces it.
+#if RO_LEGACY_IMPORTERS
 using GRF.FileFormats.RsmFormat; // Namespace do Tokeiburu para RSM
 using System.Collections.Generic;
 using System.IO;
@@ -239,3 +241,4 @@ namespace Uninarok.Editor
     }
 
 }
+#endif

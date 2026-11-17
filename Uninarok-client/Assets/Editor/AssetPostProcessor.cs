@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Old import pipeline, compiled out by SPEC-0002 T0.2 (plan D15). Deleted by the plan that replaces it.
+#if RO_LEGACY_IMPORTERS
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Uninarok.Data;
@@ -60,3 +62,4 @@ namespace Assets.Editor
         }
     }
 }
+#endif

@@ -1,3 +1,5 @@
+// Old import pipeline, compiled out by SPEC-0002 T0.2 (plan D15). Deleted by the plan that replaces it.
+#if RO_LEGACY_IMPORTERS
 using GRF;
 using GRF.FileFormats.GndFormat;
 using System.Collections.Generic;
@@ -320,3 +322,4 @@ namespace Uninarok.Editor
         }
     }
 }
+#endif

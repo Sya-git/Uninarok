@@ -1,4 +1,6 @@
-﻿using UnityEditor;
+﻿// Old import pipeline, compiled out by SPEC-0002 T0.2 (plan D15). Deleted by the plan that replaces it.
+#if RO_LEGACY_IMPORTERS
+using UnityEditor;
 using UnityEngine;
 
 namespace Assets.Editor
@@ -66,3 +68,4 @@ namespace Assets.Editor
         }
     }
 }
+#endif
