@@ -11,11 +11,25 @@ namespace Uninarok.Networking.Tests
     {
         private readonly TcpListener _listener;
 
-        public LoopbackServer()
+        public LoopbackServer() : this(0) { }
+
+        /// <summary>Listens on the given port; 0 lets the OS choose.</summary>
+        public LoopbackServer(int port)
         {
-            _listener = new TcpListener(IPAddress.Loopback, 0);
+            _listener = new TcpListener(IPAddress.Loopback, port);
             _listener.Start();
             Port = (ushort)((IPEndPoint)_listener.LocalEndpoint).Port;
+        }
+
+        /// <summary>A server on a free port above 32767 (a port a signed 16-bit value cannot hold, FR-12).</summary>
+        public static LoopbackServer OnHighPort()
+        {
+            for (int port = 40000; port < 40200; port++)
+            {
+                try { return new LoopbackServer(port); }
+                catch (SocketException) { }
+            }
+            throw new InvalidOperationException("No free port found in 40000-40199");
         }
 
         public ushort Port { get; }

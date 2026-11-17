@@ -1,4 +1,3 @@
-#if PENDING_T5_5 // T5.4: enabled (guard removed) by T5.5 when NetworkClient exists.
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
@@ -91,11 +90,13 @@ namespace Uninarok.Networking.Tests
         [Test]
         public void Connect_ToAPortAbove32767_Works()
         {
-            // FR-12: the port is a ushort end to end. The OS picks ephemeral ports above 32767 on Windows in most cases;
-            // the signature itself (ushort) is what makes 40000 representable.
-            _client.Connect("127.0.0.1", _server.Port, ConnectionRole.Map);
-            Assert.IsTrue(PumpUntil(() => _client.Status == ConnectionStatus.Connected));
-            using var peer = _server.Accept();
+            // FR-12: ports are ushort end to end; a signed 16-bit port would have gone negative.
+            using var high = LoopbackServer.OnHighPort();
+            Assert.Greater(high.Port, 32767);
+
+            _client.Connect("127.0.0.1", high.Port, ConnectionRole.Map);
+            Assert.IsTrue(PumpUntil(() => _client.Status == ConnectionStatus.Connected), "must connect on port " + high.Port);
+            using var peer = high.Accept();
         }
 
         // ---- receiving ----
@@ -302,4 +303,3 @@ namespace Uninarok.Networking.Tests
         }
     }
 }
-#endif
