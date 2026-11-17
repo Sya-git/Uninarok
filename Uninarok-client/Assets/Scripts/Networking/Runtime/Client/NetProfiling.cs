@@ -1,3 +1,4 @@
+using System.Threading;
 using UnityEngine.Profiling;
 using Uninarok.Networking.Core.Transport;
 
@@ -15,6 +16,17 @@ namespace Uninarok.Networking.Client
         private const string NamePrefix = "Uninarok.Net.";
 
         private static bool s_installed;
+        private static int s_started;
+        private static int s_stopped;
+
+        /// <summary>Socket threads that announced they started since <see cref="Install"/> (editor and development builds).</summary>
+        public static int SocketThreadsStarted => Volatile.Read(ref s_started);
+
+        /// <summary>Socket threads that announced they are stopping.</summary>
+        public static int SocketThreadsStopped => Volatile.Read(ref s_stopped);
+
+        /// <summary>Socket threads still running: started minus stopped. Zero once every connection is closed (SPEC-0001 T9.7).</summary>
+        public static int SocketThreadsRunning => SocketThreadsStarted - SocketThreadsStopped;
 
         /// <summary>Installs the hooks once. Idempotent; call on the main thread before any connection is opened.</summary>
         public static void Install()
@@ -34,8 +46,16 @@ namespace Uninarok.Networking.Client
             return threadName.StartsWith(NamePrefix) ? threadName.Substring(NamePrefix.Length) : threadName;
         }
 
-        private static void OnThreadStarted(string threadName) => Profiler.BeginThreadProfiling(ThreadGroup, ProfilerThreadName(threadName));
+        private static void OnThreadStarted(string threadName)
+        {
+            Interlocked.Increment(ref s_started);
+            Profiler.BeginThreadProfiling(ThreadGroup, ProfilerThreadName(threadName));
+        }
 
-        private static void OnThreadStopping() => Profiler.EndThreadProfiling();
+        private static void OnThreadStopping()
+        {
+            Profiler.EndThreadProfiling();
+            Interlocked.Increment(ref s_stopped);
+        }
     }
 }

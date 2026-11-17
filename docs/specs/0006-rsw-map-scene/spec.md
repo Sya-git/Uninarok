@@ -5,8 +5,8 @@
 | **Status** | Approved |
 | **Created** | 2026-11-16 |
 | **Owner** | _(fill in)_ |
-| **Plan** | plan.md _(written after approval)_ |
-| **Tasks** | tasks.md _(written after plan approval)_ |
+| **Plan** | [plan.md](plan.md) |
+| **Tasks** | [tasks.md](tasks.md) |
 
 ## 1. Why
 

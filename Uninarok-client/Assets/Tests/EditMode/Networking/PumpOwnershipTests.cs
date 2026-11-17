@@ -15,6 +15,7 @@ namespace Uninarok.Networking.Tests
         const string ConnectionFile = "Networking/Core/Transport/TcpConnection.cs";
         const string ClientFile = "Networking/Runtime/Client/NetworkClient.cs";
         const string ProfilingFile = "Networking/Runtime/Client/NetProfiling.cs";   // installs static thread hooks; never opens a connection
+        const string ProbeFile = "Networking/Runtime/Dev/NetworkProbe.cs";             // dev-only measurement tool: opens a loopback listener for its thread check
 
         static string ScriptsRoot => Path.Combine(Application.dataPath, "Scripts");
 
@@ -74,7 +75,7 @@ namespace Uninarok.Networking.Tests
         {
             // Phase 6 code must talk through INetworkClient only; no socket types outside the transport and the client.
             var offenders = FilesMatching(@"\b(System\.Net\.Sockets|TcpClient|TcpListener|Socket)\b", ProductionSources())
-                .Where(p => p != ConnectionFile && p != ClientFile).ToList();
+                .Where(p => p != ConnectionFile && p != ClientFile && p != ProbeFile).ToList();
             CollectionAssert.IsEmpty(offenders, "Socket types used outside the transport: " + string.Join(", ", offenders));
         }
 

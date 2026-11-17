@@ -96,6 +96,28 @@ namespace Uninarok.Networking.Tests
             Assert.IsTrue(LoopbackServer.WaitUntil(() => conn.LiveThreads == 0));
         }
 
+        [Test]
+        public void SocketThreadCounters_StartedAndStopped_ReturnToZeroRunning_AfterEveryConnectionIsClosed()
+        {
+            NetProfiling.Install();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            int startedBefore = NetProfiling.SocketThreadsStarted, stoppedBefore = NetProfiling.SocketThreadsStopped;
+            using var server = new LoopbackServer();
+            var peers = new System.Collections.Generic.List<System.Net.Sockets.Socket>();
+            for (int i = 0; i < 5; i++)
+            {
+                var conn = Connect(server, ConnectionRole.Map);
+                peers.Add(server.Accept());
+                Assert.IsTrue(LoopbackServer.WaitUntil(() => NetProfiling.SocketThreadsRunning >= 2));
+                conn.Dispose();
+            }
+            Assert.IsTrue(LoopbackServer.WaitUntil(() => NetProfiling.SocketThreadsStopped - stoppedBefore == 10), "10 threads announced that they stop");
+            Assert.AreEqual(10, NetProfiling.SocketThreadsStarted - startedBefore, "two threads per connection");
+            Assert.AreEqual(startedBefore - stoppedBefore, NetProfiling.SocketThreadsRunning, "nothing from these connections is still running");
+            foreach (var p in peers) p.Close();
+#endif
+        }
+
         // ---- the Runtime side ----
 
         [TestCase("Uninarok.Net.Login.Read", "Login.Read")]

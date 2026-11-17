@@ -8,8 +8,6 @@
 | **Plan** | plan.md _(written after approval)_ |
 | **Tasks** | tasks.md _(written after plan approval)_ |
 
-> This file defines **what** and **why**. It contains no class names, file paths or library choices. Those live in `plan.md`. Shared rules are in SPEC-0002.
-
 ## 1. Why
 
 Every map's terrain is stored as a grid of cubes with corner heights and texture tiles. The ground must be rebuilt as a clean mesh that matches the original exactly: no holes, no stray walls, no swapped rows and columns on non-square maps. Terrain errors are hard to spot by eye on a large map, so the importer must also give a way to check the result visually.
@@ -38,7 +36,7 @@ Priority: **M** = must, **S** = should.
 | FR-5 | M | Cube size and height scale follow SPEC-0002 FR-7 (one cube is one unit wide) and use the map's own values, not fixed constants. | A map with a non-default cube proportion renders at the right size. |
 | FR-6 | M | Maps of any size in the game are supported (no limit that breaks large maps), the ground is split so parts out of view can be skipped, and one material is used per texture. | The largest map in the data imports and renders. Moving the camera away from a region stops drawing it. |
 | FR-7 | M | Lit shading is smooth across cubes: no visible grid pattern on flat or sloped ground. | A flat reference area shows even lighting. |
-| FR-8 | S | The map's baked ground lighting (per-tile shadow brightness and color) is applied. | A map with painted shadows shows them as in the reference client. |
+| FR-8 | S | _Not implemented (owner decision, OQ-2)._ The map's baked ground lighting (per-tile shadow brightness and color) is applied. | A map with painted shadows shows them as in the reference client. |
 | FR-9 | M | Selecting the ground (or its map object) shows editor gizmos: the cube grid, cube coordinates, corner heights, and for each face whether it is a top, front wall or side wall plus its texture. Each layer can be switched on and off. Gizmos are limited to the selected area when the map is large. | Selecting a reference ground shows the grid. Hovering or selecting a cube shows its data. Switching a layer off hides it. No gizmo cost in builds or when not selected. |
 
 ## 5. Success criteria
@@ -48,6 +46,7 @@ Priority: **M** = must, **S** = should.
 
 ## 6. Assumptions and constraints
 
+- Shared rules (units and axes, textures, materials, idempotency, batches) are in SPEC-0002 and apply here.
 - Reference maps are listed in `0003-rsm-models/reference-models.md`: prontera (156 x 196 cubes) and izlude (134 x 150) are non-square, prt_fild08 is 200 x 200.
 - Gizmos are editor-only (SPEC-0002 FR-14).
 
@@ -56,4 +55,4 @@ Priority: **M** = must, **S** = should.
 | # | Question | Blocks |
 |---|---|---|
 | OQ-1 | None open. |  |
-| OQ-2 | Are lightmaps wanted in the first delivery or with Unity's baking only? | FR-8 |
+| OQ-2 | Closed by the owner: nothing is baked; Unity's real time lighting and shadows are used. FR-8 is not implemented. | FR-8 |

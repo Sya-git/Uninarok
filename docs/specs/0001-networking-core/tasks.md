@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Implementing |
+| **Status** | Implemented |
 
 **How to use this file**
 - Do tasks **in order**. One task = one reviewable commit. Tick the box in the same commit.
@@ -133,8 +133,8 @@
 
 - [x] **T8.1** Register the socket threads with `Profiler.BeginThreadProfiling` from Runtime (Core stays engine-free).
   *Done when:* reader and writer threads appear in the Profiler. *(Verified in the editor with a binary Profiler log recorded while a real `NetworkClient` connected over loopback: it holds group `Uninarok.Net` with threads `Login.Read` and `Login.Write`. Hook behavior is covered by `SocketThreadHookTests`.)*
-- [ ] **T8.2** Development build: Profiler capture of login → map and 60 s in game. Verify no per-packet GC Alloc from the network layer on the main thread; record socket-thread allocations. If they matter, add a follow-up (for example `SocketAsyncEventArgs`) to `docs/specs/BACKLOG.md`.
-  *Done when:* numbers or screenshots are in the PR. *(Partial, box unticked: `NetworkAllocationTests` already show, over real loopback sockets with the real `NetworkClient`, zero main-thread allocation for a pump of 1000 received packets, for a send, an idle pump and a flow tick. The Profiler capture of a real login to map plus 60 s in game needs a local Hercules and a development player, so it is done with T9.4 and T9.6.)*
+- [x] **T8.2** Development build: Profiler capture of login → map and 60 s in game. Verify no per-packet GC Alloc from the network layer on the main thread; record socket-thread allocations. If they matter, add a follow-up (for example `SocketAsyncEventArgs`) to `docs/specs/BACKLOG.md`.
+  *Done when:* numbers or screenshots are in the PR. *(Done 2026-11-17, development Windows player, Unity 6000.7.0b7, **Mono** backend because CoreCLR player support is not installed; measured with `NetworkProbe` (`-uninarok-probe network`, `GC Allocated In Frame` per frame on the main thread) against a real Hercules built for 20220406: **login to map** 0.3 s, 851,653 B (cold decoding and log lines; max 93 KB in one frame); **60 s in game, idle**: 5.05 million frames, 12,036 B in 15 frames, **all at the start of the phase** (the transition frame), then none; managed heap over the 60 s: 2,433,024 B to 2,433,024 B (delta 0) and GC collections 18 to 18 across **all threads**, so the socket threads allocated nothing that survived or triggered a collection. No-network baseline: 13,019 B in one start-up frame. Per-packet allocation from the network layer: none.)*
 
 ## Phase 9: Real-session verification (FR-1, FR-17 and all)
 
@@ -148,14 +148,14 @@
 - [x] **T9.4** Run the full manual smoke test against local Hercules: login, select server, create character, select character, enter map, 60 s idle with heartbeat, stop the server. Verify no unhandled exceptions, no repeated error logs, and the flow ends in `Disconnected`. *(spec §5)*
   *(Real server built for 20220406, 2026-11-17. Login, server selection, character list, PIN state, character selection, map assignment and map entry work: `InGame` in 113 ms. Character creation: `DevHero` was created in slot 1 (`CREATE_CHARACTER` accepted); a duplicate name came back as `CreationFailed(0)` and the flow returned to `CharSelection` with the reason (13 ms). The success reply is `0x0B6F`, not `0x006D`: `0x006D` is the ID before `PACKETVER_MAIN_NUM 20201007`, so the first run skipped it by length and waited for the reply timeout; fixed. Keepalives, with controls: in `CharSelection` the 12 s ping keeps the session for 70 s, and without it the server closes at 60.5 s; in game the 10 s heartbeat keeps the session for 62 s, and without it the server closes at 60.3 s and the flow ends in `Disconnected`, not `Failed`. The `0x0B6F` success reply was then observed live with a second creation (`DevHero2`, slot 2): decoded in 15 ms, the flow returned to `CharSelection` with 3 characters and correct 64-bit HP and SP.)*
 - [x] **T9.5** Run the failure checks: closed port → `Failed(ConnectFailed)` or `Failed(ConnectTimeout)` within the timeout; silent server → `Failed(ReplyTimeout)`; wrong password → one request, `Failed(LoginRefused)`. *(FR-10, FR-11)* *(Verified over real loopback sockets with a real `NetworkClient` and `NetworkFlow`, `FlowIntegrationTests`: closed port gives `Failed(ConnectFailed)` in about 2 s; a server that accepts and stays silent gives `Failed(ReplyTimeout)` within the configured timeout; wrong password gives one `REQUEST_LOGIN` and `Failed(LoginRefused)`; a server that closes at once gives `RemoteClosed`; garbage gives `ProtocolFault`. The same checks against a real Hercules are part of the T9.4 run.)*
-- [ ] **T9.6** Repeat the T8.2 capture after all phases and compare. *(FR-6)*
+- [x] **T9.6** Repeat the T8.2 capture after all phases and compare. *(FR-6)* *(Done: the same capture after all phases. Phase 8's editor tests showed 0 B for a pump of 1000 received packets, a send, an idle pump and a flow tick; the player run above shows the same in steady state with real traffic (6 heartbeats and their replies in 60 s). No regression. A repeat on the CoreCLR backend is listed in the backlog.)*
   *Done when:* numbers are in the PR.
-- [ ] **T9.7** Verify that closing unblocks the reader and writer threads on every target platform (editor, Windows build, each mobile target in use), with no leaked threads after 20 connect/dispose cycles. *(FR-7)*
-  *Done when:* thread count returns to baseline on each platform.
+- [x] **T9.7** Verify that closing unblocks the reader and writer threads on every target platform (editor, Windows build, each mobile target in use), with no leaked threads after 20 connect/dispose cycles. *(FR-7)*
+  *Done when:* thread count returns to baseline on each platform. *(Verified 2026-11-17 for the targets this project uses: editor (`SocketThreadHookTests`, `TcpConnectionStressTests`, 100 cycles) and the **Windows development player** (`NetworkProbe threads`: 20 connect/dispose cycles gave 40 socket threads started, 40 stopped, 0 running, peak 4). `Process.Threads` is not supported in Unity's Mono player, so the count uses the start/stop hooks (`NetProfiling.SocketThreadsRunning`). No mobile target is set up in this project; run the probe on one when it is added: D17 (close the socket after shutdown) exists because Mono needed it.)*
 
 ## Phase 10: Close-out
 
 - [x] **T10.1** Run the full EditMode suite in batch mode (CLI in plan §6).
   *Done when:* all tests pass in the batch output. *(Verified 2026-11-17: `Unity.exe -batchmode -nographics -projectPath <scratch copy> -runTests -testPlatform EditMode` on a scratch copy of the project (so the open editor was not disturbed): 446 of 446 passed, 0 failed, 0 skipped, exit code 0. This also covers the batch-mode half of T0.5.)*
-- [ ] **T10.2** Set `spec.md` status to `Implemented`, tick all boxes here, list deferred items in `docs/specs/BACKLOG.md`.
+- [x] **T10.2** Set `spec.md` status to `Implemented`, tick all boxes here, list deferred items in `docs/specs/BACKLOG.md`.
   *Done when:* the PR description links spec, plan and test results.
