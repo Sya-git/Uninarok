@@ -34,7 +34,7 @@
 - [x] **T1.3** Write failing `WireTextTests`: NUL termination, zero fill, truncation, Windows-1252 round trip including 0x80–0x9F, capacity check. *(FR-6)*
 - [x] **T1.4** Implement `WireText` with the hand-written Windows-1252 table, one overload per `FixedString*` size in use (plan §4.2).
   *Done when:* T1.3 passes.
-- [ ] **T1.5** Implement the shared data types of `docs/data/` (`AccountSex`, `CharInfo`, `UninarokDirection`, `UninarokPosition`, `UninarokMoveData`) in `Runtime/Data/` with `Read`/`Write` and `DataTypeTests` from the vectors in each doc. *(FR-18)*
+- [x] **T1.5** Implement the shared data types of `docs/data/` (`AccountSex`, `CharInfo`, `UninarokDirection`, `UninarokPosition`, `UninarokMoveData`) in `Runtime/Data/` with `Read`/`Write` and `DataTypeTests` from the vectors in each doc. *(FR-18)*
   *Done when:* data tests pass.
 
 ## Phase 2: Framing (FR-1, FR-2, FR-3, FR-5, FR-6, FR-17, FR-19)
