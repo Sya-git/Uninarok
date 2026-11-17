@@ -1,4 +1,5 @@
 using System;
+using Uninarok.RoImport.Core.Materials;
 using Uninarok.RoImport.Core.Paths;
 
 namespace Uninarok.RoImport.Core.Output
@@ -27,6 +28,9 @@ namespace Uninarok.RoImport.Core.Output
         /// </summary>
         public static string Material(RoOutputRoots r, RoPath texture, string suffix) =>
             Join(r.Art, MaterialsFolder + "/" + NotEmpty(texture).WithExtension("").Canonical + "__" + Name(suffix, nameof(suffix)) + ".mat");
+
+        /// <summary>The shared material of a key (plan 4.6): <c>Art/_materials/&lt;texture without extension&gt;__&lt;suffix&gt;.mat</c>.</summary>
+        public static string Material(RoOutputRoots r, RoMaterialKey key) => Material(r, key.Texture, key.Suffix);
 
         /// <summary><c>Art/_placeholders/&lt;name&gt;</c>.</summary>
         public static string Placeholder(RoOutputRoots r, string name) =>
