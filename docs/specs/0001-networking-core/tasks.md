@@ -39,7 +39,7 @@
 
 ## Phase 2: Framing (FR-1, FR-2, FR-3, FR-5, FR-6, FR-17, FR-19)
 
-- [ ] **T2.1** Add `IPacketLengthTable`, `IPacketRouter`, `IInboundSink` in `Core/Framing/` and test helpers `TableStub` (table-driven lengths) and `RecordingRouter` (records `(id, payload copy)`, configurable handled IDs).
+- [x] **T2.1** Add `IPacketLengthTable`, `IPacketRouter`, `IInboundSink` in `Core/Framing/` and test helpers `TableStub` (table-driven lengths) and `RecordingRouter` (records `(id, payload copy)`, configurable handled IDs).
   *Done when:* compiles; helpers used by one test.
 - [ ] **T2.2** Write failing `FramerFramingTests`: fixed, variable, split at every byte offset, coalesced, back-to-back. *(FR-1)*
 - [ ] **T2.3** Write failing `FramerFaultTests`: unknown ID, ID 0, variable length < 4, invalid table length, cap exceeded, no routing after fault, single `FaultReason` with hex. *(FR-2)*
