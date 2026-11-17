@@ -48,7 +48,7 @@
   *Done when:* the tests compile and are ignored with `pending T2.2`.
 - [x] **T2.2** Implement `Core/Source/`: `IRoSource`, `RoSourceFile` (with `ReadAllBytes` and `ContentHash`), `RoFolderSource` (single enumeration, canonical-key index, `Refresh`, duplicate handling) and `RoHashCache` (`Library/RoImport/hashcache.json`, keyed by disk path, length and last-write ticks). (FR-1, FR-16)
   *Done when:* `[Ignore]` removed and `RoFolderSourceTests` pass; a hash cache test shows the second `ContentHash` call on an unchanged file does not read the file (counter in a test double).
-- [ ] **T2.3** Add `Editor/Ui/RoSourceLocation` (`Resolve()` with the `EditorPrefs` key `Uninarok.RoImport.SourceRoot` and the default `Assets/Editor/GRF Resources~/data` resolved against the project root) and a test for the default value and the override. (FR-1, FR-15)
+- [x] **T2.3** Add `Editor/Ui/RoSourceLocation` (`Resolve()` with the `EditorPrefs` key `Uninarok.RoImport.SourceRoot` and the default `Assets/Editor/GRF Resources~/data` resolved against the project root) and a test for the default value and the override. (FR-1, FR-15)
   *Done when:* tests pass, including one that asserts the default folder name ends with `~` and that `AssetDatabase.AssetPathToGUID` of a path inside it is empty.
 
 ## Phase 3: Imaging
