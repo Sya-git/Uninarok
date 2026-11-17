@@ -9,7 +9,7 @@ namespace Uninarok.RoImport.Tests
     // Plan 4.5, D9. TASKS T4.1.
     public class RoOutputPathsTests
     {
-        static readonly RoOutputRoots Roots = new RoOutputRoots();
+        readonly RoOutputRoots Roots = new RoOutputRoots();
 
         [Test]
         public void DefaultRoots_AreTheThreeProjectAreas()
