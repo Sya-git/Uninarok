@@ -57,7 +57,7 @@
 
 ## Phase 3: Dispatch and transport (FR-2, FR-4, FR-6, FR-7, FR-8, FR-9)
 
-- [ ] **T3.1** Write failing `DispatcherTests`: throwing handler does not block the next; subscribe/unsubscribe during dispatch applies from the next packet; 100 subscribe/unsubscribe cycles leave the count unchanged; `Dispatch` with 3 subscribers allocates 0 bytes. *(FR-4, FR-6, FR-9)*
+- [x] **T3.1** Write failing `DispatcherTests`: throwing handler does not block the next; subscribe/unsubscribe during dispatch applies from the next packet; 100 subscribe/unsubscribe cycles leave the count unchanged; `Dispatch` with 3 subscribers allocates 0 bytes. *(FR-4, FR-6, FR-9)*
 - [ ] **T3.2** Implement `PacketHandler<T>` and `PacketDispatcher` (per-type slots, copy-on-write arrays, per-callback `try/catch`, plan §4.5).
   *Done when:* T3.1 passes.
 - [ ] **T3.3** Add `ConnectionRole`, `CloseReason`, `CloseInfo`, `IOutgoingPacket` in `Core/Transport/`.
