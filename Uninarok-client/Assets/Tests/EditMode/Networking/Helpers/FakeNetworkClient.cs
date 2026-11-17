@@ -43,6 +43,14 @@ namespace Uninarok.Networking.Tests
         /// <summary>When false, <see cref="Send{T}"/> reports failure like a full backlog or a closed connection.</summary>
         public bool AcceptSends = true;
 
+        /// <summary>
+        /// When false, sends are only counted (<see cref="UncountedSends"/>): nothing is serialized or recorded, so a test can
+        /// check that the code under test allocates nothing when it sends. The default records the bytes.
+        /// </summary>
+        public bool RecordSends = true;
+
+        public int UncountedSends { get; private set; }
+
         public FakeNetworkClient()
         {
             Dispatcher = new PacketDispatcher(e => HandlerErrors.Add(e));
@@ -75,6 +83,11 @@ namespace Uninarok.Networking.Tests
             {
                 Actions.Add("SendFailed " + typeof(T).Name);
                 return false;
+            }
+            if (!RecordSends)
+            {
+                UncountedSends++;
+                return true;
             }
             int size = packet.WireSize;
             var bytes = new byte[size];
@@ -130,6 +143,7 @@ namespace Uninarok.Networking.Tests
             Actions.Clear();
             HandlerErrors.Clear();
             DisconnectCalls = 0;
+            UncountedSends = 0;
         }
     }
 }
