@@ -1,4 +1,3 @@
-#if PENDING_T6_3 // T6.2: enabled (guard removed) by T6.3 when LoginManager exists.
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -280,4 +279,3 @@ namespace Uninarok.Networking.Tests
         }
     }
 }
-#endif
