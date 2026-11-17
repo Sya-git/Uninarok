@@ -1,4 +1,3 @@
-#if PENDING_T1_4 // T1.3: enabled (guard removed) by T1.4 when WireText exists.
 using System;
 using NUnit.Framework;
 using Unity.Collections;
@@ -136,7 +135,7 @@ namespace Uninarok.Networking.Tests
             for (int i = 0; i < 23; i++) payload[i] = 0x99;   // trademark: 3 bytes each in UTF-8
             var r = new PacketReader(payload);
             var s = new FixedString32Bytes();                 // capacity 29 bytes
-            Assert.DoesNotThrow(() => WireText.Read(ref r, payload.Length, ref s));
+            WireText.Read(ref r, payload.Length, ref s);   // must not throw
             Assert.AreEqual(9, s.Length / 3);
             Assert.AreEqual(0, s.Length % 3);                 // no split character
             Assert.AreEqual(0, r.Remaining);
@@ -183,4 +182,3 @@ namespace Uninarok.Networking.Tests
         }
     }
 }
-#endif
