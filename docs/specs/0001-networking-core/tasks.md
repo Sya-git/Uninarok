@@ -63,7 +63,7 @@
 - [x] **T3.3** Add `ConnectionRole`, `CloseReason`, `CloseInfo`, `IOutgoingPacket` in `Core/Transport/`.
   *Done when:* compiles.
 - [x] **T3.4** Write failing `TcpConnectionTests` (loopback `TcpListener`): remote close observed < 1 s with `RemoteClosed`; `Dispose` is silent (`LocalDispose`) and both threads exit; empty send returns `true` and sends nothing; send after close returns `false`; sink overflow closes with `ProtocolFault`. *(FR-7, FR-8)*
-- [ ] **T3.5** Implement `ConnectAsync` (cancellation disposes the socket), closure (`Close`, first-wins `CompareExchange`, `IsClosed`, `Closure`) and the reader thread with blocking `Receive`, shutdown-quiet filters and `Shutdown(Both)` on close (plan §4.4). *(FR-2, FR-7)*
+- [x] **T3.5** Implement `ConnectAsync` (cancellation disposes the socket), closure (`Close`, first-wins `CompareExchange`, `IsClosed`, `Closure`) and the reader thread with blocking `Receive`, shutdown-quiet filters and `Shutdown(Both)` on close (plan §4.4). *(FR-2, FR-7)*
   *Done when:* the receive and close parts of T3.4 pass.
 - [ ] **T3.6** Write failing `OutgoingTests`: 10 000 sends arrive complete and in order; 4 concurrent sender threads produce no partial or interleaved packets; `Send<T>` of a fixed test packet allocates 0 bytes after warm-up; a throwing `Serialize` leaves no partial bytes; backlog overflow closes with `Error` and returns `false`. *(FR-6, FR-8)*
 - [ ] **T3.7** Implement the outbox, writer buffer swap, idle flag, `AutoResetEvent` wake-up, writer thread, `MaxSendBacklogBytes`, `Send<T>` and `Send(ReadOnlySpan<byte>)`. *(FR-6, FR-8)*

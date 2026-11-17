@@ -311,7 +311,7 @@ private void WriteLoop()                                      // dedicated threa
 - **Idle flag:** the signal is set only on the idle → busy transition, under the buffer's lock: no lost wake-up, no redundant signals.
 - **Closure (D6):** `_closure` is set once with `Interlocked.CompareExchange(ref _closure, info, null)`. Every close path (0-byte read, I/O error, sink overflow, backlog overflow, `Close`, `Dispose`) goes through `Close`, which also calls `_outSignal.Set()` to wake the writer.
 - **Shutdown-quiet (FR-7):** exceptions raised while `_closure != null` are swallowed by the filters above; any other exception becomes `Close(Error, message)`.
-- **Waking blocked threads:** `Close` calls `socket.Shutdown(SocketShutdown.Both)` (inside try/catch) before closing the socket, because closing alone does not reliably wake a blocked `Receive` on every platform. `_outSignal` and the socket are disposed by the last thread to exit (`Interlocked.Decrement` on a live-thread counter), never by `Close`/`Dispose`, so a waiting thread never touches a disposed handle.
+- **Waking blocked threads (D17):** `Close` calls `socket.Shutdown(SocketShutdown.Both)` and then closes the socket (`TcpClient.Dispose`), both inside try/catch. Measured on Unity 6000.7.0b7 (Mono, Windows editor): `Shutdown` alone does **not** wake a thread blocked in `Receive`; closing the handle does, and the reader sees a `SocketException`. That exception is swallowed by the shutdown-quiet filter because `_closure` is already set before the socket is closed. A thread that touches the closed socket afterwards gets `ObjectDisposedException` or `SocketException`, handled by the same filter. Only `_outSignal` (the `AutoResetEvent`) is still disposed by the last thread to exit (`Interlocked.Decrement` on a live-thread counter), so the writer never waits on a disposed handle.
 - **Allocation:** `Send<T>` is generic over a struct, so there is no boxing. `AutoResetEvent.Set()`, `Socket.Send` and `Socket.Receive` do not allocate. A non-`readonly` struct passed by `in` may be copied defensively on the stack (not GC).
 - **Trace capture (optional, `UNINAROK_NET_TRACE`):** the `NetworkClient` wraps the sink with a tee that appends received bytes to `Application.persistentDataPath/captures/{role}-{yyyyMMdd-HHmmss}.bin` for replay fixtures (Core stays engine-free; the tee lives in Runtime).
 
@@ -744,13 +744,14 @@ Every serialized field (`serverIndex`, `characterSlot`, draft fields, `maxLoginA
 | D14 | `NetworkFlow` orchestrates; managers only speak their server's protocol and raise events | Managers handing off to each other directly (each would know the next server and the timeouts; the state machine would be spread over three classes) |
 | D15 | Windows-1252 through a hand-written table in `WireText` | `System.Text.Encoding.CodePages` (extra dependency, allocating APIs in places) |
 | D16 | Dev credentials read from `EditorPrefs` or a local file outside the repository | Serialized fields in the scene (credentials committed in plain text) |
+| D17 | `Close` shuts the socket down and then closes it, so a blocked `Receive` is woken on Mono; closure is recorded first so the resulting exception is silent | Shutdown only with the socket disposed by the last thread (measured: Mono's blocked `Receive` is not woken by `Shutdown`); `Poll` loop with timeout (also not woken by `Shutdown`, adds wake-ups) |
 
 ## 9. Risks
 
 | Risk | Mitigation |
 |---|---|
 | Char server echo is not exactly 4 bytes for this PACKETVER | Verify with real captures (T9.1) before relying on `SkipNextBytes(4)` |
-| A blocked `Receive` is not woken by close on some platform (Linux, Android, iOS) | `Shutdown(Both)` before close; verify on each target platform (T9.7); fallback `SocketAsyncEventArgs` (D9) |
+| A blocked `Receive` is not woken by close on some platform (Linux, Android, iOS) | `Shutdown(Both)` then close the socket (D17: verified on the Windows editor, where `Shutdown` alone is not enough); verify on each target platform (T9.7); fallback `SocketAsyncEventArgs` (D9) |
 | Unity's supported Roslyn version limits the generator API | Generator targets `netstandard2.0` and the `Microsoft.CodeAnalysis` version documented for the editor in use (T4.3) |
 | Generic interface calls (`INetworkClient.Send<T>`) allocate on first use under Mono or IL2CPP | Covered by the allocation tests after warm-up; if not, managers take `NetworkClient`'s send through a sealed class instead of the interface |
 | Per-I/O allocation claims depend on Unity's runtime | Profiler measurement in T9.6; D9 is contained inside `TcpConnection` |

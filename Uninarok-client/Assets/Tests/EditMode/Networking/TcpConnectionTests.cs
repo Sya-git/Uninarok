@@ -1,4 +1,3 @@
-#if PENDING_T3_5 // T3.4: enabled (guard removed) by T3.5 when TcpConnection receive/close exists. Send tests: PENDING_T3_7.
 using System;
 using System.Net.Sockets;
 using System.Threading;
@@ -175,4 +174,3 @@ namespace Uninarok.Networking.Tests
 #endif
     }
 }
-#endif
