@@ -471,6 +471,7 @@ Satisfies FR-18, FR-19.
 - Input: [`fixtures/hercules-packetlen-20220406.json`](fixtures/hercules-packetlen-20220406.json) (`{"_source": ..., "lengths": {"0x0064": 55, ...}}`, 1595 entries, extracted from Hercules `packets2022_len_main.h` evaluated for PACKETVER 20220406). When the target version changes, re-extract this file from Hercules first.
 - `HerculesPacketTableGenerator` (Editor menu `Uninarok/Networking/Regenerate Hercules Packet Table`) reads the JSON, validates every value (`-1` or `>= 2`, no duplicates) and writes `Core/Protocol/HerculesPacketTable.g.cs`. The file is generated: never edit it by hand; change the JSON and rerun.
 - Generated shape: `public sealed class HerculesPacketTable : IPacketLengthTable` with `public static readonly HerculesPacketTable Instance`; IDs and lengths as two `static readonly` arrays expanded once into a `short[65536]` (unknown = `-2`). `GetLength` is one array index.
+- **Corrections (D19):** a length that a real server contradicts is corrected in `lengths` and recorded in `_corrections`. Found so far: `0x006D` is 177 (`char_creation_ok` writes `2 + MAX_CHAR_BUF`, 175 for `PACKETVER_MAIN_NUM >= 20201007`), not 157. Re-extracting the fixture must re-apply these.
 - The same JSON is copied to `Assets/Tests/EditMode/Networking/Fixtures/` for tests, and a test checks that the generated table equals the fixture.
 - Every ID in the table that has no `[InPacket]` struct is framed and skipped (FR-19). Only IDs absent from the table are protocol faults (FR-2).
 
@@ -756,6 +757,7 @@ Every serialized field (`serverIndex`, `characterSlot`, draft fields, `maxLoginA
 | D16 | Dev credentials read from `EditorPrefs` or a local file outside the repository | Serialized fields in the scene (credentials committed in plain text) |
 | D17 | `Close` shuts the socket down and then closes it, so a blocked `Receive` is woken on Mono; closure is recorded first so the resulting exception is silent | Shutdown only with the socket disposed by the last thread (measured: Mono's blocked `Receive` is not woken by `Shutdown`); `Poll` loop with timeout (also not woken by `Shutdown`, adds wake-ups) |
 | D18 | The generator has its own `dotnet test` project (NUnit, in-memory generator driver, Core compiled from source) | Testing the generator only through Unity compilation (cannot assert diagnostics or run on a clean compilation); a Unity-side test that loads Roslyn into the editor domain (fragile) |
+| D19 | The length fixture may carry verified corrections (`_corrections` in the JSON, with the Hercules value, the real value and the reason); the effective `lengths` use the corrected value. `CharInfo` is 175 bytes for 20220406 (8-byte hp/sp), so `0x006D` is 177, not the 157 in the Hercules table | Trusting the Hercules table as is (the first real character list desynchronized: records are 175 bytes, and creation success would too); special cases in the framer (the table must stay the single source of truth) |
 
 ## 9. Risks
 

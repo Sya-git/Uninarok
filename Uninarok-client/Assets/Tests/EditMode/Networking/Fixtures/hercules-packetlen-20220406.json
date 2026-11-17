@@ -1,5 +1,8 @@
 {
 "_source": "Hercules 2026.09 src/common/packets/packets2022_len_main.h, evaluated for PACKETVER 20220406 (main client)",
+"_corrections": [
+  {"id": "0x006D", "hercules_table": 157, "real": 177, "reason": "char_creation_ok writes 2 + MAX_CHAR_BUF; MAX_CHAR_BUF is 175 for PACKETVER_MAIN_NUM >= 20201007 (CharInfo with 8-byte hp/sp). The table value predates that layout.", "found": "2026-11-17, real server run + src/char/char.cpp"}
+],
 "lengths": {
 "0x0064": 55,
 "0x0065": 17,
@@ -10,7 +13,7 @@
 "0x006A": 23,
 "0x006B": -1,
 "0x006C": 3,
-"0x006D": 157,
+"0x006D": 177,
 "0x006E": 3,
 "0x006F": 2,
 "0x0070": 3,

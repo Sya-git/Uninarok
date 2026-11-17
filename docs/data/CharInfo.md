@@ -1,7 +1,7 @@
 # CharInfo
 
 - **Kind:** Shared character data structure
-- **Serialized size:** 155 bytes
+- **Serialized size:** 175 bytes (PACKETVER 20220406)
 - **Description:** Character identity, progression, status, appearance, slot, and character-state data. Used by several character-server packets and by gameplay code.
 
 Fields are serialized and parsed in the following order. All integer fields use the packet reader's little-endian encoding. Fixed strings occupy their full wire width; zero bytes are omitted when converted to `FixedString32Bytes`.
@@ -19,10 +19,10 @@ Fields are serialized and parsed in the following order. All integer fields use 
 | Karma | `int` | 4 bytes | Karma value. |
 | Manner | `int` | 4 bytes | Manner value. |
 | StatusPoint | `short` | 2 bytes | Unspent status points. |
-| Hp | `int` | 4 bytes | Current HP. |
-| MaxHp | `int` | 4 bytes | Maximum HP. |
-| Sp | `short` | 2 bytes | Current SP. |
-| MaxSp | `short` | 2 bytes | Maximum SP. |
+| Hp | `long` | 8 bytes | Current HP. |
+| MaxHp | `long` | 8 bytes | Maximum HP. |
+| Sp | `long` | 8 bytes | Current SP. |
+| MaxSp | `long` | 8 bytes | Maximum SP. |
 | DefaultWalkSpeed | `short` | 2 bytes | Default walking speed. |
 | Class | `short` | 2 bytes | Character class value. |
 | Hair | `short` | 2 bytes | Hair style value. |
@@ -52,4 +52,6 @@ Fields are serialized and parsed in the following order. All integer fields use 
 | RenameEnabled | `int` | 4 bytes | Rename availability value. |
 | Sex | `byte` | 1 byte | Character sex value; see [`AccountSex.md`](AccountSex.md) for the corresponding shared enum values. |
 
-**Size check:** The field widths total 155 bytes. This type has no packet ID of its own; it is embedded in packets such as `CHARACTER_DATA` and `CHARACTER_CREATION_SUCCESS`.
+**Size check:** The field widths total 175 bytes. This type has no packet ID of its own; it is embedded in packets such as `CHARACTER_DATA` and `CHARACTER_CREATION_SUCCESS`.
+
+**Version dependence and correction (2026-11-17):** the size of this record depends on `PACKETVER` (`char_mmo_char_tobuf`, `src/char/char.cpp`). The 155-byte layout this document first described has 4-byte `Hp`/`MaxHp` and 2-byte `Sp`/`MaxSp`; it is the layout of a server built for an older version. From `PACKETVER_MAIN_NUM >= 20201007`, which includes 20220406, Hercules writes all four as 8-byte values, giving 175 bytes. This was found against a real server built for 20220406 (the character list came as records of 175 bytes) and confirmed in the Hercules source: `MAX_CHAR_BUF` is 175.

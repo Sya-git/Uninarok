@@ -6,9 +6,9 @@
 | **Hercules packet name** | `ZC_ACCEPT_ENTER2` (`ZC_ACCEPT_ENTER` in older packet versions) |
 | **Packet ID** | `0x02EB` |
 | **Declared size** | 13 bytes total, including the 2-byte packet ID (payload: 11 bytes) |
-| **Status** | implemented |
+| **Status** | verified |
 | **Frequency** | cold (once per map entry) |
-| **Verified** | Size and layout: Hercules `packet_authok` and length table 20220406 (13). Real capture: no |
+| **Verified** | Size and layout: Hercules `packet_authok` and length table 20220406 (13). Real capture: no Real server 2026-11-17 (Hercules built for 20220406): decoded from the captures `Login/Character/Map-20261117-124252.bin` with nothing left over (`RealCaptureDecodeTests`). |
 | **Allocates** | no |
 
 **Hercules usage:** Sent after successful map-server authentication. PACKETVER 20220406 selects `ZC_ACCEPT_ENTER2`.

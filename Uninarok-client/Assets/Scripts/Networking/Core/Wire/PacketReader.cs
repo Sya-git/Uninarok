@@ -58,6 +58,22 @@ namespace Uninarok.Networking.Core.Wire
             return v;
         }
 
+        public ulong ReadUInt64()
+        {
+            Require(8);
+            ulong v = BinaryPrimitives.ReadUInt64LittleEndian(_data.Slice(_pos, 8));
+            _pos += 8;
+            return v;
+        }
+
+        public long ReadInt64()
+        {
+            Require(8);
+            long v = BinaryPrimitives.ReadInt64LittleEndian(_data.Slice(_pos, 8));
+            _pos += 8;
+            return v;
+        }
+
         public void ReadBytes(Span<byte> destination)
         {
             Require(destination.Length);

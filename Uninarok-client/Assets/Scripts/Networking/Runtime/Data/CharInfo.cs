@@ -5,14 +5,14 @@ using Uninarok.Networking.Text;
 namespace Uninarok.Networking.Data
 {
     /// <summary>
-    /// Character data embedded in several character-server packets: 155 bytes on the wire (docs/data/CharInfo.md).
+    /// Character data embedded in several character-server packets: 175 bytes on the wire for PACKETVER 20220406 (docs/data/CharInfo.md).
     /// Plain mutable struct: it is stored in session lists and filled field by field.
     /// <see cref="Name"/> and <see cref="MapName"/> are held in <c>FixedString32Bytes</c>; a name whose UTF-8 form
     /// exceeds 29 bytes (only possible with several non-ASCII characters) is truncated at a character boundary (accepted).
     /// </summary>
     public struct CharInfo
     {
-        public const int WireSize = 155;
+        public const int WireSize = 175;
         public const int NameWireBytes = 24;
         public const int MapNameWireBytes = 16;
 
@@ -24,8 +24,8 @@ namespace Uninarok.Networking.Data
         public int Opt1, Opt2, Option;
         public int Karma, Manner;
         public short StatusPoint;
-        public int Hp, MaxHp;
-        public short Sp, MaxSp;
+        public long Hp, MaxHp;      // 8 bytes each since PACKETVER_MAIN_NUM 20201007
+        public long Sp, MaxSp;
         public short DefaultWalkSpeed;
         public short Class, Hair, Body, Weapon, BaseLevel, SkillPoint;
         public short LookHeadBottom, LookShield, LookHeadTop, LookHeadMid;
@@ -53,10 +53,10 @@ namespace Uninarok.Networking.Data
             c.Karma = r.ReadInt32();
             c.Manner = r.ReadInt32();
             c.StatusPoint = r.ReadInt16();
-            c.Hp = r.ReadInt32();
-            c.MaxHp = r.ReadInt32();
-            c.Sp = r.ReadInt16();
-            c.MaxSp = r.ReadInt16();
+            c.Hp = r.ReadInt64();
+            c.MaxHp = r.ReadInt64();
+            c.Sp = r.ReadInt64();
+            c.MaxSp = r.ReadInt64();
             c.DefaultWalkSpeed = r.ReadInt16();
             c.Class = r.ReadInt16();
             c.Hair = r.ReadInt16();
@@ -102,10 +102,10 @@ namespace Uninarok.Networking.Data
             w.WriteInt32(Karma);
             w.WriteInt32(Manner);
             w.WriteInt16(StatusPoint);
-            w.WriteInt32(Hp);
-            w.WriteInt32(MaxHp);
-            w.WriteInt16(Sp);
-            w.WriteInt16(MaxSp);
+            w.WriteInt64(Hp);
+            w.WriteInt64(MaxHp);
+            w.WriteInt64(Sp);
+            w.WriteInt64(MaxSp);
             w.WriteInt16(DefaultWalkSpeed);
             w.WriteInt16(Class);
             w.WriteInt16(Hair);

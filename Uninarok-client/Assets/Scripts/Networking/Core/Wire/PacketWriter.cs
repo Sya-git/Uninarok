@@ -54,6 +54,20 @@ namespace Uninarok.Networking.Core.Wire
             _pos += 4;
         }
 
+        public void WriteUInt64(ulong v)
+        {
+            Require(8);
+            BinaryPrimitives.WriteUInt64LittleEndian(_dst.Slice(_pos, 8), v);
+            _pos += 8;
+        }
+
+        public void WriteInt64(long v)
+        {
+            Require(8);
+            BinaryPrimitives.WriteInt64LittleEndian(_dst.Slice(_pos, 8), v);
+            _pos += 8;
+        }
+
         public void WriteBytes(ReadOnlySpan<byte> v)
         {
             Require(v.Length);

@@ -119,8 +119,8 @@
 - [x] **T6.7** Implement `ZoneManager`.
   *Done when:* T6.6 passes.
 - [x] **T6.8** Write failing `FlowTransitionTests` (`FakeNetworkClient`, `FakeClock`), table-driven from plan §4.9: every valid transition with its actions, every invalid command rejected with a warning, every deadline (`ConnectTimeout` vs `ReplyTimeout`, `MapLoadSeconds` after `Authenticated`), `CloseReason` → `FailureCode` mapping, `InGame` closure → `Disconnected`, wrong credentials send exactly one `REQUEST_LOGIN`, `Reset`. *(FR-10, FR-11, FR-13)*
-- [ ] **T6.9** Implement `NetworkFlow` (state, commands, manager activation, deadlines, `Tick`, `Dispose`) and construct it in `NetworkClient.Awake`. *(FR-10, FR-11, FR-20)*
-  *Done when:* T6.8 passes; a manual run against local Hercules reaches `CharSelection`. *(Automated half done: T6.8 passes, 51 flow tests. The manual run needs a local Hercules with its database and a test account; it is done with `DevAutoLogin` (phase 7) and T9.4, so this box stays unticked until then.)*
+- [x] **T6.9** Implement `NetworkFlow` (state, commands, manager activation, deadlines, `Tick`, `Dispose`) and construct it in `NetworkClient.Awake`. *(FR-10, FR-11, FR-20)*
+  *Done when:* T6.8 passes; a manual run against local Hercules reaches `CharSelection`. *(T6.8 passes; the manual run reached `CharSelection`, and in fact `InGame`, against a real Hercules built for 20220406 on 2026-11-17.)*
 
 ## Phase 7: Development auto-login (FR-15)
 
@@ -138,15 +138,15 @@
 
 ## Phase 9: Real-session verification (FR-1, FR-17 and all)
 
-- [ ] **T9.1** Record captures (T5.7) of a full login, a char-server session, and at least 60 s of map traffic. Confirm the char server prefix is 4 bytes for PACKETVER 20220406.
-  *Done when:* `.bin` files exist under `Assets/Tests/EditMode/Networking/Captures/`.
-- [ ] **T9.2** Generate `*.expected.txt` from the whole-buffer run (`skip=N`, then `id,payloadLen,crc32`), review by hand, commit.
-  *(Tooling ready: menu `Uninarok/Networking/Write Capture Expectations` writes `*.expected.txt` for captures that have none. Needs the real captures of T9.1, so unticked.)*
-- [ ] **T9.3** Add `CaptureReplayTests` over chunk sizes {1,2,3,7,64,whole}. *(FR-1, FR-17)*
+- [x] **T9.1** Record captures (T5.7) of a full login, a char-server session, and at least 60 s of map traffic. Confirm the char server prefix is 4 bytes for PACKETVER 20220406.
+  *Done when:* `.bin` files exist under `Assets/Tests/EditMode/Networking/Captures/`. *(Done 2026-11-17: `Login-`, `Character-` and `Map-20261117-124252.bin` recorded against a Hercules built for 20220406; the char server prefix is 4 bytes, confirmed: `80 84 1E 00` is the account ID. The map capture holds 62 s of play: 78 packets, 32 distinct IDs, 6 heartbeat replies.)*
+- [x] **T9.2** Generate `*.expected.txt` from the whole-buffer run (`skip=N`, then `id,payloadLen,crc32`), review by hand, commit.
+  *(Done: the lists were reviewed by hand: every fixed packet's payload equals the table length minus 2, every variable one has a consistent length, no fault.)*
+- [x] **T9.3** Add `CaptureReplayTests` over chunk sizes {1,2,3,7,64,whole}. *(FR-1, FR-17)*
   *Done when:* all captures × chunk sizes pass, and consumed bytes equal file length minus skip with no fault.
-  *(Harness ready: `CaptureReplayTests` replays every `Captures/*.bin` with chunk sizes 1, 2, 3, 7, 64 and whole, and is proven on a generated stream. It currently skips because no real capture exists; unticked until T9.1/T9.2.)*
+  *(Done: all 3 captures x 6 chunk sizes pass, with `skip=4` for the character server; `RealCaptureDecodeTests` also decodes every implemented incoming packet in them with nothing left over.)*
 - [ ] **T9.4** Run the full manual smoke test against local Hercules: login, select server, create character, select character, enter map, 60 s idle with heartbeat, stop the server. Verify no unhandled exceptions, no repeated error logs, and the flow ends in `Disconnected`. *(spec §5)*
-  *(First real run 2026-11-17: login, server selection, character list, PIN state and map assignment work against a real Hercules, and the 4-byte echo prefix is confirmed. The map step failed because the running `bin/map-server.exe` was not built for PACKETVER 20220406: it reads `REQUEST_ENTER_MAP` as the 19-byte form. See the finding in `Packets/Out/MapServer/REQUEST_ENTER_MAP.md`. Needs a server built for 20220406.)*
+  *(First real run 2026-11-17: login, server selection, character list, PIN state and map assignment work against a real Hercules, and the 4-byte echo prefix is confirmed. The map step failed because the running `bin/map-server.exe` was not built for PACKETVER 20220406: it reads `REQUEST_ENTER_MAP` as the 19-byte form. See the finding in `Packets/Out/MapServer/REQUEST_ENTER_MAP.md`. Update: with a server built for 20220406 the run reaches `InGame` in 113 ms and stays there for 62 s with heartbeats. Still unverified on a real server: character creation (and the corrected 177-byte `CHARACTER_CREATION_SUCCESS`), the char-server ping (the char step lasts milliseconds in this run), and the clean stop of the server.)*
 - [x] **T9.5** Run the failure checks: closed port → `Failed(ConnectFailed)` or `Failed(ConnectTimeout)` within the timeout; silent server → `Failed(ReplyTimeout)`; wrong password → one request, `Failed(LoginRefused)`. *(FR-10, FR-11)* *(Verified over real loopback sockets with a real `NetworkClient` and `NetworkFlow`, `FlowIntegrationTests`: closed port gives `Failed(ConnectFailed)` in about 2 s; a server that accepts and stays silent gives `Failed(ReplyTimeout)` within the configured timeout; wrong password gives one `REQUEST_LOGIN` and `Failed(LoginRefused)`; a server that closes at once gives `RemoteClosed`; garbage gives `ProtocolFault`. The same checks against a real Hercules are part of the T9.4 run.)*
 - [ ] **T9.6** Repeat the T8.2 capture after all phases and compare. *(FR-6)*
   *Done when:* numbers are in the PR.

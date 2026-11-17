@@ -143,7 +143,7 @@ namespace Uninarok.Networking.Tests
             Assert.Throws<PacketFormatException>(() => new CHARACTER_CREATION_FAILED(new byte[2]));
         }
 
-        // ---- CHARACTER_CREATION_SUCCESS (0x006D, 157) ----
+        // ---- CHARACTER_CREATION_SUCCESS (0x006D, 177: the Hercules table says 157, the server writes 2 + 175) ----
 
         [Test]
         public void CHARACTER_CREATION_SUCCESS_Decodes_TheCharInfo()
@@ -159,8 +159,8 @@ namespace Uninarok.Networking.Tests
         [Test]
         public void CHARACTER_CREATION_SUCCESS_RejectsWrongLengths()
         {
-            Assert.Throws<PacketFormatException>(() => new CHARACTER_CREATION_SUCCESS(new byte[154]));
-            Assert.Throws<PacketFormatException>(() => new CHARACTER_CREATION_SUCCESS(new byte[156]));
+            Assert.Throws<PacketFormatException>(() => new CHARACTER_CREATION_SUCCESS(new byte[174]));
+            Assert.Throws<PacketFormatException>(() => new CHARACTER_CREATION_SUCCESS(new byte[176]));
         }
 
         // ---- PINCODE_LOGINSTATE (0x08B9, 12) ----
@@ -281,7 +281,7 @@ namespace Uninarok.Networking.Tests
             Assert.AreEqual((0x0066, 3), ((int)PacketIds.SELECT_CHARACTER, SELECT_CHARACTER.Size));
             Assert.AreEqual((0x006B, -1), ((int)PacketIds.CHARACTER_DATA, CHARACTER_DATA.Size));
             Assert.AreEqual((0x006C, 3), ((int)PacketIds.MAP_ENTER_REQUEST_REFUSED, MAP_ENTER_REQUEST_REFUSED.Size));
-            Assert.AreEqual((0x006D, 157), ((int)PacketIds.CHARACTER_CREATION_SUCCESS, CHARACTER_CREATION_SUCCESS.Size));
+            Assert.AreEqual((0x006D, 177), ((int)PacketIds.CHARACTER_CREATION_SUCCESS, CHARACTER_CREATION_SUCCESS.Size));
             Assert.AreEqual((0x006E, 3), ((int)PacketIds.CHARACTER_CREATION_FAILED, CHARACTER_CREATION_FAILED.Size));
             Assert.AreEqual((0x0187, 6), ((int)PacketIds.CHARACTER_SERVER_PING, CHARACTER_SERVER_PING.Size));
             Assert.AreEqual((0x082D, -1), ((int)PacketIds.CHARACTER_SLOTS_INFO, CHARACTER_SLOTS_INFO.Size));

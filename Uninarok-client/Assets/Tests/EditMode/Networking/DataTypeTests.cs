@@ -107,7 +107,7 @@ namespace Uninarok.Networking.Tests
             Assert.AreEqual(7, (byte)UninarokDirection.NorthEast);
         }
 
-        // Builds a 155-byte CharInfo wire image field by field, straight from docs/data/CharInfo.md.
+        // Builds a 175-byte CharInfo wire image field by field, straight from docs/data/CharInfo.md.
         static byte[] CharInfoWire()
         {
             var buf = new byte[CharInfo.WireSize];
@@ -120,8 +120,8 @@ namespace Uninarok.Networking.Tests
             w.WriteInt32(1); w.WriteInt32(2); w.WriteInt32(3);   // Opt1, Opt2, Option
             w.WriteInt32(-4); w.WriteInt32(5);          // Karma, Manner
             w.WriteInt16(6);                            // StatusPoint
-            w.WriteInt32(500); w.WriteInt32(600);       // Hp, MaxHp
-            w.WriteInt16(50); w.WriteInt16(60);         // Sp, MaxSp
+            w.WriteInt64(5_000_000_000L); w.WriteInt64(6_000_000_000L);   // Hp, MaxHp: 8 bytes each for PACKETVER 20220406
+            w.WriteInt64(50); w.WriteInt64(60);                           // Sp, MaxSp: 8 bytes each
             w.WriteInt16(150);                          // DefaultWalkSpeed
             for (short v = 1; v <= 6; v++) w.WriteInt16((short)(100 + v));   // Class Hair Body Weapon BaseLevel SkillPoint
             for (short v = 1; v <= 4; v++) w.WriteInt16((short)(200 + v));   // look head bottom, shield, head top, head mid
@@ -133,18 +133,18 @@ namespace Uninarok.Networking.Tests
             for (int i = 0; i < 16; i++) w.WriteByte(i < 8 ? (byte)"prontera"[i] : (byte)0); // MapName
             w.WriteInt32(11); w.WriteInt32(12); w.WriteInt32(13); w.WriteInt32(14);   // DeleteName LookRobe SlotChange RenameEnabled
             w.WriteByte((byte)AccountSex.SEX_MALE);
-            Assert.AreEqual(CharInfo.WireSize, w.Position, "test helper must produce exactly 155 bytes");
+            Assert.AreEqual(CharInfo.WireSize, w.Position, "test helper must produce exactly 175 bytes");
             return buf;
         }
 
         [Test]
-        public void CharInfo_WireSizeIs155()
+        public void CharInfo_WireSizeIs175()
         {
-            Assert.AreEqual(155, CharInfo.WireSize);
+            Assert.AreEqual(175, CharInfo.WireSize);
         }
 
         [Test]
-        public void CharInfo_ReadsEveryFieldInOrder_ConsumesExactly155()
+        public void CharInfo_ReadsEveryFieldInOrder_ConsumesExactly175()
         {
             var wire = CharInfoWire();
             var r = new PacketReader(wire);
@@ -159,8 +159,8 @@ namespace Uninarok.Networking.Tests
             Assert.AreEqual((1, 2, 3), (c.Opt1, c.Opt2, c.Option));
             Assert.AreEqual((-4, 5), (c.Karma, c.Manner));
             Assert.AreEqual(6, c.StatusPoint);
-            Assert.AreEqual((500, 600), (c.Hp, c.MaxHp));
-            Assert.AreEqual(((short)50, (short)60), (c.Sp, c.MaxSp));
+            Assert.AreEqual((5_000_000_000L, 6_000_000_000L), (c.Hp, c.MaxHp), "64-bit: a value above int.MaxValue survives");
+            Assert.AreEqual((50L, 60L), (c.Sp, c.MaxSp));
             Assert.AreEqual(150, c.DefaultWalkSpeed);
             Assert.AreEqual((101, 102, 103, 104, 105, 106), ((int)c.Class, (int)c.Hair, (int)c.Body, (int)c.Weapon, (int)c.BaseLevel, (int)c.SkillPoint));
             Assert.AreEqual((201, 202, 203, 204), ((int)c.LookHeadBottom, (int)c.LookShield, (int)c.LookHeadTop, (int)c.LookHeadMid));

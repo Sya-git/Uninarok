@@ -88,6 +88,31 @@ namespace Uninarok.Networking.Tests
         }
 
         [Test]
+        public void SixtyFourBit_ReadAndWrite_AreLittleEndian_AndRoundTrip()
+        {
+            byte[] buf = new byte[16];
+            var w = new PacketWriter(buf);
+            w.WriteInt64(-2L);
+            w.WriteUInt64(0x0102030405060708UL);
+            Assert.AreEqual(16, w.Position);
+            Assert.AreEqual(new byte[] { 0xFE, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 8, 7, 6, 5, 4, 3, 2, 1 }, buf);
+
+            var r = new PacketReader(buf);
+            Assert.AreEqual(-2L, r.ReadInt64());
+            Assert.AreEqual(0x0102030405060708UL, r.ReadUInt64());
+            r.EnsureConsumed();
+        }
+
+        [Test]
+        public void SixtyFourBit_Overrun_Throws()
+        {
+            Assert.Throws<PacketFormatException>(() => { var r = new PacketReader(new byte[7]); r.ReadInt64(); });
+            Assert.Throws<PacketFormatException>(() => { var r = new PacketReader(new byte[7]); r.ReadUInt64(); });
+            Assert.Throws<PacketFormatException>(() => { var w = new PacketWriter(new byte[7]); w.WriteInt64(1); });
+            Assert.Throws<PacketFormatException>(() => { var w = new PacketWriter(new byte[7]); w.WriteUInt64(1); });
+        }
+
+        [Test]
         public void Writer_WritesLittleEndianPrimitives()
         {
             byte[] buf = new byte[13];

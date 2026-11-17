@@ -6,9 +6,9 @@
 | **Hercules packet name** | no named constant in the Hercules source |
 | **Packet ID** | `0x0AC5` |
 | **Declared size** | 156 bytes, including the 2-byte packet ID |
-| **Status** | implemented |
+| **Status** | verified |
 | **Frequency** | cold |
-| **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no |
+| **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no Real server 2026-11-17 (Hercules built for 20220406): decoded from the captures `Login/Character/Map-20261117-124252.bin` with nothing left over (`RealCaptureDecodeTests`). |
 | **Allocates** | no |
 
 **Description:** Provides the character ID and network endpoint used to enter the map server.

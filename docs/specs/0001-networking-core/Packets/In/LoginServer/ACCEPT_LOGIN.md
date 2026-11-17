@@ -6,9 +6,9 @@
 | **Hercules packet name** | `AC_ACCEPT_LOGIN2` |
 | **Packet ID** | `0x0AC4` |
 | **Declared size** | Variable; fixed prefix is 64 bytes, followed by one or more server entries |
-| **Status** | implemented |
+| **Status** | verified |
 | **Frequency** | cold |
-| **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no |
+| **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no Real server 2026-11-17 (Hercules built for 20220406): decoded from the captures `Login/Character/Map-20261117-124252.bin` with nothing left over (`RealCaptureDecodeTests`). |
 | **Allocates** | cold packet: may allocate (arrays); see parsing note |
 
 **Packet ID note:** `0x0AC4` (`AC_ACCEPT_LOGIN2` in Hercules)

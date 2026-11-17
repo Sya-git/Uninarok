@@ -6,9 +6,9 @@
 | **Hercules packet name** | no named constant in the Hercules source |
 | **Packet ID** | `0x082D` |
 | **Declared size** | Variable (`Size = -1`); the parser reads 25 payload bytes |
-| **Status** | implemented |
+| **Status** | verified |
 | **Frequency** | cold |
-| **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no |
+| **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no Real server 2026-11-17 (Hercules built for 20220406): decoded from the captures `Login/Character/Map-20261117-124252.bin` with nothing left over (`RealCaptureDecodeTests`). |
 | **Allocates** | cold packet: may allocate (arrays); see parsing note |
 
 **Description:** Reports character-slot counts and a 20-byte region whose meaning is not defined.
