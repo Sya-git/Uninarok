@@ -69,7 +69,7 @@ Root: `Uninarok-client/Assets/Scripts/Networking/`.
 | `Runtime/Client/` | `INetworkClient`, `NetworkClient`, `ConnectionStatus`, `Subscriptions`, `NetLog`, `NetProfiling`, `CaptureTee`, `IClock`, `UnityClock`, `NetworkSettings` | `Uninarok.Networking` |
 | `Runtime/Flow/` | `NetworkFlow`, `FlowState`, `FailureCode`, `FlowFailure`, `SessionContext`, `ServerEndpoint`, `CharacterSlots`, `MapEndpoint`, `MapEntry`, `CharacterDraft` | `Uninarok.Networking` |
 | `Runtime/Managers/` | `IServerManager`, `LoginManager`, `CharacterManager`, `ZoneManager`, `LoginRefusal`, `PinState` | `Uninarok.Networking` |
-| `Runtime/Dev/` | `DevAutoLogin` (whole file inside `#if UNITY_EDITOR \|\| DEVELOPMENT_BUILD`) | `Uninarok.Networking` |
+| `Runtime/Dev/` | `DevAutoLogin`, `DevAutoLoginDriver`, `DevCredentials`, `NetworkProbe` (player-side measurement: `-uninarok-probe baseline\|network\|threads`); every file entirely inside `#if UNITY_EDITOR \|\| DEVELOPMENT_BUILD` | `Uninarok.Networking` |
 | `Editor/` | `HerculesPacketTableGenerator` (menu item, §4.8) | `Uninarok.Networking.Editor` (Editor only) |
 | `Uninarok-client/Assets/Tests/EditMode/Networking/` | tests, `Fixtures/`, `Captures/*.bin` + `*.expected.txt` | `Uninarok.Networking.Tests` (EditMode; references Core and `Uninarok.Networking`) |
 | `Tools/Uninarok.Networking.Generator/` (repo root) | Roslyn generator source project (`netstandard2.0`, `Microsoft.CodeAnalysis.CSharp` version supported by the Unity editor in use); build output copied to `Runtime/Packets/Generator/` | outside Unity |
