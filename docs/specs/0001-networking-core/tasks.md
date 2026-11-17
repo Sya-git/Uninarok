@@ -79,7 +79,7 @@
   *Done when:* test passes.
 - [x] **T4.3** Create the generator project `Tools/Uninarok.Networking.Generator/` (`netstandard2.0`, `Microsoft.CodeAnalysis` version supported by the editor), emitting `GeneratedPacketRouter` and the compile-time diagnostics of plan §4.6. Build it into `Runtime/Packets/Generator/` with the `RoslynAnalyzer` label and all platforms excluded. *(FR-4, FR-18)*
   *Done when:* with one test `[InPacket]` struct the router is generated; a duplicate ID or size `0` fails compilation with the generator's diagnostic; an assembly without packets compiles with no generated file.
-- [ ] **T4.4** Write failing `RouterTests`: malformed payload calls `onDecodeError` once and the next packet is dispatched; unhandled ID returns `false`. *(FR-4, FR-19)*
+- [x] **T4.4** Write failing `RouterTests`: malformed payload calls `onDecodeError` once and the next packet is dispatched; unhandled ID returns `false`. *(FR-4, FR-19)*
   *Done when:* tests exist and fail or are ignored pending T4.6.
 - [ ] **T4.5** Write `PacketSizeTests`: every `[InPacket]`/`[OutPacket]` `Size` equals `HerculesPacketTable`. *(FR-18)*
   *Done when:* test exists (passes trivially until packets are added).
