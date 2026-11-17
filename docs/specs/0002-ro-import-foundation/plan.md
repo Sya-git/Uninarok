@@ -373,6 +373,7 @@ public sealed class RoReport
 }
 ```
 
+- `RoReport.Fail` takes the item as a `string` (its canonical path) from T1.1. `RoPath` only exists from T1.3, which adds the `Fail(RoPath, RoIssue)` overload and forwards to it. The report also exposes `Failures` (each failed item once) next to `Issues`. `RoResult<T>` has `Created`/`Updated`/`Skipped`/`Failed` factory methods and `Succeeded`.
 - **Expected conditions are warnings, not errors** (FR-11): a missing source file, a missing texture, an unsupported format, a corrupt file, a collision. `Warn` writes one `Debug.LogWarning` per distinct `(code, item)` in the whole run and lists the item once in the final summary (FR-10). The warning names the item and, where there is one, the referrer (the model or map that asked for it).
 - `Debug.LogError` is used only for `Unexpected`: an exception that escaped a converter (a bug). `RoBatch` catches it per item, records a `Failed` result with the exception message, logs it once as an error with the stack, and continues. A clean batch therefore produces no error log entries.
 - Converters never throw for expected conditions; they return `Failed` or a placeholder-backed `Created`.
