@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Not started |
+| **Status** | Implementing |
 
 **How to use this file**
 - Do tasks **in order**. One task = one reviewable commit. Tick the box in the same commit.
@@ -15,7 +15,7 @@
 
 ## Phase 0: Prepare
 
-- [ ] **T0.1** Create branch `feature/0001-networking-core`.
+- [x] **T0.1** Create branch `feature/0001-networking-core`.
   *Done when:* the branch exists and the project compiles.
 - [x] **T0.2** Record the session-state and keepalive decisions (`InGame` after `MAP_LOADED`; map 10 s, char 12 s; `spec.md` section 6).
   *Done when:* spec section 6 states them.

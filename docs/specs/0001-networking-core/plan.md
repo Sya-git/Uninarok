@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [spec.md](spec.md) (SPEC-0001) |
-| **Status** | Draft |
+| **Status** | Approved |
 | **Audience** | Architects, senior developers, AI agents |
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. Packet IDs, sizes and field layouts come from the packets reference ([`Packets/`](Packets/Packet-Implementation.md)), which is normative for its topic.
