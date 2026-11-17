@@ -155,7 +155,7 @@
 
 ## Phase 10: Close-out
 
-- [ ] **T10.1** Run the full EditMode suite in batch mode (CLI in plan §6).
-  *Done when:* all tests pass in the batch output.
+- [x] **T10.1** Run the full EditMode suite in batch mode (CLI in plan §6).
+  *Done when:* all tests pass in the batch output. *(Verified 2026-11-17: `Unity.exe -batchmode -nographics -projectPath <scratch copy> -runTests -testPlatform EditMode` on a scratch copy of the project (so the open editor was not disturbed): 446 of 446 passed, 0 failed, 0 skipped, exit code 0. This also covers the batch-mode half of T0.5.)*
 - [ ] **T10.2** Set `spec.md` status to `Implemented`, tick all boxes here, list deferred items in `docs/specs/BACKLOG.md`.
   *Done when:* the PR description links spec, plan and test results.
