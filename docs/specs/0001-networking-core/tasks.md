@@ -46,7 +46,7 @@
 - [x] **T2.4** Write failing `FramerSkipTests`: skip split across chunks, skip of `00 00 00 00`, skip larger than available data. *(FR-3)*
 - [x] **T2.5** Write failing `FramerLimitsTests` (cap 256 → 4 calls for 1000 packets; throwing router leaves state consistent; `Stop`; known-but-unhandled ID skipped) and `FramerConcurrencyTests` (`Append` not blocked while the router runs). *(FR-5, FR-19)*
 - [x] **T2.6** Write failing `FramerAllocTests` with `Is.Not.AllocatingGCMemory()` over 1000 fixed packets. *(FR-6)*
-- [ ] **T2.7** Implement `PacketFramer` buffers: inbox/work double buffer, `Append` (returns `false` over cap), drain with compaction and doubling growth (plan §4.3, D1).
+- [x] **T2.7** Implement `PacketFramer` buffers: inbox/work double buffer, `Append` (returns `false` over cap), drain with compaction and doubling growth (plan §4.3, D1).
   *Done when:* the buffer parts of T2.2 and T2.5 pass.
 - [ ] **T2.8** Implement `Process` steps 1–3 with header handling, advance-then-route, unhandled skip, per-call cap and `Stop`. *(FR-1, FR-5, FR-19)*
   *Done when:* T2.2, T2.5 and T2.6 pass.
