@@ -137,3 +137,7 @@ Uninarok-client/UIElementsSchema/
 Uninarok-client/[Aa]ssets/[Ss]ceneDependencyCache*
 .vs/
 *.ipch
+
+# Networking generator tool projects (SPEC-0001)
+Tools/**/[Bb]in/
+Tools/**/[Oo]bj/

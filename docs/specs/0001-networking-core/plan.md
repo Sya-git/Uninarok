@@ -15,7 +15,7 @@
 - Hercules framing: little-endian `ushort` packet ID, then either a fixed total length or (variable) a `ushort` total length that includes the 4-byte header.
 - Length contract: `-1` variable, `-2` unknown, `>= 2` fixed total length including the header. `0`, `1` and values below `-1` never appear in a table (the table generator rejects them).
 - The payload handed to an incoming packet constructor **excludes** the ID and length fields.
-- Dependencies: Unity Test Framework (NUnit) and `com.unity.collections` (`FixedString*`). Both are first-party Unity packages already resolved in the project; they become direct dependencies in `Packages/manifest.json`. `System.Buffers.Binary` from the BCL. No third-party libraries.
+- Dependencies: Unity Test Framework (NUnit) and `com.unity.collections` (`FixedString*`). Both are first-party Unity packages already resolved in the project; they become direct dependencies in `Packages/manifest.json`. `System.Buffers.Binary` from the BCL. No third-party libraries. Build-time tooling outside Unity (not shipped): the generator project uses `Microsoft.CodeAnalysis.CSharp` 4.5.0 (the editor compiles with Roslyn 5.6, which binds a 4.x reference), and its test project (`Tools/Uninarok.Networking.Generator.Tests`) uses NUnit, `NUnit3TestAdapter` and `Microsoft.NET.Test.Sdk` (D18).
 - **GC policy (FR-6):** the main thread allocates nothing per packet in steady state, in either direction. Unity's GC is global and stop-the-world (incremental mode softens it), so socket-thread allocations also matter. See §4.10.
 
 ## 2. Architecture
@@ -73,6 +73,7 @@ Root: `Uninarok-client/Assets/Scripts/Networking/`.
 | `Editor/` | `HerculesPacketTableGenerator` (menu item, §4.8) | `Uninarok.Networking.Editor` (Editor only) |
 | `Uninarok-client/Assets/Tests/EditMode/Networking/` | tests, `Fixtures/`, `Captures/*.bin` + `*.expected.txt` | `Uninarok.Networking.Tests` (EditMode; references Core and `Uninarok.Networking`) |
 | `Tools/Uninarok.Networking.Generator/` (repo root) | Roslyn generator source project (`netstandard2.0`, `Microsoft.CodeAnalysis.CSharp` version supported by the Unity editor in use); build output copied to `Runtime/Packets/Generator/` | outside Unity |
+| `Tools/Uninarok.Networking.Generator.Tests/` (repo root) | NUnit project (`net10.0`) that compiles `Core` from source and runs the generator in memory (`CSharpGeneratorDriver`) over test compilations; run with `dotnet test` | outside Unity |
 
 `Uninarok.Networking` declares `InternalsVisibleTo("Uninarok.Networking.Tests")`. Namespaces follow folders: `Uninarok.Networking.Core.*`, `Uninarok.Networking.Text`, `Uninarok.Networking.Data`, `Uninarok.Networking.Packets.*`, `Uninarok.Networking.Client`, `Uninarok.Networking.Flow`, `Uninarok.Networking.Managers`.
 
@@ -698,6 +699,7 @@ Satisfies FR-17, FR-20 and verifies FR-1 to FR-19.
 | `FlowTransitionTests` (`FakeNetworkClient`, `FakeClock`) | FR-10, FR-11, FR-13, FR-20: table-driven valid and invalid transitions; every deadline; refusal sends exactly one request; `Reset` |
 | `CaptureReplayTests` | FR-1: each `Captures/*.bin` replayed with chunk sizes {1,2,3,7,64,whole} against `*.expected.txt` (`skip=N` header, then `id,payloadLen,crc32` per packet) |
 | `PumpOwnershipTests` | FR-5, FR-20: source scan shows `Process` called only from `NetworkClient` and tests, and `TcpConnection` used only by `NetworkClient` and Core tests |
+| `GeneratorTests` (`Tools/Uninarok.Networking.Generator.Tests`, `dotnet test`) | FR-4, FR-18: router generated for `[InPacket]` structs and compiles; handled IDs sorted; unhandled ID returns `false`; malformed payload reaches `onDecodeError`; diagnostics for duplicate ID, size 0/1/below -1, missing `(ReadOnlySpan<byte>)` constructor, `[OutPacket]` without `IOutgoingPacket`, non-readonly struct; no generated file without packets |
 
 `FakeNetworkClient : INetworkClient` (test assembly) records sent packets as bytes (by calling `Serialize`), lets tests raise `Connected`/`Disconnected`, and delivers incoming packets through a real `PacketDispatcher`.
 
@@ -745,6 +747,7 @@ Every serialized field (`serverIndex`, `characterSlot`, draft fields, `maxLoginA
 | D15 | Windows-1252 through a hand-written table in `WireText` | `System.Text.Encoding.CodePages` (extra dependency, allocating APIs in places) |
 | D16 | Dev credentials read from `EditorPrefs` or a local file outside the repository | Serialized fields in the scene (credentials committed in plain text) |
 | D17 | `Close` shuts the socket down and then closes it, so a blocked `Receive` is woken on Mono; closure is recorded first so the resulting exception is silent | Shutdown only with the socket disposed by the last thread (measured: Mono's blocked `Receive` is not woken by `Shutdown`); `Poll` loop with timeout (also not woken by `Shutdown`, adds wake-ups) |
+| D18 | The generator has its own `dotnet test` project (NUnit, in-memory generator driver, Core compiled from source) | Testing the generator only through Unity compilation (cannot assert diagnostics or run on a clean compilation); a Unity-side test that loads Roslyn into the editor domain (fragile) |
 
 ## 9. Risks
 
