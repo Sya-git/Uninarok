@@ -6,9 +6,9 @@
 | **Hercules packet name** | `HC_ACCEPT_MAKECHAR` |
 | **Packet ID** | `0x0B6F` (`0x006D` before `PACKETVER_MAIN_NUM 20201007`) |
 | **Declared size** | 177 bytes, including the 2-byte packet ID |
-| **Status** | implemented |
+| **Status** | verified |
 | **Frequency** | cold |
-| **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no |
+| **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no Real server built for 20220406, 2026-11-17: creation of `DevHero2` returned this packet; it decoded with nothing left over (the 175-byte `CharInfo`). |
 | **Allocates** | no |
 
 **Description:** Reports successful character creation and returns the new character's `CharInfo` record.
