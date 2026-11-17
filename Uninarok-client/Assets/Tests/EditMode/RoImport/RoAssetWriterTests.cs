@@ -12,7 +12,6 @@ namespace Uninarok.RoImport.Tests
 {
     // SPEC-0002 FR-4 (standalone assets), FR-5 (idempotent, references kept), FR-16 (no rewrite of identical output).
     // Plan 4.7. Writes only under Assets/__RoImportTests, removed in TearDown. TASKS T4.3.
-    [Ignore("pending T4.4")]
     public class RoAssetWriterTests
     {
         static readonly DateTime Old = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -145,11 +144,13 @@ namespace Uninarok.RoImport.Tests
 
             Assert.AreEqual(guid, AssetDatabase.AssetPathToGUID(path), "never deleted and re-created (FR-5)");
             var updated = _writer.Load<Material>(path);
-            Assert.AreSame(original, updated, "the same object, updated in place");
+            // Unity may hand out a new managed wrapper per load; identity is the native object.
+            Assert.IsTrue(original == updated, "the same object, updated in place");
+            Assert.AreEqual(original.GetEntityId(), updated.GetEntityId());
             Assert.AreEqual(Color.green, updated.color);
             Assert.IsTrue(fresh == null, "the fresh copy is destroyed after the copy");
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
-            Assert.AreSame(updated, prefab.GetComponent<MeshRenderer>().sharedMaterial, "the prefab still references it");
+            Assert.IsTrue(updated == prefab.GetComponent<MeshRenderer>().sharedMaterial, "the prefab still references it");
         }
 
         [Test]
@@ -160,7 +161,9 @@ namespace Uninarok.RoImport.Tests
             AssetDatabase.SaveAssets();
             File.SetLastWriteTimeUtc(RoImportTestRoot.FullPath(path), Old);
 
-            var fresh = NewMaterial(Color.red);
+            // A copy of the saved material: URP adds tags and pass settings on save that a bare new Material lacks
+            // (the material factory sets those explicitly, plan 4.6).
+            var fresh = new Material(_writer.Load<Material>(path));
             Assert.AreEqual(RoStatus.Skipped, _writer.UpsertObject(path, fresh));
             AssetDatabase.SaveAssets();
 

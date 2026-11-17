@@ -311,6 +311,7 @@ public static class RoMaterialFactory
   Two-sided sets `_Cull` = 0 (URP Lit flips the back-face normal for lighting when culling is off), otherwise `_Cull` = 2.
 - A key whose texture is missing is built with the placeholder texture (§4.12) and the issue is reported once.
 - Every material is recorded in the ledger under the category `material`: the entry's source is the texture's Ragnarok path plus the key suffix, its hash is the texture's source hash, and its output is the `.mat` path. Several models and maps may ask for one material without owning it (added while writing PLAN-0003).
+- When a material is saved, URP adds the `RenderType` override tag and disables the `MOTIONVECTORS` shader pass. Found in T4.4. A freshly built material without them never compares equal to the saved one, so it would be rewritten on every run. The factory therefore also sets both explicitly, through the public `Material.SetOverrideTag` and `SetShaderPassEnabled`, to the values URP would set for the mode. T5.3 checks that a second `GetOrCreate` is `Skipped`.
 - Materials are written through `RoAssetWriter.UpsertObject`, so an existing material keeps its GUID and references. A user's manual edit of a generated material is overwritten when its inputs change (spec §6: only FR-12 layers survive).
 
 ### 4.7 Writing assets: `RoAssetWriter`
@@ -330,6 +331,11 @@ public sealed class RoAssetWriter
 
 - Only this class and `RoAssetWriter`'s helpers call `AssetDatabase` for writes.
 - `WriteBytes`: if the file exists with identical bytes nothing is written (`Skipped`). Otherwise the folder is created, the bytes are written with `File.WriteAllBytes`, and `AssetDatabase.ImportAsset` runs. The `configure` callback sets the importer (texture settings of §4.4) and is applied only when the importer's current settings differ, so a repeat run triggers no reimport.
+- Details fixed by T4.4:
+  - The constructor takes the `RoOutputRoots` it may write to, and `InBatch` tells whether a block is open.
+  - "Settings differ" means the importer's `EditorJsonUtility` form changed after `configure`. A file created inside a batch has no importer until the batch's imports run, so its `configure` is applied at the outermost `EndBatch`.
+  - `UpsertObject` skips when the existing and fresh objects have the same `EditorJsonUtility` form. For meshes the vertex streams and triangles are compared too. Skipped and updated `fresh` objects are destroyed.
+  - Unity 6.7 can return a new managed wrapper for the same asset on each load. Identity is checked with `==` or `GetEntityId`, not reference equality.
 - `UpsertObject`: a new asset is created with `AssetDatabase.CreateAsset` and Unity assigns its GUID. For an existing asset the writer loads the existing object and copies the fresh content into it with `EditorUtility.CopySerialized`, then marks it dirty; it never deletes and re-creates, so GUIDs and every reference to it survive (FR-5). `fresh` is destroyed after the copy.
 - All writes go through the writer so that a batch brackets them with `StartAssetEditing`/`StopAssetEditing` (in `try/finally`), then `AssetDatabase.SaveAssets` per chunk (§4.10).
 - Serialization of generated objects is the project's setting (text). Meshes serialize their data in a stable order, so a rerun produces byte-identical files; this is asserted by the determinism test (§6).
