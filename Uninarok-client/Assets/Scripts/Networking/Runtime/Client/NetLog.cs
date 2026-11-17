@@ -19,6 +19,9 @@ namespace Uninarok.Networking.Client
         [Conditional("UNINAROK_NET_TRACE")]
         public static void Trace(string message) => Debug.Log("[Net.Trace] " + message);
 
+        /// <summary>One packet sent or received; only called while <c>NetworkClient.tracePackets</c> is on.</summary>
+        public static void Packet(string message) => Debug.Log("[Net.Packet] " + message);
+
         /// <summary>A state change or other information. Not an error.</summary>
         public static void Info(string message) => Debug.Log("[Net] " + message);
 

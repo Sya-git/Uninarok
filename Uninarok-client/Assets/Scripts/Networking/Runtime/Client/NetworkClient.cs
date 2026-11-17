@@ -23,6 +23,10 @@ namespace Uninarok.Networking.Client
         [SerializeField] private string loginHost = "127.0.0.1";
         [SerializeField, Range(1, 65535)] private int loginPort = 6900;
         [SerializeField, Min(1)] private int maxPacketsPerFrame = 256;
+        [Tooltip("Log every sent and received packet (id, name, size) as [Net.Packet]. Off by default: it allocates.")]
+        [SerializeField] private bool tracePackets;
+        [Tooltip("Keep the player loop running while the window is unfocused. Without it Update stops, so no heartbeat is sent and the server drops the session on its idle timeout.")]
+        [SerializeField] private bool keepRunningInBackground = true;
         [SerializeField] private NetworkSettings settings = new NetworkSettings();
 
         private PacketDispatcher _dispatcher;
@@ -56,6 +60,9 @@ namespace Uninarok.Networking.Client
         public ConnectionRole Role => _role;
 
         public NetworkSettings Settings => settings;
+
+        /// <summary>Log every sent and received packet. Takes effect for the next connection (received) and at once (sent).</summary>
+        public bool TracePackets { get => tracePackets; set => tracePackets = value; }
         public string LoginHost => loginHost;
         public ushort LoginPort => (ushort)Mathf.Clamp(loginPort, 1, 65535);
 
@@ -80,7 +87,11 @@ namespace Uninarok.Networking.Client
                 return;
             }
             Instance = this;
-            if (Application.isPlaying) DontDestroyOnLoad(gameObject);
+            if (Application.isPlaying)
+            {
+                DontDestroyOnLoad(gameObject);
+                if (keepRunningInBackground) Application.runInBackground = true;
+            }
             EnsureInitialized();
         }
 
@@ -117,7 +128,8 @@ namespace Uninarok.Networking.Client
 
             _role = role;
             _status = ConnectionStatus.Connecting;
-            _framer = new PacketFramer(HerculesPacketTable.Instance, _router);
+            IPacketRouter router = tracePackets ? new TracingRouter(_router) : _router;
+            _framer = new PacketFramer(HerculesPacketTable.Instance, router);
             var cts = new CancellationTokenSource();
             _pendingCts = cts;
             IInboundSink sink = _framer;
@@ -138,8 +150,14 @@ namespace Uninarok.Networking.Client
 
         public bool Send<T>(in T packet) where T : struct, IOutgoingPacket
         {
-            if (_status != ConnectionStatus.Connected || _connection == null) return false;
-            return _connection.Send(in packet);
+            if (_status != ConnectionStatus.Connected || _connection == null)
+            {
+                if (tracePackets) PacketTrace.Sent(typeof(T).Name, packet.WireSize, false);
+                return false;
+            }
+            bool queued = _connection.Send(in packet);
+            if (tracePackets) PacketTrace.Sent(typeof(T).Name, packet.WireSize, queued);
+            return queued;
         }
 
         public void SkipNextBytes(int count)
