@@ -64,7 +64,7 @@
 
 ## Phase 4: Output paths, writer and ledger
 
-- [ ] **T4.1** Add `Core/Output/` tests (failing, ignored) and then the code: `RoOutputRoots` (`Art`, `Data`, `Scenes`), `RoOutputPaths` (`Mirror`, `Texture`, `Material`, `Placeholder`, `Data`, `Scene`, `AdditiveScene`) per plan §4.5. Tests: same file name in two Ragnarok folders gives two different output paths; a path is lowercase with `/`; material path is `<root>/_materials/<texture path without extension>__<suffix>.mat`. (FR-4)
+- [x] **T4.1** Add `Core/Output/` tests (failing, ignored) and then the code: `RoOutputRoots` (`Art`, `Data`, `Scenes`), `RoOutputPaths` (`Mirror`, `Texture`, `Material`, `Placeholder`, `Data`, `Scene`, `AdditiveScene`) per plan §4.5. Tests: same file name in two Ragnarok folders gives two different output paths; a path is lowercase with `/`; material path is `<root>/_materials/<texture path without extension>__<suffix>.mat`. (FR-4)
   *Done when:* the tests are enabled by the implementation in the same commit and pass.
 - [ ] **T4.2** Add `Editor/Writing/RoPngCodec` (`IRoPngCodec` through `ImageConversion`). (FR-8)
   *Done when:* a round-trip test (encode then decode a small image with and without alpha) returns identical pixels.

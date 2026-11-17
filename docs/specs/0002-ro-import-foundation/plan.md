@@ -272,6 +272,7 @@ public static class RoOutputPaths
 ```
 
 - Outputs mirror the canonical (lowercase, forward slash) Ragnarok path, so two files with the same name in different Ragnarok folders never collide (FR-4), and the path is the same on every machine and file system.
+- `Material` first exists as `Material(RoOutputRoots, RoPath texture, string suffix)` (T4.1), because `RoMaterialKey` comes in T5.1; T5.1 adds the `Material(RoOutputRoots, RoMaterialKey)` overload over it. `RoOutputRoots.Under(folder)` puts all three roots under one folder (used by the tests). Names passed to `Placeholder`, `Data` and `Scene` must be single segments.
 - The converter for each format chooses its own extension and kind (`Mirror(r, path, ".prefab")` and so on); the foundation owns the root, the case rule and the collision rule below.
 - **Collision rule:** two different source files must not map to the same output path (for example `a.bmp` and `a.tga`). The ledger (§4.8) owns each output by source path; a second owner gives one `OutputCollision` issue and the second file is skipped.
 - **GUIDs are assigned by Unity** when it first imports a new asset (the writer then calls `AssetDatabase.Refresh`/`ImportAsset`); the tool never writes a `.meta` itself. An output the tool owns is always **updated in place** (§4.7), never deleted and recreated, so its GUID and every reference to it stay valid. Consequence for teams: committed outputs are pulled from version control, not regenerated from scratch on another machine, because that would assign new GUIDs (D4, §9).
