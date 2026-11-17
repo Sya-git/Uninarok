@@ -107,7 +107,7 @@
 
 ## Phase 6: Managers and flow (FR-3, FR-9 to FR-14, FR-20)
 
-- [ ] **T6.1** Add `SessionContext` (`ServerEndpoint` already exists since T4.6), `CharacterSlots`, `MapEndpoint`, `MapEntry`, `CharacterDraft`, `FlowState`, `FailureCode`, `FlowFailure`, `IServerManager`, `LoginRefusal`, `PinState`, and `FakeClock` in tests (plan §4.9). *(FR-12)*
+- [x] **T6.1** Add `SessionContext` (`ServerEndpoint` already exists since T4.6), `CharacterSlots`, `MapEndpoint`, `MapEntry`, `CharacterDraft`, `FlowState`, `FailureCode`, `FlowFailure`, `IServerManager`, `LoginRefusal`, `PinState`, and `FakeClock` in tests (plan §4.9). *(FR-12)*
   *Done when:* compiles.
 - [ ] **T6.2** Write failing `LoginManagerTests` (`FakeNetworkClient`): `REQUEST_LOGIN` bytes sent on `OnConnected`, credentials cleared after; `ACCEPT_LOGIN` fills `Context` and `Servers` and raises `Accepted`; each of the three refusal packets raises `Refused` once; no subscription after `Exit`. *(FR-9, FR-11, FR-12, FR-20)*
 - [ ] **T6.3** Implement `LoginManager`.

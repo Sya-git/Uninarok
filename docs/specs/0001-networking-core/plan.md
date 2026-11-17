@@ -490,7 +490,7 @@ namespace Uninarok.Networking.Flow
         // character server
         public readonly List<CharInfo> Characters = new();
         public CharacterSlots Slots;                 // from CHARACTER_SLOTS_INFO
-        public uint CharacterId; public byte SelectedSlot;
+        public int CharacterId; public byte SelectedSlot;   // CharacterId is int, like CharInfo.CharId and MAP_ENTER_REQUEST_ACCEPTED.CharId
         // map server
         public MapEndpoint Map;                      // where to connect
         public MapEntry Entry;                       // what AUTHENTICATION_ACCEPTED reported
@@ -529,7 +529,9 @@ namespace Uninarok.Networking.Managers
         public void SetCredentials(string user, string password);   // held until OnConnected sends REQUEST_LOGIN, then cleared
     }
 
-    public enum PinState { Unknown = -1, /* server values per PINCODE_LOGINSTATE doc */ }
+    // Values from Hercules pincode_login_response: Ok 0, Ask 1, NotSet 2, Expired 3, RestrictPassword 5, Unused 7, Wrong 8.
+    public enum PinState { Unknown = -1, Ok = 0, Ask = 1, NotSet = 2, Expired = 3, RestrictPassword = 5, Unused = 7, Wrong = 8 }
+    // LoginRefusal { Source (Refusal | Refuse3 | ServerNotice), ErrorCode (int), BlockDate (FixedString64Bytes) }
 
     public sealed class CharacterManager : IServerManager
     {
