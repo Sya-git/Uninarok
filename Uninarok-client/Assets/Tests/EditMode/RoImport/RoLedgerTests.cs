@@ -16,7 +16,6 @@ namespace Uninarok.RoImport.Tests
 {
     // SPEC-0002 FR-5 (skip unchanged, keep references), FR-12 (hand-made content survives), FR-16 (deterministic files).
     // Plan 4.8, 4.13, D5, D14. TASKS T4.5.
-    [Ignore("pending T4.6")]
     public class RoLedgerTests
     {
         string _folder;
@@ -120,7 +119,7 @@ namespace Uninarok.RoImport.Tests
         RoLedger CurrentLedger(out RoLedgerEntry entry)
         {
             var ledger = RoLedger.Load("texture", _folder);
-            entry = Entry("texture/a.bmp", Hash("texture/a.bmp"), 3, new[] { Output("texture/a.png") },
+            entry = Entry("texture/a.bmp", Hash("texture/a.bmp"), 3, new[] { Output("texture/a.bytes") },
                 new RoLedgerDependency("texture/KEY8.BMP".ToLowerInvariant(), Hash("texture/key8.bmp")),
                 new RoLedgerDependency("texture/gone.bmp", ""));
             ledger.Record(entry);
@@ -163,7 +162,7 @@ namespace Uninarok.RoImport.Tests
         {
             var ledger = RoLedger.Load("texture", _folder);
             string hash = Hash("texture/a.bmp");
-            ledger.Record(Entry("texture/a.bmp", hash, 1, new[] { Output("texture/a.png") },
+            ledger.Record(Entry("texture/a.bmp", hash, 1, new[] { Output("texture/a.bytes") },
                 new RoLedgerDependency("texture/key8.bmp", "an older hash")));
 
             Assert.IsFalse(ledger.IsCurrent(RoPath.Parse("texture/a.bmp"), hash, 1, _source, _writer));
@@ -174,7 +173,7 @@ namespace Uninarok.RoImport.Tests
         {
             var ledger = RoLedger.Load("texture", _folder);
             string hash = Hash("texture/a.bmp");
-            string output = Output("texture/a.png");
+            string output = Output("texture/a.bytes");
 
             // Recorded as missing (empty hash, plan 4.12), but the file exists now: stale.
             ledger.Record(Entry("texture/a.bmp", hash, 1, new[] { output }, new RoLedgerDependency("texture/key8.bmp", "")));
@@ -228,10 +227,10 @@ namespace Uninarok.RoImport.Tests
         public void OnlyLedgerOwnedPaths_AreRewritten_HandMadeFilesSurvive()
         {
             var ledger = RoLedger.Load("map", _folder);
-            string generated = Output("model/a/mesh.asset");
+            string generated = Output("model/a/mesh.bytes");
             ledger.Record(Entry("model/a.rsm", "aa", 1, new[] { generated }));
 
-            string handMade = Output("model/a/custom.asset", 7);                 // a person's asset inside the output root
+            string handMade = Output("model/a/custom.bytes", 7);                 // a person's asset inside the output root
             string additive = RoOutputPaths.AdditiveScene(_roots, "prontera");  // the hand-made additive scene
             Directory.CreateDirectory(Path.GetDirectoryName(RoImportTestRoot.FullPath(additive)));
             File.WriteAllBytes(RoImportTestRoot.FullPath(additive), new byte[] { 42 });

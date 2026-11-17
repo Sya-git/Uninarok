@@ -370,6 +370,12 @@ public sealed class RoLedger
 - A converter's rules version is an integer constant in that converter. Changing a rule bumps it and forces regeneration (FR-16: a change appears in version control only when an input or a rule changed). An editor upgrade that changes encoders is handled the same way: bump the version.
 - The ledger also bounds what the tool may delete: **only paths listed in a ledger entry are ever removed or overwritten**; any other asset in the output roots is left alone.
 - Saving happens at the end of each chunk (§4.10), so an aborted batch resumes where it stopped.
+- Details fixed by T4.6:
+  - `Load(category, folder = DefaultFolder)` takes a folder, so tests can use a temporary one.
+  - `Record` returns `false` when it refuses an entry. It warns `OutputCollision` with the item set to the refused source and the referrer set to the owner. It throws for an additive-scene output.
+  - Re-recording a source replaces its outputs.
+  - `Entries` lists the entries in source order.
+  - `Save` writes only when the text changed.
 
 ### 4.9 Results, issues and logging: `RoResult<T>`, `RoReport`, `RoIssue`
 
