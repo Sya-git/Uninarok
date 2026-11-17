@@ -11,7 +11,6 @@ namespace Uninarok.RoImport.Tests
 {
     // SPEC-0002 FR-8: BMP, PNG and TGA convert; anything else is reported. Plan 4.4 and D16 (T0.4 findings).
     // Expected pixels are the ones listed in Fixtures~/README.md (top row first). TASKS T3.1.
-    [Ignore("pending T3.2")]
     public class RoImageReaderTests
     {
         static readonly Color32 Magenta = new Color32(255, 0, 255, 255);
