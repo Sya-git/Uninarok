@@ -145,10 +145,26 @@ namespace Uninarok.Networking.Core.Framing
             return processed;
         }
 
+        private const int FaultDumpBytes = 32;
+
+        // Records the fault once. The reason ends with up to 32 of the bytes at the read position, as hex (FR-2).
         private void Fault(string reason)
         {
+            if (_faulted) return;
             _faulted = true;
-            _faultReason = reason;
+
+            int count = Math.Min(FaultDumpBytes, _write - _read);
+            var hex = new char[count * 3 - (count > 0 ? 1 : 0)];
+            const string digits = "0123456789ABCDEF";
+            for (int i = 0; i < count; i++)
+            {
+                byte b = _work[_read + i];
+                int o = i * 3;
+                hex[o] = digits[b >> 4];
+                hex[o + 1] = digits[b & 0x0F];
+                if (i < count - 1) hex[o + 2] = ' ';
+            }
+            _faultReason = reason + ": " + new string(hex);
         }
 
         // Moves as much of the inbox as the cap allows into the work buffer. Lock is held only for the copy.

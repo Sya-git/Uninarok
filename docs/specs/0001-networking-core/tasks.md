@@ -52,7 +52,7 @@
   *Done when:* T2.2, T2.5 and T2.6 pass.
 - [x] **T2.9** Implement `SkipNextBytes` and the skip step before header parsing. *(FR-3)*
   *Done when:* T2.4 passes.
-- [ ] **T2.10** Implement faults (`IsFaulted`, `FaultReason` with up to 32 hex bytes, stop parsing, return 0). *(FR-2)*
+- [x] **T2.10** Implement faults (`IsFaulted`, `FaultReason` with up to 32 hex bytes, stop parsing, return 0). *(FR-2)*
   *Done when:* T2.3 passes; all Phase 2 tests green.
 
 ## Phase 3: Dispatch and transport (FR-2, FR-4, FR-6, FR-7, FR-8, FR-9)
