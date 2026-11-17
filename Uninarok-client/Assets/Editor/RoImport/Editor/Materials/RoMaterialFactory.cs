@@ -43,8 +43,11 @@ namespace Uninarok.RoImport.Editor.Materials
             string memoKey = Category + ":" + key;
             if (ctx.TryGetMemo(memoKey, out Material done)) return RoResult<Material>.Skipped(done);
 
+            // A missing texture (already warned once by ctx.Texture) is replaced by the placeholder (plan 4.6, 4.12).
+            // Its hash is recorded empty, so the material is stale, and rebuilt, once the real texture exists.
             var texture = ctx.Texture(key.Texture, referrer);
-            if (texture.Status == RoStatus.Failed) return RoResult<Material>.Failed(texture.Failure);
+            bool placeholder = texture.Status == RoStatus.Failed;
+            if (placeholder) texture = RoPlaceholders.MissingTexture(ctx);
 
             var shader = Shader.Find(ShaderName);
             if (shader == null)
@@ -55,7 +58,7 @@ namespace Uninarok.RoImport.Editor.Materials
 
             string path = RoOutputPaths.Material(ctx.Roots, key);
             var id = RoPath.Parse(key.ToString());
-            string hash = ctx.Source.TryGetFile(key.Texture, out var file) ? file.ContentHash() : string.Empty;
+            string hash = !placeholder && ctx.Source.TryGetFile(key.Texture, out var file) ? file.ContentHash() : string.Empty;
             var ledger = ctx.Ledger(Category);
 
             if (!ctx.Force && ledger.IsCurrent(id, hash, Rules, ctx.Source, ctx.Writer))

@@ -85,7 +85,7 @@
   *Done when:* the project compiles; a test constructs a context over the fixture source and the throwaway root.
 - [x] **T5.3** Implement `Editor/Materials/RoMaterialFactory` (`GetOrCreate`, `SurfaceFor`, explicit property setup in one method, `ShaderMissing` handling) and wire `RoImportContext.Material`. (FR-9, FR-6)
   *Done when:* `[Ignore]` removed and `RoMaterialTests` pass.
-- [ ] **T5.4** Implement `Editor/Pipeline/RoPlaceholders` (procedural 16 x 16 checker PNG at `_placeholders/missing_texture.png`, created on first need, with its own material) and a test that two requests create one asset with identical bytes on a rerun. (FR-8, FR-10, FR-16)
+- [x] **T5.4** Implement `Editor/Pipeline/RoPlaceholders` (procedural 16 x 16 checker PNG at `_placeholders/missing_texture.png`, created on first need, with its own material) and a test that two requests create one asset with identical bytes on a rerun. (FR-8, FR-10, FR-16)
   *Done when:* the test passes.
 
 ## Phase 6: Texture converter and pipeline

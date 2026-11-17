@@ -480,6 +480,11 @@ Satisfies FR-8, FR-10.
 
 - `RoPlaceholders.MissingTexture(ctx)` returns a generated 16 x 16 magenta and black checker PNG at `Art/_placeholders/missing_texture.png`, created once through the normal writer (deterministic bytes), with its own material key. It is created on the first need, not at install.
 - A missing source texture, an unsupported format and a corrupt texture all resolve to it, so the model or map that needed the texture still converts and shows an obvious placeholder (FR-10), with one warning naming the texture and its referrer.
+- Details fixed by T5.4:
+  - The checker is made of 4-pixel cells, magenta first, and imports with point filtering and no mipmaps.
+  - `RoPlaceholders.MissingMaterial(ctx)` is its own opaque material at `Art/_placeholders/missing_texture.mat`.
+  - Both files are owned by the `placeholder` ledger (D14).
+  - A material whose texture is missing keeps its own key and path, uses the placeholder texture, and records an empty texture hash.
 - The placeholder is never listed as a dependency, so replacing a missing file later and re-running a batch is enough: the dependent item is stale because its recorded dependency list contains the missing path with the empty hash, which no longer matches.
 
 ### 4.13 Additive layer rule
