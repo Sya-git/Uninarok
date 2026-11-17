@@ -6,7 +6,7 @@
 | **Hercules packet name** | `AC_REFUSE_LOGIN_R3` (uses the `PACKET_AC_REFUSE_LOGIN_R2` layout) |
 | **Packet ID** | `0x0B02` |
 | **Declared size** | 26 bytes, including the 2-byte packet ID |
-| **Status** | documented |
+| **Status** | implemented |
 | **Frequency** | cold |
 | **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no |
 | **Allocates** | no |

@@ -6,7 +6,7 @@
 | **Hercules packet name** | `SC_NOTIFY_BAN` |
 | **Packet ID** | `0x0081` |
 | **Declared size** | 3 bytes, fixed |
-| **Status** | documented |
+| **Status** | implemented |
 | **Frequency** | cold |
 | **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no |
 | **Allocates** | no |

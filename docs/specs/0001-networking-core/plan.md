@@ -64,7 +64,7 @@ Root: `Uninarok-client/Assets/Scripts/Networking/`.
 | `Core/Protocol/` | `InPacketAttribute`, `OutPacketAttribute`, `HerculesPacketTable.g.cs` (generated, §4.8) | Core |
 | `Runtime/Text/` | `WireText` (`FixedString*` read/write, Windows-1252 table) | `Uninarok.Networking` (references Core, `Unity.Collections`) |
 | `Runtime/Data/` | `AccountSex`, `CharInfo`, `UninarokPosition`, `UninarokDirection`, `UninarokMoveData` (one per `docs/data/*.md`; `UninarokDirection` is described in `UninarokPosition.md`) | `Uninarok.Networking` |
-| `Runtime/Packets/` | `PacketIds`, `In/{Login,Character,Map}/*.cs`, `Out/{Login,Character,Map}/*.cs`, one struct per file | `Uninarok.Networking` |
+| `Runtime/Packets/` | `PacketIds`, `ProtocolInfo` (`PacketVersion`, default client type), `In/{Login,Character,Map}/*.cs`, `Out/{Login,Character,Map}/*.cs`, one struct per file | `Uninarok.Networking` |
 | `Runtime/Packets/Generator/` | `Uninarok.Networking.Generator.dll` (Roslyn source generator, asset label `RoslynAnalyzer`, excluded from all platforms) | applies to `Uninarok.Networking` and assemblies that reference it |
 | `Runtime/Client/` | `INetworkClient`, `NetworkClient`, `ConnectionStatus`, `Subscriptions`, `NetLog`, `IClock`, `UnityClock`, `NetworkSettings` | `Uninarok.Networking` |
 | `Runtime/Flow/` | `NetworkFlow`, `FlowState`, `FailureCode`, `FlowFailure`, `SessionContext`, `ServerEndpoint`, `CharacterSlots`, `MapEndpoint`, `MapEntry`, `CharacterDraft` | `Uninarok.Networking` |
@@ -95,6 +95,7 @@ namespace Uninarok.Networking.Core.Wire
         public void ReadBytes(Span<byte> destination);
         public ReadOnlySpan<byte> ReadSpan(int count);   // view, valid only while the payload is
         public void Skip(int count);
+        public void EnsureConsumed();                    // throws PacketFormatException if bytes are left: incoming packet constructors call it last
     }
     public ref struct PacketWriter
     {

@@ -83,7 +83,7 @@
   *Done when:* tests exist and fail or are ignored pending T4.6.
 - [x] **T4.5** Write `PacketSizeTests`: every `[InPacket]`/`[OutPacket]` `Size` equals `HerculesPacketTable`. *(FR-18)*
   *Done when:* test exists (passes trivially until packets are added).
-- [ ] **T4.6** Implement the login-server packets in scope (plan §4.6) with `PacketIds`, following `Packets/Packet-Implementation.md`; add their `PacketDecodeTests` and golden-byte tests from the docs. Update each doc's `Status` in the same commit. *(FR-6, FR-18)*
+- [x] **T4.6** Implement the login-server packets in scope (plan §4.6) with `PacketIds`, following `Packets/Packet-Implementation.md`; add their `PacketDecodeTests` and golden-byte tests from the docs. Update each doc's `Status` in the same commit. *(FR-6, FR-18)*
   *Done when:* decode, golden-byte, size and router tests pass for these packets.
 - [ ] **T4.7** Same for the character-server packets in scope. *(FR-6, FR-18)*
   *Done when:* as T4.6.
@@ -107,7 +107,7 @@
 
 ## Phase 6: Managers and flow (FR-3, FR-9 to FR-14, FR-20)
 
-- [ ] **T6.1** Add `SessionContext`, `ServerEndpoint`, `CharacterSlots`, `MapEndpoint`, `MapEntry`, `CharacterDraft`, `FlowState`, `FailureCode`, `FlowFailure`, `IServerManager`, `LoginRefusal`, `PinState`, and `FakeClock` in tests (plan §4.9). *(FR-12)*
+- [ ] **T6.1** Add `SessionContext` (`ServerEndpoint` already exists since T4.6), `CharacterSlots`, `MapEndpoint`, `MapEntry`, `CharacterDraft`, `FlowState`, `FailureCode`, `FlowFailure`, `IServerManager`, `LoginRefusal`, `PinState`, and `FakeClock` in tests (plan §4.9). *(FR-12)*
   *Done when:* compiles.
 - [ ] **T6.2** Write failing `LoginManagerTests` (`FakeNetworkClient`): `REQUEST_LOGIN` bytes sent on `OnConnected`, credentials cleared after; `ACCEPT_LOGIN` fills `Context` and `Servers` and raises `Accepted`; each of the three refusal packets raises `Refused` once; no subscription after `Exit`. *(FR-9, FR-11, FR-12, FR-20)*
 - [ ] **T6.3** Implement `LoginManager`.

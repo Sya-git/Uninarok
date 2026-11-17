@@ -11,13 +11,13 @@ One row per documented packet (SPEC-0001, PACKETVER 20220406). Generated from th
 | Character server to client | `0x082D` | [CHARACTER_SLOTS_INFO](In/CharacterServer/CHARACTER_SLOTS_INFO.md) | variable | documented | cold |
 | Character server to client | `0x08B9` | [PINCODE_LOGINSTATE](In/CharacterServer/PINCODE_LOGINSTATE.md) | 12 | documented | cold |
 | Character server to client | `0x0AC5` | [MAP_ENTER_REQUEST_ACCEPTED](In/CharacterServer/MAP_ENTER_REQUEST_ACCEPTED.md) | 156 | documented | cold |
-| Login server to client | `0x006A` | [LOGIN_REFUSAL](In/LoginServer/LOGIN_REFUSAL.md) | 23 | documented | cold |
-| Login server to client | `0x0081` | [LOGIN_SERVER_NOTICE](In/LoginServer/LOGIN_SERVER_NOTICE.md) | 3 | documented | cold |
+| Login server to client | `0x006A` | [LOGIN_REFUSAL](In/LoginServer/LOGIN_REFUSAL.md) | 23 | implemented | cold |
+| Login server to client | `0x0081` | [LOGIN_SERVER_NOTICE](In/LoginServer/LOGIN_SERVER_NOTICE.md) | 3 | implemented | cold |
 | Login server to client | `0x01DC` | [HASH_CHALLENGE](In/LoginServer/HASH_CHALLENGE.md) | variable | documented | cold |
 | Login server to client | `0x09A2` | [MOBILE_OTP_REQUEST](In/LoginServer/MOBILE_OTP_REQUEST.md) | 6 | documented | cold |
-| Login server to client | `0x0AC4` | [ACCEPT_LOGIN](In/LoginServer/ACCEPT_LOGIN.md) | variable | documented | cold |
+| Login server to client | `0x0AC4` | [ACCEPT_LOGIN](In/LoginServer/ACCEPT_LOGIN.md) | variable | implemented | cold |
 | Login server to client | `0x0AE3` | [LOGIN_OTP_RESPONSE](In/LoginServer/LOGIN_OTP_RESPONSE.md) | variable | documented | cold |
-| Login server to client | `0x0B02` | [REFUSE_LOGIN_3](In/LoginServer/REFUSE_LOGIN_3.md) | 26 | documented | cold |
+| Login server to client | `0x0B02` | [REFUSE_LOGIN_3](In/LoginServer/REFUSE_LOGIN_3.md) | 26 | implemented | cold |
 | Map server to client | `0x0074` | [MAP_ENTRY_REFUSAL](In/MapServer/MAP_ENTRY_REFUSAL.md) | 3 | documented | cold |
 | Map server to client | `0x007F` | [SERVER_HEARTBEAT_RESPONSE](In/MapServer/SERVER_HEARTBEAT_RESPONSE.md) | 6 | documented | warm |
 | Map server to client | `0x0080` | [UNIT_VANISH](In/MapServer/UNIT_VANISH.md) | 7 | documented | hot |
@@ -43,7 +43,7 @@ One row per documented packet (SPEC-0001, PACKETVER 20220406). Generated from th
 | Client to character server | `0x0066` | [SELECT_CHARACTER](Out/CharacterServer/SELECT_CHARACTER.md) | 3 | documented | cold |
 | Client to character server | `0x0187` | [CHARACTER_SERVER_PING](Out/CharacterServer/CHARACTER_SERVER_PING.md) | 6 | documented | warm |
 | Client to character server | `0x0A39` | [CREATE_CHARACTER](Out/CharacterServer/CREATE_CHARACTER.md) | 36 | documented | cold |
-| Client to login server | `0x0064` | [REQUEST_LOGIN](Out/LoginServer/REQUEST_LOGIN.md) | 55 | documented | cold |
+| Client to login server | `0x0064` | [REQUEST_LOGIN](Out/LoginServer/REQUEST_LOGIN.md) | 55 | implemented | cold |
 | Client to login server | `0x01DB` | [HASH_CHALLENGE_REQUEST](Out/LoginServer/HASH_CHALLENGE_REQUEST.md) | 2 | documented | cold |
 | Client to login server | `0x01DD` | [LOGIN_REQUEST2](Out/LoginServer/LOGIN_REQUEST2.md) | 47 | documented | cold |
 | Client to login server | `0x01FA` | [LOGIN_REQUEST3](Out/LoginServer/LOGIN_REQUEST3.md) | 48 | documented | cold |

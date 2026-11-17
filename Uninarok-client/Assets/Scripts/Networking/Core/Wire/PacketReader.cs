@@ -80,6 +80,16 @@ namespace Uninarok.Networking.Core.Wire
             _pos += count;
         }
 
+        /// <summary>
+        /// Throws <see cref="PacketFormatException"/> unless the whole payload was read. Incoming packet constructors call
+        /// this last, so a payload with unread bytes is reported instead of silently misparsed (docs: Packet-Implementation).
+        /// </summary>
+        public void EnsureConsumed()
+        {
+            if (_pos != _data.Length)
+                throw new PacketFormatException($"{_data.Length - _pos} unread byte(s) left in payload of {_data.Length} byte(s)");
+        }
+
         private void Require(int count)
         {
             if (count < 0 || count > _data.Length - _pos)

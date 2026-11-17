@@ -75,6 +75,19 @@ namespace Uninarok.Networking.Tests
         }
 
         [Test]
+        public void EnsureConsumed_ThrowsWhenBytesAreLeft_AndPassesWhenAllWereRead()
+        {
+            byte[] data = { 1, 2, 3 };
+            var r = new PacketReader(data);
+            r.ReadUInt16();
+            Assert.Throws<PacketFormatException>(() => { var x = new PacketReader(data); x.ReadUInt16(); x.EnsureConsumed(); });
+            r.ReadByte();
+            r.EnsureConsumed();                            // all three bytes read: no throw
+            var empty = new PacketReader(ReadOnlySpan<byte>.Empty);
+            empty.EnsureConsumed();
+        }
+
+        [Test]
         public void Writer_WritesLittleEndianPrimitives()
         {
             byte[] buf = new byte[13];

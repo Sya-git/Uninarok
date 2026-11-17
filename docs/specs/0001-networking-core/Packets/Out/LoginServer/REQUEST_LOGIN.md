@@ -6,7 +6,7 @@
 | **Hercules packet name** | `CA_LOGIN` |
 | **Packet ID** | `0x0064` |
 | **Declared size** | 55 bytes, including the 2-byte packet ID |
-| **Status** | documented |
+| **Status** | implemented |
 | **Frequency** | cold |
 | **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no |
 | **Allocates** | no |
@@ -20,9 +20,9 @@
 | Field | Wire type | Size | Description |
 |---|---:|---:|---|
 | PacketId | `ushort` | 2 bytes | Packet identifier `0x0064`. |
-| PacketVersion | `uint` | 4 bytes | Value of `LoginManager.PacketVersion`. |
+| PacketVersion | `uint` | 4 bytes | Value of `ProtocolInfo.PacketVersion` (20220406). |
 | AccountName | fixed byte string | 24 bytes | Account name, padded with zero bytes or truncated to the fixed width. |
 | AccountPassword | fixed byte string | 24 bytes | Account password, padded with zero bytes or truncated to the fixed width. |
-| ClientType | `byte` | 1 byte | Client type; the source stores it as `char` and writes its byte value. Its meaning is marked TODO in the source. |
+| ClientType | `byte` | 1 byte | Client type; Hercules stores it without interpreting it. Default `ProtocolInfo.DefaultClientType` (the character `'0'`, as the prototype sent). |
 
 **Serialization:** writes 55 bytes in table order; unused text bytes are zero.

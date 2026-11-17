@@ -1,4 +1,3 @@
-#if PENDING_T4_6 // T4.4: enabled (guard removed) by T4.6 when the first [InPacket] structs exist.
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -109,4 +108,3 @@ namespace Uninarok.Networking.Tests
         }
     }
 }
-#endif
