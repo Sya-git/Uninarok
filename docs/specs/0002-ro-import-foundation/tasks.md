@@ -53,7 +53,7 @@
 
 ## Phase 3: Imaging
 
-- [ ] **T3.1** Add `Core/Imaging/RoImage` and `RoImageReaderTests` (failing, ignored) over the fixtures: the 8-bit paletted and 24-bit BMP, the 32-bit TGA with alpha and the PNG decode to the expected pixel values at known coordinates (including a magenta pixel and an alpha value), `SourceHadAlpha` is true only for the TGA/PNG with alpha; the corrupt fixture and a copy of each fixture cut to half its length return false with a reason and never throw (GRF does not detect files missing only their last bytes, plan §4.4); an unsupported extension is reported by `IsSupportedExtension`. (FR-8)
+- [x] **T3.1** Add `Core/Imaging/RoImage` and `RoImageReaderTests` (failing, ignored) over the fixtures: the 8-bit paletted and 24-bit BMP, the 32-bit TGA with alpha and the PNG decode to the expected pixel values at known coordinates (including a magenta pixel and an alpha value), `SourceHadAlpha` is true only for the TGA/PNG with alpha; the corrupt fixture and a copy of each fixture cut to half its length return false with a reason and never throw (GRF does not detect files missing only their last bytes, plan §4.4); an unsupported extension is reported by `IsSupportedExtension`. (FR-8)
   *Done when:* the tests compile and are ignored with `pending T3.2`.
 - [ ] **T3.2** Implement `Core/Formats/RoImageReader` using the GRF members recorded by T0.4 (convert the GRF result to `RoImage`; PNG through GRF or `IRoPngCodec` as T0.4 decided) and the `IRoPngCodec` interface. No decoding logic of our own. (FR-8)
   *Done when:* `[Ignore]` removed and `RoImageReaderTests` pass; every fixture decodes; a text search shows no `BinaryReader` or `BitConverter` in `Core/`.
