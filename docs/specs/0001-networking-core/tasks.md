@@ -134,7 +134,7 @@
 - [x] **T8.1** Register the socket threads with `Profiler.BeginThreadProfiling` from Runtime (Core stays engine-free).
   *Done when:* reader and writer threads appear in the Profiler. *(Verified in the editor with a binary Profiler log recorded while a real `NetworkClient` connected over loopback: it holds group `Uninarok.Net` with threads `Login.Read` and `Login.Write`. Hook behavior is covered by `SocketThreadHookTests`.)*
 - [ ] **T8.2** Development build: Profiler capture of login → map and 60 s in game. Verify no per-packet GC Alloc from the network layer on the main thread; record socket-thread allocations. If they matter, add a follow-up (for example `SocketAsyncEventArgs`) to `docs/specs/BACKLOG.md`.
-  *Done when:* numbers or screenshots are in the PR.
+  *Done when:* numbers or screenshots are in the PR. *(Partial, box unticked: `NetworkAllocationTests` already show, over real loopback sockets with the real `NetworkClient`, zero main-thread allocation for a pump of 1000 received packets, for a send, an idle pump and a flow tick. The Profiler capture of a real login to map plus 60 s in game needs a local Hercules and a development player, so it is done with T9.4 and T9.6.)*
 
 ## Phase 9: Real-session verification (FR-1, FR-17 and all)
 
