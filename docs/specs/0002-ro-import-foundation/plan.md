@@ -353,6 +353,10 @@ public sealed class RoAssetWriter
 - `UpsertObject`: a new asset is created with `AssetDatabase.CreateAsset` and Unity assigns its GUID. For an existing asset the writer loads the existing object and copies the fresh content into it with `EditorUtility.CopySerialized`, then marks it dirty; it never deletes and re-creates, so GUIDs and every reference to it survive (FR-5). `fresh` is destroyed after the copy.
 - All writes go through the writer so that a batch brackets them with `StartAssetEditing`/`StopAssetEditing` (in `try/finally`), then `AssetDatabase.SaveAssets` per chunk (§4.10).
 - Serialization of generated objects is the project's setting (text). Meshes serialize their data in a stable order, so a rerun produces byte-identical files; this is asserted by the determinism test (§6).
+- Determinism has two forms (found in T6.4).
+  - **Rerun in place:** a rerun leaves every file and `.meta` byte-identical. This is what FR-16 asks.
+  - **From scratch:** after deleting the outputs and converting again, textures and placeholders are byte-identical. Materials differ in two expected ways. First, the GUIDs they reference: recreated assets get new GUIDs (D4). Second, the random local file ID of the hidden `AssetVersion` object URP 17.7 adds to every material, which also sets the order of the two objects in the file. `RoDeterminismTests` masks exactly these and compares the rest.
+  - This is one more reason committed outputs are pulled, not regenerated (§4.5, D4).
 - The writer refuses a path outside the two output roots (and the additive area of §4.13) with an exception: a bug, not an expected condition.
 
 ### 4.8 Ledger and skipping: `RoLedger`

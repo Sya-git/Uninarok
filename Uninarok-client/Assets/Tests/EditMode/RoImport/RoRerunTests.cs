@@ -63,11 +63,27 @@ namespace Uninarok.RoImport.Tests
                 if (file.EndsWith(".meta", StringComparison.Ordinal) != metas) continue;
                 byte[] bytes = File.ReadAllBytes(file);
                 if (maskGuids && file.EndsWith(".mat", StringComparison.Ordinal))
-                    bytes = Encoding.UTF8.GetBytes(Regex.Replace(Encoding.UTF8.GetString(bytes), "guid: [0-9a-f]{32}", "guid: <masked>"));
+                    bytes = Encoding.UTF8.GetBytes(NormalizeRecreatedMaterial(Encoding.UTF8.GetString(bytes)));
                 using (var sha = SHA256.Create())
                     result[file.Substring(RootDisk.Length).Replace('\\', '/')] = string.Concat(sha.ComputeHash(bytes).Select(b => b.ToString("x2")));
             }
             return result;
+        }
+
+        /// <summary>
+        /// What legitimately changes when a material is created again from nothing (plan 4.7): the GUIDs it references
+        /// (recreated assets get new ones, D4), and the random local file ID of the AssetVersion object URP adds to every
+        /// material, which also decides the order of the two objects in the file. Everything else must be identical.
+        /// </summary>
+        static string NormalizeRecreatedMaterial(string yaml)
+        {
+            yaml = Regex.Replace(yaml.Replace("\r\n", "\n"), "guid: [0-9a-f]{32}", "guid: <masked>");
+            var parts = Regex.Split(yaml, "(?m)^(?=--- !u!)");
+            var header = parts[0];
+            var objects = parts.Skip(1)
+                .Select(o => o.StartsWith("--- !u!114 ", StringComparison.Ordinal) ? Regex.Replace(o, "^--- !u!114 &-?\\d+", "--- !u!114 &<masked>") : o)
+                .OrderBy(o => o, StringComparer.Ordinal);
+            return header + string.Concat(objects);
         }
 
         protected Dictionary<string, string> Guids() =>
@@ -77,7 +93,7 @@ namespace Uninarok.RoImport.Tests
     }
 
     // SPEC-0002 FR-5 (idempotent, skipped, references kept), FR-6 (dependencies on demand). Plan 4.7, 4.8, 4.10. TASKS T6.3.
-    [Ignore("pending T6.4")]
+
     public class RoIdempotencyTests : RoRunFixture
     {
         [Test]
@@ -140,7 +156,7 @@ namespace Uninarok.RoImport.Tests
     }
 
     // SPEC-0002 FR-16 (identical files when inputs and rules are unchanged), FR-4. Plan 4.7, 4.8. TASKS T6.3.
-    [Ignore("pending T6.4")]
+
     public class RoDeterminismTests : RoRunFixture
     {
         void ConvertEverything()
@@ -162,7 +178,10 @@ namespace Uninarok.RoImport.Tests
             RoImportTestRoot.Create();
             ConvertEverything();
 
-            CollectionAssert.AreEqual(first, Snapshot(metas: false, maskGuids: true),
+            var second = Snapshot(metas: false, maskGuids: true);
+            var differing = first.Keys.Union(second.Keys)
+                .Where(k => !first.TryGetValue(k, out var a) || !second.TryGetValue(k, out var b) || a != b).ToArray();
+            CollectionAssert.IsEmpty(differing,
                 "byte-identical outputs; inside .mat files only the texture GUID (new after deletion, D4) may differ");
             Assert.Greater(first.Count, Good.Length, "textures, materials and the placeholder were compared");
         }
