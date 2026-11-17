@@ -1,4 +1,3 @@
-#if PENDING_T6_7 // T6.6: enabled (guard removed) by T6.7 when ZoneManager exists.
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -266,4 +265,3 @@ namespace Uninarok.Networking.Tests
         }
     }
 }
-#endif

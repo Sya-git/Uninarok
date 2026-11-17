@@ -116,7 +116,7 @@
 - [x] **T6.5** Implement `CharacterManager`.
   *Done when:* T6.4 passes.
 - [x] **T6.6** Write failing `ZoneManagerTests`: `REQUEST_ENTER_MAP` bytes with `Context` values and clock timestamp; `AUTHENTICATION_ACCEPTED` fills `Context.Entry` and raises `Authenticated`; `MAP_ENTRY_REFUSAL` raises `EnterRefused`; no heartbeat before `SendMapLoaded`; after it, `HEARTBEAT_REQUEST` every 10 s with increasing timestamps; none after `Exit`; heartbeat `Tick` allocates nothing. *(FR-6, FR-14)*
-- [ ] **T6.7** Implement `ZoneManager`.
+- [x] **T6.7** Implement `ZoneManager`.
   *Done when:* T6.6 passes.
 - [ ] **T6.8** Write failing `FlowTransitionTests` (`FakeNetworkClient`, `FakeClock`), table-driven from plan §4.9: every valid transition with its actions, every invalid command rejected with a warning, every deadline (`ConnectTimeout` vs `ReplyTimeout`, `MapLoadSeconds` after `Authenticated`), `CloseReason` → `FailureCode` mapping, `InGame` closure → `Disconnected`, wrong credentials send exactly one `REQUEST_LOGIN`, `Reset`. *(FR-10, FR-11, FR-13)*
 - [ ] **T6.9** Implement `NetworkFlow` (state, commands, manager activation, deadlines, `Tick`, `Dispose`) and construct it in `NetworkClient.Awake`. *(FR-10, FR-11, FR-20)*
