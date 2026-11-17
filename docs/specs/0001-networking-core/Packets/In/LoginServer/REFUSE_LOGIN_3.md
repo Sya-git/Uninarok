@@ -6,14 +6,14 @@
 | **Hercules packet name** | `AC_REFUSE_LOGIN_R3` (uses the `PACKET_AC_REFUSE_LOGIN_R2` layout) |
 | **Packet ID** | `0x0B02` |
 | **Declared size** | 26 bytes, including the 2-byte packet ID |
-| **Status** | implemented |
+| **Status** | documented |
 | **Frequency** | cold |
 | **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no |
 | **Allocates** | no |
 
 **Hercules usage:** Sent by the login server for authentication failures at this packet version.
 
-**Description:** Login refusal packet containing an error code and a fixed-width block-date value. The exact error-code meanings are not defined in the current packet implementation.
+**Description:** Login refusal packet containing an error code and a fixed-width block-date value. The exact error-code meanings are not yet documented.
 
 | Field | Wire type | Size | Description |
 |---|---:|---:|---|

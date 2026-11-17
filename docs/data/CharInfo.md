@@ -1,9 +1,8 @@
 # CharInfo
 
 - **Kind:** Shared character data structure
-- **Current source type:** `CharacterServer.CHARACTER_DATA.CharInfo`
 - **Serialized size:** 155 bytes
-- **Description:** Character identity, progression, status, appearance, slot, and character-state data. The type is currently nested in the incoming packet implementation but is also consumed by gameplay code.
+- **Description:** Character identity, progression, status, appearance, slot, and character-state data. Used by several character-server packets and by gameplay code.
 
 Fields are serialized and parsed in the following order. All integer fields use the packet reader's little-endian encoding. Fixed strings occupy their full wire width; zero bytes are omitted when converted to `FixedString32Bytes`.
 

@@ -6,7 +6,7 @@
 | **Hercules packet name** | `CZ_REQNAME2` |
 | **Packet ID** | `0x0368` |
 | **Declared size** | 6 bytes, including the 2-byte packet ID |
-| **Status** | implemented |
+| **Status** | documented |
 | **Frequency** | warm |
 | **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no; handler `clif->pGetCharNameRequest` (offset 2) at 0x0368 in `packets_shuffle_main.h` |
 | **Allocates** | no |
@@ -20,4 +20,4 @@
 | PacketId | `ushort` | 2 bytes | Packet identifier `0x0368`. |
 | UnitId | `uint` | 4 bytes | Object ID of the visible unit whose name is requested. |
 
-**Serialization:** The local `SEND_PACKET_VER` struct (rename it to `REQUEST_UNIT_NAME`) currently writes a packet-version number under this ID; Hercules interprets the 4-byte payload as `UnitId`, not a packet version.
+**Serialization:** Hercules interprets the 4-byte payload as `UnitId`, not a packet version.

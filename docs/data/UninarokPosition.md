@@ -5,7 +5,6 @@
 | **Kind** | `readonly struct` (shared packet data) |
 | **Namespace** | `Uninarok.Networking.Data` |
 | **Wire size** | 3 bytes (`UninarokPosition.WireSize`) |
-| **Current source type** | none yet (the three bytes are read raw in `AUTHENTICATION_ACCEPTED`) |
 | **Hercules** | `WBUFPOS` / `RBUFPOS` in `src/map/clif.cpp` |
 | **Used by** | `AUTHENTICATION_ACCEPTED` (0x02EB). Future: idle/spawn unit packets (`packet_idle_unit`, `packet_spawn_unit`) |
 

@@ -20,4 +20,4 @@
 | PacketId | `ushort` | 2 bytes | Header, `0x006C`. |
 | ErrorCode | `byte` | 1 byte | Hercules always sends `0` ("rejected from server"). |
 
-**Parsing:** the old local definition declared a fixed size of 1, which is invalid; the correct total is 3 (header plus 1 byte).
+**Parsing:** the total size is 3 (header plus 1 byte).

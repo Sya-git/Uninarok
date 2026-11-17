@@ -2,76 +2,76 @@
 
 One row per documented packet (SPEC-0001, PACKETVER 20220406). Generated from the packet docs; edit the docs, not this table. `Size` is the total including the 2-byte ID. Packets that exist in Hercules but have no doc yet are listed in [`CATALOG.md`](CATALOG.md).
 
-| Direction | ID | Doc | Size | Status | Frequency | Local code name (if different) |
-|---|---|---|---:|---|---|---|
-| Character server to client | `0x006B` | [CHARACTER_DATA](In/CharacterServer/CHARACTER_DATA.md) | variable | implemented | cold |  |
-| Character server to client | `0x006C` | [MAP_ENTER_REQUEST_REFUSED](In/CharacterServer/MAP_ENTER_REQUEST_REFUSED.md) | 3 | documented | cold |  |
-| Character server to client | `0x006D` | [CHARACTER_CREATION_SUCCESS](In/CharacterServer/CHARACTER_CREATION_SUCCESS.md) | 157 | implemented | cold |  |
-| Character server to client | `0x006E` | [CHARACTER_CREATION_FAILED](In/CharacterServer/CHARACTER_CREATION_FAILED.md) | 3 | documented | cold |  |
-| Character server to client | `0x082D` | [CHARACTER_SLOTS_INFO](In/CharacterServer/CHARACTER_SLOTS_INFO.md) | variable | implemented | cold |  |
-| Character server to client | `0x08B9` | [PINCODE_LOGINSTATE](In/CharacterServer/PINCODE_LOGINSTATE.md) | 12 | implemented | cold |  |
-| Character server to client | `0x0AC5` | [MAP_ENTER_REQUEST_ACCEPTED](In/CharacterServer/MAP_ENTER_REQUEST_ACCEPTED.md) | 156 | implemented | cold |  |
-| Login server to client | `0x006A` | [LOGIN_REFUSAL](In/LoginServer/LOGIN_REFUSAL.md) | 23 | documented | cold |  |
-| Login server to client | `0x0081` | [LOGIN_SERVER_NOTICE](In/LoginServer/LOGIN_SERVER_NOTICE.md) | 3 | implemented | cold | REFUSE_LOGIN (wrong size 23) |
-| Login server to client | `0x01DC` | [HASH_CHALLENGE](In/LoginServer/HASH_CHALLENGE.md) | variable | documented | cold |  |
-| Login server to client | `0x09A2` | [MOBILE_OTP_REQUEST](In/LoginServer/MOBILE_OTP_REQUEST.md) | 6 | documented | cold |  |
-| Login server to client | `0x0AC4` | [ACCEPT_LOGIN](In/LoginServer/ACCEPT_LOGIN.md) | variable | implemented | cold |  |
-| Login server to client | `0x0AE3` | [LOGIN_OTP_RESPONSE](In/LoginServer/LOGIN_OTP_RESPONSE.md) | variable | documented | cold |  |
-| Login server to client | `0x0B02` | [REFUSE_LOGIN_3](In/LoginServer/REFUSE_LOGIN_3.md) | 26 | implemented | cold |  |
-| Map server to client | `0x0074` | [MAP_ENTRY_REFUSAL](In/MapServer/MAP_ENTRY_REFUSAL.md) | 3 | implemented | cold | MAP_REFUSE_ENTER |
-| Map server to client | `0x007F` | [SERVER_HEARTBEAT_RESPONSE](In/MapServer/SERVER_HEARTBEAT_RESPONSE.md) | 6 | implemented | warm | HEARTBEAT_RESPONSE (wrong ID 0x0188) |
-| Map server to client | `0x0080` | [UNIT_VANISH](In/MapServer/UNIT_VANISH.md) | 7 | documented | hot |  |
-| Map server to client | `0x0087` | [PLAYER_MOVE](In/MapServer/PLAYER_MOVE.md) | 12 | documented | warm |  |
-| Map server to client | `0x0088` | [UNIT_STOP_MOVE](In/MapServer/UNIT_STOP_MOVE.md) | 10 | documented | hot |  |
-| Map server to client | `0x008D` | [GLOBAL_MESSAGE](In/MapServer/GLOBAL_MESSAGE.md) | variable | documented | warm |  |
-| Map server to client | `0x00A1` | [ITEM_DISAPPEAR](In/MapServer/ITEM_DISAPPEAR.md) | 6 | documented | hot |  |
-| Map server to client | `0x0283` | [MAP_ENTRY_ACCEPTANCE](In/MapServer/MAP_ENTRY_ACCEPTANCE.md) | 6 | implemented | cold | MAP_ACCEPT_ENTER |
-| Map server to client | `0x02EB` | [AUTHENTICATION_ACCEPTED](In/MapServer/AUTHENTICATION_ACCEPTED.md) | 13 | implemented | cold |  |
-| Map server to client | `0x08C8` | [DAMAGE](In/MapServer/DAMAGE.md) | 34 | documented | hot |  |
-| Map server to client | `0x0977` | [UNIT_HP](In/MapServer/UNIT_HP.md) | 14 | documented | hot |  |
-| Map server to client | `0x0983` | [STATUS_CHANGE](In/MapServer/STATUS_CHANGE.md) | 29 | documented | warm |  |
-| Map server to client | `0x09CA` | [SKILL_UNIT_ENTRY](In/MapServer/SKILL_UNIT_ENTRY.md) | variable | documented | warm |  |
-| Map server to client | `0x09FD` | [UNIT_MOVE_ENTRY](In/MapServer/UNIT_MOVE_ENTRY.md) | variable | documented | hot |  |
-| Map server to client | `0x09FE` | [UNIT_NEW_ENTRY](In/MapServer/UNIT_NEW_ENTRY.md) | variable | documented | hot |  |
-| Map server to client | `0x09FF` | [UNIT_STAND_ENTRY](In/MapServer/UNIT_STAND_ENTRY.md) | variable | documented | hot |  |
-| Map server to client | `0x0A30` | [UNIT_NAME_ACK](In/MapServer/UNIT_NAME_ACK.md) | 106 | documented | warm |  |
-| Map server to client | `0x0ADD` | [ITEM_FALL_ENTRY](In/MapServer/ITEM_FALL_ENTRY.md) | 24 | documented | hot |  |
-| Map server to client | `0x0ADE` | [OVERWEIGHT_PERCENT_INFO](In/MapServer/OVERWEIGHT_PERCENT_INFO.md) | 6 | implemented | warm |  |
-| Map server to client | `0x0B18` | [INVENTORY_EXPANSION_INFO](In/MapServer/INVENTORY_EXPANSION_INFO.md) | 4 | implemented | cold |  |
-| Map server to client | `0x0B41` | [ITEM_PICKUP_ACK](In/MapServer/ITEM_PICKUP_ACK.md) | 70 | documented | warm |  |
-| Client to character server | `0x0065` | [CHARACTER_SERVER_REQUEST_ENTRY](Out/CharacterServer/CHARACTER_SERVER_REQUEST_ENTRY.md) | 17 | implemented | cold |  |
-| Client to character server | `0x0066` | [SELECT_CHARACTER](Out/CharacterServer/SELECT_CHARACTER.md) | 3 | implemented | cold |  |
-| Client to character server | `0x0187` | [CHARACTER_SERVER_PING](Out/CharacterServer/CHARACTER_SERVER_PING.md) | 6 | documented | warm | (MAP_HEARTBEAT type is really this packet) |
-| Client to character server | `0x0A39` | [CREATE_CHARACTER](Out/CharacterServer/CREATE_CHARACTER.md) | 36 | implemented | cold |  |
-| Client to login server | `0x0064` | [REQUEST_LOGIN](Out/LoginServer/REQUEST_LOGIN.md) | 55 | implemented | cold | LOGIN |
-| Client to login server | `0x01DB` | [HASH_CHALLENGE_REQUEST](Out/LoginServer/HASH_CHALLENGE_REQUEST.md) | 2 | documented | cold |  |
-| Client to login server | `0x01DD` | [LOGIN_REQUEST2](Out/LoginServer/LOGIN_REQUEST2.md) | 47 | documented | cold |  |
-| Client to login server | `0x01FA` | [LOGIN_REQUEST3](Out/LoginServer/LOGIN_REQUEST3.md) | 48 | documented | cold |  |
-| Client to login server | `0x0200` | [CONNECTION_KEEPALIVE](Out/LoginServer/CONNECTION_KEEPALIVE.md) | 26 | documented | warm |  |
-| Client to login server | `0x0204` | [CLIENT_EXECUTABLE_HASH](Out/LoginServer/CLIENT_EXECUTABLE_HASH.md) | 18 | documented | cold |  |
-| Client to login server | `0x0277` | [LOGIN_REQUEST_PCBANG](Out/LoginServer/LOGIN_REQUEST_PCBANG.md) | 84 | documented | cold |  |
-| Client to login server | `0x027C` | [LOGIN_REQUEST4](Out/LoginServer/LOGIN_REQUEST4.md) | 60 | documented | cold |  |
-| Client to login server | `0x02B0` | [LOGIN_REQUEST_HAN](Out/LoginServer/LOGIN_REQUEST_HAN.md) | 85 | documented | cold |  |
-| Client to login server | `0x0825` | [SSO_LOGIN_REQUEST](Out/LoginServer/SSO_LOGIN_REQUEST.md) | variable | documented | cold |  |
-| Client to login server | `0x09A3` | [MOBILE_OTP_ACK](Out/LoginServer/MOBILE_OTP_ACK.md) | variable | documented | cold |  |
-| Client to login server | `0x0ACF` | [LOGIN_OTP_REQUEST](Out/LoginServer/LOGIN_OTP_REQUEST.md) | 68 | documented | cold |  |
-| Client to login server | `0x0AD0` | [OTP_CODE_SUBMISSION](Out/LoginServer/OTP_CODE_SUBMISSION.md) | 11 | documented | cold |  |
-| Client to map server | `0x007D` | [MAP_LOADED](Out/MapServer/MAP_LOADED.md) | 2 | documented | cold |  |
-| Client to map server | `0x0090` | [NPC_CLICK](Out/MapServer/NPC_CLICK.md) | 7 | documented | cold |  |
-| Client to map server | `0x00B2` | [RESTART](Out/MapServer/RESTART.md) | 3 | documented | cold |  |
-| Client to map server | `0x00F3` | [GLOBAL_CHAT](Out/MapServer/GLOBAL_CHAT.md) | variable | documented | warm |  |
-| Client to map server | `0x018A` | [QUIT_GAME](Out/MapServer/QUIT_GAME.md) | 4 | documented | cold |  |
-| Client to map server | `0x035F` | [REQUEST_MOVE](Out/MapServer/REQUEST_MOVE.md) | 5 | documented | warm |  |
-| Client to map server | `0x0360` | [HEARTBEAT_REQUEST](Out/MapServer/HEARTBEAT_REQUEST.md) | 6 | documented | warm | MAP_HEARTBEAT (uses 0x0187, the char-server ping) |
-| Client to map server | `0x0361` | [CHANGE_DIRECTION](Out/MapServer/CHANGE_DIRECTION.md) | 5 | documented | warm |  |
-| Client to map server | `0x0362` | [PICKUP_ITEM](Out/MapServer/PICKUP_ITEM.md) | 6 | documented | warm |  |
-| Client to map server | `0x0363` | [DROP_ITEM](Out/MapServer/DROP_ITEM.md) | 6 | documented | warm |  |
-| Client to map server | `0x0366` | [USE_SKILL_TO_POS](Out/MapServer/USE_SKILL_TO_POS.md) | 10 | documented | warm |  |
-| Client to map server | `0x0368` | [REQUEST_UNIT_NAME](Out/MapServer/REQUEST_UNIT_NAME.md) | 6 | implemented | warm | SEND_PACKET_VER |
-| Client to map server | `0x0369` | [REQUEST_UNIT_NAME_BY_ID](Out/MapServer/REQUEST_UNIT_NAME_BY_ID.md) | 6 | documented | warm |  |
-| Client to map server | `0x0436` | [REQUEST_ENTER_MAP](Out/MapServer/REQUEST_ENTER_MAP.md) | 23 | implemented | cold |  |
-| Client to map server | `0x0437` | [REQUEST_ACT](Out/MapServer/REQUEST_ACT.md) | 7 | documented | hot |  |
-| Client to map server | `0x0438` | [USE_SKILL_TO_ID](Out/MapServer/USE_SKILL_TO_ID.md) | 10 | documented | hot |  |
-| Client to map server | `0x0439` | [USE_ITEM](Out/MapServer/USE_ITEM.md) | 8 | documented | warm |  |
+| Direction | ID | Doc | Size | Status | Frequency |
+|---|---|---|---:|---|---|
+| Character server to client | `0x006B` | [CHARACTER_DATA](In/CharacterServer/CHARACTER_DATA.md) | variable | documented | cold |
+| Character server to client | `0x006C` | [MAP_ENTER_REQUEST_REFUSED](In/CharacterServer/MAP_ENTER_REQUEST_REFUSED.md) | 3 | documented | cold |
+| Character server to client | `0x006D` | [CHARACTER_CREATION_SUCCESS](In/CharacterServer/CHARACTER_CREATION_SUCCESS.md) | 157 | documented | cold |
+| Character server to client | `0x006E` | [CHARACTER_CREATION_FAILED](In/CharacterServer/CHARACTER_CREATION_FAILED.md) | 3 | documented | cold |
+| Character server to client | `0x082D` | [CHARACTER_SLOTS_INFO](In/CharacterServer/CHARACTER_SLOTS_INFO.md) | variable | documented | cold |
+| Character server to client | `0x08B9` | [PINCODE_LOGINSTATE](In/CharacterServer/PINCODE_LOGINSTATE.md) | 12 | documented | cold |
+| Character server to client | `0x0AC5` | [MAP_ENTER_REQUEST_ACCEPTED](In/CharacterServer/MAP_ENTER_REQUEST_ACCEPTED.md) | 156 | documented | cold |
+| Login server to client | `0x006A` | [LOGIN_REFUSAL](In/LoginServer/LOGIN_REFUSAL.md) | 23 | documented | cold |
+| Login server to client | `0x0081` | [LOGIN_SERVER_NOTICE](In/LoginServer/LOGIN_SERVER_NOTICE.md) | 3 | documented | cold |
+| Login server to client | `0x01DC` | [HASH_CHALLENGE](In/LoginServer/HASH_CHALLENGE.md) | variable | documented | cold |
+| Login server to client | `0x09A2` | [MOBILE_OTP_REQUEST](In/LoginServer/MOBILE_OTP_REQUEST.md) | 6 | documented | cold |
+| Login server to client | `0x0AC4` | [ACCEPT_LOGIN](In/LoginServer/ACCEPT_LOGIN.md) | variable | documented | cold |
+| Login server to client | `0x0AE3` | [LOGIN_OTP_RESPONSE](In/LoginServer/LOGIN_OTP_RESPONSE.md) | variable | documented | cold |
+| Login server to client | `0x0B02` | [REFUSE_LOGIN_3](In/LoginServer/REFUSE_LOGIN_3.md) | 26 | documented | cold |
+| Map server to client | `0x0074` | [MAP_ENTRY_REFUSAL](In/MapServer/MAP_ENTRY_REFUSAL.md) | 3 | documented | cold |
+| Map server to client | `0x007F` | [SERVER_HEARTBEAT_RESPONSE](In/MapServer/SERVER_HEARTBEAT_RESPONSE.md) | 6 | documented | warm |
+| Map server to client | `0x0080` | [UNIT_VANISH](In/MapServer/UNIT_VANISH.md) | 7 | documented | hot |
+| Map server to client | `0x0087` | [PLAYER_MOVE](In/MapServer/PLAYER_MOVE.md) | 12 | documented | warm |
+| Map server to client | `0x0088` | [UNIT_STOP_MOVE](In/MapServer/UNIT_STOP_MOVE.md) | 10 | documented | hot |
+| Map server to client | `0x008D` | [GLOBAL_MESSAGE](In/MapServer/GLOBAL_MESSAGE.md) | variable | documented | warm |
+| Map server to client | `0x00A1` | [ITEM_DISAPPEAR](In/MapServer/ITEM_DISAPPEAR.md) | 6 | documented | hot |
+| Map server to client | `0x0283` | [MAP_ENTRY_ACCEPTANCE](In/MapServer/MAP_ENTRY_ACCEPTANCE.md) | 6 | documented | cold |
+| Map server to client | `0x02EB` | [AUTHENTICATION_ACCEPTED](In/MapServer/AUTHENTICATION_ACCEPTED.md) | 13 | documented | cold |
+| Map server to client | `0x08C8` | [DAMAGE](In/MapServer/DAMAGE.md) | 34 | documented | hot |
+| Map server to client | `0x0977` | [UNIT_HP](In/MapServer/UNIT_HP.md) | 14 | documented | hot |
+| Map server to client | `0x0983` | [STATUS_CHANGE](In/MapServer/STATUS_CHANGE.md) | 29 | documented | warm |
+| Map server to client | `0x09CA` | [SKILL_UNIT_ENTRY](In/MapServer/SKILL_UNIT_ENTRY.md) | variable | documented | warm |
+| Map server to client | `0x09FD` | [UNIT_MOVE_ENTRY](In/MapServer/UNIT_MOVE_ENTRY.md) | variable | documented | hot |
+| Map server to client | `0x09FE` | [UNIT_NEW_ENTRY](In/MapServer/UNIT_NEW_ENTRY.md) | variable | documented | hot |
+| Map server to client | `0x09FF` | [UNIT_STAND_ENTRY](In/MapServer/UNIT_STAND_ENTRY.md) | variable | documented | hot |
+| Map server to client | `0x0A30` | [UNIT_NAME_ACK](In/MapServer/UNIT_NAME_ACK.md) | 106 | documented | warm |
+| Map server to client | `0x0ADD` | [ITEM_FALL_ENTRY](In/MapServer/ITEM_FALL_ENTRY.md) | 24 | documented | hot |
+| Map server to client | `0x0ADE` | [OVERWEIGHT_PERCENT_INFO](In/MapServer/OVERWEIGHT_PERCENT_INFO.md) | 6 | documented | warm |
+| Map server to client | `0x0B18` | [INVENTORY_EXPANSION_INFO](In/MapServer/INVENTORY_EXPANSION_INFO.md) | 4 | documented | cold |
+| Map server to client | `0x0B41` | [ITEM_PICKUP_ACK](In/MapServer/ITEM_PICKUP_ACK.md) | 70 | documented | warm |
+| Client to character server | `0x0065` | [CHARACTER_SERVER_REQUEST_ENTRY](Out/CharacterServer/CHARACTER_SERVER_REQUEST_ENTRY.md) | 17 | documented | cold |
+| Client to character server | `0x0066` | [SELECT_CHARACTER](Out/CharacterServer/SELECT_CHARACTER.md) | 3 | documented | cold |
+| Client to character server | `0x0187` | [CHARACTER_SERVER_PING](Out/CharacterServer/CHARACTER_SERVER_PING.md) | 6 | documented | warm |
+| Client to character server | `0x0A39` | [CREATE_CHARACTER](Out/CharacterServer/CREATE_CHARACTER.md) | 36 | documented | cold |
+| Client to login server | `0x0064` | [REQUEST_LOGIN](Out/LoginServer/REQUEST_LOGIN.md) | 55 | documented | cold |
+| Client to login server | `0x01DB` | [HASH_CHALLENGE_REQUEST](Out/LoginServer/HASH_CHALLENGE_REQUEST.md) | 2 | documented | cold |
+| Client to login server | `0x01DD` | [LOGIN_REQUEST2](Out/LoginServer/LOGIN_REQUEST2.md) | 47 | documented | cold |
+| Client to login server | `0x01FA` | [LOGIN_REQUEST3](Out/LoginServer/LOGIN_REQUEST3.md) | 48 | documented | cold |
+| Client to login server | `0x0200` | [CONNECTION_KEEPALIVE](Out/LoginServer/CONNECTION_KEEPALIVE.md) | 26 | documented | warm |
+| Client to login server | `0x0204` | [CLIENT_EXECUTABLE_HASH](Out/LoginServer/CLIENT_EXECUTABLE_HASH.md) | 18 | documented | cold |
+| Client to login server | `0x0277` | [LOGIN_REQUEST_PCBANG](Out/LoginServer/LOGIN_REQUEST_PCBANG.md) | 84 | documented | cold |
+| Client to login server | `0x027C` | [LOGIN_REQUEST4](Out/LoginServer/LOGIN_REQUEST4.md) | 60 | documented | cold |
+| Client to login server | `0x02B0` | [LOGIN_REQUEST_HAN](Out/LoginServer/LOGIN_REQUEST_HAN.md) | 85 | documented | cold |
+| Client to login server | `0x0825` | [SSO_LOGIN_REQUEST](Out/LoginServer/SSO_LOGIN_REQUEST.md) | variable | documented | cold |
+| Client to login server | `0x09A3` | [MOBILE_OTP_ACK](Out/LoginServer/MOBILE_OTP_ACK.md) | variable | documented | cold |
+| Client to login server | `0x0ACF` | [LOGIN_OTP_REQUEST](Out/LoginServer/LOGIN_OTP_REQUEST.md) | 68 | documented | cold |
+| Client to login server | `0x0AD0` | [OTP_CODE_SUBMISSION](Out/LoginServer/OTP_CODE_SUBMISSION.md) | 11 | documented | cold |
+| Client to map server | `0x007D` | [MAP_LOADED](Out/MapServer/MAP_LOADED.md) | 2 | documented | cold |
+| Client to map server | `0x0090` | [NPC_CLICK](Out/MapServer/NPC_CLICK.md) | 7 | documented | cold |
+| Client to map server | `0x00B2` | [RESTART](Out/MapServer/RESTART.md) | 3 | documented | cold |
+| Client to map server | `0x00F3` | [GLOBAL_CHAT](Out/MapServer/GLOBAL_CHAT.md) | variable | documented | warm |
+| Client to map server | `0x018A` | [QUIT_GAME](Out/MapServer/QUIT_GAME.md) | 4 | documented | cold |
+| Client to map server | `0x035F` | [REQUEST_MOVE](Out/MapServer/REQUEST_MOVE.md) | 5 | documented | warm |
+| Client to map server | `0x0360` | [HEARTBEAT_REQUEST](Out/MapServer/HEARTBEAT_REQUEST.md) | 6 | documented | warm |
+| Client to map server | `0x0361` | [CHANGE_DIRECTION](Out/MapServer/CHANGE_DIRECTION.md) | 5 | documented | warm |
+| Client to map server | `0x0362` | [PICKUP_ITEM](Out/MapServer/PICKUP_ITEM.md) | 6 | documented | warm |
+| Client to map server | `0x0363` | [DROP_ITEM](Out/MapServer/DROP_ITEM.md) | 6 | documented | warm |
+| Client to map server | `0x0366` | [USE_SKILL_TO_POS](Out/MapServer/USE_SKILL_TO_POS.md) | 10 | documented | warm |
+| Client to map server | `0x0368` | [REQUEST_UNIT_NAME](Out/MapServer/REQUEST_UNIT_NAME.md) | 6 | documented | warm |
+| Client to map server | `0x0369` | [REQUEST_UNIT_NAME_BY_ID](Out/MapServer/REQUEST_UNIT_NAME_BY_ID.md) | 6 | documented | warm |
+| Client to map server | `0x0436` | [REQUEST_ENTER_MAP](Out/MapServer/REQUEST_ENTER_MAP.md) | 23 | documented | cold |
+| Client to map server | `0x0437` | [REQUEST_ACT](Out/MapServer/REQUEST_ACT.md) | 7 | documented | hot |
+| Client to map server | `0x0438` | [USE_SKILL_TO_ID](Out/MapServer/USE_SKILL_TO_ID.md) | 10 | documented | hot |
+| Client to map server | `0x0439` | [USE_ITEM](Out/MapServer/USE_ITEM.md) | 8 | documented | warm |
 
 69 packets documented. Data shared by several packets is documented in `docs/data/` (`AccountSex`, `CharInfo`, `UninarokPosition`, `UninarokMoveData`).

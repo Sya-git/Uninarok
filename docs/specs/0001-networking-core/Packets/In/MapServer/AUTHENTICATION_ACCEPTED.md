@@ -6,7 +6,7 @@
 | **Hercules packet name** | `ZC_ACCEPT_ENTER2` (`ZC_ACCEPT_ENTER` in older packet versions) |
 | **Packet ID** | `0x02EB` |
 | **Declared size** | 13 bytes total, including the 2-byte packet ID (payload: 11 bytes) |
-| **Status** | implemented |
+| **Status** | documented |
 | **Frequency** | cold (once per map entry) |
 | **Verified** | Size and layout: Hercules `packet_authok` and length table 20220406 (13). Real capture: no |
 | **Allocates** | no |

@@ -22,4 +22,4 @@
 | PacketId | `ushort` | 2 bytes | Packet identifier `0x0360` for PACKETVER 20220406, or legacy `0x007E`. |
 | ClientTimestamp | `uint` | 4 bytes | Client tick value. |
 
-**Serialization:** Local `MAP_HEARTBEAT` has the timestamp field but uses `0x0187`, which Hercules does not handle as a MapServer packet. The active 20220406 request is `0x0360` (verified in `packets_shuffle_main.h`). Rename the local type to `HEARTBEAT_REQUEST`. Reply: `SERVER_HEARTBEAT_RESPONSE` (0x007F).
+**Serialization:** the active 20220406 request is `0x0360` (verified in `packets_shuffle_main.h`); `0x0187` is the character-server ping, not a map-server packet. Reply: `SERVER_HEARTBEAT_RESPONSE` (0x007F).

@@ -13,7 +13,7 @@
 
 **Hercules usage:** Handled by `chr->parse_char_ping`. It keeps the connection from hitting `stall_time` (60 s in `conf/common/socket.conf`) while the player sits on the character selection screen.
 
-**Description:** Keepalive for the character server. The local `MAP_HEARTBEAT` type uses this ID (0x0187), which is why it is not a valid map-server packet.
+**Description:** Keepalive for the character server. It is not a map-server packet: the map keepalive is `HEARTBEAT_REQUEST` (0x0360).
 
 | Field | Wire type | Size | Description |
 |---|---:|---:|---|

@@ -6,10 +6,10 @@
 | **Hercules packet name** | `CA_LOGIN` |
 | **Packet ID** | `0x0064` |
 | **Declared size** | 55 bytes, including the 2-byte packet ID |
-| **Status** | implemented |
+| **Status** | documented |
 | **Frequency** | cold |
 | **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no |
-| **Allocates** | current code: yes (new buffer per call); target: no (`IOutgoingPacket`, plan §4.2) |
+| **Allocates** | no |
 
 **Packet ID note:** `0x0064` (`LOGIN`)
 
@@ -25,4 +25,4 @@
 | AccountPassword | fixed byte string | 24 bytes | Account password, padded with zero bytes or truncated to the fixed width. |
 | ClientType | `byte` | 1 byte | Client type; the source stores it as `char` and writes its byte value. Its meaning is marked TODO in the source. |
 
-**Serialization:** `Serialize()` allocates a 55-byte buffer and writes fields in table order.
+**Serialization:** writes 55 bytes in table order; unused text bytes are zero.

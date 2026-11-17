@@ -6,7 +6,7 @@
 | **Hercules packet name** | `AC_ACCEPT_LOGIN2` |
 | **Packet ID** | `0x0AC4` |
 | **Declared size** | Variable; fixed prefix is 64 bytes, followed by one or more server entries |
-| **Status** | implemented |
+| **Status** | documented |
 | **Frequency** | cold |
 | **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no |
 | **Allocates** | cold packet: may allocate (arrays); see parsing note |
@@ -43,4 +43,4 @@ Each `ServerEndpoint` is serialized as follows:
 | Property | `uint16` | 2 bytes | Server property. |
 | Unknown2 | fixed byte array | 128 bytes | Opaque field whose meaning is not defined by the packet source. |
 
-The total length is `64 + 160 * ServerList.Length` bytes. The local parser previously skipped `Unknown2`; Hercules confirms its fixed 128-byte wire region.
+The total length is `64 + 160 * ServerList.Length` bytes. Hercules confirms the fixed 128-byte `Unknown2` region; read it with `Skip(128)`.

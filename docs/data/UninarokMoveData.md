@@ -5,7 +5,6 @@
 | **Kind** | `readonly struct` (shared packet data) |
 | **Namespace** | `Uninarok.Networking.Data` |
 | **Wire size** | 6 bytes (`UninarokMoveData.WireSize`) |
-| **Current source type** | none yet |
 | **Hercules** | `WBUFPOS2` / `RBUFPOS2` in `src/map/clif.cpp` |
 | **Used by** | `PLAYER_MOVE` (0x0087), `UNIT_MOVE_ENTRY` (0x09FD) |
 

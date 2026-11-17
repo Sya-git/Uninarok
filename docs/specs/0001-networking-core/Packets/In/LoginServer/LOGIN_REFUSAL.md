@@ -21,4 +21,4 @@
 | ErrorCode | `uint8` | 1 byte | Login refusal reason. |
 | BlockDate | fixed byte array | 20 bytes | Ban expiration date when the error code indicates a ban; otherwise Hercules zero-fills this field. |
 
-This is the legacy `AC_REFUSE_LOGIN` structure emitted by Hercules' login-error path. The current Uninarok `REFUSE_LOGIN` ID `0x0081` does not identify this packet in Hercules for version `20220406`.
+This is the legacy `AC_REFUSE_LOGIN` structure emitted by Hercules' login-error path. It is not `0x0081`: that ID is `LOGIN_SERVER_NOTICE` for version `20220406`.

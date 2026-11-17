@@ -1,6 +1,6 @@
 # Packet Implementation
 
-Normative rules for packet definitions. Linked from `plan.md` §4.10 of SPEC-0001. Target: Hercules, `PACKETVER 20220406`.
+Normative rules for packet definitions. Linked from `plan.md` §4.6 of SPEC-0001. Target: Hercules, `PACKETVER 20220406`.
 
 ## Wire format
 
@@ -16,7 +16,7 @@ Normative rules for packet definitions. Linked from `plan.md` §4.10 of SPEC-000
 ## Registration
 
 - One packet per file, one `readonly struct`.
-- Register with `[InPacket(id, size)]` or `[OutPacket(id, size)]`. These are inputs to the source generator, which produces the length table, the router, and `IOutgoingPacket.WireSize` for fixed-size outgoing packets.
+- Register with `[InPacket(id, size)]` or `[OutPacket(id, size)]`. `[InPacket]` structs are inputs to the source generator, which produces the router. Frame lengths come from the Hercules length table, and a test checks every declared `Size` against it.
 - Packet IDs are `ushort` values in `Uninarok.Networking.Packets.PacketIds`. The generator fails the build on duplicate IDs per direction.
 - `Size` is a `const` field on the struct.
 
@@ -33,7 +33,7 @@ Normative rules for packet definitions. Linked from `plan.md` §4.10 of SPEC-000
 - Implement `IOutgoingPacket`:
   - `int WireSize { get; }`: exact total bytes (fixed packets: `Size`; variable packets: header + payload, computed without allocating).
   - `void Serialize(Span<byte> destination)`: writes **exactly** `WireSize` bytes with `PacketWriter`: the ID, then the length field if variable (value = `WireSize`), then the fields.
-- Send with `connection.Send(in packet)`. Never build `byte[]` or `Memory<byte>`, and never return a buffer from `Serialize`.
+- Send with `INetworkClient.Send(in packet)`. Never build `byte[]` or `Memory<byte>`, and never return a buffer from `Serialize`.
 - `Serialize` must not throw for valid field values. A text field longer than its wire size is truncated by the writer, never overflowed.
 
 ## Text fields
@@ -83,7 +83,7 @@ Followed by the field table (name, wire type, size, description) and a parsing n
 
 ## Shared data types
 
-Values used by more than one packet (`AccountSex`, `CharInfo`, `UninarokPosition`, `UninarokMoveData`) are documented in `docs/data/` and live in `Assets/Scripts/Networking/Data/` (`Uninarok.Networking.Data`). Packet docs link to them with the field type set to the data type name. Never redefine one inside a packet.
+Values used by more than one packet (`AccountSex`, `CharInfo`, `UninarokPosition`, `UninarokMoveData`) are documented in `docs/data/` and live in `Assets/Scripts/Networking/Runtime/Data/` (`Uninarok.Networking.Data`). Packet docs link to them with the field type set to the data type name. Never redefine one inside a packet.
 
 ## Documentation upkeep
 
@@ -91,24 +91,18 @@ Packet code and its doc change in the same commit. Wire types in docs are C# typ
 
 ## Coverage
 
-- [`INDEX.md`](INDEX.md): every documented packet (one doc each), with local code name where it differs.
+- [`INDEX.md`](INDEX.md): every documented packet (one doc each).
 - [`CATALOG.md`](CATALOG.md): every other map-server packet Hercules defines for 20220406 (machine-generated; promote an entry to a doc when a feature needs it).
 
-## Code corrections required (task T0.7)
+## Verified facts
 
-All IDs and sizes in the docs were checked against the Hercules 2026.09 length table and, for map-server packets, against `packets_shuffle_main.h` (which overrides `packets.h` for this version). The docs are right; these local definitions are not.
+All IDs and sizes in the docs were checked against the Hercules 2026.09 length table and, for map-server packets, against `packets_shuffle_main.h` (which overrides `packets.h` for this version). Points that are easy to get wrong:
 
-| Local code name | Doc | Correction |
-|---|---|---|
-| `MAP_HEARTBEAT` (0x0187) | `HEARTBEAT_REQUEST` | ID `0x0360`, 6 bytes. (0x0187 is the **character-server** ping, now `CHARACTER_SERVER_PING`.) |
-| `HEARTBEAT_RESPONSE` (0x0188) | `SERVER_HEARTBEAT_RESPONSE` | ID `0x007F`; 0x0188 is another packet. |
-| `REQUEST_ENTER_MAP` (19 bytes) | `REQUEST_ENTER_MAP` | 23 bytes, `Reserved` at offsets 14 to 17. |
-| `MAP_ACCEPT_ENTER` | `MAP_ENTRY_ACCEPTANCE` | Exactly 6 bytes (header plus ID). Reading only the ID leaves `Remaining == 0`; no `Skip`. |
-| `MAP_ENTER_REQUEST_REFUSED` (size 1) | `MAP_ENTER_REQUEST_REFUSED` | Size 3. |
-| `REFUSE_LOGIN` (0x0081, 23 bytes) | `LOGIN_SERVER_NOTICE` (3 bytes), `LOGIN_REFUSAL` (0x006A, 23), `REFUSE_LOGIN_3` (0x0B02, 26) | Handle all three as refusals. |
-| `SEND_PACKET_VER` (0x0368) | `REQUEST_UNIT_NAME` | Rename; the field is a unit ID. |
-| `MAP_ENTER_REQUEST_ACCEPTED.Port` (`short`) | `MAP_ENTER_REQUEST_ACCEPTED` | `ushort`. |
-| `MAP_ENTER_REQUEST_ACCEPTED.DnsHost` | same | Needs a type that holds 127 characters (`FixedString512Bytes`). |
-| `CHARACTER_DATA`, `ACCEPT_LOGIN` | same | Known parser bugs (`ReadCharsInfo`, server-list slice); see task T0.10. |
-
-Verified and not issues: `MAP_ENTRY_REFUSAL` (0x0074) and `CHARACTER_CREATION_FAILED` (0x006E) are 3 bytes; `CREATE_CHARACTER.JobClass` is 4 bytes (`char.cpp` reads it with `RFIFOL`); `ACCEPT_LOGIN` has a fixed 128-byte reserved region (`Skip(128)`).
+- The map keepalive is `HEARTBEAT_REQUEST` (`0x0360`, 6 bytes), answered by `SERVER_HEARTBEAT_RESPONSE` (`0x007F`). `0x0187` is the **character-server** ping (`CHARACTER_SERVER_PING`); `0x0188` is an unrelated packet.
+- `REQUEST_ENTER_MAP` is 23 bytes with `Reserved` at offsets 14 to 17.
+- `MAP_ENTRY_ACCEPTANCE` is exactly 6 bytes (header plus ID); reading the ID leaves `Remaining == 0`.
+- `MAP_ENTER_REQUEST_REFUSED` is 3 bytes.
+- Login refusals come as `LOGIN_SERVER_NOTICE` (`0x0081`, 3 bytes), `LOGIN_REFUSAL` (`0x006A`, 23) or `REFUSE_LOGIN_3` (`0x0B02`, 26); all three are handled as refusals.
+- `0x0368` is `REQUEST_UNIT_NAME`; its payload is a unit ID, not a packet version.
+- `MAP_ENTER_REQUEST_ACCEPTED.Port` is `ushort`; `DnsHost` needs a type that holds 127 characters (`FixedString512Bytes`).
+- `MAP_ENTRY_REFUSAL` (0x0074) and `CHARACTER_CREATION_FAILED` (0x006E) are 3 bytes; `CREATE_CHARACTER.JobClass` is 4 bytes (`char.cpp` reads it with `RFIFOL`); `ACCEPT_LOGIN` has a fixed 128-byte reserved region (`Skip(128)`).
