@@ -68,7 +68,7 @@
   *Done when:* the tests are enabled by the implementation in the same commit and pass.
 - [x] **T4.2** Add `Editor/Writing/RoPngCodec` (`IRoPngCodec` through `ImageConversion`). (FR-8)
   *Done when:* a round-trip test (encode then decode a small image with and without alpha) returns identical pixels.
-- [ ] **T4.3** Add `RoAssetWriterTests` (failing, ignored) using a throwaway root `Assets/__RoImportTests/`: `WriteBytes` of new bytes returns `Created`, identical bytes return `Skipped` and do not change the file's modified time, different bytes return `Updated` and the GUID is unchanged; `UpsertObject` of a material or mesh into an existing path keeps the asset's GUID and the identity of references to it; a path outside the allowed roots throws; `BeginBatch`/`EndBatch` nest. (FR-4, FR-5, FR-16)
+- [x] **T4.3** Add `RoAssetWriterTests` (failing, ignored) using a throwaway root `Assets/__RoImportTests/`: `WriteBytes` of new bytes returns `Created`, identical bytes return `Skipped` and do not change the file's modified time, different bytes return `Updated` and the GUID is unchanged; `UpsertObject` of a material or mesh into an existing path keeps the asset's GUID and the identity of references to it; a path outside the allowed roots throws; `BeginBatch`/`EndBatch` nest. (FR-4, FR-5, FR-16)
   *Done when:* the tests compile and are ignored with `pending T4.4`.
 - [ ] **T4.4** Implement `RoAssetWriter` per plan §4.7, with the importer `configure` callback applied only when settings differ, and re-entrant batching. (FR-4, FR-5, FR-16)
   *Done when:* `[Ignore]` removed and `RoAssetWriterTests` pass; the test folder is removed in `TearDown` and `git status` shows no leftover files.
