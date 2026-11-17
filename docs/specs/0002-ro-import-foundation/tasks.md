@@ -39,7 +39,7 @@
   *Done when:* `[Ignore]` removed from `RoPathTests` and they pass.
 - [x] **T1.4** Add `RoSpaceTests` (failing, ignored): `Matrix` of a rotation has determinant +1 and `Matrix(Matrix(m))` returns `m` within tolerance; `Point` of a 10 Ragnarok-unit cube edge is 1 Unity unit; `Direction` is unscaled; `Scale` keeps signs; `ReverseWinding` swaps the 2nd and 3rd index of each triple and twice is the identity; a table of known Ragnarok point/rotation inputs and their expected Unity outputs (derived by hand in the test, with a comment explaining each row). (FR-7)
   *Done when:* the tests compile and are ignored with `pending T1.5`.
-- [ ] **T1.5** Implement `Core/Space/RoUnits` and `RoSpace` per plan §4.3. (FR-7)
+- [x] **T1.5** Implement `Core/Space/RoUnits` and `RoSpace` per plan §4.3. (FR-7)
   *Done when:* `[Ignore]` removed and `RoSpaceTests` pass; a text search finds the numbers `0.1f`, `0.5f` and the Y-flip only in these two files.
 
 ## Phase 2: Source

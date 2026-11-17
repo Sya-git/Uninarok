@@ -9,7 +9,6 @@ namespace Uninarok.RoImport.Tests
     //
     // The change of basis is the reflection F = diag(1, -1, 1): Ragnarok's Y points down, Unity's up.
     // Points and directions map as F*v (points also scaled by 0.1); matrices map by conjugation F*M*F.
-    [Ignore("pending T1.5")]
     public class RoSpaceTests
     {
         const float Eps = 1e-5f;
