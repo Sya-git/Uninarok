@@ -1,6 +1,6 @@
-#if PENDING_T1_2 // T1.1: enabled (guard removed) by T1.2 when PacketReader/PacketWriter exist.
 using System;
 using NUnit.Framework;
+using UnityEngine.TestTools.Constraints;
 using Uninarok.Networking.Core.Wire;
 
 namespace Uninarok.Networking.Tests
@@ -34,9 +34,9 @@ namespace Uninarok.Networking.Tests
         {
             byte[] data = { 1, 2, 3, 4, 5, 6, 7, 8 };
             var r = new PacketReader(data);
-            Span<byte> dst = stackalloc byte[3];
+            byte[] dst = new byte[3];
             r.ReadBytes(dst);
-            Assert.AreEqual(new byte[] { 1, 2, 3 }, dst.ToArray());
+            Assert.AreEqual(new byte[] { 1, 2, 3 }, dst);
             r.Skip(1);
             Assert.AreEqual(4, r.Remaining);
             Assert.AreEqual(new byte[] { 5, 6 }, r.ReadSpan(2).ToArray());
@@ -55,7 +55,7 @@ namespace Uninarok.Networking.Tests
             Assert.Throws<PacketFormatException>(() =>
             {
                 var r = new PacketReader(data);
-                Span<byte> dst = stackalloc byte[4];
+                byte[] dst = new byte[4];
                 r.ReadBytes(dst);
             });
             Assert.Throws<PacketFormatException>(() =>
@@ -112,8 +112,8 @@ namespace Uninarok.Networking.Tests
         [Test]
         public void HappyPath_AllocatesNoManagedMemory()
         {
-            byte[] src = new byte[16];
-            byte[] dst = new byte[16];
+            byte[] src = new byte[32];
+            byte[] dst = new byte[32];
             Assert.That(() =>
             {
                 var w = new PacketWriter(dst);
@@ -123,8 +123,7 @@ namespace Uninarok.Networking.Tests
                 var r = new PacketReader(src);
                 r.ReadByte(); r.ReadUInt16(); r.ReadInt16(); r.ReadUInt32(); r.ReadInt32();
                 r.ReadSpan(2); r.Skip(2);
-            }, Is.Not.AllocatingGCMemory());
+            }, UnityEngine.TestTools.Constraints.Is.Not.AllocatingGCMemory());
         }
     }
 }
-#endif
