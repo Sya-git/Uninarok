@@ -1,4 +1,3 @@
-#if PENDING_T3_7 // T3.6: enabled (guard removed) by T3.7 when the outbox and Send exist.
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
@@ -118,7 +117,7 @@ namespace Uninarok.Networking.Tests
             for (int off = 0; off < bytes.Length; off += 12)
             {
                 byte sender = bytes[off];
-                Assert.That(sender, Is.InRange((byte)1, (byte)4), $"bad sender id at offset {off}");
+                Assert.That(sender, NUnit.Framework.Is.InRange((byte)1, (byte)4), $"bad sender id at offset {off}");
                 for (int i = 5; i < 11; i++) Assert.AreEqual(sender, bytes[off + i], $"interleaved bytes at offset {off}");
                 Assert.AreEqual((byte)(sender ^ 0x5A), bytes[off + 11], $"bad check byte at offset {off}");
                 uint seq = BitConverter.ToUInt32(bytes, off + 1);
@@ -194,4 +193,3 @@ namespace Uninarok.Networking.Tests
         }
     }
 }
-#endif

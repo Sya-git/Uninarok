@@ -125,7 +125,6 @@ namespace Uninarok.Networking.Tests
                 TcpConnection.ConnectAsync("127.0.0.1", _server.Port, ConnectionRole.Login, _sink, cts.Token).GetAwaiter().GetResult());
         }
 
-#if PENDING_T3_7 // enabled by T3.7 when Send exists
         [Test]
         public void EmptySend_ReturnsTrue_AndSendsNothing()
         {
@@ -171,6 +170,5 @@ namespace Uninarok.Networking.Tests
             public int WireSize => 1;
             public void Serialize(Span<byte> destination) { destination[0] = _value; }
         }
-#endif
     }
 }

@@ -12,7 +12,7 @@ namespace Uninarok.Networking.Core.Transport
     /// writer thread drains the outbox. Neither thread touches the engine or game code.
     /// Closure is one immutable <see cref="CloseInfo"/> set exactly once (first close wins).
     /// </summary>
-    public sealed partial class TcpConnection : IDisposable
+    public sealed class TcpConnection : IDisposable
     {
         private readonly TcpClient _client;
         private readonly Socket _socket;
@@ -21,6 +21,14 @@ namespace Uninarok.Networking.Core.Transport
 
         private CloseInfo _closure;
         private int _liveThreads;
+
+        // Outbox: appended by Send under a short lock; the writer swaps it with its own buffer and writes with no lock held.
+        private const int MaxSendBacklogBytes = 1024 * 1024;
+        private readonly object _outLock = new object();
+        private byte[] _outbox = new byte[16 * 1024];
+        private byte[] _writeBuf = new byte[16 * 1024];
+        private int _outLength;
+        private bool _writerIdle = true;            // guarded by _outLock
 
         private TcpConnection(TcpClient client, ConnectionRole role, IInboundSink sink)
         {
@@ -131,8 +139,98 @@ namespace Uninarok.Networking.Core.Transport
             finally { ThreadExited(); }
         }
 
-        // Writes whatever the outbox holds. Implemented with the outbox itself (T3.7).
-        partial void WriteQueued();
+        // Drains the outbox: swap buffers under the lock, write with no lock held, until it is empty.
+        private void WriteQueued()
+        {
+            while (true)
+            {
+                int n;
+                lock (_outLock)
+                {
+                    if (_outLength == 0) { _writerIdle = true; return; }
+                    byte[] tmp = _outbox; _outbox = _writeBuf; _writeBuf = tmp;
+                    n = _outLength;
+                    _outLength = 0;
+                }
+                for (int sent = 0; sent < n;)
+                    sent += _socket.Send(_writeBuf, sent, n - sent, SocketFlags.None);
+            }
+        }
+
+        /// <summary>
+        /// Any thread, normally the main thread. Never blocks on I/O and never throws because of connection state.
+        /// Returns true when the packet was QUEUED (not "sent"); false when it was not queued (connection closed, or the
+        /// backlog limit was hit, which also closes the connection). A packet is committed whole or not at all, and the
+        /// order on the wire is the order of the calls. An empty packet is a no-op. If <c>Serialize</c> throws (a programmer
+        /// error) the exception propagates and nothing is queued.
+        /// </summary>
+        public bool Send<T>(in T packet) where T : struct, IOutgoingPacket
+        {
+            int size = packet.WireSize;
+            if (size <= 0) return true;
+            bool overflow = false;
+            lock (_outLock)
+            {
+                if (IsClosed) return false;
+                if (_outLength + size > MaxSendBacklogBytes) overflow = true;
+                else
+                {
+                    if (_outLength + size > _outbox.Length) Array.Resize(ref _outbox, GrownOutboxSize(_outLength + size));
+                    packet.Serialize(new Span<byte>(_outbox, _outLength, size));   // if this throws, _outLength is not advanced
+                    _outLength += size;
+                    if (!WakeWriterIfIdle()) return false;
+                }
+            }
+            if (overflow)
+            {
+                Close(CloseReason.Error, "Send backlog exceeded");
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>Queues raw bytes with the same rules as <see cref="Send{T}"/>.</summary>
+        public bool Send(ReadOnlySpan<byte> rawPacket)
+        {
+            int size = rawPacket.Length;
+            if (size <= 0) return true;
+            bool overflow = false;
+            lock (_outLock)
+            {
+                if (IsClosed) return false;
+                if (_outLength + size > MaxSendBacklogBytes) overflow = true;
+                else
+                {
+                    if (_outLength + size > _outbox.Length) Array.Resize(ref _outbox, GrownOutboxSize(_outLength + size));
+                    rawPacket.CopyTo(new Span<byte>(_outbox, _outLength, size));
+                    _outLength += size;
+                    if (!WakeWriterIfIdle()) return false;
+                }
+            }
+            if (overflow)
+            {
+                Close(CloseReason.Error, "Send backlog exceeded");
+                return false;
+            }
+            return true;
+        }
+
+        // Called under _outLock. The signal is set only on the idle -> busy transition: no lost wake-up, no redundant signals.
+        private bool WakeWriterIfIdle()
+        {
+            if (!_writerIdle) return true;
+            _writerIdle = false;
+            try { _outSignal.Set(); }
+            catch (ObjectDisposedException) { return false; }   // closed and fully shut down in the meantime
+            return true;
+        }
+
+        private static int GrownOutboxSize(int needed)
+        {
+            long size = 16 * 1024;
+            while (size < needed) size *= 2;
+            return (int)Math.Min(size, MaxSendBacklogBytes);
+        }
 
         /// <summary>Any thread. Idempotent: only the first close counts.</summary>
         public void Close(CloseReason reason, string message)
