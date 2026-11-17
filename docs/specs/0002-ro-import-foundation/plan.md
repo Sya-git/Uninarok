@@ -113,6 +113,12 @@ Rules, in this order:
 
 Equality and hashing use `Canonical` with ordinal comparison. Every other component receives a `RoPath`, never a raw string.
 
+Details fixed by T1.3:
+- `default(RoPath)` is the empty root: `Canonical` is `""`, `IsEmpty` is true. It is the `Folder` of a top-level item, and `Combine` on it is `Parse`.
+- `Combine` normalizes the relative part by the same rules except rule 4, so a real `data` folder inside a path is kept.
+- `WithExtension` accepts `".png"` or `"png"`; `""` removes the extension.
+- `ToString()` returns `Canonical`.
+
 ### 4.2 Source: `IRoSource`, `RoFolderSource`, `RoSourceLocation`
 
 Satisfies FR-1, FR-15, FR-3.

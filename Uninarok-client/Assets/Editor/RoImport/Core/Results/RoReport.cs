@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Uninarok.RoImport.Core.Paths;
 using UnityEngine;
 
 namespace Uninarok.RoImport.Core.Results
@@ -40,6 +41,9 @@ namespace Uninarok.RoImport.Core.Results
         /// Records that an item failed. The item is counted and listed once, however often it fails.
         /// Logging is the caller's: the warning was already raised with <see cref="Warn"/>, or the batch logs the exception.
         /// </summary>
+        public void Fail(RoPath item, RoIssue issue) => Fail(item.Canonical, issue);
+
+        /// <inheritdoc cref="Fail(RoPath, RoIssue)"/>
         public void Fail(string item, RoIssue issue)
         {
             if (issue == null) throw new ArgumentNullException(nameof(issue));

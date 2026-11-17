@@ -2,6 +2,7 @@ using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
+using Uninarok.RoImport.Core.Paths;
 using Uninarok.RoImport.Core.Results;
 
 namespace Uninarok.RoImport.Tests
@@ -72,6 +73,18 @@ namespace Uninarok.RoImport.Tests
 
             Assert.AreEqual(2, report.Issues.Count, "a failure already warned about is not listed twice");
             LogAssert.NoUnexpectedReceived();
+        }
+
+        [Test]
+        public void FailByRoPath_IsTheSameItemAsItsCanonicalString()
+        {
+            var report = new RoReport();
+            var issue = new RoIssue(RoIssueCode.CorruptFile, "texture/a.bmp", null, "bad");
+
+            report.Fail(RoPath.Parse(@"DATA\Texture\A.BMP"), issue);
+            report.Fail("texture/a.bmp", issue);
+
+            Assert.AreEqual(1, report.Failed);
         }
 
         static int Occurrences(string text, string value) =>

@@ -35,7 +35,7 @@
   *Done when:* `RoReportTests` pass: the same warning raised three times is listed and logged once; `Summarize` lists each failed item once with its reason; no error log is produced (`LogAssert.NoUnexpectedReceived`).
 - [x] **T1.2** Add `RoPathTests` (failing, ignored): the three spellings of one path are equal, Korean composed and decomposed forms are equal, a leading `data/` is stripped, case is folded, `..`, `.`, drive letters, control characters and empty input throw `RoPathException`, `TryParse` returns false instead. (FR-1)
   *Done when:* the tests compile and are listed as ignored with `pending T1.3`.
-- [ ] **T1.3** Implement `Core/Paths/RoPath` and `RoPathException` per plan §4.1 (rules in the stated order). (FR-1)
+- [x] **T1.3** Implement `Core/Paths/RoPath` and `RoPathException` per plan §4.1 (rules in the stated order). (FR-1)
   *Done when:* `[Ignore]` removed from `RoPathTests` and they pass.
 - [ ] **T1.4** Add `RoSpaceTests` (failing, ignored): `Matrix` of a rotation has determinant +1 and `Matrix(Matrix(m))` returns `m` within tolerance; `Point` of a 10 Ragnarok-unit cube edge is 1 Unity unit; `Direction` is unscaled; `Scale` keeps signs; `ReverseWinding` swaps the 2nd and 3rd index of each triple and twice is the identity; a table of known Ragnarok point/rotation inputs and their expected Unity outputs (derived by hand in the test, with a comment explaining each row). (FR-7)
   *Done when:* the tests compile and are ignored with `pending T1.5`.

@@ -8,7 +8,6 @@ namespace Uninarok.RoImport.Tests
 {
     // SPEC-0002 FR-1: a file is found by its Ragnarok path whatever the case, slash direction or Korean form.
     // Plan 4.1 (rules applied in order: slashes and trim, NFC, lowercase, strip one data/, reject). TASKS T1.2.
-    [Ignore("pending T1.3")]
     public class RoPathTests
     {
         const string KoreanUi = "유저인터페이스";   // composed (NFC) Hangul syllables
