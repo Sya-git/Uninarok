@@ -4,7 +4,7 @@ using Uninarok.Networking.Core.Wire;
 
 namespace Uninarok.Networking.Packets.In.Character
 {
-    /// <summary>Character server to client, 0x006C (chr->auth_error), 3 bytes. Entry to the character server was refused.</summary>
+    /// <summary>Character server to client, 0x006C, 3 bytes. The request to enter the map was refused (the flow returns to character selection).</summary>
     [InPacket(PacketIds.MAP_ENTER_REQUEST_REFUSED, Size)]
     public readonly struct MAP_ENTER_REQUEST_REFUSED
     {

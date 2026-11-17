@@ -11,9 +11,11 @@
 | **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no; layout from `char_auth_error` |
 | **Allocates** | no |
 
-**Hercules usage:** Sent when the character server rejects the client's entry request (`CH_ENTER`): unknown account, bad auth codes, or a duplicate connection.
+**Hercules usage:** Sent by the character server when it refuses the request to enter the map after a character was selected (`SELECT_CHARACTER`).
 
-**Description:** Entry to the character server was refused. In SPEC-0001 this moves the flow to `Failed(CharServerRefused)`.
+**Description:** The request to enter the map was refused. In SPEC-0001 (plan 4.9) this is `CharacterManager.MapEnterRefused`: the flow returns from `SelectingCharacter` to `CharSelection` and keeps the reason. It is not a character-server entry refusal and not a failure state.
+
+**Correction (2026-11-17):** earlier text described this as a refusal of entry to the character server (`Failed(CharServerRefused)`); that was wrong.
 
 | Field | Wire type | Size | Description |
 |---|---:|---:|---|
