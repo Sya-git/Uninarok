@@ -6,7 +6,7 @@
 | **Hercules packet name** | `HC_ACCEPT_MAKECHAR` |
 | **Packet ID** | `0x006D` |
 | **Declared size** | 157 bytes, including the 2-byte packet ID |
-| **Status** | documented |
+| **Status** | implemented |
 | **Frequency** | cold |
 | **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no |
 | **Allocates** | no |

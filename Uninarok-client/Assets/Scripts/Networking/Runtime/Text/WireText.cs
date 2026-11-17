@@ -32,10 +32,13 @@ namespace Uninarok.Networking.Text
         public static void Read(ref PacketReader r, int wireBytes, ref FixedString128Bytes value) => ReadCore(ref r, wireBytes, ref value);
         public static void Read(ref PacketReader r, int wireBytes, ref FixedString512Bytes value) => ReadCore(ref r, wireBytes, ref value);
 
-        public static void Write(ref PacketWriter w, int wireBytes, in FixedString32Bytes value) => WriteCore(ref w, wireBytes, in value);
-        public static void Write(ref PacketWriter w, int wireBytes, in FixedString64Bytes value) => WriteCore(ref w, wireBytes, in value);
-        public static void Write(ref PacketWriter w, int wireBytes, in FixedString128Bytes value) => WriteCore(ref w, wireBytes, in value);
-        public static void Write(ref PacketWriter w, int wireBytes, in FixedString512Bytes value) => WriteCore(ref w, wireBytes, in value);
+        public static void Write(ref PacketWriter w, int wireBytes, in FixedString32Bytes value) => WriteCore(ref w, wireBytes, in value, false);
+        public static void Write(ref PacketWriter w, int wireBytes, in FixedString64Bytes value) => WriteCore(ref w, wireBytes, in value, false);
+        public static void Write(ref PacketWriter w, int wireBytes, in FixedString128Bytes value) => WriteCore(ref w, wireBytes, in value, false);
+        public static void Write(ref PacketWriter w, int wireBytes, in FixedString512Bytes value) => WriteCore(ref w, wireBytes, in value, false);
+
+        /// <summary>Like <see cref="Write(ref PacketWriter, int, in FixedString32Bytes)"/> but every non-ASCII character becomes '?' (for example character names).</summary>
+        public static void WriteAscii(ref PacketWriter w, int wireBytes, in FixedString32Bytes value) => WriteCore(ref w, wireBytes, in value, true);
 
         private static void ReadCore<T>(ref PacketReader r, int wireBytes, ref T value)
             where T : unmanaged, INativeList<byte>, IUTF8Bytes
@@ -52,7 +55,7 @@ namespace Uninarok.Networking.Text
             }
         }
 
-        private static void WriteCore<T>(ref PacketWriter w, int wireBytes, in T value)
+        private static void WriteCore<T>(ref PacketWriter w, int wireBytes, in T value, bool asciiOnly)
             where T : unmanaged, INativeList<byte>, IUTF8Bytes
         {
             if (wireBytes <= 0) return;
@@ -64,7 +67,7 @@ namespace Uninarok.Networking.Text
             {
                 int cp = DecodeUtf8(in value, len, ref i);
                 if (cp == 0) break;
-                w.WriteByte(Encode(cp));
+                w.WriteByte(asciiOnly && cp >= 0x80 ? (byte)'?' : Encode(cp));
                 written++;
             }
             w.Skip(wireBytes - written);            // NUL terminator plus zero fill

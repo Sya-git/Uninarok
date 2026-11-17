@@ -85,7 +85,7 @@
   *Done when:* test exists (passes trivially until packets are added).
 - [x] **T4.6** Implement the login-server packets in scope (plan §4.6) with `PacketIds`, following `Packets/Packet-Implementation.md`; add their `PacketDecodeTests` and golden-byte tests from the docs. Update each doc's `Status` in the same commit. *(FR-6, FR-18)*
   *Done when:* decode, golden-byte, size and router tests pass for these packets.
-- [ ] **T4.7** Same for the character-server packets in scope. *(FR-6, FR-18)*
+- [x] **T4.7** Same for the character-server packets in scope. *(FR-6, FR-18)*
   *Done when:* as T4.6.
 - [ ] **T4.8** Same for the map-server packets in scope. *(FR-6, FR-18)*
   *Done when:* as T4.6.

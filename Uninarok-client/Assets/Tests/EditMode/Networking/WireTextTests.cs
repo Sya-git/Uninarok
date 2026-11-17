@@ -120,6 +120,15 @@ namespace Uninarok.Networking.Tests
         }
 
         [Test]
+        public void WriteAscii_ReplacesEveryNonAsciiCharacterWithQuestionMark()
+        {
+            byte[] buf = new byte[8];
+            var w = new PacketWriter(buf);
+            WireText.WriteAscii(ref w, 8, new FixedString32Bytes("aé€b"));    // e-acute and euro are fine in Windows-1252, not in ASCII
+            Assert.AreEqual(Bytes((byte)'a', (byte)'?', (byte)'?', (byte)'b', 0, 0, 0, 0), buf);
+        }
+
+        [Test]
         public void Write_UnmappableCharacter_BecomesQuestionMark()
         {
             byte[] buf = new byte[4];

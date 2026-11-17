@@ -4,13 +4,13 @@ One row per documented packet (SPEC-0001, PACKETVER 20220406). Generated from th
 
 | Direction | ID | Doc | Size | Status | Frequency |
 |---|---|---|---:|---|---|
-| Character server to client | `0x006B` | [CHARACTER_DATA](In/CharacterServer/CHARACTER_DATA.md) | variable | documented | cold |
-| Character server to client | `0x006C` | [MAP_ENTER_REQUEST_REFUSED](In/CharacterServer/MAP_ENTER_REQUEST_REFUSED.md) | 3 | documented | cold |
-| Character server to client | `0x006D` | [CHARACTER_CREATION_SUCCESS](In/CharacterServer/CHARACTER_CREATION_SUCCESS.md) | 157 | documented | cold |
-| Character server to client | `0x006E` | [CHARACTER_CREATION_FAILED](In/CharacterServer/CHARACTER_CREATION_FAILED.md) | 3 | documented | cold |
-| Character server to client | `0x082D` | [CHARACTER_SLOTS_INFO](In/CharacterServer/CHARACTER_SLOTS_INFO.md) | variable | documented | cold |
-| Character server to client | `0x08B9` | [PINCODE_LOGINSTATE](In/CharacterServer/PINCODE_LOGINSTATE.md) | 12 | documented | cold |
-| Character server to client | `0x0AC5` | [MAP_ENTER_REQUEST_ACCEPTED](In/CharacterServer/MAP_ENTER_REQUEST_ACCEPTED.md) | 156 | documented | cold |
+| Character server to client | `0x006B` | [CHARACTER_DATA](In/CharacterServer/CHARACTER_DATA.md) | variable | implemented | cold |
+| Character server to client | `0x006C` | [MAP_ENTER_REQUEST_REFUSED](In/CharacterServer/MAP_ENTER_REQUEST_REFUSED.md) | 3 | implemented | cold |
+| Character server to client | `0x006D` | [CHARACTER_CREATION_SUCCESS](In/CharacterServer/CHARACTER_CREATION_SUCCESS.md) | 157 | implemented | cold |
+| Character server to client | `0x006E` | [CHARACTER_CREATION_FAILED](In/CharacterServer/CHARACTER_CREATION_FAILED.md) | 3 | implemented | cold |
+| Character server to client | `0x082D` | [CHARACTER_SLOTS_INFO](In/CharacterServer/CHARACTER_SLOTS_INFO.md) | variable | implemented | cold |
+| Character server to client | `0x08B9` | [PINCODE_LOGINSTATE](In/CharacterServer/PINCODE_LOGINSTATE.md) | 12 | implemented | cold |
+| Character server to client | `0x0AC5` | [MAP_ENTER_REQUEST_ACCEPTED](In/CharacterServer/MAP_ENTER_REQUEST_ACCEPTED.md) | 156 | implemented | cold |
 | Login server to client | `0x006A` | [LOGIN_REFUSAL](In/LoginServer/LOGIN_REFUSAL.md) | 23 | implemented | cold |
 | Login server to client | `0x0081` | [LOGIN_SERVER_NOTICE](In/LoginServer/LOGIN_SERVER_NOTICE.md) | 3 | implemented | cold |
 | Login server to client | `0x01DC` | [HASH_CHALLENGE](In/LoginServer/HASH_CHALLENGE.md) | variable | documented | cold |
@@ -39,10 +39,10 @@ One row per documented packet (SPEC-0001, PACKETVER 20220406). Generated from th
 | Map server to client | `0x0ADE` | [OVERWEIGHT_PERCENT_INFO](In/MapServer/OVERWEIGHT_PERCENT_INFO.md) | 6 | documented | warm |
 | Map server to client | `0x0B18` | [INVENTORY_EXPANSION_INFO](In/MapServer/INVENTORY_EXPANSION_INFO.md) | 4 | documented | cold |
 | Map server to client | `0x0B41` | [ITEM_PICKUP_ACK](In/MapServer/ITEM_PICKUP_ACK.md) | 70 | documented | warm |
-| Client to character server | `0x0065` | [CHARACTER_SERVER_REQUEST_ENTRY](Out/CharacterServer/CHARACTER_SERVER_REQUEST_ENTRY.md) | 17 | documented | cold |
-| Client to character server | `0x0066` | [SELECT_CHARACTER](Out/CharacterServer/SELECT_CHARACTER.md) | 3 | documented | cold |
-| Client to character server | `0x0187` | [CHARACTER_SERVER_PING](Out/CharacterServer/CHARACTER_SERVER_PING.md) | 6 | documented | warm |
-| Client to character server | `0x0A39` | [CREATE_CHARACTER](Out/CharacterServer/CREATE_CHARACTER.md) | 36 | documented | cold |
+| Client to character server | `0x0065` | [CHARACTER_SERVER_REQUEST_ENTRY](Out/CharacterServer/CHARACTER_SERVER_REQUEST_ENTRY.md) | 17 | implemented | cold |
+| Client to character server | `0x0066` | [SELECT_CHARACTER](Out/CharacterServer/SELECT_CHARACTER.md) | 3 | implemented | cold |
+| Client to character server | `0x0187` | [CHARACTER_SERVER_PING](Out/CharacterServer/CHARACTER_SERVER_PING.md) | 6 | implemented | warm |
+| Client to character server | `0x0A39` | [CREATE_CHARACTER](Out/CharacterServer/CREATE_CHARACTER.md) | 36 | implemented | cold |
 | Client to login server | `0x0064` | [REQUEST_LOGIN](Out/LoginServer/REQUEST_LOGIN.md) | 55 | implemented | cold |
 | Client to login server | `0x01DB` | [HASH_CHALLENGE_REQUEST](Out/LoginServer/HASH_CHALLENGE_REQUEST.md) | 2 | documented | cold |
 | Client to login server | `0x01DD` | [LOGIN_REQUEST2](Out/LoginServer/LOGIN_REQUEST2.md) | 47 | documented | cold |
