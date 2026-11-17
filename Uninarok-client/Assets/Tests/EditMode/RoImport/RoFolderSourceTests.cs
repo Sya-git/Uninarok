@@ -15,7 +15,6 @@ namespace Uninarok.RoImport.Tests
 {
     // SPEC-0002 FR-1: a file is found by its Ragnarok path regardless of case, slashes or Korean folder names.
     // Plan 4.2. Uses the fixture data root (Fixtures~/README.md). TASKS T2.1.
-    [Ignore("pending T2.2")]
     public class RoFolderSourceTests
     {
         internal static string FixtureRoot => Path.Combine(Application.dataPath, "Tests/EditMode/RoImport/Fixtures~/data");

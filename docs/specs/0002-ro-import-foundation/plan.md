@@ -150,6 +150,13 @@ public sealed class RoFolderSource : IRoSource
 - `RoSourceLocation.Resolve()` (editor layer) returns the data root: the `EditorPrefs` key `Uninarok.RoImport.SourceRoot` if set, otherwise the project-relative default `Assets/Editor/GRF Resources~/data`. The window shows the active path and has a Browse button that sets the preference.
 - **The default folder name ends with `~`.** Unity does not import, index or build folders whose name ends with `~`. Copying or updating the full data set there creates no `.meta`, no import and nothing in the build (FR-15). See D2 for the alternatives rejected.
 - Nothing in the source layer writes to the source folder (spec §6).
+- Details fixed by T2.2:
+  - The constructor is `RoFolderSource(string dataRootOnDisk, RoReport report = null, RoHashCache hashes = null)`; without a cache, `ContentHash` hashes the file directly.
+  - `RoSourceFile` also carries `LastWriteTicks` (UTC), which keys the cache together with `Length`.
+  - Disk paths are indexed with the internal `RoPath.TryParseRelative`, which keeps a leading `data` segment, because they are already relative to the data root. A file whose name is not a valid Ragnarok path is left out of the index.
+  - A missing data root is an empty source.
+  - `Enumerate` normalizes its prefix like a path and matches whole segments.
+  - NTFS cannot hold two names that differ only by case, so the duplicate test builds its collision from NFC and NFD forms of a Korean name, which NTFS keeps apart.
 
 ### 4.3 Units and axes: `RoUnits`, `RoSpace`
 

@@ -68,6 +68,17 @@ namespace Uninarok.RoImport.Core.Paths
             return ok;
         }
 
+        /// <summary>
+        /// Like <see cref="TryParse"/> but keeps a leading <c>data</c> segment: for paths that are already relative to the
+        /// data root, such as files found on disk by <see cref="Source.RoFolderSource"/>.
+        /// </summary>
+        internal static bool TryParseRelative(string relative, out RoPath path)
+        {
+            bool ok = TryNormalize(relative, stripData: false, out string canonical, out _);
+            path = ok ? new RoPath(canonical) : default;
+            return ok;
+        }
+
         /// <summary>Same folder and name with another extension (".png" or "png"; "" removes it).</summary>
         public RoPath WithExtension(string extension)
         {
