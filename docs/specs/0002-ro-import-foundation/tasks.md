@@ -33,7 +33,7 @@
 
 - [x] **T1.1** Add `Core/Results/`: `RoStatus`, `RoResult<T>`, `RoIssueCode` (with `DependencyCycle`), `RoIssue`, `RoReport` (de-duplicated `Warn`, `Fail`, counters, `Summarize`), per plan §4.9. Warnings go to `Debug.LogWarning` once per `(code, item)`; `RoReport` never calls `LogError`. (FR-10, FR-11)
   *Done when:* `RoReportTests` pass: the same warning raised three times is listed and logged once; `Summarize` lists each failed item once with its reason; no error log is produced (`LogAssert.NoUnexpectedReceived`).
-- [ ] **T1.2** Add `RoPathTests` (failing, ignored): the three spellings of one path are equal, Korean composed and decomposed forms are equal, a leading `data/` is stripped, case is folded, `..`, `.`, drive letters, control characters and empty input throw `RoPathException`, `TryParse` returns false instead. (FR-1)
+- [x] **T1.2** Add `RoPathTests` (failing, ignored): the three spellings of one path are equal, Korean composed and decomposed forms are equal, a leading `data/` is stripped, case is folded, `..`, `.`, drive letters, control characters and empty input throw `RoPathException`, `TryParse` returns false instead. (FR-1)
   *Done when:* the tests compile and are listed as ignored with `pending T1.3`.
 - [ ] **T1.3** Implement `Core/Paths/RoPath` and `RoPathException` per plan §4.1 (rules in the stated order). (FR-1)
   *Done when:* `[Ignore]` removed from `RoPathTests` and they pass.
