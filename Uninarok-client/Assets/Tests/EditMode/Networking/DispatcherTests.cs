@@ -1,4 +1,3 @@
-#if PENDING_T3_2 // T3.1: enabled (guard removed) by T3.2 when PacketDispatcher exists.
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -160,4 +159,3 @@ namespace Uninarok.Networking.Tests
         }
     }
 }
-#endif
