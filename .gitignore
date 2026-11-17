@@ -135,3 +135,5 @@ Uninarok-client/UIElementsSchema/
 
 # Auto-generated cache in Assets folder
 Uninarok-client/[Aa]ssets/[Ss]ceneDependencyCache*
+.vs/
+*.ipch
