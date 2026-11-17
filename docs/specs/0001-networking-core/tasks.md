@@ -60,7 +60,7 @@
 - [x] **T3.1** Write failing `DispatcherTests`: throwing handler does not block the next; subscribe/unsubscribe during dispatch applies from the next packet; 100 subscribe/unsubscribe cycles leave the count unchanged; `Dispatch` with 3 subscribers allocates 0 bytes. *(FR-4, FR-6, FR-9)*
 - [x] **T3.2** Implement `PacketHandler<T>` and `PacketDispatcher` (per-type slots, copy-on-write arrays, per-callback `try/catch`, plan §4.5).
   *Done when:* T3.1 passes.
-- [ ] **T3.3** Add `ConnectionRole`, `CloseReason`, `CloseInfo`, `IOutgoingPacket` in `Core/Transport/`.
+- [x] **T3.3** Add `ConnectionRole`, `CloseReason`, `CloseInfo`, `IOutgoingPacket` in `Core/Transport/`.
   *Done when:* compiles.
 - [ ] **T3.4** Write failing `TcpConnectionTests` (loopback `TcpListener`): remote close observed < 1 s with `RemoteClosed`; `Dispose` is silent (`LocalDispose`) and both threads exit; empty send returns `true` and sends nothing; send after close returns `false`; sink overflow closes with `ProtocolFault`. *(FR-7, FR-8)*
 - [ ] **T3.5** Implement `ConnectAsync` (cancellation disposes the socket), closure (`Close`, first-wins `CompareExchange`, `IsClosed`, `Closure`) and the reader thread with blocking `Receive`, shutdown-quiet filters and `Shutdown(Both)` on close (plan §4.4). *(FR-2, FR-7)*
