@@ -75,7 +75,7 @@
 
 - [x] **T4.1** Add `InPacketAttribute`/`OutPacketAttribute` in `Core/Protocol/` and `HerculesPacketTableGenerator` (Editor menu) that turns `fixtures/hercules-packetlen-20220406.json` into `Core/Protocol/HerculesPacketTable.g.cs` (plan §4.8). Generate and commit the table. *(FR-18, FR-19)*
   *Done when:* the table compiles and `GetLength(0x0064) == 55`, `GetLength(0x006B) == -1`, `GetLength(0x0000) == -2`.
-- [ ] **T4.2** Copy the fixture to `Tests/EditMode/Networking/Fixtures/` and add `PacketTableTests` (generated table equals the fixture; no invalid values). *(FR-18)*
+- [x] **T4.2** Copy the fixture to `Tests/EditMode/Networking/Fixtures/` and add `PacketTableTests` (generated table equals the fixture; no invalid values). *(FR-18)*
   *Done when:* test passes.
 - [ ] **T4.3** Create the generator project `Tools/Uninarok.Networking.Generator/` (`netstandard2.0`, `Microsoft.CodeAnalysis` version supported by the editor), emitting `GeneratedPacketRouter` and the compile-time diagnostics of plan §4.6. Build it into `Runtime/Packets/Generator/` with the `RoslynAnalyzer` label and all platforms excluded. *(FR-4, FR-18)*
   *Done when:* with one test `[InPacket]` struct the router is generated; a duplicate ID or size `0` fails compilation with the generator's diagnostic; an assembly without packets compiles with no generated file.
