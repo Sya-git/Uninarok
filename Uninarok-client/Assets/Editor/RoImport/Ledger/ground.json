@@ -3,7 +3,7 @@
         {
             "Source": "izlude.gnd",
             "SourceHash": "a70c8207df579bdf664498f31a1f118195d817f9d258e96497557013331b41ad",
-            "Rules": 1,
+            "Rules": 2,
             "Outputs": [
                 "Assets/Art/Imported/map/izlude/ground/chunk_0_0.asset",
                 "Assets/Art/Imported/map/izlude/ground/chunk_0_1.asset",
@@ -183,7 +183,7 @@
         {
             "Source": "prontera.gnd",
             "SourceHash": "227b304e2adea423bd85e8e38c38459b9a73143616c03051c1d9b0f96b6dbfaa",
-            "Rules": 1,
+            "Rules": 2,
             "Outputs": [
                 "Assets/Art/Imported/map/prontera/ground/chunk_0_0.asset",
                 "Assets/Art/Imported/map/prontera/ground/chunk_0_1.asset",
@@ -367,7 +367,7 @@
         {
             "Source": "prt_fild08.gnd",
             "SourceHash": "9e5bdbc8c0a1ce1f2c1e98b928535745eedd80c72f363206d6963d817f858dc6",
-            "Rules": 1,
+            "Rules": 2,
             "Outputs": [
                 "Assets/Art/Imported/map/prt_fild08/ground/chunk_0_0.asset",
                 "Assets/Art/Imported/map/prt_fild08/ground/chunk_0_1.asset",
