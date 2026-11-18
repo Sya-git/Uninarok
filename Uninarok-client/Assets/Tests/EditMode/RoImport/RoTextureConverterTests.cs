@@ -129,7 +129,7 @@ namespace Uninarok.RoImport.Tests
             Assert.AreEqual(64, OutputPixels("texture/rgba.png").GetPixel(1, 0).a);
         }
 
-        [Test, Ignore("pending T9.2")]
+        [Test]
         public void Jpg_ConvertsToAKeyedPng_WithWorldSettings()
         {
             string root = Path.Combine(_temp, "data");

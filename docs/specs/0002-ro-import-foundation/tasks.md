@@ -123,7 +123,7 @@ The whole-game texture run, the visual checks and the build checks (formerly T9.
 
 - [x] **T9.1** Add JPG to the reader tests and the converter tests (failing, ignored): a JPG built in the test with Unity's encoder decodes through `IRoPngCodec` with `SourceHadAlpha` false; its magenta (within tolerance, despite compression noise) is keyed; `IsSupportedExtension` accepts `.jpg` and `.jpeg`; a JPG source converts to a PNG at the mirrored path with World settings; a half-length JPG fails with a reason. (FR-8)
   *Done when:* the tests compile and are ignored with `pending T9.2`.
-- [ ] **T9.2** Implement JPG support in `RoImageReader` per plan §4.4 (decode through `IRoPngCodec`, no alpha, keyed like BMP). (FR-8)
+- [x] **T9.2** Implement JPG support in `RoImageReader` per plan §4.4 (decode through `IRoPngCodec`, no alpha, keyed like BMP). (FR-8)
   *Done when:* `[Ignore]` removed and the tests pass, with the rest of the importer tests.
 - [ ] **T9.3** Close: verify every FR of the spec against the test list and manual evidence; set the status of `spec.md`, `plan.md` and `tasks.md` to `Implemented` (the owner sets `Approved` states; `Implemented` follows the lifecycle in CLAUDE.md §1.3); move leftovers to `docs/specs/BACKLOG.md`.
   *Done when:* the traceability table of the plan has a passing test or recorded evidence for each of FR-1 to FR-16, or names the owner's manual check that covers it, and the leftovers are in `BACKLOG.md`.

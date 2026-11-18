@@ -161,9 +161,9 @@ namespace Uninarok.RoImport.Tests
         [TestCase(".png", true)]
         [TestCase(".tga", true)]
         [TestCase(".BMP", true)]
-        [TestCase(".jpg", true, Ignore = "pending T9.2")]
-        [TestCase(".jpeg", true, Ignore = "pending T9.2")]
-        [TestCase(".JPG", true, Ignore = "pending T9.2")]
+        [TestCase(".jpg", true)]
+        [TestCase(".jpeg", true)]
+        [TestCase(".JPG", true)]
         [TestCase(".dds", false)]
         [TestCase(".gif", false)]
         [TestCase("bmp", false)]
@@ -193,7 +193,7 @@ namespace Uninarok.RoImport.Tests
             }
         }
 
-        [Test, Ignore("pending T9.2")]
+        [Test]
         public void Jpg_DecodesThroughTheCodec_WithoutSourceAlpha()
         {
             var codec = new TestPngCodec();
@@ -209,7 +209,7 @@ namespace Uninarok.RoImport.Tests
             Assert.That(green.r, Is.LessThan(15));
         }
 
-        [Test, Ignore("pending T9.2")]
+        [Test]
         public void Jpg_MagentaIsKeyedDespiteCompressionNoise()
         {
             Assert.IsTrue(RoImageReader.TryRead(RoPath.Parse("texture/a.jpeg"), MagentaGreenJpg(), new TestPngCodec(), out var image, out _));
@@ -219,7 +219,7 @@ namespace Uninarok.RoImport.Tests
             Assert.AreEqual(255, image.GetPixel(13, 8).a);
         }
 
-        [Test, Ignore("pending T9.2")]
+        [Test]
         public void HalfLengthJpg_ReturnsFalseWithAReason()
         {
             byte[] jpg = MagentaGreenJpg();

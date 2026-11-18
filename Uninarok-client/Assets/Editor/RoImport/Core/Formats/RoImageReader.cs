@@ -7,18 +7,23 @@ namespace Uninarok.RoImport.Core.Formats
 {
     /// <summary>
     /// Adapter over the GRF image classes (plan 4.4, D7, D16; SPEC-0002 FR-8). Decoding is GRF's (BMP, TGA) or Unity's
-    /// (PNG, through <see cref="IRoPngCodec"/>); this class only converts their result into an <see cref="RoImage"/>.
-    /// It never throws for bad input: every failure is <c>false</c> with a reason.
+    /// (PNG and JPG, through <see cref="IRoPngCodec"/>, which GRF cannot decode inside Unity); this class only converts
+    /// their result into an <see cref="RoImage"/>. It never throws for bad input: every failure is <c>false</c> with a reason.
     /// </summary>
     public static class RoImageReader
     {
-        public const string Bmp = ".bmp", Png = ".png", Tga = ".tga";
+        public const string Bmp = ".bmp", Png = ".png", Jpg = ".jpg", Jpeg = ".jpeg", Tga = ".tga";
 
-        /// <summary>True for <c>.bmp</c>, <c>.png</c> and <c>.tga</c> (with the dot, any case).</summary>
+        /// <summary>True for <c>.bmp</c>, <c>.png</c>, <c>.jpg</c>, <c>.jpeg</c> and <c>.tga</c> (with the dot, any case).</summary>
         public static bool IsSupportedExtension(string extension) =>
             string.Equals(extension, Bmp, StringComparison.OrdinalIgnoreCase)
             || string.Equals(extension, Png, StringComparison.OrdinalIgnoreCase)
+            || IsJpg(extension)
             || string.Equals(extension, Tga, StringComparison.OrdinalIgnoreCase);
+
+        static bool IsJpg(string extension) =>
+            string.Equals(extension, Jpg, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(extension, Jpeg, StringComparison.OrdinalIgnoreCase);
 
         public static bool TryRead(RoPath path, byte[] bytes, IRoPngCodec png, out RoImage image, out string reason)
         {
@@ -30,26 +35,27 @@ namespace Uninarok.RoImport.Core.Formats
             if (bytes == null || bytes.Length == 0)
                 return Fail("the file is empty", out reason);
 
-            return extension == Png
-                ? TryReadPng(bytes, png, out image, out reason)
-                : TryReadWithGrf(bytes, extension, out image, out reason);
+            if (extension == Png) return TryReadWithCodec(bytes, png, "PNG", out image, out reason);
+            if (IsJpg(extension)) return TryReadWithCodec(bytes, png, "JPG", out image, out reason);
+            return TryReadWithGrf(bytes, extension, out image, out reason);
         }
 
-        static bool TryReadPng(byte[] bytes, IRoPngCodec png, out RoImage image, out string reason)
+        /// <summary>PNG and JPG through Unity's decoder (plan 4.4). A JPG has no alpha, so it is keyed like a BMP.</summary>
+        static bool TryReadWithCodec(byte[] bytes, IRoPngCodec png, string format, out RoImage image, out string reason)
         {
             image = null;
-            if (png == null) return Fail("no PNG codec was given", out reason);
+            if (png == null) return Fail("no PNG/JPG codec was given", out reason);
             try
             {
-                if (!png.TryDecode(bytes, out image) || image == null) return Fail("not a valid PNG", out reason);
+                if (!png.TryDecode(bytes, out image) || image == null) return Fail($"not a valid {format}", out reason);
             }
             catch (Exception e)
             {
                 image = null;
-                return Fail($"PNG decode failed: {e.Message}", out reason);
+                return Fail($"{format} decode failed: {e.Message}", out reason);
             }
 
-            image.SourceHadAlpha = HasNonOpaquePixel(image.Rgba32);
+            image.SourceHadAlpha = format == "PNG" && HasNonOpaquePixel(image.Rgba32);
             reason = null;
             return true;
         }
