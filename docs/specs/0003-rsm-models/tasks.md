@@ -88,7 +88,7 @@
 
 - [x] **T7.1** Add `RsmReferenceTests` part 3 (`NeedsData`): every model of the reference tables converts through `RoImport.Model` with no failure; the four reported models and the control group convert and match the recorded rest transforms; a batch over the whole `model/` folder converts every file or lists each failure exactly once, with no `LogError`; any file with a version other than 1.4 is converted or reported once. (FR-2, FR-8)
   *Done when:* the tests pass on the reference data, and the batch summary is pasted into the PR.
-- [ ] **T7.2** Run the whole `model/` folder with the window, then run it again. (FR-8, 0002 FR-5, FR-16)
+- [x] **T7.2** Run the whole `model/` folder with the window, then run it again. (FR-8, 0002 FR-5, FR-16)
   *Done when:* the first run ends with a failure list that is empty or fully explained (pasted into the PR, unsupported versions named); the second run reports everything `Skipped` and `git status` shows no changed file.
 
 ## Phase 8: Verify and close

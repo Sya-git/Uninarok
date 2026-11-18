@@ -321,6 +321,33 @@ namespace Uninarok.RoImport.Tests.Rsm
                 Assert.AreEqual(1, materials.Count, "one shared material");
                 Assert.IsEmpty(ctx.Report.Issues.Where(i => i.Code == RoIssueCode.OutputCollision && i.Item.Contains("__")),
                     "no material collision: " + string.Join("; ", ctx.Report.Issues));
+                // T7.2: the .tga is not a dependency (it was recorded with an empty hash, so the model was never current).
+                var entry = ctx.Ledger(RoRsmConverter.Category).Find(Source);
+                CollectionAssert.AreEqual(new[] { "texture/a.bmp" }, entry.Dependencies.Select(d => d.Source));
+                Assert.IsFalse(string.IsNullOrEmpty(entry.Dependencies[0].Hash));
+            }
+            finally
+            {
+                Directory.Delete(Path.GetDirectoryName(data), recursive: true);
+            }
+        }
+
+        [Test]
+        public void TextureNamedAsTgaWithAPngBeside_UsesThePng()
+        {
+            // D12 (owner rule): anything over a .tga.
+            string data = Path.Combine(Path.GetTempPath(), "RoImportTests", Guid.NewGuid().ToString("N"), "data");
+            try
+            {
+                Directory.CreateDirectory(Path.Combine(data, "texture"));
+                File.Copy(Path.Combine(RoFolderSourceTests.FixtureRoot, "texture", "rgba.png"), Path.Combine(data, "texture", "b.png"));
+                File.Copy(Path.Combine(RoFolderSourceTests.FixtureRoot, "texture", "alpha32.tga"), Path.Combine(data, "texture", "b.tga"));
+                var ctx = new RoImportContext(new RoFolderSource(data), _roots, _ledgerFolder) { Png = new RoPngCodec() };
+                var model = RsmTestModels.Model(RsmTestModels.Cube("only"));
+                model.Textures = new[] { "b.tga" };
+                Convert(model, ctx);
+                var entry = ctx.Ledger(RoRsmConverter.Category).Find(Source);
+                CollectionAssert.AreEqual(new[] { "texture/b.png" }, entry.Dependencies.Select(d => d.Source));
             }
             finally
             {

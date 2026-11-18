@@ -182,9 +182,9 @@ namespace Uninarok.RoImport.Editor.Rsm
             }
             else
             {
-                var texturePath = RoPath.Parse("texture").Combine(rsm.Textures[submesh.TextureIndex]);
+                // Resolve the preferred .bmp first: only the file actually used becomes a dependency (T7.2).
+                var texturePath = Preferred(ctx, RoPath.Parse("texture").Combine(rsm.Textures[submesh.TextureIndex]));
                 var texture = ctx.Texture(texturePath, referrer);
-                texturePath = Preferred(ctx, texturePath);
                 var surface = RoSurface.Opaque;
                 if (texture.Status != RoStatus.Failed)
                 {
@@ -199,15 +199,19 @@ namespace Uninarok.RoImport.Editor.Rsm
         }
 
         /// <summary>
-        /// The texture the pipeline actually uses: a <c>.tga</c> or <c>.png</c> with a <c>.bmp</c> of the same name beside it
-        /// is converted from the <c>.bmp</c> (PLAN-0002 4.5, D19), so the material key names the <c>.bmp</c> too; otherwise two
-        /// keys would own one material file (found by the T7.1 batch on izlude/iz_enchant).
+        /// The texture to use when files of the same name share one output (PLAN-0003 D12, owner rule: anything over a
+        /// <c>.tga</c>): a <c>.tga</c> resolves to a <c>.bmp</c>, else a <c>.png</c>, of the same name; a <c>.png</c> to a
+        /// <c>.bmp</c> (PLAN-0002 D19). Resolved before the texture is requested, so the material key and the ledger
+        /// dependency both name the file actually used (T7.1, T7.2 on izlude/iz_enchant).
         /// </summary>
         static RoPath Preferred(RoImportContext ctx, RoPath texture)
         {
-            if (texture.Extension == ".bmp" || !ctx.Source.TryGetFile(texture, out _)) return texture;
+            string ext = texture.Extension;
+            if ((ext != ".tga" && ext != ".png") || !ctx.Source.TryGetFile(texture, out _)) return texture;
             var bmp = texture.WithExtension(".bmp");
-            return ctx.Source.TryGetFile(bmp, out _) ? bmp : texture;
+            if (ctx.Source.TryGetFile(bmp, out _)) return bmp;
+            var png = texture.WithExtension(".png");
+            return ext == ".tga" && ctx.Source.TryGetFile(png, out _) ? png : texture;
         }
 
         static RoResult<GameObject> Fail(RoImportContext ctx, RoPath path, RoIssueCode code, string message)

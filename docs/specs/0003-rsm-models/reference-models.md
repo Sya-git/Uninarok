@@ -120,3 +120,16 @@ Counted by a raw read of the files that does not use GRF (a scratch script of T1
 ```
 
 140 models, all version 1.4, no failure, no `LogError`. The one warning is a data note: `iz_enchant` names a `.tga` that has a `.bmp` of the same name beside it, and the `.bmp` is used (PLAN-0002 D19). The first batch also showed two material keys (`.tga` and `.bmp`) owning one material file; the converter now names the preferred `.bmp` in the material key (test `TextureNamedAsTgaWithABmpBeside_SharesTheBmpsMaterial_WithoutACollision`).
+
+### Whole folder into the project (TASKS-0003 T7.2, 2026-11-18)
+
+Same path as the window (`RoImportJobs.Expand("model/", Model)` → `RoImport.Run`), default roots and ledger:
+
+```
+run 1: [RoImport] Created 140, Updated 0, Skipped 0, Failed 0, Warnings 1   (the iz_rookie_06.tga note above)
+run 2: [RoImport] Created 0, Updated 1, Skipped 139, Failed 0, Warnings 0   (iz_enchant stale: .tga dependency with empty hash -> D12)
+run 3: [RoImport] Created 0, Updated 1, Skipped 139, Failed 0, Warnings 0   (after the D12 fix: iz_enchant rebuilt once with the .bmp dependency)
+run 4: [RoImport] Created 0, Updated 0, Skipped 140, Failed 0, Warnings 0
+```
+
+Between run 3 and run 4 none of the 2,348 files under `Assets/Art` and `Assets/Editor/RoImport/Ledger` changed (SHA-256 of every file compared). The outputs are not committed; they are untracked like the folder itself (owner to decide).
