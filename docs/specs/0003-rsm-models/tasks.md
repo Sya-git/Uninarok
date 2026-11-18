@@ -19,7 +19,7 @@
 
 ## Phase 0: Verify before building
 
-- [ ] **T0.1** Check the data: list the reference models of `reference-models.md` §1 to §3 and the three reference maps in the source folder, count the `.rsm` and `.rsm2` files under `model/`, and record the counts and any missing reference model in the PR. (FR-8)
+- [x] **T0.1** Check the data: list the reference models of `reference-models.md` §1 to §3 and the three reference maps in the source folder, count the `.rsm` and `.rsm2` files under `model/`, and record the counts and any missing reference model in the PR. (FR-8)
   *Done when:* every reference model path exists in the source folder or its absence is listed and agreed with the owner; the counts are in the PR.
 - [ ] **T0.2** Map GRF to the file fields (plan §4.1). In a scratch editor script, load each reference model of `reference-models.md` through the GRF `Rsm` class and print, per node, every member that could correspond to a file field (the members named in plan §4.1, plus offset, texture slots, shade type, animation length, keyframes, smoothing group, two-sided flag, version). Compare them with the raw values of the four reported models (single node, rotation angle and position non-zero) taken from the earlier scan of `reference-models.md`, and with a model with a parent and children. Write the result into `plan.md` §4.1 as a table: one row per `RoRsm` field with the GRF member that supplies it, and one note for every GRF member that is derived and must not be used. Record whether `.rsm2` files load through GRF in the editor. (FR-2, FR-8)
   *Done when:* every `RoRsm` field has a GRF member (or is declared absent for the version), the derived members are listed as unused, the `.rsm2` outcome is recorded, and the table is in `plan.md`.

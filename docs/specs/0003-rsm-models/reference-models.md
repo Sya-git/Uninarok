@@ -56,6 +56,20 @@ prt_fild08 is the confirmed reference map (the earlier mention of prt_fild09 is 
 
 ## 5. Gaps (not covered by the current data)
 
-- No model with mirrored (negative) scale.
-- No RSM version other than 1.4 (all 148 scanned models).
+- No model with mirrored (negative) scale in the 148 scanned models (the full folder is scanned by TASKS-0003 T0.3).
+- No RSM version other than 1.4 in the 148 scanned models. The full folder has other versions (§6).
 - No very large map beyond 200 x 200 cubes.
+
+## 6. Full data check (TASKS-0003 T0.1, 2026-11-17)
+
+Source folder: `Uninarok-client/Assets/Editor/GRF Resources~/data/`.
+
+- Every model of §1 to §3 exists under `model/` (34 of 34). The three reference maps exist with `.rsw`, `.gnd` and `.gat`.
+- `model/` holds 7,044 `.rsm` and 1,893 `.rsm2` files (none outside `model/`). Versions from the file header (`GRSM` + major, minor):
+
+| Extension | Version | Files |
+|---|---|---|
+| `.rsm` | 1.4 | 6,554 |
+| `.rsm` | 1.5 | 490 |
+| `.rsm2` | 2.2 | 258 |
+| `.rsm2` | 2.3 | 1,635 |
