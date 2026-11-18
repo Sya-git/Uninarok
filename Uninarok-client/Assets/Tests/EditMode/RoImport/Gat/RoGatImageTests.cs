@@ -8,7 +8,6 @@ using Uninarok.RoImport.Core.Gat;
 namespace Uninarok.RoImport.Tests.Gat
 {
     // TASKS-0005 T4.1 / T4.2 (FR-8): the optional flat image of the cell types, one pixel per cell, row 0 at the bottom.
-    [Ignore("pending T4.2")]
     public class RoGatImageTests
     {
         static byte[] Types(RoGat gat) => gat.Types.Select(t => (byte)RoGatRules.TypeOf(t)).ToArray();

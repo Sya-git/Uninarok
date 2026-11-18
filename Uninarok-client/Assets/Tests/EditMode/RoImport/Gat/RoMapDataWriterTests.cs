@@ -20,7 +20,6 @@ namespace Uninarok.RoImport.Tests.Gat
     // TASKS-0005 T4.1 / T4.2 (FR-1, FR-3, FR-6, FR-8; SPEC-0002 FR-5, FR-16): a synthetic map converts to one MapData asset
     // at Data/map/<name>.asset, in place, with the optional type image. Sources are written to a temporary data folder;
     // outputs go under Assets/__RoImportTests.
-    [Ignore("pending T4.2")]
     public class RoMapDataWriterTests
     {
         const string Map = "sample";

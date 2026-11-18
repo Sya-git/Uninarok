@@ -15,6 +15,7 @@ namespace Uninarok.RoImport.Editor.Pipeline
             new RoTextureConverter(),
             new Rsm.RoRsmConverter(),
             new Gnd.RoGndConverter(),
+            new Gat.RoMapDataConverter(),
         };
 
         public static IRoConverter For(RoJobKind kind)

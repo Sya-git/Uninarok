@@ -158,7 +158,17 @@ namespace Uninarok.RoImport.Editor.Pipeline
         /// The map data asset of a <c>.gat</c> path, converted on demand when missing or stale (PLAN-0005 4.5), so the map
         /// converter of PLAN-0006 asks for it. Repeat requests in a run are free.
         /// </summary>
-        public RoResult<Uninarok.Map.MapData> MapData(RoPath path) => throw new NotImplementedException();
+        public RoResult<Uninarok.Map.MapData> MapData(RoPath path)
+        {
+            string key = "mapdata:" + path.Canonical;
+            if (TryGetMemo(key, out RoResult<Uninarok.Map.MapData> known))
+                return known.Status == RoStatus.Failed ? known : RoResult<Uninarok.Map.MapData>.Skipped(known.Value);
+
+            var result = RoConverterRegistry.For(RoJobKind.MapData).Convert(this, path);
+            var typed = new RoResult<Uninarok.Map.MapData>(result.Status, result.Value as Uninarok.Map.MapData, result.Failure);
+            Memo(key, typed);
+            return typed;
+        }
 
         /// <summary>A result already produced in this run, by key (e.g. <c>texture:texture/a.bmp</c>).</summary>
         internal bool TryGetMemo<T>(string key, out T value)

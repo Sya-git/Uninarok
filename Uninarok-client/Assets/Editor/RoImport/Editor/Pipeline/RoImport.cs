@@ -96,8 +96,13 @@ namespace Uninarok.RoImport.Editor.Pipeline
         /// Converts the map data of a map (or skips it when current) and returns its asset (PLAN-0005 4.5): the source is
         /// <c>&lt;mapName&gt;.gat</c> at the data root, with <c>&lt;mapName&gt;.gnd</c> beside it (D9).
         /// </summary>
-        public static RoResult<Uninarok.Map.MapData> MapData(string mapName, RoImportOptions options = null) =>
-            throw new NotImplementedException();
+        public static RoResult<Uninarok.Map.MapData> MapData(string mapName, RoImportOptions options = null)
+        {
+            if (!RoPath.TryParse((mapName ?? string.Empty) + ".gat", out var path))
+                return RoResult<Uninarok.Map.MapData>.Failed(new RoIssue(RoIssueCode.SourceMissing, mapName, null, "not a valid map name"));
+            using (var session = new Session(options))
+                return session.Context.MapData(path);
+        }
 
         /// <summary>Runs a batch (plan 4.10): continues past failures and returns the report, whose summary lists them.</summary>
         public static RoReport Run(IEnumerable<RoJob> jobs, RoImportOptions options = null) => RoBatch.Run(jobs, options);
@@ -123,6 +128,7 @@ namespace Uninarok.RoImport.Editor.Pipeline
                 Context = new RoImportContext(source, options.Roots ?? new RoOutputRoots(), options.LedgerFolder ?? RoLedger.DefaultFolder, report)
                 {
                     Force = options.Force,
+                    GatImage = options.GatImage,
                 };
             }
 

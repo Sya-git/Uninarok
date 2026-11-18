@@ -41,10 +41,10 @@ Satisfies FR-1 to FR-6.
 
 Data flow for `RoImport.MapData("prontera")` (source `prontera.gat` at the data root, D9):
 
-1. Ledger check (hashes of the GAT and of the GND header, rules version): current → `Skipped`.
+1. Ledger check (hash of the GAT, hash of the GND file, rules version): current → `Skipped`.
 2. Read the GAT through GRF into `RoGat`; read the GND through `RoGndReader` only for its width, height and zoom. A cell grid that is not exactly `2 × GND width` by `2 × GND height` gives one `GatGndMismatch` issue and no output.
 3. Convert every cell to the stored form (§4.3) with `RoMapSpace`, build the arrays in memory.
-4. Upsert `Assets/Data/map/<name>.asset` in place (FR-6) and, if requested, the optional type image (FR-8). Record outputs and dependencies in the ledger (category `mapdata`).
+4. Upsert `Assets/Data/map/<name>.asset` in place (FR-6) and, if requested, the optional type image (FR-8). Record outputs and dependencies in the ledger (category `mapdata`): the source hash is the GAT file's, the dependency is the GND file's whole-file hash (D12).
 
 ## 3. Assemblies and file layout
 
@@ -293,6 +293,7 @@ Satisfies every FR of the spec. EditMode NUnit tests (command in `CLAUDE.md` §2
 | D9 | (T0.1, 2026-11-18) Map sources are `<name>.gat` at the data root, as PLAN-0004 D11 found for `.gnd` (owner decision there); the batch enumerates the whole root by extension. The old `MapData` assets sit in `Assets/Data/Map/` (capital M, same folder as `Assets/Data/map/` on Windows): T6.1 deletes them and renames the folder to `map` before any real map is converted (T7.x), so the new asset never upserts into an object of the old class | A `map/` source folder (absent from the data); writing next to the old assets and replacing their script (the old fields would linger in the YAML) |
 | D10 | (T0.2) The GAT version is read by the adapter from bytes 4 and 5, next to its magic and length checks, because GRF does not expose it | Dropping the version from `RoGat` (reports would not show it) |
 | D11 | (owner, after T0.3) FR-3 is checked in two parts: never more than 0.3 Unity units below the ground, and at least 98% of walkable cells within 0.05 units on the maps without large model floors; `CellCenter` uses the diagonal rule | One tolerance for every walkable cell (fails on bridges and decks: 21% of izlude); the mean of four corners (worse fit) |
+| D12 | (T4.2) The ledger records the GND as a dependency by its whole-file hash, because the ledger compares file hashes; a GND change converts the map data again (cheap: arrays only). The ledger rules number is `RulesVersion * 1000 + RoGatRules.RulesVersion`, so a change of the cell table converts again. An image requested for a current map converts it again; an image made earlier stays owned when a later run does not ask for it | A GND header hash (the ledger has no partial-file dependency); deleting an earlier image when not requested (surprising output loss) |
 
 Items for the owner: approve D1 (per-corner heights), the new runtime assembly `Uninarok.Map`, the replacement of `MapData.cs`, and `docs/data/GatCellType.md` (new).
 
