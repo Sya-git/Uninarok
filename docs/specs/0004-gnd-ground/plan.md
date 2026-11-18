@@ -37,7 +37,7 @@ Satisfies FR-1, FR-2, FR-3, FR-6.
   (cube ↔ world)        (tops, walls: quads)            (16 x 16 cubes per chunk)
       └──────────────────────┴──────────────┬────────────────┘
                                             ▼
-                         RoGndMeshBuilder  (vertices, uv, normals, uv2, submeshes)
+                         RoGndMeshBuilder  (vertices, uv, normals, submeshes)
                                             │  plain arrays
                                             ▼
                     RoGndConverter  (Editor/Gnd: ctx, materials, meshes, prefab, ledger)
@@ -196,7 +196,7 @@ Satisfies FR-3, FR-6, FR-7.
 public sealed class RoGndMeshData
 {
     public int ChunkColumn, ChunkRow;
-    public Vector3[] Positions; public Vector3[] Normals; public Vector2[] Uvs; public Vector2[] Uvs2;   // Unity space, chunk-local origin
+    public Vector3[] Positions; public Vector3[] Normals; public Vector2[] Uvs;   // Unity space, chunk-local origin (no second UV set, D6)
     public IReadOnlyList<RoGndSubmesh> Submeshes;                       // one per texture used in the chunk, ascending texture index
     public Vector3 Origin;                                              // chunk object position, Unity space
 }
@@ -226,8 +226,8 @@ public static class RoGndMeshBuilder
   - Chunk borders use the same normals, because they are computed before the cut: a vertex on a chunk border has the same normal in both chunks.
   - `Mesh.RecalculateNormals` is never used (it splits at every UV seam, which is the lighting bug of the old importers).
 - **Winding.** The quads are built in Ragnarok space and converted with `RoSpace.Point`; winding is reversed once with `RoSpace.ReverseWinding` (PLAN-0002 §4.3) and the top faces are checked by test to face up and each wall to face its lower side.
-- **Second UV set (`Uvs2`)** (not used for lighting the ground in real time; it exists only so a person who chooses to bake in Unity later has a stable unwrap, SPEC-0006 FR-6): every quad gets its own cell in a regular grid inside the chunk's `[0,1]` square, sorted in quad order (tops first by cube index, then walls), cell size `1 / ceil(sqrt(quadCount))`, each quad's corners inset by a fixed margin. No two quads overlap in `Uvs2`, and the result is deterministic. This replaces Unity's own unwrapping, whose output is not guaranteed stable across editor versions.
-- **Chunk origin.** Each chunk object is positioned at the Unity position of its first corner and its vertices are relative to it, so meshes keep small coordinates and a chunk can be moved or batched.
+- **No second UV set (D6).** The ground has no UV set of our own for lightmaps: lighting is Unity's real time lighting (OQ-2), and if a person later chooses to bake the ground or static models, Unity's built-in baking system is used (owner decision, 2026-11-18). A second UV set made per quad would also break the vertex merging above, since a merged corner can only have one value per UV set.
+- **Chunk origin.** Each chunk object is positioned at the Unity position of its first grid corner at height 0 (`CornerUnity(cx · ChunkSize, cz · ChunkSize, 0)`) and its vertices are relative to it, so meshes keep small coordinates and a chunk can be moved or batched.
 - All of this is pure: arrays in, arrays out.
 
 ### 4.5 Materials and textures
@@ -290,7 +290,6 @@ Satisfies every FR of the spec. EditMode NUnit tests in `Uninarok.RoImport.Tests
 | `RoGndNormalsTests` | 3, 7 | flat ground gives `up` at every vertex, including across chunk borders; a ramp gives a continuous normal field with no jump at cube borders; two tops with different textures share the normal at their common corner; a cliff top corner is not smoothed into the lower ground; wall normals are flat; two coplanar walls side by side share their common corners; the vertex count equals the distinct (position, uv) pairs plus the hard-edge vertices (D12) |
 | `RoGndWindingTests` | 1, 2, 3 | every top triangle faces up; every wall faces its lower side; mesh has no inside-out faces |
 | `RoGndChunkTests` | 6 | a 40 × 33 map gives 3 × 3 chunks with the right cube ranges; a quad belongs to the chunk of its cube; a wall at a chunk border is in its owner's chunk and meets the neighbour's top exactly; indices are 16-bit; submeshes are one per texture in ascending order; the two chunks that use one texture reference the same material (through the context) |
-| `RoGndUv2Tests` | (0006 FR-6) | no two quads overlap in `Uvs2`; all coordinates are in `[0,1]`; deterministic across runs |
 | `RoGndPickerTests` | 9 | `RoGndPicker` returns the right cube and face for rays from above and from the side, and nothing for a ray that misses |
 | `RoGndWriterTests` | 6 | a synthetic map converts to the prefab and chunk meshes at the paths of §3; the prefab has one chunk per chunk with static flags; materials are the shared ones; a missing texture gives the placeholder and one warning |
 | `RoGndIdempotencyTests` | (0002 FR-5, FR-16) | second conversion is `Skipped`; a forced second conversion leaves every mesh byte-identical and every GUID unchanged; the prefab and a scene that references a chunk mesh keep their references |
@@ -323,7 +322,7 @@ Satisfies every FR of the spec. EditMode NUnit tests in `Uninarok.RoImport.Tests
 | D3 | Corner positions from one function and one height per owning cube, so shared corners are bit-identical; walls take both edges from the owners | Computing wall corners from neighbours' averages or re-deriving positions per face (hairline cracks) |
 | D4 | Normals welded by (grid corner, height) over the whole map, angle-weighted, walls flat (made precise by D12) | `Mesh.RecalculateNormals` per chunk (splits at every vertex that is not shared, which is the old grid pattern and seams at chunk borders) |
 | D5 | 16 × 16 cube chunks, one mesh and renderer per chunk, one material per texture | One mesh for the whole map (no culling, 32-bit indices); one mesh per cube (draw-call count) |
-| D6 | Second UV set from a regular cell grid per chunk, computed by us | `Unwrapping.GenerateSecondaryUVSet` (not guaranteed stable across editor versions, breaks byte-identical output) |
+| D6 | (owner, 2026-11-18) No second UV set in the ground: lighting is real time, and any baking a person chooses later uses Unity's built-in system. Vertices merge on (position, uv, normal group) as D12 says, which smooth lighting needs | A second UV set from a regular cell grid per quad, computed by us (§4.4 first draft): a merged corner cannot sit in two quads' cells, so it would have forced one vertex per quad corner, duplicated vertices and lit seams; `Unwrapping.GenerateSecondaryUVSet` at conversion (not stable across editor versions, breaks byte-identical output) |
 | D7 | Gizmos hang on `MeshFilter` and chunk mesh paths; the data is read again from the source through GRF | A scene component for gizmos (cannot live in an editor-only assembly, a runtime marker would put importer types in builds); a generated debug data file (owner did not approve it) |
 | D8 | Picking is our own, pure and tested | Unity's physics picking against the meshes (cannot return the cube, its heights or its tile ids) |
 | D9 | The rules table of §4.3 (diagonal, wall facing, UV corner order, row direction) is verified by T0.3 against the reference viewer before any builder code | Choosing from memory of other loaders without checking |

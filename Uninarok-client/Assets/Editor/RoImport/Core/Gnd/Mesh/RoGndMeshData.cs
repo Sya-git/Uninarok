@@ -6,7 +6,8 @@ namespace Uninarok.RoImport.Core.Gnd
 {
     /// <summary>
     /// The mesh of one ground chunk as plain arrays (PLAN-0004 4.4): Unity space, positions relative to
-    /// <see cref="Origin"/>, one submesh per texture used in the chunk in ascending texture order.
+    /// <see cref="Origin"/>, one submesh per texture used in the chunk in ascending texture order. There is no second UV
+    /// set (PLAN-0004 D6).
     /// </summary>
     public sealed class RoGndMeshData
     {
@@ -14,7 +15,6 @@ namespace Uninarok.RoImport.Core.Gnd
         public Vector3[] Positions = Array.Empty<Vector3>();
         public Vector3[] Normals = Array.Empty<Vector3>();
         public Vector2[] Uvs = Array.Empty<Vector2>();
-        public Vector2[] Uvs2 = Array.Empty<Vector2>();
         public IReadOnlyList<RoGndSubmesh> Submeshes = Array.Empty<RoGndSubmesh>();
         /// <summary>The chunk object's position in Unity space.</summary>
         public Vector3 Origin;

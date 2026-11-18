@@ -6,7 +6,7 @@ namespace Uninarok.RoImport.Core.Gnd
 {
     /// <summary>
     /// Builds the chunk meshes of a ground (PLAN-0004 4.4): welded vertices, map-wide angle-weighted normals, walls flat,
-    /// winding reversed once, chunk origin and second UV set. Pure: arrays in, arrays out.
+    /// winding reversed once and chunk origin. Pure: arrays in, arrays out.
     /// </summary>
     public static class RoGndMeshBuilder
     {
