@@ -62,7 +62,9 @@ namespace Uninarok.RoImport.Tests.Rsm
         {
             var cube = RsmTestModels.Cube(perFaceUv: false);
             var mesh = Build(cube, RsmShadeType.Flat);
-            Assert.AreEqual(36, mesh.Positions.Length, "every face corner is its own vertex");
+            // D11: the two coplanar triangles of a side share their corners; corners split only where the normal
+            // changes, so each of the 6 sides has its own 4 corners.
+            Assert.AreEqual(24, mesh.Positions.Length, "4 corners per side");
             foreach (var s in mesh.Submeshes)
                 for (int i = 0; i < s.Triangles.Length; i += 3)
                 {

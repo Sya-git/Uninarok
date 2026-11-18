@@ -68,10 +68,17 @@ namespace Uninarok.RoImport.Core.Rsm
             var uvs = new List<Vector2>();
             var vertexIndex = new Dictionary<(int, float, float, int), int>();
             var groups = new SortedDictionary<(int texture, int twoSided), List<int>>();
+            var flatGroups = new Dictionary<(int, int, int), int>();
             for (int fi = 0; fi < faces.Count; fi++)
             {
                 var face = faces[fi].Face;
-                int group = RsmShading.GroupKey(effective, fi, face.SmoothGroup);
+                int flatGroup = 0;
+                if (effective == RsmShadeType.Flat)
+                {
+                    var flatKey = RsmShading.FlatKey(faceNormal[fi]);
+                    if (!flatGroups.TryGetValue(flatKey, out flatGroup)) flatGroups.Add(flatKey, flatGroup = flatGroups.Count);
+                }
+                int group = RsmShading.GroupKey(effective, flatGroup, face.SmoothGroup);
                 var key = (faces[fi].Texture, face.TwoSided ? 1 : 0);
                 if (!groups.TryGetValue(key, out var triangles)) groups.Add(key, triangles = new List<int>());
 

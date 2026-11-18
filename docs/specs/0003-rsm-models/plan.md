@@ -266,7 +266,7 @@ public static class RsmMeshBuilder
 | Shade type | Normal group key | Result |
 |---|---|---|
 | Smooth, or the version has no shade type | `(welded position, face.SmoothGroup)` | faces that meet at a position and are in the same smoothing group share one normal, **across texture seams too** because the position is welded by value, not by (position, uv); faces in different groups keep a hard edge; a version without smoothing groups has every face in group 0, which is smooth everywhere as in the original client |
-| Flat | face index | every face keeps its own normal (crisp facets) |
+| Flat | the face's normal, rounded to 1e-4 (D11) | every face keeps its own normal (crisp facets); coplanar faces share their corners |
 | None | a constant | all vertices get one fixed normal (up, in Unity space), which gives the uniform look of an unshaded model; verified on the `iz_enchant` and `이즈루드초소` references in T0.3 |
 
 - A shared normal is the sum of the face normals at that position and group, **weighted by the corner angle** of each face at that position and then normalized. Angle weighting makes the result independent of how a surface is triangulated.
@@ -381,10 +381,9 @@ Satisfies every FR of the spec. EditMode NUnit tests in `Uninarok.RoImport.Tests
 | D6 | One mesh per node, nodes stay separate (spec non-goal), with the node's own offset baked into its vertices | Merging static nodes (non-goal); baking the whole chain into vertices (breaks animation) |
 | D7 | Two-sided faces go to separate submeshes with a two-sided material | Duplicating the triangles with reversed winding (doubles index data, breaks smooth normals); making whole models two-sided (see-through walls and z-fighting) |
 | D8 | Mesh and animation assets are separate files per node and per model | Sub-assets of the prefab (read-only in the editor, spec FR-10 forbids) |
-
 | D9 | (T0.2, T0.3, 2026-11-17) The offset matrix's file groups are columns; the reader sets GRF's display encoding to Korean for the read; the rules table has a verified row for 1.4 only, and 1.5 and 2.x stay `UnsupportedRsmVersion` until a file of that version is checked | Reading the matrix as rows (rotates 139 of 140 models wrongly); post-correcting garbled texture names (lossy); a guessed "conservative default row" for other 1.x versions (§4.4 first draft: nothing in the working data can verify it) |
-
 | D10 | (T0.4, 2026-11-17) 1.x key times in milliseconds; per-node loop on the node's last key time, one clip and one animator layer per distinct loop length; linear quaternion blending written key for key (Unity's own curve sampling), no slerp subdivision and no sign flips | One clip of `AnimationLength` for the whole model (wrong period for `라헬/분수`'s 19.36 s nodes); one clip of the least common multiple of the loop lengths (25.8 min for `라헬/분수`); slerp subdivision (§4.8 first draft: the reference does not slerp, so it would change the motion); flipping key signs to the short way (changes the 174° swings of `라헬/분수`) |
+| D11 | (T4.4, 2026-11-18) Flat shading keys a corner's normal group by the face's normal (rounded to 1e-4), not by the face index: coplanar faces share their corners, every edge between faces of different normals stays hard. The flat reference models drop below three vertices per face as FR-4 asks | Face index (§4.6 first draft): the flat models `넝쿨01`, `동굴입구`, `iz_bridge01` kept exactly three vertices per face, duplicating corners whose position, uv and normal are all equal |
 
 Items for the owner's approval: D3's spec wording, and the animation budget of §4.8 (D5).
 

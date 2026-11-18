@@ -1,5 +1,8 @@
+using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
+using Uninarok.RoImport.Core.Results;
 using Uninarok.RoImport.Core.Formats;
 using Uninarok.RoImport.Core.Paths;
 using Uninarok.RoImport.Core.Rsm;
@@ -67,6 +70,135 @@ namespace Uninarok.RoImport.Tests.Rsm
             // The converted transform is RoSpace of the same values (4.5).
             Near(RoSpace.Point(e.Position), RsmSpace.LocalPosition(root), "converted position");
             Near(e.Scale, RsmSpace.LocalScale(root), "converted scale");
+        }
+
+        // ---- part 2 (T4.4, FR-4, FR-5): meshes of the real models ----
+
+        static IEnumerable<string> AllReferenceModels() => RsmTestData.ReferenceModels();
+
+        sealed class Built
+        {
+            public RoRsm Rsm;
+            public RsmRestPose Rest;
+            public RsmMeshData[] Meshes;
+            public RoReport Report;
+        }
+
+        static Built BuildAll(string model)
+        {
+            byte[] bytes = RsmTestData.ModelBytes(model);
+            Assert.IsTrue(RoRsmReader.TryRead(RoPath.Parse("model/" + model), bytes, out var rsm, out var reason), reason);
+            Assert.IsTrue(RsmRules.TryGet(rsm.VersionMajor, rsm.VersionMinor, out var rules));
+            Assert.IsTrue(RsmHierarchy.TryBuild(rsm, out var tree, out var issue), issue?.ToString());
+            var rest = RsmPose.ComputeRest(rsm, tree, rules);
+            var report = new RoReport();
+            var meshes = new RsmMeshData[rsm.Nodes.Count];
+            for (int n = 0; n < meshes.Length; n++)
+                meshes[n] = RsmMeshBuilder.Build(rsm.Nodes[n], rsm.ShadeType, rsm.HasShadeType, rest.Vertex[n],
+                                                 RsmSpace.MirrorsWinding(rest.Vertex[n]), report, model);
+            return new Built { Rsm = rsm, Rest = rest, Meshes = meshes, Report = report };
+        }
+
+        static float Z(float f) => f == 0f ? 0f : f;
+
+        [TestCaseSource(nameof(AllReferenceModels))]
+        public void Meshes_HaveFewerVerticesThanThreePerFace_AndEveryTriangle(string model)
+        {
+            var b = BuildAll(model);
+            int faces = b.Rsm.Nodes.Sum(n => n.Faces.Length);
+            int vertices = b.Meshes.Sum(m => m.Positions.Length);
+            Assert.AreEqual(faces, b.Meshes.Sum(m => m.TriangleCount), "triangle count");
+            Assert.Less(vertices, 3 * faces, "vertex count against the old importer's 3 per face");
+            CollectionAssert.IsEmpty(b.Report.Issues, "no bad index in the reference data");
+            TestContext.Out.WriteLine($"{model}: {vertices} vertices for {faces} faces (old importer: {3 * faces})");
+        }
+
+        [TestCaseSource(nameof(AllReferenceModels))]
+        public void VertexCount_IsTheDistinctPositionUvPairs_PerNormalGroup(string model)
+        {
+            // FR-4 with D3: one vertex per distinct (position, uv); a hard edge adds exactly the vertices whose normal
+            // group differs (smoothing group for smooth models, the face for flat ones, nothing for none).
+            var b = BuildAll(model);
+            var shade = RsmShading.Effective(b.Rsm.ShadeType, b.Rsm.HasShadeType);
+            int expected = 0, pairs = 0;
+            for (int n = 0; n < b.Rsm.Nodes.Count; n++)
+            {
+                var node = b.Rsm.Nodes[n];
+                var keyed = new HashSet<(float, float, float, float, float, (int, int, int))>();
+                var plain = new HashSet<(float, float, float, float, float)>();
+                for (int fi = 0; fi < node.Faces.Length; fi++)
+                {
+                    var f = node.Faces[fi];
+                    // normal group: the smoothing group (smooth), the rounded face normal (flat, D11), none (none)
+                    var a = RsmSpace.Vertex(b.Rest.Vertex[n], node.Vertices[f.V0]);
+                    var faceNormal = Vector3.Cross(RsmSpace.Vertex(b.Rest.Vertex[n], node.Vertices[f.V2]) - a,
+                                                   RsmSpace.Vertex(b.Rest.Vertex[n], node.Vertices[f.V1]) - a).normalized;
+                    var group = shade == RsmShadeType.Flat ? RsmShading.FlatKey(faceNormal)
+                              : shade == RsmShadeType.Smooth ? (f.SmoothGroup, 0, 0) : (0, 0, 0);
+                    foreach (var (v, t) in new[] { (f.V0, f.T0), (f.V1, f.T1), (f.V2, f.T2) })
+                    {
+                        var p = RsmSpace.Vertex(b.Rest.Vertex[n], node.Vertices[v]);
+                        float u = Z(node.TexCoords[t].U), w = Z(1f - node.TexCoords[t].V);
+                        keyed.Add((Z(p.x), Z(p.y), Z(p.z), u, w, group));
+                        plain.Add((Z(p.x), Z(p.y), Z(p.z), u, w));
+                    }
+                }
+                expected += keyed.Count;
+                pairs += plain.Count;
+            }
+            int vertices = b.Meshes.Sum(m => m.Positions.Length);
+            Assert.AreEqual(expected, vertices, "distinct (position, uv, normal group)");
+            bool oneGroup = b.Rsm.Nodes.SelectMany(n => n.Faces).Select(f => f.SmoothGroup).Distinct().Count() <= 1;
+            if (shade == RsmShadeType.None || (shade == RsmShadeType.Smooth && oneGroup))
+                Assert.AreEqual(pairs, vertices, "exactly the distinct (position, uv) pairs");
+        }
+
+        [TestCase("izlude/iz_enchant.rsm")]
+        [TestCase("외부소품/이즈루드초소.rsm")]
+        public void ShadeNone_HasOneConstantNormal(string model)
+        {
+            var b = BuildAll(model);
+            Assert.AreEqual(RsmShadeType.None, b.Rsm.ShadeType);
+            foreach (var m in b.Meshes)
+                foreach (var n in m.Normals)
+                    Assert.That((n - Vector3.up).magnitude, Is.LessThan(1e-6f));
+        }
+
+        [TestCase("나무잡초꽃/넝쿨01.rsm")]
+        [TestCase("외부소품/동굴입구.rsm")]
+        [TestCase("izlude/iz_bridge01.rsm")]
+        public void ShadeFlat_EveryCornerHasItsFacesNormal(string model)
+        {
+            var b = BuildAll(model);
+            Assert.AreEqual(RsmShadeType.Flat, b.Rsm.ShadeType);
+            foreach (var m in b.Meshes)
+                foreach (var s in m.Submeshes)
+                    for (int i = 0; i < s.Triangles.Length; i += 3)
+                    {
+                        var p0 = m.Positions[s.Triangles[i]];
+                        var cross = Vector3.Cross(m.Positions[s.Triangles[i + 1]] - p0, m.Positions[s.Triangles[i + 2]] - p0);
+                        if (cross.sqrMagnitude < 1e-12f) continue;   // degenerate faces keep a default normal
+                        for (int k = 0; k < 3; k++)
+                            Assert.That((m.Normals[s.Triangles[i + k]] - cross.normalized).magnitude, Is.LessThan(1e-3f));
+                    }
+        }
+
+        [TestCase("나무잡초꽃/야자수01.rsm")]
+        [TestCase("프론테라/성_기둥.rsm")]
+        public void ShadeSmooth_SharesNormalsAcrossUvSeams(string model)
+        {
+            // Vertices at one position with different uvs and one shared normal: a texture seam without a lighting seam.
+            var b = BuildAll(model);
+            Assert.AreEqual(RsmShadeType.Smooth, b.Rsm.ShadeType);
+            int seams = 0;
+            foreach (var m in b.Meshes)
+            {
+                foreach (var g in Enumerable.Range(0, m.Positions.Length).GroupBy(i => m.Positions[i]).Where(g => g.Count() > 1))
+                    if (g.Select(i => m.Uvs[i]).Distinct().Count() == g.Count() && g.Select(i => m.Normals[i]).Distinct().Count() == 1)
+                        seams++;
+                foreach (var nrm in m.Normals) Assert.AreEqual(1f, nrm.magnitude, 1e-4f);
+            }
+            Assert.Greater(seams, 0);
         }
     }
 }

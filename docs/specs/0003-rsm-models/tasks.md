@@ -61,7 +61,7 @@
   *Done when:* the tests compile and are ignored with `pending T4.3`.
 - [x] **T4.3** Implement `Core/Rsm/Mesh/`: `RsmMeshBuilder`, `RsmMeshData`, `RsmSubmesh`, `RsmShading` per plan §4.6 (weld by value, vertex key of position, uv and normal group, angle-weighted normals, winding reversed once through `RoSpace.ReverseWinding`, submeshes). (FR-4, FR-5, FR-6)
   *Done when:* `[Ignore]` removed and the tests of T4.1 and T4.2 pass.
-- [ ] **T4.4** Add `RsmReferenceTests` part 2 (`NeedsData`): for every reference model the vertex count is lower than three per face with an equal triangle count; the sum over nodes of distinct (position, uv) pairs equals the vertex count for the smooth models of the reference set; shade-type samples (none, flat, smooth) produce the normal rules of plan §4.6. (FR-4, FR-5)
+- [x] **T4.4** Add `RsmReferenceTests` part 2 (`NeedsData`): for every reference model the vertex count is lower than three per face with an equal triangle count; the sum over nodes of distinct (position, uv) pairs equals the vertex count for the smooth models of the reference set; shade-type samples (none, flat, smooth) produce the normal rules of plan §4.6. (FR-4, FR-5)
   *Done when:* the tests pass on the reference data.
 
 ## Phase 5: Animation data
