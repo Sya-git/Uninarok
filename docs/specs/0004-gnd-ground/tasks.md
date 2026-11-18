@@ -21,8 +21,9 @@
 
 ## Phase 0: Verify before building
 
-- [ ] **T0.1** Check the data: list the three reference maps of `0003-rsm-models/reference-models.md` §4 in the source folder (`map/<name>.gnd`, plus `.gat` and `.rsw` for later specs), count every `.gnd` under `map/`, and record the counts and any missing file in the PR. Confirm that the map files are in the `map` folder of the data root (plan §2). (FR-6)
+- [x] **T0.1** Check the data: list the three reference maps of `0003-rsm-models/reference-models.md` §4 in the source folder (`<name>.gnd`, plus `.gat` and `.rsw` for later specs), count every `.gnd`, and record the counts and any missing file in the PR. Confirm which folder of the data root holds the map files (plan §2). (FR-6)
   *Done when:* every reference map file exists or its absence is listed and agreed with the owner; the counts and the folder are in the PR.
+  *Result (2026-11-18):* the map files are at the data root, not in `map/` (owner agreed, plan D11). All nine files present: prontera `.gnd` 3,334,150 B, `.gat` 2,446,094 B, `.rsw` 417,262 B; izlude 2,327,838 / 1,608,014 / 228,430 B; prt_fild08 5,272,734 / 3,200,014 / 219,402 B. The data set has 3 `.gnd`, 3 `.gat`, 3 `.rsw` in total; the largest map is prt_fild08.
 - [ ] **T0.2** Map GRF to the file fields (plan §4.1). In a scratch editor script, load each reference map through the GRF `Gnd` class and print the header (version, width, height, zoom), the texture list and the first and last cubes. Compare them with the raw values of the same files (a handful of cubes and tiles, including one with tile id `-1` and one with tile id `0`). Confirm that `BottomLeft`, `BottomRight`, `TopLeft`, `TopRight` are the corners `H00`, `H10`, `H01`, `H11`, that the tile coordinates map to `Uv00`, `Uv10`, `Uv01`, `Uv11`, that the cube order is `row * Width + column` on a non-square map, and which GRF members are derived and must not be used. Write the result into `plan.md` §4.1 as a table: one row per `RoGnd` field with the GRF member that supplies it. Record the version and zoom of every reference map. (FR-4, FR-5)
   *Done when:* every `RoGnd` field has a GRF member, the derived members are listed as unused, the versions and zooms of the three maps are recorded, and the table is in `plan.md`.
 - [ ] **T0.3** Verify the rules table of plan §4.3. In a scratch editor script build throwaway meshes of each reference map from the GRF values mapped in T0.2, using the candidate rules (diagonal `H10`–`H01`, wall facing toward the lower side, wall UV order as for tops, `RowDirection`, V axis flip), and compare them with the reference viewer top-down and from the side, on a cliff, a sloped area, a gap and the map border. For any rule that differs, change the rule (not the map) and repeat. Check that the row direction also matches the placement of at least two RSW objects on the ground (a model on a cliff edge and a model at the map corner). Record in `plan.md` §4.3: the final value of each rule, the `RoGndRules` table row for the versions found, and "result by map" (match, or the difference with its reason). (FR-1, FR-2, FR-4)
@@ -66,7 +67,7 @@
   *Done when:* the tests compile and are ignored with `pending T5.2`.
 - [ ] **T5.2** Implement `Editor/Gnd/RoGndConverter`, `RoGndPrefabBuilder` and `RoGndOutputPaths`; add `RoJobKind.Ground`, the `RoConverterRegistry` entry, `RoImport.Ground(string)` and `RoImportContext.Ground(RoPath)`; the ledger category `ground` lists the prefab and meshes as outputs and the texture hashes as dependencies. (FR-1, FR-6)
   *Done when:* `[Ignore]` removed and the tests of T5.1 pass.
-- [ ] **T5.3** Add the kind `Ground` to the window and the menu `Tools/Ragnarok/Convert All Grounds` (`Enumerate("map/")`, extension `.gnd`). (FR-6)
+- [ ] **T5.3** Add the kind `Ground` to the window and the menu `Tools/Ragnarok/Convert All Grounds` (`Enumerate("")`, extension `.gnd`, plan D11). (FR-6)
   *Done when:* a synthetic ground converts from the window and from the menu, with progress and cancel working, as in the foundation.
 
 ## Phase 6: Gizmos and picking
@@ -82,7 +83,7 @@
 
 ## Phase 7: Whole data set
 
-- [ ] **T7.1** Add `RoGndReferenceTests` (`NeedsData`): each reference map converts with no failure; the chunk and triangle counts equal an oracle computed from the table read through GRF; the largest map converts within the batch; a second batch skips everything; every `.gnd` under `map/` in the source folder reads, with the failures listed by name. (FR-1 to FR-6)
+- [ ] **T7.1** Add `RoGndReferenceTests` (`NeedsData`): each reference map converts with no failure; the chunk and triangle counts equal an oracle computed from the table read through GRF; the largest map converts within the batch; a second batch skips everything; every `.gnd` in the source folder reads, with the failures listed by name. (FR-1 to FR-6)
   *Done when:* the tests pass on the owner's data.
 - [ ] **T7.2** Run **Convert All Grounds** on the full data set. Record the number converted, warnings by code, failures, the total time and the largest map's chunk and vertex counts. (FR-6)
   *Done when:* every map converts or its failure is one listed issue, a second run skips all, and the numbers are in the PR.

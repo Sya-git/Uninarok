@@ -24,7 +24,7 @@
 Satisfies FR-1, FR-2, FR-3, FR-6.
 
 ```
- map/x.gnd ──(IRoSource)──> bytes
+   x.gnd ──(IRoSource)──> bytes
                              │
                    RoGndReader (GRF adapter)                       Core/Formats
                              │
@@ -44,7 +44,7 @@ Satisfies FR-1, FR-2, FR-3, FR-6.
                     meshes ── prefab "Ground"        (gizmos read the source again, §4.7)
 ```
 
-Data flow for one request `RoImport.Ground("prontera")` (the ground of the map named `prontera`, source `map/prontera.gnd`, the map files being in the data root's `map` folder, to be confirmed by T0.1):
+Data flow for one request `RoImport.Ground("prontera")` (the ground of the map named `prontera`, source `prontera.gnd`; the map files sit directly in the data root, as in the original client, confirmed by T0.1, see D11):
 
 1. Ledger check (source hash, rules version, texture dependencies): current → `Skipped`.
 2. Read through GRF into `RoGnd`; failure is one `CorruptFile` issue and no output.
@@ -70,7 +70,7 @@ Satisfies FR-6, FR-9.
 | `Editor/Gnd/Gizmos/` | `RoGndGizmos` (`DrawGizmo` methods), `RoGndSceneTools` (hover data, layer overlay), `RoGndGizmoSettings`, `RoGndSourceCache` | Editor |
 | `Assets/Tests/EditMode/RoImport/Gnd/` | tests; synthetic maps built in code | `Uninarok.RoImport.Tests` |
 
-Output paths (through `RoOutputPaths.Mirror`, PLAN-0002 §4.5), for a source `map/<name>.gnd`:
+Output paths (through `RoOutputPaths.Mirror`, PLAN-0002 §4.5), for a source `<name>.gnd` at the data root (the output keeps the `map/<name>/` folder, built from the map name, D11):
 
 | Output | Path |
 |---|---|
@@ -208,7 +208,7 @@ public sealed class RoGndConverter : IRoConverter        // registers RoJobKind.
 - The prefab has a root `Ground` and one `Chunk_<cx>_<cz>` child per chunk, each with `MeshFilter`, `MeshRenderer` (materials in submesh order, shadow receiving on, light probes off), and static editor flags for lightmap contribution, batching and occlusion (SPEC-0006 FR-6). The root has no transform of its own: chunks are positioned in map space, so the map scene (PLAN-0006) places the prefab at the origin.
 - The ledger entry (category `ground`) lists as outputs the prefab and every chunk mesh; as dependencies the source hash of every texture the ground uses. All outputs are written only after the whole ground is built in memory (no partial output on failure); meshes are upserted in place, so references from a committed map scene survive a re-conversion.
 - Expected conditions are warnings (PLAN-0002 §4.9), with new `RoIssueCode` values `GndBadIndex` and `UnsupportedGndVersion` (a version GRF reads but this plan has no rules row for is reported once and gives no output). No version is guessed; the three reference maps fix the first row of the table.
-- The menu and window gain the kind `Ground` and `Tools/Ragnarok/Convert All Grounds` (`Enumerate("map/")`, extension `.gnd`).
+- The menu and window gain the kind `Ground` and `Tools/Ragnarok/Convert All Grounds` (`Enumerate("")`, the whole data root, extension `.gnd`; D11).
 
 ### 4.7 Gizmos and picking: `RoGndGizmos`, `RoGndSceneTools`, `RoGndSourceCache`
 
@@ -283,6 +283,7 @@ Satisfies every FR of the spec. EditMode NUnit tests in `Uninarok.RoImport.Tests
 | D8 | Picking is our own, pure and tested | Unity's physics picking against the meshes (cannot return the cube, its heights or its tile ids) |
 | D9 | The rules table of §4.3 (diagonal, wall facing, UV corner order, row direction) is verified by T0.3 against the reference viewer before any builder code | Choosing from memory of other loaders without checking |
 | D10 | FR-8 is not implemented: owner answered OQ-2 with real time lighting only | A baked-shadow shader and lightmap atlas |
+| D11 | Map sources are `<name>.gnd` at the data root (T0.1 found no `map/` folder; the original client stores maps there too). Batch enumeration covers the whole root and filters by extension; output paths keep `Art/Imported/map/<name>/` (owner decision, 2026-11-18) | Moving the source files into a `map/` folder (differs from the client layout) |
 
 Items for the owner: none open.
 
