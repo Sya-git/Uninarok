@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [spec.md](spec.md) (SPEC-0005) |
-| **Status** | Approved |
+| **Status** | Implemented |
 | **Audience** | Architects, senior developers, AI agents |
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. Shared rules (paths, units and axes, results, writer, ledger, batch) come from [PLAN-0002](../0002-ro-import-foundation/plan.md); the map space (`RoMapSpace`), the ground rules and the pure ground height sampler come from [PLAN-0004](../0004-gnd-ground/plan.md). Reference maps are in [`../0003-rsm-models/reference-models.md`](../0003-rsm-models/reference-models.md) §4.
@@ -312,13 +312,13 @@ Items for the owner: approve D1 (per-corner heights), the new runtime assembly `
 
 ## 10. Traceability
 
-| FR | Plan sections |
-|---|---|
-| FR-1 | 4.1, 4.2, 4.3, 6 |
-| FR-2 | 4.3, 6 |
-| FR-3 | 4.3, 4.4, 6 |
-| FR-4 | 3, 4.3, 5, 6 |
-| FR-5 | 4.3, 6 |
-| FR-6 | 4.3, 4.5, 6 |
-| FR-7 | 4.6, 6 |
-| FR-8 | 4.5, 6 |
+| FR | Plan sections | Evidence (TASKS-0005 T8.2, 2026-11-18) |
+|---|---|---|
+| FR-1 | 4.1, 4.2, 4.3, 6 | `RoGatReaderTests` 7/7 and `RoMapDataReferenceTests.SampleQueries_EqualTheSourceCells` (105 cells per reference map: type, flags, four heights); `RoGatRulesTests` (the server table, pinned to `docs/data/GatCellType.md`); T8.1: identical to the Hercules pre-renewal cell map on prontera |
+| FR-2 | 4.3, 6 | `MapDataQueryTests` (cell (0, 0), last cell, edges, both triangles, outside on four sides, NaN, no allocation over 10,000 calls) |
+| FR-3 | 4.3, 4.4, 6 | `RoMapDataReferenceTests.WalkableCells_LieOnTheGround_OrAboveIt` (two-part check, D11); `RoGatBuilderTests`; T8.1: no map rotated, mirrored or offset |
+| FR-4 | 3, 4.3, 5, 6 | `MapDataAssemblyTests` (runtime assembly for all platforms, no editor, importer or GRF reference; D15: no player build) |
+| FR-5 | 4.3, 6 | `MapDataStorageTests` (19 data bytes per cell, linear); T7.2: file sizes recorded, no compression (D14) |
+| FR-6 | 4.3, 4.5, 6 | `RoMapDataWriterTests` (one asset at `Data/map/<name>.asset`, skipped rerun, byte-identical forced rerun, GUID and `MapRoot` reference kept); `RoMapDataBatchTests`; T7.2 |
+| FR-7 | 4.6, 6 | `RoMapDataGizmoSelectorTests` 15/15; T5.3 screenshots on prt_fild08 (colours by type, a toggle hides walls, region tool) |
+| FR-8 | 4.5, 6 | `RoGatImageTests`, `RoMapDataWriterTests` (image only when requested, point filtered, deterministic); T8.1 images north up |

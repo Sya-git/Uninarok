@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Approved |
+| **Status** | Implemented |
 | **Created** | 2026-11-16 |
 | **Owner** | _(fill in)_ |
 | **Plan** | [plan.md](plan.md) |

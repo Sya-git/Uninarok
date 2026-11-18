@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Approved |
+| **Status** | Implemented |
 
 **How to use this file**
 - Start only when TASKS-0002 phases 0 to 6 and TASKS-0004 phases 0 to 3 are done (the foundation, `RoMapSpace`, the ground rules). Tasks here use those contracts as written in PLAN-0002 and PLAN-0004.
@@ -108,8 +108,9 @@ No player build (owner, 2026-11-18, plan D15): the first draft's T7.3 is removed
   | prt_fild08 | 160,000 | 2 differ, both water (0 → 3) | 251 differ: 2 water, 249 layout cells |
 
   Matching: cliffs (type 5, 7,899 cells on prt_fild08), buildings and walls (type 1) and the map border are identical cell by cell where the GAT files are the same, so no map is rotated, mirrored or offset (prontera and izlude are not square). Water: the only differences against the pre-renewal cache are type-0 cells the server turns into water from the RSW water level (`map_readgat`), which plan §4.2 leaves to SPEC-0006. The renewal differences come from the data, not the converter: the client data has the pre-renewal prontera and prt_fild08 GAT files, while the server is built for renewal (`BACKLOG.md`). Image: `Uninarok-client/Screenshots/gat-t8/<map>_cells.png` (not committed, like `gat-t5`) show each map north up (prontera's castle at the top, izlude's decks and bridge); the image and the gizmos draw the same `RoGatImage.ColorOf(TypeAt(x, z))` of the same asset, and `RoGatImageTests` pins the image's row direction; the gizmo screenshots on the real map are those of T5.3. A further gizmo screenshot on prontera was not taken: the screen capture method reads whatever window is in front, so it was dropped.
-- [ ] **T8.2** Close: verify each FR of the spec against the tests and manual evidence; set the status of `spec.md`, `plan.md` and `tasks.md` to `Implemented`; move leftovers to `docs/specs/BACKLOG.md`.
+- [x] **T8.2** Close: verify each FR of the spec against the tests and manual evidence; set the status of `spec.md`, `plan.md` and `tasks.md` to `Implemented`; move leftovers to `docs/specs/BACKLOG.md`.
   *Done when:* the traceability table of the plan has a passing test or recorded evidence for each of FR-1 to FR-8 and the leftovers are in `BACKLOG.md`.
+  *Result (2026-11-18):* plan §10 lists the evidence of every FR. Tests run in the editor: `Uninarok.Map.Tests` 36/36; `Uninarok.RoImport.Tests.Gat` 68/68 (with the reference maps); `RoGroundSamplerTests` 7/7; the rest of the importer suite unchanged and passing (Gnd 105/105, Rsm 243/243 without `RsmReferenceConversionTests`, the top-level classes 321/321). `RsmReferenceConversionTests` (every reference model, untouched by this spec) ran past the MCP's time limit twice, so its result was not seen. Leftovers in `BACKLOG.md`: map data compression or LFS (D14), the pre-renewal client data against the renewal server (T8.1); handed to SPEC-0006: the RSW water-level rule (plan §4.2) and the map settings of the asset (§4.3).
 
 ---
 
