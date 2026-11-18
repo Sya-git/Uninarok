@@ -74,7 +74,7 @@ Output paths (through `RoOutputPaths.Mirror`, PLAN-0002 §4.5), for a source `<n
 
 | Output | Path |
 |---|---|
-| Ground prefab | `Art/Imported/map/<name>/<name>_ground.prefab` (root `Ground`, one child `Chunk_<cx>_<cz>` per chunk) |
+| Ground prefab | `Art/Imported/map/<name>/<name>_ground.prefab` (root named after the file, `<name>_ground`, D14; one child `Chunk_<cx>_<cz>` per chunk) |
 | Chunk mesh | `Art/Imported/map/<name>/ground/chunk_<cx>_<cz>.asset` |
 
 ## 4. Component contracts
@@ -246,11 +246,13 @@ public sealed class RoGndConverter : IRoConverter        // registers RoJobKind.
 {
     public const int RulesVersion = 1;
     public RoResult<UnityEngine.Object> Convert(RoImportContext ctx, RoPath path);   // returns the ground prefab
+    internal static RoResult<GameObject> Write(RoImportContext ctx, RoPath path, RoGnd gnd, string sourceHash);   // D14
 }
+public sealed class RoGndOutputPaths { public string Prefab, Folder; public string Chunk(int cx, int cz); public static RoGndOutputPaths For(RoOutputRoots roots, RoPath source); }
 ```
 
 - `RoJobKind.Ground` is added to the enum and `RoConverterRegistry`, with the wrapper `RoImport.Ground(string mapName)` and `RoImportContext.Ground(RoPath)` so the map converter of PLAN-0006 requests the ground on demand (SPEC-0002 FR-6).
-- The prefab has a root `Ground` and one `Chunk_<cx>_<cz>` child per chunk, each with `MeshFilter`, `MeshRenderer` (materials in submesh order, shadow receiving on, light probes off), and static editor flags for lightmap contribution, batching and occlusion (SPEC-0006 FR-6). The root has no transform of its own: chunks are positioned in map space, so the map scene (PLAN-0006) places the prefab at the origin.
+- The prefab has a root (named after its file, D14) and one `Chunk_<cx>_<cz>` child per chunk, each with `MeshFilter`, `MeshRenderer` (materials in submesh order, shadow receiving on, light probes off), and static editor flags for lightmap contribution, batching and occlusion (SPEC-0006 FR-6). The root has no transform of its own: chunks are positioned in map space, so the map scene (PLAN-0006) places the prefab at the origin.
 - The ledger entry (category `ground`) lists as outputs the prefab and every chunk mesh; as dependencies the source hash of every texture the ground uses. All outputs are written only after the whole ground is built in memory (no partial output on failure); meshes are upserted in place, so references from a committed map scene survive a re-conversion.
 - Expected conditions are warnings (PLAN-0002 §4.9), with new `RoIssueCode` values `GndBadIndex` and `UnsupportedGndVersion` (a version GRF reads but this plan has no rules row for is reported once and gives no output). No version is guessed; the three reference maps fix the first row of the table.
 - The menu and window gain the kind `Ground` and `Tools/Ragnarok/Convert All Grounds` (`Enumerate("")`, the whole data root, extension `.gnd`; D11).
@@ -330,6 +332,7 @@ Satisfies every FR of the spec. EditMode NUnit tests in `Uninarok.RoImport.Tests
 | D11 | Map sources are `<name>.gnd` at the data root (T0.1 found no `map/` folder; the original client stores maps there too). Batch enumeration covers the whole root and filters by extension; output paths keep `Art/Imported/map/<name>/` (owner decision, 2026-11-18) | Moving the source files into a `map/` folder (differs from the client layout) |
 | D12 | (owner, 2026-11-18) Vertex de-duplication and smoothing follow PLAN-0003 §4.6 (D3, D11): vertex key `(welded position, uv, normal group)`; tops are one smoothing group across texture seams; walls are flat with the face normal (rounded to 1e-4) as their group, so coplanar walls share corners; angle-weighted sums; never `RecalculateNormals` | A ground-only key `(position, uv, normal)` and a per-face normal for every wall (§4.4 first draft): coplanar walls along one cliff kept duplicate corners, and the two importers would weld and shade by different rules |
 | D13 | (T1.2, 2026-11-18) `RoGndReader.TryRead` takes an optional `RoReport`, into which it reports `GndBadIndex` once per map with a count; the bad id is replaced by `-1` in `RoGnd`, so no later stage sees it | Keeping the §4.1 first-draft signature without a report (the rule "reported once" had nowhere to go); leaving bad ids in `RoGnd` for the surface builder to report (every stage after the reader would have to check them again) |
+| D14 | (T5.1, 2026-11-18) The ground prefab's root is named after its file (`<name>_ground`), because Unity names a prefab asset's root after the file; the map scene (PLAN-0006) may name its instance `Ground`. `RoGndConverter.Write(ctx, path, gnd, sourceHash)` converts a ground already read, as `RoRsmConverter.Write` does, so writer tests use maps built in code | A root named `Ground` in a file named `<name>_ground.prefab` (Unity renames it on save); writer tests only on real data (they would need the data folder and a GND writer of our own) |
 
 Items for the owner: none open.
 
