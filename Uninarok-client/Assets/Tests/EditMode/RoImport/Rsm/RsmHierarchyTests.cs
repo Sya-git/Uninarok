@@ -6,7 +6,6 @@ using Uninarok.RoImport.Core.Rsm;
 namespace Uninarok.RoImport.Tests.Rsm
 {
     // TASKS-0003 T2.1 (FR-1): parents are resolved by name, independent of file order (PLAN-0003 4.2).
-    [Ignore("pending T2.2")]
     public class RsmHierarchyTests
     {
         static RoRsmNode N(string name, string parent = "") => new RoRsmNode { Name = name, ParentName = parent };
