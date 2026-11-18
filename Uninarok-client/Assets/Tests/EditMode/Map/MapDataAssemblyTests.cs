@@ -8,7 +8,6 @@ namespace Uninarok.Map.Tests
 {
     // TASKS-0005 T1.1, T1.3 (FR-4, PLAN-0005 4.3, D3): the map data lives in a runtime assembly that references no editor
     // and no importer code, so it exists in player builds without the source files.
-    [Ignore("pending T1.3")]
     public class MapDataAssemblyTests
     {
         const string AssemblyName = "Uninarok.Map";

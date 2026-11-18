@@ -3,7 +3,6 @@ using NUnit.Framework;
 namespace Uninarok.Map.Tests
 {
     // TASKS-0005 T1.2 / T1.3 (FR-5): flat storage of at most 24 bytes per cell (19 by PLAN-0005 4.3), linear in cells.
-    [Ignore("pending T1.3")]
     public class MapDataStorageTests
     {
         [Test]

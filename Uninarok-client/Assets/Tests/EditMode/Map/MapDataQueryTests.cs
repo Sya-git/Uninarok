@@ -6,7 +6,6 @@ namespace Uninarok.Map.Tests
 {
     // TASKS-0005 T1.2 / T1.3 (FR-2): cell and position queries of PLAN-0005 4.3. Positions are built from the cell
     // geometry (origin, cell size, row sign), so non-square maps and both row signs are covered.
-    [Ignore("pending T1.3")]
     public class MapDataQueryTests
     {
         const float Eps = 1e-5f;

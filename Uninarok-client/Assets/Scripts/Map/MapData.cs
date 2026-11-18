@@ -76,40 +76,103 @@ namespace Uninarok.Map
             rawTypes = cellRawTypes;
         }
 
-        // ---- queries (FR-2): no allocation, no exception; implemented by TASKS-0005 T1.3 ----
+        // ---- queries (FR-2): no allocation, no exception ----
 
         /// <summary>The cell under a Unity position (y ignored); false outside the map.</summary>
-        public bool TryGetCell(Vector3 position, out int x, out int z) => throw new NotImplementedException();
+        public bool TryGetCell(Vector3 position, out int x, out int z)
+        {
+            if (TryLocal(position, out float fx, out float fz))
+            {
+                x = (int)fx;
+                z = (int)fz;
+                return true;
+            }
+            x = z = -1;
+            return false;
+        }
 
-        public bool InBounds(int x, int z) => throw new NotImplementedException();
+        public bool InBounds(int x, int z) => (uint)x < (uint)cellsX && (uint)z < (uint)cellsZ;
 
         /// <summary>Outside the map: false.</summary>
-        public bool IsWalkable(int x, int z) => throw new NotImplementedException();
+        public bool IsWalkable(int x, int z) => (FlagsAt(x, z) & MapCellFlags.Walkable) != 0;
 
         /// <summary>Outside the map: false.</summary>
-        public bool IsWalkable(Vector3 position) => throw new NotImplementedException();
+        public bool IsWalkable(Vector3 position) => TryGetCell(position, out int x, out int z) && IsWalkable(x, z);
 
         /// <summary>Outside the map: <see cref="MapCellType.Other"/>.</summary>
-        public MapCellType TypeAt(int x, int z) => throw new NotImplementedException();
+        public MapCellType TypeAt(int x, int z) => InBounds(x, z) ? (MapCellType)types[z * cellsX + x] : MapCellType.Other;
 
         /// <summary>Outside the map: <see cref="MapCellFlags.None"/>.</summary>
-        public MapCellFlags FlagsAt(int x, int z) => throw new NotImplementedException();
+        public MapCellFlags FlagsAt(int x, int z) => InBounds(x, z) ? (MapCellFlags)flags[z * cellsX + x] : MapCellFlags.None;
 
         /// <summary>Walkable with the water flag; outside the map: false.</summary>
-        public bool IsWalkableWater(int x, int z) => throw new NotImplementedException();
+        public bool IsWalkableWater(int x, int z)
+        {
+            const MapCellFlags both = MapCellFlags.Walkable | MapCellFlags.Water;
+            return (FlagsAt(x, z) & both) == both;
+        }
 
         /// <summary>The height under a position, interpolated on the cell's triangle (D5); false outside the map.</summary>
-        public bool TryGetHeight(Vector3 position, out float y) => throw new NotImplementedException();
+        public bool TryGetHeight(Vector3 position, out float y)
+        {
+            if (!TryLocal(position, out float fx, out float fz))
+            {
+                y = 0f;
+                return false;
+            }
+            int x = (int)fx, z = (int)fz;
+            y = Interpolate(z * cellsX + x, fx - x, fz - z);
+            return true;
+        }
 
-        /// <summary>The centre of a cell, y by the diagonal rule (PLAN-0005 4.4, D11).</summary>
-        public Vector3 CellCenter(int x, int z) => throw new NotImplementedException();
+        /// <summary>
+        /// The centre of a cell, y by the diagonal rule (PLAN-0005 4.4, D11). Outside the map the position is still the
+        /// centre of that grid cell, at height 0.
+        /// </summary>
+        public Vector3 CellCenter(int x, int z)
+        {
+            float y = InBounds(x, z) ? Interpolate(z * cellsX + x, 0.5f, 0.5f) : 0f;
+            return new Vector3(origin.x + (x + 0.5f) * cellSize, y, origin.y + (z + 0.5f) * cellSize * rowSign);
+        }
 
         /// <summary>H00, H10, H01, H11 of a cell in Unity units; outside the map: zero.</summary>
-        public Vector4 CornerHeights(int x, int z) => throw new NotImplementedException();
+        public Vector4 CornerHeights(int x, int z)
+        {
+            if (!InBounds(x, z)) return Vector4.zero;
+            int h = (z * cellsX + x) * 4;
+            return new Vector4(heights[h], heights[h + 1], heights[h + 2], heights[h + 3]);
+        }
 
         /// <summary>The raw GAT type's low byte of a cell, for tools and the inspector; outside: 0.</summary>
-        internal byte RawTypeAt(int x, int z) => InBoundsInternal(x, z) ? rawTypes[z * cellsX + x] : (byte)0;
+        internal byte RawTypeAt(int x, int z) => InBounds(x, z) ? rawTypes[z * cellsX + x] : (byte)0;
 
-        bool InBoundsInternal(int x, int z) => x >= 0 && z >= 0 && x < cellsX && z < cellsZ;
+        /// <summary>Fractional cell coordinates of a position; false outside the map (NaN fails every comparison).</summary>
+        bool TryLocal(Vector3 position, out float fx, out float fz)
+        {
+            fx = (position.x - origin.x) / cellSize;
+            fz = (position.z - origin.y) * rowSign / cellSize;
+            return fx >= 0f && fz >= 0f && fx < cellsX && fz < cellsZ;
+        }
+
+        /// <summary>
+        /// The height at (u, v) inside cell <paramref name="cell"/>, on the triangle the cell's diagonal puts it in, the
+        /// same split as the ground mesh (PLAN-0004 4.3, D5).
+        /// </summary>
+        float Interpolate(int cell, float u, float v)
+        {
+            int h = cell * 4;
+            float h00 = heights[h], h10 = heights[h + 1], h01 = heights[h + 2], h11 = heights[h + 3];
+            if (!diagonalFlip)
+            {
+                // diagonal H10 to H01: triangles (00, 10, 01) and (10, 11, 01)
+                return u + v <= 1f
+                    ? h00 + u * (h10 - h00) + v * (h01 - h00)
+                    : h11 + (1f - u) * (h01 - h11) + (1f - v) * (h10 - h11);
+            }
+            // diagonal H00 to H11: triangles (00, 10, 11) and (00, 11, 01)
+            return u >= v
+                ? h00 + u * (h10 - h00) + v * (h11 - h10)
+                : h00 + v * (h01 - h00) + u * (h11 - h01);
+        }
     }
 }
