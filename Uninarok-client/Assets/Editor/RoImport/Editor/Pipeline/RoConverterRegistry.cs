@@ -13,6 +13,7 @@ namespace Uninarok.RoImport.Editor.Pipeline
         public static IReadOnlyList<IRoConverter> All => new IRoConverter[]
         {
             new RoTextureConverter(),
+            new Rsm.RoRsmConverter(),
         };
 
         public static IRoConverter For(RoJobKind kind)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Uninarok.RoImport.Core.Formats;
 using Uninarok.RoImport.Core.Materials;
 using Uninarok.RoImport.Core.Output;
 using Uninarok.RoImport.Core.Paths;
@@ -27,8 +28,33 @@ namespace Uninarok.RoImport.Editor.Rsm
         /// <summary><c>.rsm</c> and <c>.rsm2</c> files.</summary>
         public bool Handles(RoPath path) => path.Extension == ".rsm" || path.Extension == ".rsm2";
 
-        public RoResult<Object> Convert(RoImportContext ctx, RoPath path) =>
-            RoResult<Object>.Failed(new RoIssue(RoIssueCode.Unexpected, path.Canonical, null, "not implemented yet (TASKS-0003 T6.4)"));
+        /// <summary>
+        /// Converts one model, or skips it when the ledger says it is current (source hash, rules version, outputs present,
+        /// texture dependencies unchanged). A missing, unreadable or unsupported model is one warning and a failed result.
+        /// </summary>
+        public RoResult<Object> Convert(RoImportContext ctx, RoPath path)
+        {
+            var result = ConvertModel(ctx, path);
+            return new RoResult<Object>(result.Status, result.Value, result.Failure);
+        }
+
+        static RoResult<GameObject> ConvertModel(RoImportContext ctx, RoPath path)
+        {
+            if (!ctx.Source.TryGetFile(path, out var file))
+                return Fail(ctx, path, RoIssueCode.SourceMissing, "no such file in the source folder");
+
+            string hash = file.ContentHash();
+            var ledger = ctx.Ledger(Category);
+            if (!ctx.Force && ledger.IsCurrent(path, hash, RulesVersion, ctx.Source, ctx.Writer))
+            {
+                var current = ctx.Writer.Load<GameObject>(RsmOutputPaths.For(ctx.Roots, path, System.Array.Empty<string>()).Prefab);
+                if (current != null) return RoResult<GameObject>.Skipped(current);
+            }
+
+            if (!RoRsmReader.TryRead(path, file.ReadAllBytes(), out var rsm, out string reason))
+                return Fail(ctx, path, RoIssueCode.CorruptFile, reason);
+            return Write(ctx, path, rsm, hash);
+        }
 
         /// <summary>
         /// Converts a model already read into <paramref name="rsm"/> and records it in the ledger with
@@ -89,6 +115,29 @@ namespace Uninarok.RoImport.Editor.Rsm
                 }
 
                 root = RsmPrefabBuilder.Build(modelName, tree, rest, meshes, materials);
+
+                // Animated models: one clip per loop group, one controller, an animator on the root (4.8, D5, D10).
+                if (animation.IsAnimated)
+                {
+                    var clips = new List<AnimationClip>();
+                    for (int g = 0; g < animation.Loops.Count; g++)
+                    {
+                        string clipPath = paths.Clip(g);
+                        string clipName = System.IO.Path.GetFileNameWithoutExtension(clipPath);
+                        ctx.Writer.UpsertObject(clipPath, RsmClipBuilder.Build(clipName, animation.Loops[g], tree));
+                        clips.Add(ctx.Writer.Load<AnimationClip>(clipPath));
+                        outputs.Add(clipPath);
+                    }
+                    ctx.Writer.UpsertController(paths.Controller,
+                        c => RsmControllerBuilder.Matches(c, clips), c => RsmControllerBuilder.Build(c, clips));
+                    outputs.Add(paths.Controller);
+
+                    var animator = root.AddComponent<Animator>();
+                    animator.runtimeAnimatorController = ctx.Writer.Load<UnityEditor.Animations.AnimatorController>(paths.Controller);
+                    animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
+                    animator.applyRootMotion = false;
+                }
+
                 var saved = ctx.Writer.SavePrefab(paths.Prefab, root);
                 if (saved.Status == RoStatus.Failed)
                 {

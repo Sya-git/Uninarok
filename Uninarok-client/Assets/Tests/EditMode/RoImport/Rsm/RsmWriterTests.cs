@@ -17,8 +17,8 @@ using Object = UnityEngine.Object;
 namespace Uninarok.RoImport.Tests.Rsm
 {
     // TASKS-0003 T6.2 (FR-1, FR-7, FR-10): converting hand-made models writes the prefab, one mesh per node and the shared
-    // materials as separate assets at the paths of PLAN-0003 §3. Writes under Assets/__RoImportTests.
-    [Ignore("pending T6.4")]
+    // materials as separate assets at the paths of PLAN-0003 §3. T6.4 (FR-8, FR-9): animated models get clips, a controller
+    // and an animator; a failing model writes nothing. Writes under Assets/__RoImportTests.
     public class RsmWriterTests
     {
         const string Texture = "a.bmp";   // fixture texture/a.bmp (keyed: a cutout material)
@@ -209,6 +209,111 @@ namespace Uninarok.RoImport.Tests.Rsm
             AssetDatabase.SaveAssetIfDirty(material);
             Assert.AreEqual(Color.red, AssetDatabase.LoadAssetAtPath<Material>(AssetDatabase.GetAssetPath(material)).GetColor("_BaseColor"));
             Assert.AreEqual(sourceBefore, Hash(RoFolderSourceTests.FixtureRoot), "the source folder is untouched");
+        }
+
+        // ---- T6.4 ----
+
+        [Test]
+        public void AnimatedModel_GetsAClipAControllerAndAnAnimator()
+        {
+            var model = WithTexture(RsmTestModels.TwoNodeAnimated());
+            var prefab = Convert(model);
+            var paths = Paths(model);
+
+            var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(paths.Clip(0));
+            Assert.IsNotNull(clip, paths.Clip(0));
+            Assert.IsTrue(AnimationUtility.GetAnimationClipSettings(clip).loopTime);
+            Assert.AreEqual(1f, clip.length, 1e-4f);
+            var bindings = AnimationUtility.GetCurveBindings(clip);
+            CollectionAssert.AreEquivalent(new[] { "m_LocalRotation.x", "m_LocalRotation.y", "m_LocalRotation.z", "m_LocalRotation.w" },
+                bindings.Select(b => b.propertyName));
+            Assert.IsTrue(bindings.All(b => b.path == "base/hand"));
+
+            var controller = AssetDatabase.LoadAssetAtPath<UnityEditor.Animations.AnimatorController>(paths.Controller);
+            Assert.IsNotNull(controller);
+            Assert.AreEqual(1, controller.layers.Length);
+            Assert.AreEqual("Play", controller.layers[0].stateMachine.defaultState.name);
+            Assert.AreSame(clip, controller.layers[0].stateMachine.defaultState.motion);
+            Assert.IsEmpty(controller.parameters);
+
+            var animator = prefab.GetComponent<Animator>();
+            Assert.IsNotNull(animator, "the animator is on the prefab root");
+            Assert.AreSame(controller, animator.runtimeAnimatorController);
+            Assert.AreEqual(AnimatorCullingMode.CullUpdateTransforms, animator.cullingMode);
+            Assert.IsFalse(animator.applyRootMotion);
+            Assert.IsEmpty(prefab.GetComponentsInChildren<MonoBehaviour>(true), "no runtime script");
+        }
+
+        [Test]
+        public void TwoLoopLengths_GiveTwoClipsAndTwoLayers()
+        {
+            var model = WithTexture(RsmTestModels.TwoNodeAnimated());
+            var slow = RsmTestModels.Cube("slow");
+            slow.ParentName = "base";
+            slow.RotKeys = new[] { new RoRsmRotKey(0, Quaternion.identity), new RoRsmRotKey(3000, Quaternion.AngleAxis(90f, Vector3.up)) };
+            model.Nodes = model.Nodes.Concat(new[] { slow }).ToArray();
+            Convert(model);
+            var paths = Paths(model);
+
+            Assert.AreEqual(1f, AssetDatabase.LoadAssetAtPath<AnimationClip>(paths.Clip(0)).length, 1e-4f);
+            Assert.AreEqual(3f, AssetDatabase.LoadAssetAtPath<AnimationClip>(paths.Clip(1)).length, 1e-4f);
+            var controller = AssetDatabase.LoadAssetAtPath<UnityEditor.Animations.AnimatorController>(paths.Controller);
+            Assert.AreEqual(2, controller.layers.Length);
+            Assert.AreEqual(1f, controller.layers[1].defaultWeight);
+        }
+
+        [Test]
+        public void FailingModel_LeavesNoPartialOutput()
+        {
+            // a cycle fails before anything is written
+            var a = RsmTestModels.Cube("a");
+            a.ParentName = "b";
+            var b = RsmTestModels.Cube("b");
+            b.ParentName = "a";
+            var ctx = Context();
+            var result = RoRsmConverter.Write(ctx, Source, WithTexture(RsmTestModels.Model(a, b)), "hash");
+            Assert.AreEqual(RoStatus.Failed, result.Status);
+            Assert.AreEqual(RoIssueCode.RsmCycle, result.Failure.Code);
+            Assert.IsFalse(Directory.Exists(RoImportTestRoot.FullPath(_roots.Art + "/model")), "no model output at all");
+        }
+
+        [Test]
+        public void FailingModel_LeavesThePreviousOutputsUnchanged()
+        {
+            var good = WithTexture(RsmTestModels.ParentAndChild());
+            Convert(good);
+            var paths = Paths(good);
+            var before = paths.Meshes.Concat(new[] { paths.Prefab }).ToDictionary(p => p, p => File.ReadAllBytes(RoImportTestRoot.FullPath(p)));
+
+            var unsupported = WithTexture(RsmTestModels.ParentAndChild());
+            unsupported.VersionMinor = 5;   // no verified rules (D9)
+            var ctx = Context();
+            var result = RoRsmConverter.Write(ctx, Source, unsupported, "other");
+            Assert.AreEqual(RoStatus.Failed, result.Status);
+            Assert.AreEqual(RoIssueCode.UnsupportedRsmVersion, result.Failure.Code);
+            Assert.AreEqual(1, ctx.Report.Issues.Count(i => i.Code == RoIssueCode.UnsupportedRsmVersion), "one warning naming the file");
+            foreach (var kv in before)
+                CollectionAssert.AreEqual(kv.Value, File.ReadAllBytes(RoImportTestRoot.FullPath(kv.Key)), kv.Key);
+        }
+
+        [Test]
+        public void Converter_IsRegistered_ForRsmAndRsm2()
+        {
+            var converter = RoConverterRegistry.For(RoJobKind.Model);
+            Assert.IsInstanceOf<RoRsmConverter>(converter);
+            Assert.IsTrue(converter.Handles(RoPath.Parse("model/a.rsm")));
+            Assert.IsTrue(converter.Handles(RoPath.Parse("model/a.rsm2")));
+            Assert.IsFalse(converter.Handles(RoPath.Parse("model/a.bmp")));
+        }
+
+        [Test]
+        public void MissingSource_FailsWithOneWarning()
+        {
+            var ctx = Context();
+            var result = new RoRsmConverter().Convert(ctx, RoPath.Parse("model/none.rsm"));
+            Assert.AreEqual(RoStatus.Failed, result.Status);
+            Assert.AreEqual(RoIssueCode.SourceMissing, result.Failure.Code);
+            Assert.AreEqual(1, ctx.Report.Issues.Count);
         }
 
         static string Hash(string folder) =>
