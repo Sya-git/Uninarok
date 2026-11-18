@@ -299,7 +299,7 @@ Satisfies every FR of the spec. EditMode NUnit tests in `Uninarok.RoImport.Tests
 ## 7. Migration and compatibility
 
 - `GNDImporter.cs` (a `ScriptedImporter` on `.gnd`) is deleted by the last task of this plan. Once the source folder is hidden from Unity (PLAN-0002 §7) it no longer fires and is inert. Its logic is not carried over: the old index, tile-id, wall and shader bugs are replaced by §4.1 to §4.5.
-- The shared helpers of `UtilExtensions.cs` that only the GND importer used are deleted with it; the file itself is deleted when no importer uses it (PLAN-0003 §7 lists the order).
+- The shared helpers of `UtilExtensions.cs` that only the GND importer used are deleted with it; the file itself is deleted when no importer uses it (PLAN-0003 §7 lists the order). T8.4 found no user at all (the GND, GAT and RSW importers never called it; `RsmImpoter.cs` only in commented-out lines), so the whole file was deleted with `GNDImporter.cs`. The old importers left, all compiled out: `GatImporter.cs` (PLAN-0005), `RswImporter.cs` (PLAN-0006), `RsmImpoter.cs` and `RsmImpoter.bkp.cs` (BACKLOG).
 - `Assets/Scripts/MapData.cs` is not used here; PLAN-0005 decides its replacement.
 - PLAN-0006 requests the ground through `ctx.Ground(...)`, instantiates the prefab at the map origin and uses `RoMapSpace`. The contract between the plans: the prefab path of §3, a root with no transform of its own, and the `RoMapSpace` of §4.2.
 - Chunk meshes are covered by the LFS rule `Art/Imported/**/*.asset` of PLAN-0002 §7.
