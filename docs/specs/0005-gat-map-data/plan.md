@@ -188,6 +188,7 @@ public sealed class MapData : ScriptableObject
   - `TryGetHeight`: the position inside the cell is split by the cell's diagonal (`diagonalFlip`, same rule as the ground, PLAN-0004 §4.3) and the height is interpolated across the triangle, so it follows the ground surface, not a bilinear patch that the ground does not have.
   - Positions outside the map return `false`; there is no exception path. Queries do not allocate.
 - **Settings for SPEC-0006.** The asset also has a `MapSettings settings` field and a `hasSettings` flag, empty after this plan; PLAN-0006 extends the converter to fill it from the RSW (water level, lighting, music name), so there is exactly one map data asset per map and one converter owning it (FR-6, SPEC-0006 FR-7).
+- **Filling the asset.** `internal void Assign(name, cellsX, cellsZ, cellSize, origin, rowSign, diagonalFlip, heights, types, flags, rawTypes)` sets every field at once and throws on inconsistent lengths (importer code, never gameplay); `Uninarok.Map` grants its internals to `Uninarok.RoImport.Editor` and the two test assemblies (`InternalsVisibleTo`), which keeps the public API read-only and adds no reference from the runtime to the importer (T1.1).
 - **`MapRoot`** is a small runtime component for scenes: a reference to the map's `MapData` and the map name. SPEC-0006 puts it on the map object; the gizmos of §4.6 attach to it. It holds no logic.
 - The asset has no reference to importer code (FR-4, PLAN-0002 FR-14); a test checks the assembly references.
 
