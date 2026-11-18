@@ -80,7 +80,7 @@ T6.1 to T6.4 (ground gizmos and picking, FR-9) were removed by the owner on 2026
 
 ## Phase 7: Whole data set
 
-- [ ] **T7.1** Add `RoGndReferenceTests` (`NeedsData`): each reference map converts with no failure; the chunk and triangle counts equal an oracle computed from the table read through GRF; the largest map converts within the batch; a second batch skips everything; every `.gnd` in the source folder reads, with the failures listed by name. (FR-1 to FR-6)
+- [x] **T7.1** Add `RoGndReferenceTests` (`NeedsData`): each reference map converts with no failure; the chunk and triangle counts equal an oracle computed from the table read through GRF; the largest map converts within the batch; a second batch skips everything; every `.gnd` in the source folder reads, with the failures listed by name. (FR-1 to FR-6)
   *Done when:* the tests pass on the owner's data.
 - [ ] **T7.2** Run **Convert All Grounds** on the full data set. Record the number converted, warnings by code, failures, the total time and the largest map's chunk and vertex counts. (FR-6)
   *Done when:* every map converts or its failure is one listed issue, a second run skips all, and the numbers are in the PR.
