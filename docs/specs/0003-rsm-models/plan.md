@@ -72,7 +72,7 @@ Output paths (through `RoOutputPaths.Mirror`, PLAN-0002 §4.5). For a source `mo
 |---|---|---|
 | Prefab | `Art/Imported/model/a/b.prefab` | root object named `b`, one child object per node |
 | Mesh per node | `Art/Imported/model/a/b/<node>.asset` | `<node>` = node name made file-safe; duplicate names get `_2`, `_3` in file order |
-| Animation clip | `Art/Imported/model/a/b/b.anim` | only for animated models |
+| Animation clip | `Art/Imported/model/a/b/b.anim`, then `b_2.anim`, `b_3.anim` … | only for animated models; one per loop group (§4.8), in ascending loop length |
 | Animator controller | `Art/Imported/model/a/b/b.controller` | only for animated models |
 
 Node object names inside the prefab keep the original node names; only the mesh file names are made file-safe. Two nodes with the same name keep distinct object names (`name`, `name_2`) so animation paths stay unique.
@@ -278,19 +278,24 @@ Satisfies FR-9.
 ```csharp
 public sealed class RsmAnimationData
 {
-    public float LengthSeconds;                    // from AnimationLength via RsmTiming
-    public IReadOnlyList<RsmNodeCurves> Nodes;     // only nodes with keyframes
+    public IReadOnlyList<RsmLoopGroup> Loops;      // one per distinct node loop length, ascending by length
+}
+public sealed class RsmLoopGroup
+{
+    public int LengthUnits; public float LengthSeconds;   // the nodes' last key time, and via RsmTiming
+    public IReadOnlyList<RsmNodeCurves> Nodes;     // only nodes with keyframes that loop on this length
 }
 public sealed class RsmNodeCurves { public int Node; public RsmKey<Vector3>[] Position; public RsmKey<Quaternion>[] Rotation; public RsmKey<Vector3>[] Scale; }
 public readonly struct RsmKey<T> { public float Time; public T Value; }
-public static class RsmTiming { public const float SecondsPerUnit = 0.001f; }                  // candidate, §below
+public static class RsmTiming { public const float SecondsPerUnit = 0.001f; }                  // verified by T0.4
 ```
 
-- **Keys are converted once, in Core.** Position keys are `RoSpace.Point`; for a root they include the `Recenter` translation (§4.4 step 5). Rotation keys (quaternions) become matrices, go through `RoSpace.Rotation` and back to quaternions (this is the conjugation by the Y flip; for a quaternion `(x, y, z, w)` it gives `(-x, y, -z, w)`, which the tests assert). Scale keys are unchanged. A negative `w` is flipped to the nearest sign to the previous key so interpolation takes the short way.
-- **Timing (D4).** `RsmTiming` converts the file's keyframe units to seconds with one constant. The working assumption is that they are milliseconds of the original client's animation clock; T0.4 checks it on the clock tower (`reference-models.md` §3), against the reference viewer's speed and direction, and the constant (and any per-version difference, as a column of the `RsmRules` table) is corrected there. The clip length is `AnimationLength` converted the same way.
-- **Rotation interpolation.** The original interpolates rotation keys spherically; an `AnimationClip` quaternion curve is interpolated per component and normalized. To keep the motion equal (FR-9), `RsmClipBuilder` inserts extra keys, computed with an exact slerp, wherever two consecutive rotation keys differ by more than 10° (constant), so the per-component interpolation never strays visibly. Position and scale curves are linear with linear tangents (no smoothing). Keys are written in time order; the result is deterministic.
-- **Clip.** One `AnimationClip` per animated model, with curves for `localPosition`, `localRotation` and `localScale` on the path of each animated node (path = names from the root, `UniqueNames`). Loop time is on, with the first key at time 0 as the rest pose of §4.4 and the clip length as above. Nodes without keys keep their static transform.
-- **Playback.** The prefab gets one `Animator` whose controller is `b.controller` (`UnityEditor.Animations.AnimatorController`): one layer, one looping state `Play` with the clip, default state, no transitions, no parameters. The animator uses `cullingMode = CullUpdateTransforms` (no transform updates while off-screen) and no root motion. Nothing here needs a runtime script, so the importer assembly stays editor-only and the prefab references only Unity types.
+- **Keys are converted once, in Core.** Position keys are `RoSpace.Point`; for a root they include the `Recenter` translation (§4.4 step 5). Rotation keys (quaternions) become matrices, go through `RoSpace.Rotation` and back to quaternions (this is the conjugation by the Y flip; for a quaternion `(x, y, z, w)` it gives `(-x, y, -z, w)`, which the tests assert). Scale keys are unchanged. Key signs are kept as in the file (no flip to the short way): the reference blends the stored quaternions as they are, and `라헬/분수` has consecutive keys 174° apart whose path depends on it (T0.4).
+- **Timing (D4, verified by T0.4).** Key times and `AnimationLength` of 1.x are **milliseconds**: `RsmTiming.SecondsPerUnit = 0.001`. This is the unit of BrowEdit3 (`tick = time * 1000`) and was confirmed by the owner against the reference viewer on `프론테라/시계탑` (minute hand: 49 keys 16000 apart, 90° each, one turn in 64 s; hour hand: 5 keys 192000 apart, one turn in 12.8 min; both clockwise seen from the dial) and on `라헬/분수`. The 160-unit key spacing common in the data is 0.16 s. 2.x multiplies times by the header frame rate (BrowEdit3), a lead for when 2.x data exists.
+- **Loop (T0.4).** Each animated node loops on **its own last key time**, not on `AnimationLength` (BrowEdit3: `tick = time % lastKey.time`; confirmed on `라헬/분수`, whose `Object*` nodes loop at 12.8 s and `Cylinder*` nodes at 19.36 s while `AnimationLength` is 12.8 s). The last key is reached at the end of the loop and the next loop starts at the first key; the segment from the last key back to the first is never interpolated. A node whose last key time is 0 holds its first key. `AnimationLength` is not used for playback.
+- **Rotation interpolation (T0.4).** Between two keys the reference blends the quaternions linearly and normalizes (`glm::mix` + `normalize`), which is how Unity samples a `localRotation` curve with linear tangents. So rotation curves are written key for key with linear tangents, with no extra keys and no sign changes. Position and scale curves are linear with linear tangents. Keys are written in time order; the result is deterministic.
+- **Clips.** Nodes are grouped by loop length (`RsmLoopGroup`). One `AnimationClip` per group, with curves for `localPosition`, `localRotation` and `localScale` on the path of each node of the group (path = names from the root, `UniqueNames`), loop time on, length = the group's loop length, first key at time 0 (the rest pose of §4.4). Nodes without keys keep their static transform. Most models have one group; `라헬/분수` has two.
+- **Playback.** The prefab gets one `Animator` whose controller is `b.controller` (`UnityEditor.Animations.AnimatorController`): one layer per loop group (layer 0 base, the others override with weight 1; their nodes are disjoint, so no layer overrides another), each with one looping state `Play` holding that group's clip, default state, no transitions, no parameters. The animator uses `cullingMode = CullUpdateTransforms` (no transform updates while off-screen) and no root motion. Nothing here needs a runtime script, so the importer assembly stays editor-only and the prefab references only Unity types.
 - **Budget (FR-9, D5).** The "agreed budget" of the spec is proposed here and is part of the plan's approval: a map with 200 instances of an animated model produces **no managed allocation per frame** in steady state (Unity Profiler `GC.Alloc` is zero for the animator update), and costs at most **0.5 ms** of main-thread animation update per frame in a standalone development build on the owner's development machine, with off-screen instances costing close to nothing (culling). Measured by T9.x with 200 instances of the clock tower; if the budget is missed the fallback is in D5.
 
 ### 4.9 Converter: `RoRsmConverter`
@@ -364,6 +369,8 @@ Satisfies every FR of the spec. EditMode NUnit tests in `Uninarok.RoImport.Tests
 | D8 | Mesh and animation assets are separate files per node and per model | Sub-assets of the prefab (read-only in the editor, spec FR-10 forbids) |
 
 | D9 | (T0.2, T0.3, 2026-11-17) The offset matrix's file groups are columns; the reader sets GRF's display encoding to Korean for the read; the rules table has a verified row for 1.4 only, and 1.5 and 2.x stay `UnsupportedRsmVersion` until a file of that version is checked | Reading the matrix as rows (rotates 139 of 140 models wrongly); post-correcting garbled texture names (lossy); a guessed "conservative default row" for other 1.x versions (§4.4 first draft: nothing in the working data can verify it) |
+
+| D10 | (T0.4, 2026-11-17) 1.x key times in milliseconds; per-node loop on the node's last key time, one clip and one animator layer per distinct loop length; linear quaternion blending written key for key (Unity's own curve sampling), no slerp subdivision and no sign flips | One clip of `AnimationLength` for the whole model (wrong period for `라헬/분수`'s 19.36 s nodes); one clip of the least common multiple of the loop lengths (25.8 min for `라헬/분수`); slerp subdivision (§4.8 first draft: the reference does not slerp, so it would change the motion); flipping key signs to the short way (changes the 174° swings of `라헬/분수`) |
 
 Items for the owner's approval: D3's spec wording, and the animation budget of §4.8 (D5).
 
