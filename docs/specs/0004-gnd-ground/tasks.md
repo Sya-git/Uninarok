@@ -44,7 +44,7 @@
 
 - [x] **T2.1** Add `RoMapSpaceTests` (failing, ignored): corner positions for known columns, rows and heights; `Zoom = 5` gives cubes of 0.5 Unity units and `Zoom = 10` exactly 1 unit; heights keep their own scale through `RoSpace.Point`; `CentreOffsetRo`; `TryCubeAtUnity` round trips every corner and centre of a non-square map and fails outside it; `CubeOfGatCell` is `/ 2`; `RowDirection` has the value recorded by T0.3. (FR-4, FR-5)
   *Done when:* the tests compile and are ignored with `pending T2.2`.
-- [ ] **T2.2** Implement `Core/Gnd/Space/RoMapSpace` (plan §4.2) with the `RowDirection` constant of T0.3. (FR-4, FR-5)
+- [x] **T2.2** Implement `Core/Gnd/Space/RoMapSpace` (plan §4.2) with the `RowDirection` constant of T0.3. (FR-4, FR-5)
   *Done when:* `[Ignore]` removed and `RoMapSpaceTests` pass.
 
 ## Phase 3: Surfaces

@@ -5,7 +5,6 @@ using Uninarok.RoImport.Core.Gnd;
 namespace Uninarok.RoImport.Tests.Gnd
 {
     // TASKS-0004 T2.1 (FR-4, FR-5): the shared map space of PLAN-0004 4.2, with the row direction verified by T0.3.
-    [Ignore("pending T2.2")]
     public class RoMapSpaceTests
     {
         const float Eps = 1e-5f;
