@@ -34,7 +34,7 @@
   *Done when:* the project compiles and a test builds each sample model and checks its counts (vertices, faces, nodes, keys).
 - [x] **T1.2** Add `RoRsmReaderTests` (`NeedsData`, failing, ignored): every reference model reads, its node names, parent names, vertex and face counts and keyframe counts equal the table of `reference-models.md`; the versions are as recorded in T0.3; a truncated copy of a model and an empty array return false with a reason and never throw. (FR-8)
   *Done when:* the tests compile and are ignored with `pending T1.3`.
-- [ ] **T1.3** Implement `Core/Formats/RoRsmReader` using the GRF members recorded by T0.2 (fields GRF does not supply keep their defaults, `HasShadeType` is set from the version). No parsing code of our own. (FR-8, FR-2)
+- [x] **T1.3** Implement `Core/Formats/RoRsmReader` using the GRF members recorded by T0.2 (fields GRF does not supply keep their defaults, `HasShadeType` is set from the version). No parsing code of our own. (FR-8, FR-2)
   *Done when:* `[Ignore]` removed and `RoRsmReaderTests` pass; a text search shows no `BinaryReader` or `BitConverter` use added.
 
 ## Phase 2: Hierarchy

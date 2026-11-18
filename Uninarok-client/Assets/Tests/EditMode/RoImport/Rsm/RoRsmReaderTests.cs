@@ -10,7 +10,6 @@ namespace Uninarok.RoImport.Tests.Rsm
     // TASKS-0003 T1.2 (FR-8, FR-2). The expected values come from a raw read of the files that does not use GRF
     // (Fixtures~/reference-nodes.csv, reference-models.md §7), so these tests check the adapter, not GRF against itself.
     [Category(RsmTestData.Category)]
-    [Ignore("pending T1.3")]
     public class RoRsmReaderTests
     {
         static RoRsm Read(string model)
