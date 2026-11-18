@@ -31,7 +31,7 @@ namespace Uninarok.RoImport.Tests.Gnd
         {
             public int TileCount, TilesOffset, CubesOffset;
 
-            public const int TileSize = 56, TileTextureField = 32;       // 8 floats, then int16 texture index
+            public const int TileSize = 40, TileTextureField = 32;       // 8 floats, int16 texture, uint16 lightmap, 4 color bytes
             public const int CubeSize = 28, CubeTileUpField = 16, CubeTileFrontField = 20, CubeTileSideField = 24;
 
             public static Layout Of(byte[] bytes)

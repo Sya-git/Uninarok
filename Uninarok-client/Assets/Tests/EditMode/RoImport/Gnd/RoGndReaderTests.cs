@@ -12,7 +12,6 @@ namespace Uninarok.RoImport.Tests.Gnd
     // TASKS-0004 T1.2 (FR-4, FR-5). The expected values come from a raw read of the files that does not use GRF
     // (TASKS-0004 T0.2, PLAN-0004 §4.1), so these tests check the adapter, not GRF against itself.
     [Category(GndTestData.Category)]
-    [Ignore("pending T1.3")]
     public class RoGndReaderTests
     {
         static RoGnd Read(string map, RoReport report = null) => Read(map, GndTestData.MapBytes(map), report);
@@ -103,7 +102,8 @@ namespace Uninarok.RoImport.Tests.Gnd
         {
             byte[] bytes = (byte[])GndTestData.MapBytes("izlude").Clone();
             var layout = GndTestData.Layout.Of(bytes);
-            Assert.AreEqual(20358, layout.TileCount, "layout check");
+            Assert.AreEqual(20358, layout.TileCount, "layout check: tile count");
+            Assert.AreEqual(bytes.Length, layout.CubesOffset + 134 * 150 * GndTestData.Layout.CubeSize, "layout check: cubes end the file");
             layout.SetCubeTile(bytes, 0, GndTestData.Layout.CubeTileUpField, layout.TileCount + 5);   // past the table
             layout.SetCubeTile(bytes, 1, GndTestData.Layout.CubeTileSideField, -7);                   // below -1
             layout.SetTileTexture(bytes, 1, 99);                                                      // 21 textures

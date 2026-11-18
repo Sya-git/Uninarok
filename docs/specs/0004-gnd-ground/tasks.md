@@ -37,7 +37,7 @@
   *Done when:* the project compiles and a test builds each sample map and checks its width, height, cube count and tile count.
 - [x] **T1.2** Add `RoGndReaderTests` (`NeedsData`, failing, ignored): the three reference maps read through GRF with the widths and heights of `reference-models.md` §4 and the zoom recorded by T0.2; the cube table length equals `Width · Height`; a tile or texture index outside its table is reported once as `GndBadIndex` and treated as none; a truncated copy and an empty array return false with a reason and never throw. (FR-4, FR-5)
   *Done when:* the tests compile and are ignored with `pending T1.3`.
-- [ ] **T1.3** Implement `Core/Formats/RoGndReader` using the GRF members recorded by T0.2. No parsing code of our own. Tile id `-1` is none, `0` is valid. (FR-4, FR-5)
+- [x] **T1.3** Implement `Core/Formats/RoGndReader` using the GRF members recorded by T0.2. No parsing code of our own. Tile id `-1` is none, `0` is valid. (FR-4, FR-5)
   *Done when:* `[Ignore]` removed and `RoGndReaderTests` pass; a text search shows no `BinaryReader` or `BitConverter` use added.
 
 ## Phase 2: Map space
