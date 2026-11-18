@@ -6,11 +6,13 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Uninarok.RoImport.Core.Gnd;
+using Uninarok.RoImport.Core.Materials;
 using Uninarok.RoImport.Core.Output;
 using Uninarok.RoImport.Core.Paths;
 using Uninarok.RoImport.Core.Results;
 using Uninarok.RoImport.Core.Source;
 using Uninarok.RoImport.Editor.Gnd;
+using Uninarok.RoImport.Editor.Materials;
 using Uninarok.RoImport.Editor.Pipeline;
 using Uninarok.RoImport.Editor.Writing;
 
@@ -152,6 +154,50 @@ namespace Uninarok.RoImport.Tests.Gnd
             Assert.AreEqual(2, first.Length, "submesh 0 = texture 0 (tops), submesh 1 = texture 1 (walls)");
             Assert.AreSame(first[0], second[0], "one material per texture across chunks (FR-6)");
             StringAssert.Contains("key8", AssetDatabase.GetAssetPath(first[1]), "paths are canonical, lower case");
+        }
+
+        // PLAN-0004 D17, TASKS-0004 T8.6: the ground draws with Clamp copies of its textures, so a tile that ends on the
+        // texture edge does not blend in the opposite edge.
+        [Test]
+        public void GroundMaterials_AreGroundOnes_OnClampCopiesOfTheTextures()
+        {
+            var prefab = Convert(Sample());
+            var materials = prefab.transform.Find("Chunk_0_0").GetComponent<MeshRenderer>().sharedMaterials;
+            StringAssert.IsMatch(@"/_materials/texture/a__[a-z]+_ground\.mat$", AssetDatabase.GetAssetPath(materials[0]));
+            StringAssert.IsMatch(@"/_materials/texture/key8__[a-z]+_ground\.mat$", AssetDatabase.GetAssetPath(materials[1]));
+            foreach (var m in materials)
+            {
+                var texture = m.GetTexture("_BaseMap");
+                StringAssert.EndsWith("__ground.png", AssetDatabase.GetAssetPath(texture));
+                Assert.AreEqual(TextureWrapMode.Clamp, texture.wrapMode, AssetDatabase.GetAssetPath(texture));
+            }
+            Assert.IsFalse(File.Exists(RoImportTestRoot.FullPath(RoOutputPaths.Texture(_roots, RoPath.Parse("texture/a.bmp")))),
+                "the ground does not make the model's Repeat texture");
+        }
+
+        [Test]
+        public void AModelAndAGround_SharingATexture_GetDifferentMaterialsAndTextures()
+        {
+            var ctx = Context();
+            var prefab = Convert(Sample(), ctx);
+            var ground = prefab.transform.Find("Chunk_0_0").GetComponent<MeshRenderer>().sharedMaterials[0];
+            var model = ctx.Material(new RoMaterialKey(RoPath.Parse("texture/a.bmp"), RoSurface.Cutout, false), "model/a.rsm").Value;
+
+            Assert.IsNotNull(model);
+            Assert.AreNotEqual(AssetDatabase.GetAssetPath(ground), AssetDatabase.GetAssetPath(model));
+            var modelTexture = model.GetTexture("_BaseMap");
+            Assert.AreEqual(RoOutputPaths.Texture(_roots, RoPath.Parse("texture/a.bmp")), AssetDatabase.GetAssetPath(modelTexture));
+            Assert.AreEqual(TextureWrapMode.Repeat, modelTexture.wrapMode, "the model keeps its repeat");
+            Assert.AreEqual(TextureWrapMode.Clamp, ground.GetTexture("_BaseMap").wrapMode);
+        }
+
+        [TestCase("model/a.rsm")]
+        [TestCase("model/b.rsm2")]
+        public void AGroundMaterial_IsNeverGivenToAModel(string model)
+        {
+            var key = new RoMaterialKey(RoPath.Parse("texture/a.bmp"), RoSurface.Opaque, false, ground: true);
+            Assert.Throws<ArgumentException>(() => RoMaterialFactory.GetOrCreate(Context(), key, model));
+            Assert.IsFalse(Directory.Exists(RoImportTestRoot.FullPath(_roots.Art + "/_materials")), "no material written");
         }
 
         [Test]

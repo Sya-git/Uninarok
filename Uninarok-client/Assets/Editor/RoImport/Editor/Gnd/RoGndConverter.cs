@@ -22,7 +22,7 @@ namespace Uninarok.RoImport.Editor.Gnd
     public sealed class RoGndConverter : IRoConverter
     {
         public const string Category = "ground";
-        public const int RulesVersion = 1;
+        public const int RulesVersion = 2;   // 2: ground textures and materials of its own, Clamp wrap (D17)
 
         public RoJobKind Kind => RoJobKind.Ground;
 
@@ -137,20 +137,23 @@ namespace Uninarok.RoImport.Editor.Gnd
             }
         }
 
-        /// <summary>The shared material of a texture; a missing texture's material shows the placeholder (4.5).</summary>
+        /// <summary>
+        /// The ground material of a texture, on the ground's Clamp copy of it (4.5, D17); a missing texture's material shows
+        /// the placeholder.
+        /// </summary>
         static Material MaterialOf(RoImportContext ctx, RoGnd gnd, int textureIndex, Dictionary<int, Material> byTexture, string referrer)
         {
             if (byTexture.TryGetValue(textureIndex, out var known)) return known;
 
             var texturePath = RoPath.Parse("texture").Combine(gnd.Textures[textureIndex]);
-            var texture = ctx.Texture(texturePath, referrer);
+            var texture = ctx.GroundTexture(texturePath, referrer);
             var surface = RoSurface.Opaque;
             if (texture.Status != RoStatus.Failed)
             {
-                var alpha = RoTextureConverter.AlphaOf(RoOutputPaths.Texture(ctx.Roots, texturePath));
+                var alpha = RoTextureConverter.AlphaOf(RoOutputPaths.GroundTexture(ctx.Roots, texturePath));
                 if (alpha.HasValue) surface = RoMaterialFactory.SurfaceFor(alpha.Value);
             }
-            var material = ctx.Material(new RoMaterialKey(texturePath, surface, false), referrer).Value
+            var material = ctx.Material(new RoMaterialKey(texturePath, surface, false, ground: true), referrer).Value
                            ?? RoPlaceholders.MissingMaterial(ctx).Value;
             byTexture.Add(textureIndex, material);
             return material;

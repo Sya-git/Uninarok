@@ -231,8 +231,12 @@ public static class RoGndMeshBuilder
 
 Satisfies FR-6.
 
-- Tile `Texture` indices refer to `RoGnd.Textures`; each is parsed as `RoPath.Parse("texture").Combine(name)` and requested with `ctx.Texture` then `ctx.Material(new RoMaterialKey(texture, RoMaterialFactory.SurfaceFor(analysis), false))` (PLAN-0002 §4.4, §4.6). Ground faces are one-sided; a missing texture gives the placeholder and one warning naming the texture and the map.
+- Tile `Texture` indices refer to `RoGnd.Textures`; each is parsed as `RoPath.Parse("texture").Combine(name)` and requested with `ctx.GroundTexture` then `ctx.Material(new RoMaterialKey(texture, RoMaterialFactory.SurfaceFor(analysis), false, ground: true))` (D17) (PLAN-0002 §4.4, §4.6). Ground faces are one-sided; a missing texture gives the placeholder and one warning naming the texture and the map.
 - Lit materials carry no baked ground shadow: lighting and shadows are Unity's real time ones (owner decision on OQ-2).
+- **Ground textures and materials of their own, with Clamp wrap (D17).** About two thirds of a map's top tiles end exactly on a texture edge (izlude: 13,398 of 20,100 reach v = 0 or 1). With Repeat wrap, bilinear filtering there blends in the opposite edge of the texture, which draws a thin light line along tile rows; Clamp removes it. Wrap mode belongs to the texture asset, and a model can use a ground texture (`model/프론테라/시계탑벽.rsm` uses `프론테라/pron-ctwr4.bmp`), so the ground does not share the model's texture or material:
+  - `ctx.GroundTexture(path, referrer)` converts the source like `ctx.Texture` (same decoding, keying and import settings, PLAN-0002 §4.4) but writes `RoOutputPaths.GroundTexture` = `Art/<texture path without extension>__ground.png` with wrap Clamp, recorded in its own ledger category `groundtexture`. The source stays the ground's dependency.
+  - `RoMaterialKey` gains `Ground` (default false; suffix `<mode>_ground`, e.g. `Art/_materials/texture/a__opaque_ground.mat`). The factory builds a ground key's material on the ground texture, and refuses a ground key whose referrer is a model (`.rsm`, `.rsm2`): a model never gets a ground material.
+  - The ground converter asks only for ground keys; its rules version becomes 2.
 
 ### 4.6 Converter and prefab: `RoGndConverter`, `RoGndPrefabBuilder`
 
@@ -320,6 +324,7 @@ Satisfies every FR of the spec. EditMode NUnit tests in `Uninarok.RoImport.Tests
 | D14 | (T5.1, 2026-11-18) The ground prefab's root is named after its file (`<name>_ground`), because Unity names a prefab asset's root after the file; the map scene (PLAN-0006) may name its instance `Ground`. `RoGndConverter.Write(ctx, path, gnd, sourceHash)` converts a ground already read, as `RoRsmConverter.Write` does, so writer tests use maps built in code | A root named `Ground` in a file named `<name>_ground.prefab` (Unity renames it on save); writer tests only on real data (they would need the data folder and a GND writer of our own) |
 | D15 | (T5.1, 2026-11-18) Chunks get the static flags `ContributeGI` and `BatchingStatic` only. Unity 6.7 marks `StaticEditorFlags.OccludeeStatic` obsolete (CS0618, "migrate to GPU Occlusion Culling"), which needs no per-object flag | Setting the occludee flag as §4.6 first said: a new compiler warning in the converter, for a feature Unity is removing |
 | D16 | (owner, 2026-11-18) No gizmos or picking for the ground: FR-9 is removed. The gizmos wanted are for walkable versus non-walkable cells, which SPEC-0005 FR-7 already covers on the map data | Ground gizmos reading the source (§4.7 first draft) or the chunk meshes (TASKS first draft): neither was wanted |
+| D17 | (owner, T8.2, 2026-11-18) The ground uses its own Clamp copy of each texture (`__ground.png`) and its own materials (`Ground` in `RoMaterialKey`); the material factory never gives a ground material to a model. Tested on izlude: Repeat shows a light line at tile rows whatever the compression, mipmaps or light; Clamp has none | Clamping the shared texture (the clock tower model uses a ground texture and would lose its repeat); separate materials over one shared texture (wrap is a texture setting, so the model would still be clamped); insetting the UVs by half a texel (changes the mesh and still samples the neighbouring texel at lower mipmaps); keeping the lines (GRF Editor shows them too, but fainter) |
 
 Items for the owner: none open.
 

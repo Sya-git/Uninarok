@@ -91,6 +91,11 @@ T6.1 to T6.4 (ground gizmos and picking, FR-9) were removed by the owner on 2026
 
 ## Phase 8: Verify and close
 
+- [x] **T8.6** Give the ground its own Clamp textures and materials (plan §4.5, D17): `RoOutputPaths.GroundTexture`, `ctx.GroundTexture` with the `groundtexture` ledger, `RoMaterialKey.Ground`, the factory building ground materials on ground textures and refusing a ground key for a model, the ground converter on ground keys with rules version 2. Tests first. (FR-6)
+  *Done when:* tests show a ground material named `__opaque_ground` on a Clamp `__ground.png`, a model and a ground sharing a texture get different materials and textures (the model's still Repeat), a ground key asked for by a model fails, and the GND, material, texture and RSM tests pass.
+  *Result (2026-11-18):* the four new tests failed first (no Clamp texture, no refusal), then pass. EditMode: RoGndWriterTests 13/13, RoMaterialKey, RoMaterial, RoTextureConverter, RoPlaceholders, RoOutputPaths, RoArchitecture, RoImportJobs 91/91, RoImportContext, RsmWriter, RoBatch, RoImportSmoke 28/28, RoIdempotency, RoDeterminism, RsmIdempotency 10/10, RoGndIdempotency 3/3, the other GND tests 77/77. No compiler warning in Editor.log.
+- [ ] **T8.7** Reconvert the three reference grounds with T8.6, remove the outputs T7.2 made that nothing uses any more (ground-only `texture/*.png` and `*__opaque.mat` and their ledger entries), and reshoot the T8.2 cliff view. (FR-6)
+  *Done when:* each map's ground uses only `__ground` textures and `_ground` materials, the clock tower model still uses `pron-ctwr4__opaque.mat`, no removed file is still referenced, and the cliff view shows no light lines at tile rows.
 - [ ] **T8.1** Visual check of the three reference maps against the reference viewer, top-down and from the side, including a cliff, a gap, sloped ground and the border; prontera and izlude are not rotated or mirrored. (FR-1, FR-2, FR-4)
   *Done when:* screenshots are in the PR and each case is marked as matching.
 - [ ] **T8.2** Seam and lighting check: top-down and side views show no light leaks along cube and chunk borders; with a real time directional light and shadows a flat area is evenly lit, a slope shows a smooth gradient, and the ground casts and receives real time shadows. (FR-3, FR-7)
@@ -113,7 +118,7 @@ T6.1 to T6.4 (ground gizmos and picking, FR-9) were removed by the owner on 2026
 | FR-3 | T3.2, T4.1, T4.2, T4.3, T7.1, T8.2 |
 | FR-4 | T0.2, T0.3, T1.1, T1.2, T1.3, T2.1, T2.2, T3.1, T7.1, T8.1, T8.4 |
 | FR-5 | T0.2, T1.1, T1.2, T1.3, T2.1, T2.2, T7.1 |
-| FR-6 | T0.1, T4.2, T4.3, T5.1, T5.2, T5.3, T7.1, T7.2, T7.3, T8.3 |
+| FR-6 | T0.1, T4.2, T4.3, T5.1, T5.2, T5.3, T7.1, T7.2, T7.3, T8.3, T8.6, T8.7 |
 | FR-7 | T4.2, T4.3, T7.1, T8.2 |
 | FR-8 | Not implemented (owner decision, OQ-2) |
 | FR-9 | Removed (owner, plan D16; SPEC-0005 FR-7) |

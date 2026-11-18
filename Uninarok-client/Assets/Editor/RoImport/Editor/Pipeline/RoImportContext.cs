@@ -92,6 +92,26 @@ namespace Uninarok.RoImport.Editor.Pipeline
             return memo.Result.Status == RoStatus.Failed ? memo.Result : RoResult<Texture2D>.Skipped(memo.Result.Value);
         }
 
+        /// <summary>
+        /// The ground's Clamp copy of a texture (PLAN-0004 D17), converted on demand like <see cref="Texture"/>, with the
+        /// same placeholder and warning rules. The source is recorded as a dependency, as for <see cref="Texture"/>.
+        /// </summary>
+        public RoResult<Texture2D> GroundTexture(RoPath path, string referrer = null)
+        {
+            string key = "groundtexture:" + path.Canonical;
+            if (!TryGetMemo(key, out TextureMemo memo))
+            {
+                var result = RoTextureConverter.ConvertTexture(this, path, referrer, out string hash, ground: true);
+                memo = new TextureMemo { Result = result, Hash = hash };
+                Memo(key, memo);
+                AddDependency(path, hash);
+                return result;
+            }
+
+            AddDependency(path, memo.Hash);
+            return memo.Result.Status == RoStatus.Failed ? memo.Result : RoResult<Texture2D>.Skipped(memo.Result.Value);
+        }
+
         /// <summary>Starts collecting the inputs a converter asks for (its ledger dependencies, plan 4.8). Frames nest.</summary>
         public void BeginDependencies() => _dependencyFrames.Push(new List<RoLedgerDependency>());
 

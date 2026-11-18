@@ -14,7 +14,8 @@ namespace Uninarok.RoImport.Editor.Materials
     /// <summary>
     /// Shared, lit URP materials (plan 4.6, D10, D11; SPEC-0002 FR-9). One material per <see cref="RoMaterialKey"/>, at
     /// <c>Art/_materials/&lt;texture&gt;__&lt;suffix&gt;.mat</c>, written in place through the writer and recorded in the
-    /// <c>material</c> ledger. Every property is set explicitly in <see cref="Setup"/>, independent of the material inspector.
+    /// <c>material</c> ledger. A ground key's material uses the ground's Clamp texture and is never given to a model
+    /// (PLAN-0004 D17). Every property is set explicitly in <see cref="Setup"/>, independent of the material inspector.
     /// </summary>
     public static class RoMaterialFactory
     {
@@ -40,12 +41,14 @@ namespace Uninarok.RoImport.Editor.Materials
         internal static RoResult<Material> GetOrCreate(RoImportContext ctx, RoMaterialKey key, string referrer)
         {
             if (ctx == null) throw new ArgumentNullException(nameof(ctx));
+            if (key.Ground && IsModel(referrer))
+                throw new ArgumentException($"'{referrer}' is a model and asks for the ground material '{key}'; models never use ground materials (PLAN-0004 D17).", nameof(key));
             string memoKey = Category + ":" + key;
             if (ctx.TryGetMemo(memoKey, out Material done)) return RoResult<Material>.Skipped(done);
 
             // A missing, unsupported or corrupt texture comes back Failed with the placeholder as its value (warned once by
             // ctx.Texture; plan 4.6, 4.12). Its hash is recorded empty, so the material is rebuilt once the real texture works.
-            var texture = ctx.Texture(key.Texture, referrer);
+            var texture = key.Ground ? ctx.GroundTexture(key.Texture, referrer) : ctx.Texture(key.Texture, referrer);
             bool placeholder = texture.Status == RoStatus.Failed;
             if (placeholder && texture.Value == null) texture = RoPlaceholders.MissingTexture(ctx);
 
@@ -80,6 +83,10 @@ namespace Uninarok.RoImport.Editor.Materials
             ctx.Memo(memoKey, material);
             return new RoResult<Material>(status, material);
         }
+
+        /// <summary>A model referrer: <c>.rsm</c> or <c>.rsm2</c>.</summary>
+        static bool IsModel(string referrer) =>
+            referrer != null && RoPath.TryParse(referrer, out var path) && (path.Extension == ".rsm" || path.Extension == ".rsm2");
 
         /// <summary>
         /// The whole material setup, in one place (plan 4.6 table, D10). Besides the table it sets what URP itself writes
