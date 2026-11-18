@@ -103,7 +103,7 @@
 
 ## Phase 7: Editor entry points
 
-- [ ] **T7.1** Implement `Editor/Ui/RoImportMenu` and `RoImportWindow` per plan §4.11: `Tools/Ragnarok/Import Window`, `Tools/Ragnarok/Convert All Textures`; the window shows the source root with Browse, a kind popup from the registry, a path list text area (folder prefixes end with `/`), Scan, Force and Convert, and shows and logs the batch summary. Both call only `RoImport.Run`. (FR-2)
+- [x] **T7.1** Implement `Editor/Ui/RoImportMenu` and `RoImportWindow` per plan §4.11: `Tools/Ragnarok/Import Window`, `Tools/Ragnarok/Convert All Textures`; the window shows the source root with Browse, a kind popup from the registry, a path list text area (folder prefixes end with `/`), Scan, Force and Convert, and shows and logs the batch summary. Both call only `RoImport.Run`. (FR-2)
   *Done when:* manual check recorded with a screenshot: converting `texture/` of the reference data from the window produces the outputs and a summary; converting one path from a test script (`RoImport.Texture("data\\texture\\...")`) with the window closed gives the same asset.
 - [ ] **T7.2** Add `RoArchitectureTests`: no type in the importer assemblies derives from `AssetPostprocessor` or `ScriptedImporter` or carries `InitializeOnLoad`; the `Core` assembly's referenced assemblies do not include any `UnityEditor.*`; the `.asmdef` files of `Core`, `Editor` and the tests have `includePlatforms` equal to `["Editor"]` (read as JSON). No C# file of the importer assemblies outside `Core/Formats/` uses `BinaryReader`, `BitConverter` or a GRF type (text search over the source files). (FR-3, FR-13, FR-14)
   *Done when:* the tests pass.
