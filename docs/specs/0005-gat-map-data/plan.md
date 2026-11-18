@@ -258,7 +258,7 @@ Satisfies every FR of the spec. EditMode NUnit tests (command in `CLAUDE.md` §2
 | `MapDataQueryTests` (runtime) | 2 | `IsWalkable` and `TryGetHeight` for cell (0, 0), the last cell, a cell edge, a diagonal and a position outside (all four sides) give the right result and never throw; the interpolated height on the diagonal equals both triangles; no allocation (`GC.GetAllocatedBytesForCurrentThread` before and after 10,000 calls) |
 | `RoGroundSamplerTests` | 3 | a flat, a ramp and a cliff synthetic ground give the expected heights; a gap returns false; the diagonal rule is the one of `RoGndRules` |
 | `MapDataStorageTests` | 5 | the data is 19 bytes per cell (arrays' byte count over cell count, pins the layout of 4.3); growth is linear (two sizes) |
-| `MapDataAssemblyTests` | 4 | `Uninarok.Map` references no editor assembly and no importer assembly; the asset class is in it; a built player has no importer type (checked once manually, T7.x) |
+| `MapDataAssemblyTests` | 4 | `Uninarok.Map` references no editor assembly and no importer assembly; the asset class is in it; its assembly definition is for all platforms (no player build, D15) |
 | `RoMapDataWriterTests` | 6 | a synthetic map converts to one asset at the path of §3 with the right fields; the second conversion is `Skipped`; a forced conversion leaves the asset byte-identical and its GUID unchanged; a scene object referencing it (`MapRoot`) keeps the reference; the optional image only exists when requested and equals the layout of the cells |
 | `RoGatImageTests` | 8 | one pixel per cell, the colour of each type, row direction, deterministic |
 | `RoMapDataGizmoSelectorTests` | 7 | region and radius selection, cap, per-type hiding |
@@ -269,7 +269,6 @@ Satisfies every FR of the spec. EditMode NUnit tests (command in `CLAUDE.md` §2
 
 - FR-7: select the map object of a reference map; walkable and blocked cells show different colours; a toggle hides a type; panning keeps the editor responsive on prt_fild08; deselecting costs nothing in the Profiler.
 - FR-8: the image of a reference map shows the same layout as the gizmos.
-- FR-4: a development build of an empty scene with `MapRoot` and the `MapData` queries a cell correctly with the source folder absent.
 
 ## 7. Migration and compatibility
 
@@ -296,6 +295,7 @@ Satisfies every FR of the spec. EditMode NUnit tests (command in `CLAUDE.md` §2
 | D12 | (T4.2) The ledger records the GND as a dependency by its whole-file hash, because the ledger compares file hashes; a GND change converts the map data again (cheap: arrays only). The ledger rules number is `RulesVersion * 1000 + RoGatRules.RulesVersion`, so a change of the cell table converts again. An image requested for a current map converts it again; an image made earlier stays owned when a later run does not ask for it | A GND header hash (the ledger has no partial-file dependency); deleting an earlier image when not requested (surprising output loss) |
 | D13 | (T5.1) Gizmo radius default 38 (77 × 77 = 5,929 cells, under the cap of 6,000) and cells taken in rings nearest the focus first, so the default view is never cut and a cut view keeps the nearest cells | Radius 48 (97 × 97 = 9,409 cells: the cap would always cut it and the notice would always show) |
 | D14 | (owner, 2026-11-18, T7.2) No compression and no size optimization of the map data for now; FR-5 asks for flat, linear storage only. The text-serialised file is about twice the data (hex); it can be optimized later | Deflating the arrays into one byte array unpacked on load (measured: 0.5 to 4.3 bytes per cell on disk), deferred to the backlog; a 24-byte per-cell target on the file (the first draft) |
+| D15 | (owner, 2026-11-18) No player build in this spec: FR-4 is checked in the editor by `MapDataAssemblyTests` (runtime assembly for all platforms, no editor, importer or GRF reference) and by the queries working on the asset alone | A development player build with the source folder moved away (the first draft's T7.3) |
 
 Items for the owner: approve D1 (per-corner heights), the new runtime assembly `Uninarok.Map`, the replacement of `MapData.cs`, and `docs/data/GatCellType.md` (new).
 

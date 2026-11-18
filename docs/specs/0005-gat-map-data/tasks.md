@@ -13,7 +13,7 @@
 - Test command (batch): `Unity -batchmode -projectPath . -runTests -testPlatform EditMode -testResults results.xml -quit`. Tests marked `NeedsData` need the source data folder and are ignored with a message when it is absent.
 - Paths are relative to `Uninarok-client/Assets/Editor/RoImport/` unless written in full. Class names and contracts are in `plan.md` §4; do not redesign them here. If a spike (phase 0) shows a plan rule is wrong, stop and update `plan.md` first with a note under Decisions.
 - Spike scripts are scratch code: delete them when the task is done. Production code never parses GAT bytes (PLAN-0002 §1).
-- Steps that need the running editor (scratch scenes, screenshots, Profiler, a player build) are done with the Unity MCP when it is connected, otherwise by the owner.
+- Steps that need the running editor (scratch scenes, screenshots, Profiler) are done with the Unity MCP when it is connected, otherwise by the owner.
 - Unrelated problems go to `docs/specs/BACKLOG.md` as one line each.
 
 ---
@@ -87,14 +87,14 @@
 
 ## Phase 7: Whole data set
 
+No player build (owner, 2026-11-18, plan D15): the first draft's T7.3 is removed; FR-4 is covered by `MapDataAssemblyTests` (T1.3).
+
 - [x] **T7.1** Add `RoMapDataReferenceTests` (`NeedsData`): sample queries on every reference map equal the source cells; the two-part FR-3 check of plan §4.4 (none more than `GroundTolerance` below the ground, at least `OnGroundShare` within `OnGroundTolerance` on prontera and prt_fild08); every `.gat` of the data root reads, with failures listed by name; a second batch skips everything. (FR-1, FR-2, FR-3)
   *Done when:* the tests pass on the owner's data.
   *Result (2026-11-18):* `RoMapDataReferenceTests` 8/8 on the owner's data (prontera, izlude, prt_fild08): 105 sample cells per map equal the source (type, flags, four heights, position lookup); FR-3 (a) holds on all three maps and (b) on prontera and prt_fild08; the three `.gat` of the data root convert (`Created 3`) and a second batch skips all (`Skipped 3`); prt_fild08 stores 19 bytes of data per cell.
 - [x] **T7.2** Run **Convert All Map Data** on the full data set. Record the number converted, warnings by code (especially `GatUnknownType` values and `GatGndMismatch`), failures, total time, the size of each asset and its bytes per cell, and the serialization mode. No compression, size optimization or LFS line (plan D14). (FR-5, FR-6)
   *Done when:* every map converts or its failure is one listed issue, a second run skips all, and the numbers are in the PR.
   *Result (2026-11-18):* the data root has 3 `.gat` (prontera, izlude, prt_fild08). First run `Created 3, Updated 0, Skipped 0, Failed 0, Warnings 0` in 875 ms (no `GatUnknownType`, no `GatGndMismatch`); second run `Skipped 3` in 63 ms. Serialization `ForceText`. Files: prontera 4,369,760 B (122,304 cells, 35.7 B per cell), izlude 3,513,989 B (80,400 cells, 43.7 B per cell), prt_fild08 6,530,519 B (160,000 cells, 40.8 B per cell); the data is 19 B per cell, the text file writes arrays as hex. No compression and no LFS line (owner, plan D14). Outputs `Assets/Data/map/<name>.asset` and the ledger `Ledger/mapdata.json` are committed with this task.
-- [ ] **T7.3** Build check: make a development player build of an empty scene containing a `MapRoot` for a reference map, with the source folder renamed away; query a walkable cell, a blocked cell and a position outside; search the build output for importer assembly names and for source files. (FR-4)
-  *Done when:* the queries are correct in the build and the search finds nothing.
 
 ## Phase 8: Verify and close
 
@@ -112,7 +112,7 @@
 | FR-1 | T0.1, T0.2, T2.1, T2.2, T2.3, T3.1, T3.2, T4.2, T7.1 |
 | FR-2 | T1.2, T1.3, T7.1 |
 | FR-3 | T0.3, T3.1, T3.2, T3.3, T4.2, T7.1, T8.1 |
-| FR-4 | T0.1, T1.1, T6.1, T6.2, T7.3 |
+| FR-4 | T0.1, T1.1, T1.3, T6.1, T6.2 |
 | FR-5 | T1.1, T1.2, T1.3, T3.2, T7.2 |
 | FR-6 | T4.1, T4.2, T4.3, T7.1, T7.2 |
 | FR-7 | T5.1, T5.2, T5.3, T8.1 |
