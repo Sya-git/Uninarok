@@ -57,6 +57,19 @@ namespace Uninarok.RoImport.Tests
                 RoOutputPaths.Material(new RoOutputRoots(), Key("texture/sub/a.bmp", RoSurface.Cutout, true)));
         }
 
+        // PLAN-0004 D17, TASKS-0004 T8.6: a ground key is a material of its own beside the model's.
+        [Test]
+        public void AGroundKey_IsADifferentMaterial_WithItsOwnName()
+        {
+            var model = Key("texture/sub/a.bmp");
+            var ground = new RoMaterialKey(RoPath.Parse("texture/sub/a.bmp"), RoSurface.Opaque, false, ground: true);
+
+            Assert.AreNotEqual(model, ground);
+            Assert.AreEqual("opaque_ground", ground.Suffix);
+            Assert.AreEqual("Assets/Art/Imported/_materials/texture/sub/a__opaque_ground.mat", RoOutputPaths.Material(new RoOutputRoots(), ground));
+            Assert.AreEqual("Assets/Art/Imported/texture/sub/a__ground.png", RoOutputPaths.GroundTexture(new RoOutputRoots(), RoPath.Parse("texture/sub/a.bmp")));
+        }
+
         [Test]
         public void KeyWithoutATexture_IsRejected()
         {

@@ -21,6 +21,9 @@ namespace Uninarok.RoImport.Editor.Pipeline
     {
         public const string Category = "texture";
 
+        /// <summary>Ledger category of the ground's Clamp copies (PLAN-0004 D17).</summary>
+        public const string GroundCategory = "groundtexture";
+
         /// <summary>Rules version: bump when decoding, keying, bleeding, encoding or the import settings change (plan 4.8).</summary>
         public const int Rules = 2;   // 2: World textures keep their original size (npotScale none, D20)
 
@@ -46,8 +49,12 @@ namespace Uninarok.RoImport.Editor.Pipeline
             return Enum.TryParse(data.Substring(AlphaUserData.Length), out RoTextureAlpha alpha) ? alpha : (RoTextureAlpha?)null;
         }
 
-        /// <summary>One texture, converted or skipped. Called through <see cref="RoImportContext.Texture"/>, which memoizes it.</summary>
-        internal static RoResult<Texture2D> ConvertTexture(RoImportContext ctx, RoPath path, string referrer, out string hash)
+        /// <summary>
+        /// One texture, converted or skipped. Called through <see cref="RoImportContext.Texture"/>, which memoizes it, or with
+        /// <paramref name="ground"/> through <see cref="RoImportContext.GroundTexture"/>: the same image written as the
+        /// ground's Clamp copy, in its own ledger (PLAN-0004 D17).
+        /// </summary>
+        internal static RoResult<Texture2D> ConvertTexture(RoImportContext ctx, RoPath path, string referrer, out string hash, bool ground = false)
         {
             hash = string.Empty;
             string item = path.Canonical;
@@ -66,13 +73,13 @@ namespace Uninarok.RoImport.Editor.Pipeline
             {
                 ctx.Report.Warn(RoIssueCode.OutputCollision, item, referrer,
                     $"'{bmp.Canonical}' has the same output and is preferred; it is used instead");
-                var preferred = ctx.Texture(bmp, referrer);
+                var preferred = ground ? ctx.GroundTexture(bmp, referrer) : ctx.Texture(bmp, referrer);
                 return preferred.Status == RoStatus.Failed ? preferred : RoResult<Texture2D>.Skipped(preferred.Value);
             }
 
             hash = file.ContentHash();
-            string output = RoOutputPaths.Texture(ctx.Roots, path);
-            var ledger = ctx.Ledger(Category);
+            string output = ground ? RoOutputPaths.GroundTexture(ctx.Roots, path) : RoOutputPaths.Texture(ctx.Roots, path);
+            var ledger = ctx.Ledger(ground ? GroundCategory : Category);
 
             string owner = ledger.OwnerOf(output);
             if (owner != null && owner != item)
@@ -97,7 +104,7 @@ namespace Uninarok.RoImport.Editor.Pipeline
             RoColorKey.BleedTransparentColor(image);
             var usage = RoTextureUsageRules.For(path);
 
-            var status = ctx.Writer.WriteBytes(output, ctx.Png.Encode(image), importer => Configure(importer, usage, alpha));
+            var status = ctx.Writer.WriteBytes(output, ctx.Png.Encode(image), importer => Configure(importer, usage, alpha, ground));
             ledger.Record(new RoLedgerEntry { Source = item, SourceHash = hash, Rules = Rules, Outputs = new[] { output } }, ctx.Report);
 
             var texture = ctx.Writer.Load<Texture2D>(output);
@@ -111,8 +118,11 @@ namespace Uninarok.RoImport.Editor.Pipeline
             return RoResult<Texture2D>.Failed(new RoIssue(code, item, referrer, message), placeholder);
         }
 
-        /// <summary>Import settings by usage (plan 4.4 table). Applied by the writer only when they differ (plan 4.7).</summary>
-        internal static void Configure(AssetImporter importer, RoTextureUsage usage, RoTextureAlpha alpha)
+        /// <summary>
+        /// Import settings by usage (plan 4.4 table). Applied by the writer only when they differ (plan 4.7). A ground copy
+        /// is a world texture with Clamp wrap (PLAN-0004 D17).
+        /// </summary>
+        internal static void Configure(AssetImporter importer, RoTextureUsage usage, RoTextureAlpha alpha, bool ground = false)
         {
             var t = (TextureImporter)importer;
             t.sRGBTexture = true;
@@ -138,7 +148,7 @@ namespace Uninarok.RoImport.Editor.Pipeline
                 t.mipmapEnabled = true;
                 t.mipMapsPreserveCoverage = alpha == RoTextureAlpha.Keyed;
                 t.alphaTestReferenceValue = 0.5f;            // matches the cutout material's _Cutoff (plan 4.6)
-                t.wrapMode = TextureWrapMode.Repeat;
+                t.wrapMode = ground ? TextureWrapMode.Clamp : TextureWrapMode.Repeat;
                 t.filterMode = FilterMode.Bilinear;
                 t.textureCompression = TextureImporterCompression.Compressed;
             }

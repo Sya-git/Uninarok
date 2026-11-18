@@ -14,6 +14,7 @@ namespace Uninarok.RoImport.Core.Output
         public const string MaterialsFolder = "_materials";
         public const string PlaceholdersFolder = "_placeholders";
         public const string AdditiveSuffix = ".additive";
+        public const string GroundSuffix = "__ground";
 
         /// <summary><c>Art/&lt;canonical folder&gt;/&lt;name&gt;&lt;newExtension&gt;</c>.</summary>
         public static string Mirror(RoOutputRoots r, RoPath source, string newExtension) =>
@@ -21,6 +22,10 @@ namespace Uninarok.RoImport.Core.Output
 
         /// <summary>Every texture becomes a PNG (D7): <c>Art/texture/a/b.png</c>.</summary>
         public static string Texture(RoOutputRoots r, RoPath source) => Mirror(r, source, ".png");
+
+        /// <summary>The ground's Clamp copy of a texture (PLAN-0004 D17): <c>Art/texture/a/b__ground.png</c>.</summary>
+        public static string GroundTexture(RoOutputRoots r, RoPath source) =>
+            Join(r.Art, NotEmpty(source).WithExtension("").Canonical + GroundSuffix + ".png");
 
         /// <summary>
         /// <c>Art/_materials/&lt;texture path without extension&gt;__&lt;suffix&gt;.mat</c>. The overload taking an

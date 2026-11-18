@@ -1,6 +1,15 @@
 {
     "entries": [
         {
+            "Source": "texture/backside.bmp__opaque_ground",
+            "SourceHash": "c23d886dfe22c30d1c5c4af1ee8da4a0e0822eba29c3c5aa9731ee283d102df4",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/backside__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
             "Source": "texture/dewata/indo_17.bmp__cutout",
             "SourceHash": "ec36a5202c2964f50b6771308d644d02f1be51df96bdd5184e6b47b6361c9d67",
             "Rules": 1,
@@ -3219,6 +3228,312 @@
             "Rules": 1,
             "Outputs": [
                 "Assets/Art/Imported/_materials/texture/프론테라내부/wa-line-1__opaque.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_도시01.bmp__opaque_ground",
+            "SourceHash": "b086b532d229e775c02da094edaeb52eba4e05e50ca12631dc09a644b74db18b",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_도시01__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_도시02.bmp__opaque_ground",
+            "SourceHash": "7bc308fc2500e2e0c5aeb65660f39d2430072618d7e2d4efbe8e3ad97d7ba944",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_도시02__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_도시03.bmp__opaque_ground",
+            "SourceHash": "0060688639263f34fa8fe77457be718fc2665da2babe5d3f4c72b47e43d2ed04",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_도시03__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_도시04.bmp__opaque_ground",
+            "SourceHash": "e34bd452ba603df943032777b469b795e0076cdf8a3a16cf8ebbd1ac26c0b4d5",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_도시04__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_도시05-1.bmp__opaque_ground",
+            "SourceHash": "92379768cbe82ddeb23671ee60e3854e28de778795e041b584bbfda15f900f90",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_도시05-1__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_도시05.bmp__opaque_ground",
+            "SourceHash": "37087ebabd0e44fd3c6faf935ac66a4d9f4bc908cde1ac9b5aef2b77a021468f",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_도시05__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_도시06.bmp__opaque_ground",
+            "SourceHash": "e0d513ca08f4cfe8090e8b042551b0e7ce122aac004ceda7d0292538bf1c42da",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_도시06__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_도시07.bmp__opaque_ground",
+            "SourceHash": "1dbd3b6359152ae0707038e6cb51e085242c1eb58c5fa4c91418ef081e1dba0e",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_도시07__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_도시08.bmp__opaque_ground",
+            "SourceHash": "09e52d844d2acc51a6bb2ec53a503c20c3fc5571e60351a81fbc569bbb481b79",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_도시08__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_바위01.bmp__opaque_ground",
+            "SourceHash": "6cccb894c886a8f84d97a1dec7f09bdf4e31796718f30651f1c3138393491050",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_바위01__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_언덕01.bmp__opaque_ground",
+            "SourceHash": "2834b9dbb6c8469abcb1a3919db24e3d0ee2fef7578fd22e7212ce2795240c0a",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_언덕01__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_언덕02.bmp__opaque_ground",
+            "SourceHash": "f74dcad58c0b670d7e591e629582ecf9703558a3697803d3625613bef7989724",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_언덕02__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_언덕03.bmp__opaque_ground",
+            "SourceHash": "8f3112c749e3832f3a3b0546d1287f30c1ceea7361316f0248eadd8628f1137d",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_언덕03__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_언덕04.bmp__opaque_ground",
+            "SourceHash": "2bce57a01f537662bb47a59aa1a67b029ce8e8ef12ba878819faa19784af9f34",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_언덕04__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_언덕05.bmp__opaque_ground",
+            "SourceHash": "6aa092bee03cd6afac104ca78d0ecc1a7f6609dcd27eb0e0bb310d8dda4cedb4",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_언덕05__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_언덕06.bmp__opaque_ground",
+            "SourceHash": "9f204cf2eef96f7c5b1a9bf76ff29533bc23c8c48692f7db890253e69f41dd0f",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_언덕06__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_언덕10.bmp__opaque_ground",
+            "SourceHash": "7326805a5948cd183575a7e766f1e08c403ad6ec5e21e2dde2b5013e16d58f71",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_언덕10__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_언덕11.bmp__opaque_ground",
+            "SourceHash": "da8b98a8c5807dc98f7ed1b66f0a98be716b9671201b0fcbd143588ad821af2f",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_언덕11__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_초원01.bmp__opaque_ground",
+            "SourceHash": "073a6e7f3ed128ddd566f51cd030c5561726f45f68029309792a348b6205c689",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_초원01__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_초원02.bmp__opaque_ground",
+            "SourceHash": "222b5c92e47b7d44bdab3a9c06aa0a5c365bd0bf12540f9ee90267604c1c74d2",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_초원02__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_초원04.bmp__opaque_ground",
+            "SourceHash": "0ddbcc4f2784486dae56358a0ecedbfb2fd4e221a894e623de7b6cc976567b2e",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_초원04__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_초원06.bmp__opaque_ground",
+            "SourceHash": "36803c0959e2ba76ddb75820e6b08fe985d02cb63c7f08c8d62d67e51ccb4ac7",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_초원06__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_초원08.bmp__opaque_ground",
+            "SourceHash": "2b768915abb4c7e4adbd73c445c5fac152e382cd8bdc614c5eecc3a648657749",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_초원08__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_초원09.bmp__opaque_ground",
+            "SourceHash": "a0ff9436b7600a81410d86fc6ee356a3d40c84e290b34feea88e5195cc3dbbfe",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_초원09__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_흙02.bmp__opaque_ground",
+            "SourceHash": "731db0e180a4806b0e83233a7e41b78b2707ac6519eb5c0952916ba113663528",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_흙02__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/prt_흙03.bmp__opaque_ground",
+            "SourceHash": "3254d320aa4c72f1d3361555b458b97201fc3e5d5deaea538c922fe2483119b6",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/prt_흙03__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/태국풀바닥20.bmp__opaque_ground",
+            "SourceHash": "6cf37cb3eea690e59084d229e8f5fae9c4ed8372f1f26110828234bf31beda22",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/태국풀바닥20__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/태국풀바닥29.bmp__opaque_ground",
+            "SourceHash": "7337248fd13b2eedcde615806a5d8892232d74be6a07fbf10da7f715963eedb8",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/태국풀바닥29__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/프론절벽-01.bmp__opaque_ground",
+            "SourceHash": "91aeea01fa70b588de6519785591dd7d47d0589667552a057bbb555930e0ab93",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/프론절벽-01__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/프론절벽-02.bmp__opaque_ground",
+            "SourceHash": "ba72b0f42a425871286f7257ae2d1dfcf94b37c984205e5989b6d34dddac98bc",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/프론절벽-02__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/프론절벽-03.bmp__opaque_ground",
+            "SourceHash": "dea36b72180f313154efc5e02eb5b2712f29c7b1df2eac26190e857aebcb8f38",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/프론절벽-03__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/프론절벽-04.bmp__opaque_ground",
+            "SourceHash": "a5f5721e7e225fdb20c0c76a38f5bdf357031bddb63dae550d8e0b53c3dd11bb",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/프론절벽-04__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/프론절벽-05.bmp__opaque_ground",
+            "SourceHash": "5af8ab7299d3f47a382bd4cdea413fea4af61057122caa9760665fd8eb189191",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/프론절벽-05__opaque_ground.mat"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/필드바닥/프론절벽-06.bmp__opaque_ground",
+            "SourceHash": "7c41fcae455aa54994ef2cbaef5b0f4877f28a1a32c4cd38f1f129f77906b5ab",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_materials/texture/필드바닥/프론절벽-06__opaque_ground.mat"
             ],
             "Dependencies": []
         }
