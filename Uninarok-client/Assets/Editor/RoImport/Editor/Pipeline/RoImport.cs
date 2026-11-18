@@ -76,6 +76,19 @@ namespace Uninarok.RoImport.Editor.Pipeline
             }
         }
 
+        /// <summary>
+        /// Converts the ground of a map (or skips it when current) and returns its prefab (PLAN-0004 4.6): the source is
+        /// <c>&lt;mapName&gt;.gnd</c> at the data root (D11). A ground that cannot be converted is
+        /// <see cref="RoStatus.Failed"/> with no value and its reason.
+        /// </summary>
+        public static RoResult<GameObject> Ground(string mapName, RoImportOptions options = null)
+        {
+            if (!RoPath.TryParse((mapName ?? string.Empty) + ".gnd", out var path))
+                return RoResult<GameObject>.Failed(new RoIssue(RoIssueCode.SourceMissing, mapName, null, "not a valid map name"));
+            using (var session = new Session(options))
+                return session.Context.Ground(path);
+        }
+
         /// <summary>Runs a batch (plan 4.10): continues past failures and returns the report, whose summary lists them.</summary>
         public static RoReport Run(IEnumerable<RoJob> jobs, RoImportOptions options = null) => RoBatch.Run(jobs, options);
 

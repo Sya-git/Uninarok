@@ -7,7 +7,9 @@ namespace Uninarok.RoImport.Editor.Pipeline
     {
         Texture,
         /// <summary>An RSM model (PLAN-0003).</summary>
-        Model
+        Model,
+        /// <summary>A GND ground (PLAN-0004).</summary>
+        Ground
     }
 
     /// <summary>One conversion request: a kind and a Ragnarok path (plan 4.10, SPEC-0002 FR-2).</summary>

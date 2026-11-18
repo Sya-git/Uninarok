@@ -19,7 +19,6 @@ namespace Uninarok.RoImport.Tests.Gnd
     // TASKS-0004 T5.1 (FR-1, FR-6; SPEC-0002 FR-5, FR-16): converting a map built in code writes the chunk meshes and the
     // ground prefab at the paths of PLAN-0004 §3, with shared materials and the setup of §4.6. Writes under
     // Assets/__RoImportTests; textures come from the test fixture folder.
-    [Ignore("pending T5.2")]
     public class RoGndWriterTests
     {
         static RoPath Source => RoPath.Parse("sample.gnd");
@@ -152,7 +151,7 @@ namespace Uninarok.RoImport.Tests.Gnd
             var second = prefab.transform.Find("Chunk_1_0").GetComponent<MeshRenderer>().sharedMaterials;
             Assert.AreEqual(2, first.Length, "submesh 0 = texture 0 (tops), submesh 1 = texture 1 (walls)");
             Assert.AreSame(first[0], second[0], "one material per texture across chunks (FR-6)");
-            StringAssert.Contains("KEY8", AssetDatabase.GetAssetPath(first[1]));
+            StringAssert.Contains("key8", AssetDatabase.GetAssetPath(first[1]), "paths are canonical, lower case");
         }
 
         [Test]

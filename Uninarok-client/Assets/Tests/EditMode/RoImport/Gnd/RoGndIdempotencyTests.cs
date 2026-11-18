@@ -22,7 +22,6 @@ namespace Uninarok.RoImport.Tests.Gnd
     // TASKS-0004 T5.1 (FR-6; SPEC-0002 FR-5, FR-16): reruns skip; a forced rerun changes no mesh byte and no GUID; the
     // prefab and a scene that reference a chunk mesh keep their references when the ground changes. The NeedsData tests
     // use a copy of izlude.gnd in a temporary data folder with generated textures; all write under Assets/__RoImportTests.
-    [Ignore("pending T5.2")]
     public class RoGndIdempotencyTests
     {
         const string Map = "izlude";
@@ -43,11 +42,12 @@ namespace Uninarok.RoImport.Tests.Gnd
         [TearDown]
         public void TearDown()
         {
-            if (SceneManager.sceneCount > 1)
-                for (int i = SceneManager.sceneCount - 1; i >= 0; i--)
+            // Leave an untitled scene open rather than one under the test folder, which is about to be deleted.
+            for (int i = 0; i < SceneManager.sceneCount; i++)
+                if (SceneManager.GetSceneAt(i).path.StartsWith(RoImportTestRoot.Folder))
                 {
-                    var s = SceneManager.GetSceneAt(i);
-                    if (s.path.StartsWith(RoImportTestRoot.Folder)) EditorSceneManager.CloseScene(s, true);
+                    EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+                    break;
                 }
             RoImportTestRoot.Delete();
             foreach (string folder in new[] { Path.GetDirectoryName(_data), _ledgerFolder })
@@ -157,14 +157,15 @@ namespace Uninarok.RoImport.Tests.Gnd
             var meshBefore = File.ReadAllBytes(RoImportTestRoot.FullPath(chunk));
 
             string scenePath = RoImportTestRoot.Folder + "/reference.unity";
-            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
+            // Single mode: the runner's own untitled scene cannot stay beside an additive new one; the EditMode runner
+            // restores the scene setup after the run, and TearDown leaves an untitled scene again.
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             var holder = new GameObject("holder");
-            SceneManager.MoveGameObjectToScene(holder, scene);
             holder.AddComponent<MeshFilter>().sharedMesh = AssetDatabase.LoadAssetAtPath<Mesh>(chunk);
             var instance = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(paths.Prefab), scene);
             Assert.IsNotNull(instance);
             Assert.IsTrue(EditorSceneManager.SaveScene(scene, scenePath));
-            EditorSceneManager.CloseScene(scene, true);
+            EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);   // nothing holds the meshes in memory
 
             ctx = Context(data: RoFolderSourceTests.FixtureRoot);
             Assert.AreNotEqual(RoStatus.Failed, RoGndConverter.Write(ctx, source, Sample(-30f), "two").Status);
@@ -174,14 +175,13 @@ namespace Uninarok.RoImport.Tests.Gnd
             Assert.AreEqual(meshGuid, AssetDatabase.AssetPathToGUID(chunk), "mesh GUID kept");
             Assert.AreEqual(prefabGuid, AssetDatabase.AssetPathToGUID(paths.Prefab), "prefab GUID kept");
 
-            scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Additive);
+            scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);   // as saved on disk
             var roots = scene.GetRootGameObjects();
             var filter = roots.Single(g => g.name == "holder").GetComponent<MeshFilter>();
             Assert.AreEqual(chunk, AssetDatabase.GetAssetPath(filter.sharedMesh), "the scene's mesh reference survives");
             var placed = roots.Single(g => g != filter.gameObject);
             Assert.AreEqual(paths.Prefab, PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(placed), "the scene's prefab instance survives");
             Assert.IsTrue(placed.GetComponentsInChildren<MeshFilter>().All(f => f.sharedMesh != null), "and its chunks resolve");
-            EditorSceneManager.CloseScene(scene, true);
         }
     }
 }
