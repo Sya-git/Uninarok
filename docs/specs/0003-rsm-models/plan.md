@@ -113,6 +113,37 @@ public static class RoRsmReader { public static bool TryRead(RoPath path, byte[]
 
 - `RoRsm` holds the file's values as GRF reads them, in Ragnarok space, unconverted: matrices and vectors as in the file, angles in radians, keyframe times in the file's units. No derived or recentered values.
 - **GRF member mapping (T0.2).** The task prints, for each reference model of `reference-models.md`, every `Rsm` and `Mesh` member that could correspond to a file field (the old importer used `Name`, `ParentName`, `LocalPosition`, `GlobalPosition`, `GlobalRotationAxis`, `GlobalRotationAngle`, `GlobalScale`, `TransformationMatrix`, `Vertices`, `TextureVertices`, `Faces`, `TextureIndexes`, `Textures`, and GRF also has `ShadeType`, `AnimationLength`, `PosKeyFrames`, `RotationKeyFrames`, `ScaleKeyFrames`, `SmoothGroup`, `Rsm2` and `Rsm2Converter`), and compares them with the raw values already recorded for the four reported models (single node, rotation and position non-zero). The result, one row per `RoRsm` field with the GRF member that supplies it, is written into this section. Fields GRF does not supply (for example a version without shade type) are left at their defaults with `HasShadeType = false`.
+- **T0.2 result (2026-11-17).** Checked against a raw read of the RSM 1.4 layout for `나무잡초꽃/버섯02`, `나무잡초꽃/넝쿨01` (single node, rotation and position non-zero), `dewata/다약화로01` (parent and child) and `프론테라/시계탑` (5 nodes, animated): every value below equals the raw value bit for bit. Despite their names, GRF's `Local*`/`Global*` node members are the plain file fields, not derived values.
+
+  | `RoRsm` field | GRF member | Notes |
+  |---|---|---|
+  | `VersionMajor`, `VersionMinor` | `Rsm.Header.MajorVersion`, `.MinorVersion` | `Rsm.Version` (double) is the same, not used |
+  | `ShadeType`, `HasShadeType` | `Rsm.ShadeType` (int: 0 none, 1 flat, 2 smooth) | every 1.x file in the data has it; `HasShadeType` comes from the `RsmRules` row |
+  | `AnimationLength` | `Rsm.AnimationLength` | file units (`시계탑`: 768000) |
+  | `Textures` | `Rsm.Textures` | relative to `texture/`, `\` separators; **needs the Korean encoding** (below) |
+  | `Nodes` | `Rsm.Meshes` | file order |
+  | `Name`, `ParentName` | `Mesh.Name`, `Mesh.ParentName` | `""` for a root |
+  | `TextureSlots` | `Mesh.TextureIndexes` | node slot → index into `Rsm.Textures` |
+  | `OffsetMatrix` | `Mesh.TransformationMatrix` (`TkMatrix3`, `[row, col]`) | row-major as in the file (raw `1,0,0, 0,0,1, 0,-1,0` = rows printed by GRF) |
+  | `Offset` | `Mesh.LocalPosition` | the file's offset vector (first 3 floats after the matrix); non-zero on 17 nodes of the data |
+  | `Position` | `Mesh.GlobalPosition` | the file's position (next 3 floats) |
+  | `RotationAngle`, `RotationAxis` | `Mesh.GlobalRotationAngle`, `Mesh.GlobalRotationAxis` | radians; axis `(0,0,0)` with angle 0 means no rotation |
+  | `Scale` | `Mesh.GlobalScale` | |
+  | `Vertices` | `Mesh.Vertices` (`TkVector3`) | |
+  | `TexCoords` | `Mesh.TextureVertices` (`U`, `V`, `C` color) | |
+  | `Faces[].V0..V2`, `T0..T2` | `Face.VertexIds`, `Face.TextureVertexIds` | `ushort[3]` |
+  | `Faces[].TextureSlot` | `Face.TextureId` | node-local slot; no out-of-range slot in the data |
+  | `Faces[].TwoSided` | `Face.TwoSide != 0` | |
+  | `Faces[].SmoothGroup` | `Face.SmoothGroup[0]` | GRF stores `int[3]`; in all 21,184 faces of the data the three are equal, values 0 to 7 (an integer group id, not a mask) |
+  | `PosKeys` | `Mesh.PosKeyFrames` (`Frame`, `Position`) | per node from 1.5; none in the 1.4 data (1.4's global position keys are empty in every file) |
+  | `RotKeys` | `Mesh.RotationKeyFrames` (`Frame`, `Quaternion` X, Y, Z, W) | 44 nodes in the data have them |
+  | `ScaleKeys` | `Mesh.ScaleKeyFrames` (`Frame`, `Scale`) | 2.x only; empty for 1.x |
+
+  **Not used** (derived by GRF or for features out of scope): `Mesh.Parent`, `Mesh.Children` (we resolve parents by name, §4.2), `Mesh.Matrix1`, `Mesh.Matrix2`, `Mesh.InvertTransformationMatrix`, `Mesh.BoundingBox`, `Mesh.CalculateBoundingBox()`, `Rsm.Box`, `Rsm.MainMesh`, `Rsm.MainMeshNames`, `Mesh.Textures` (empty for 1.x), `Mesh.TextureKeyFrameGroup` (texture animation, not in this spec), `Rsm.VolumeBoxes`, `Rsm.Alpha`, `Rsm.FrameRatePerSecond` (0 for 1.x; a 2.x timing input to be checked when 2.x data is available), `Rsm.ScaleKeyFrames`, `Rsm.Flatten()`, `Rsm.Downgrade()`, `Rsm2Converter`.
+
+  **Text encoding.** GRF decodes strings with `Utilities.Services.EncodingService.DisplayEncoding`, which is UTF-8 in the editor; Korean texture names (CP949 in the file) come out as replacement characters, which cannot be undone. The adapter sets `DisplayEncoding = EncodingService.Korean` for the read and restores the previous value in a `finally` (main thread only, §5); with it all texture paths of the 140 models resolve. Node names in the data are ASCII.
+
+  **Versions and `.rsm2`.** The working data set has 140 `.rsm` files, all 1.4; all load through `new Rsm((GRF.MultiType)bytes)` with no failure. The full game data has 1.5, 2.2 and 2.3 (`reference-models.md` §6) but none of them is in the working set, so whether `.rsm2` loads through GRF in the editor is **not verified**; until a file is available, those versions get no `RsmRules` row and are reported `UnsupportedRsmVersion` (§4.1, §4.4).
 - Versions: the adapter records the version and passes through whatever GRF returns for it, including `.rsm2` through GRF's own `Rsm2` handling if it loads in the editor. A file GRF cannot read gives `false` with GRF's reason and the converter reports one `CorruptFile` issue; a version GRF reads but our rules table (§4.4) has no row for gives one `UnsupportedRsmVersion` issue and no output (FR-8). No version is guessed.
 - The adapter never throws to its caller.
 
