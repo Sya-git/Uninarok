@@ -90,6 +90,22 @@ namespace Uninarok.RoImport.Editor.Writing
             return RoStatus.Updated;
         }
 
+        /// <summary>
+        /// Saves <paramref name="root"/> as a prefab asset (PLAN-0003 4.7). Saving over an existing prefab replaces its
+        /// content and keeps its GUID, so references to it survive. The in-memory object stays the caller's.
+        /// </summary>
+        public RoResult<GameObject> SavePrefab(string projectPath, GameObject root)
+        {
+            string path = Checked(projectPath);
+            if (root == null) throw new ArgumentNullException(nameof(root));
+            bool existed = File.Exists(Disk(path));
+            EnsureFolder(Parent(path));
+            var saved = PrefabUtility.SaveAsPrefabAsset(root, path, out bool success);
+            if (!success || saved == null)
+                return RoResult<GameObject>.Failed(new RoIssue(RoIssueCode.Unexpected, path, null, "Unity could not save the prefab"));
+            return existed ? RoResult<GameObject>.Updated(saved) : RoResult<GameObject>.Created(saved);
+        }
+
         public bool Exists(string projectPath) => File.Exists(Disk(Normalize(projectPath)));
 
         public T Load<T>(string projectPath) where T : Object => AssetDatabase.LoadAssetAtPath<T>(Normalize(projectPath));

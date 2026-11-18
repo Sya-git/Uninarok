@@ -281,6 +281,7 @@ public static class RsmMeshBuilder
 Satisfies FR-1, FR-7, FR-10.
 
 - An in-memory `GameObject` root named after the model; one child per node, created in `RsmTree.Order`, parented by the tree, named `UniqueNames`, with local transforms from §4.5. Nodes with at least one face get a `MeshFilter` (the node's mesh asset) and a `MeshRenderer` (materials in submesh order, shadow casting and receiving left at Unity defaults, light probes off, per SPEC-0003 non-goals).
+- (T6.3) The save goes through a new `RoAssetWriter.SavePrefab(path, root)` (path checked against the output roots, folder created, `PrefabUtility.SaveAsPrefabAsset` inside), so the writer stays the only code that writes assets (PLAN-0002 4.7).
 - The prefab is saved with `PrefabUtility.SaveAsPrefabAsset` at the mirrored path, then the in-memory object is destroyed. Saving to an existing path replaces its content and keeps its GUID; mesh and material references are to asset objects (meshes upserted first through `RoAssetWriter.UpsertObject`, in place, PLAN-0002 §4.7), so references to the model from maps (PLAN-0006) survive re-conversion (SPEC-0002 FR-5).
 - Meshes and materials are separate assets of the model (FR-10): a mesh can be assigned to a collider, a material can be changed without touching the source.
 - A model with no animation has no `Animator` and no scripts; a model with animation also gets the `Animator` of §4.8.
