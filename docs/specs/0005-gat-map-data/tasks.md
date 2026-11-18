@@ -54,7 +54,7 @@
   *Done when:* the tests compile and are ignored with `pending T3.2`.
 - [x] **T3.2** Implement `Core/Gat/RoGatRules` (the table of plan §4.2) and `RoGatBuilder` (arrays for `MapData`, geometry fields from `RoMapSpace`, `diagonalFlip` from `RoGndRules`, `rowSign` from `RoMapSpace.RowDirection`). (FR-1, FR-3, FR-5)
   *Done when:* `[Ignore]` removed and the tests of T3.1 pass.
-- [ ] **T3.3** Add `RoGroundSamplerTests` (failing, ignored) and implement `Core/Gnd/Space/RoGroundSampler` (plan §4.4): flat, ramp and cliff synthetic grounds give the expected heights, a gap returns false, the diagonal is the one of `RoGndRules`. (FR-3)
+- [x] **T3.3** Add `RoGroundSamplerTests` (failing, ignored) and implement `Core/Gnd/Space/RoGroundSampler` (plan §4.4): flat, ramp and cliff synthetic grounds give the expected heights, a gap returns false, the diagonal is the one of `RoGndRules`. (FR-3)
   *Done when:* `[Ignore]` removed and the tests pass.
 
 ## Phase 4: Editor side
