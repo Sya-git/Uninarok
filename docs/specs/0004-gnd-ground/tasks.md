@@ -85,8 +85,9 @@ T6.1 to T6.4 (ground gizmos and picking, FR-9) were removed by the owner on 2026
 - [x] **T7.2** Run **Convert All Grounds** on the full data set. Record the number converted, warnings by code, failures, the total time and the largest map's chunk and vertex counts. (FR-6)
   *Done when:* every map converts or its failure is one listed issue, a second run skips all, and the numbers are in the PR.
   *Result (2026-11-18):* run in the editor over the data root (3 `.gnd`: izlude, prontera, prt_fild08). First run 20.7 s: created 3, failed 0, warnings 0. Second run 0.1 s: skipped 3. Per map (chunks, vertices, triangles, largest chunk's vertices, distinct materials): izlude 90, 48,281, 40,674, 763, 20; prontera 130, 51,142, 56,996, 608, 11; prt_fild08 (the largest) 169, 84,886, 79,110, 695, 21. The ground outputs are 18 MB; the chunk meshes are LFS objects under the existing `Art/Imported/**/*.asset` rule.
-- [ ] **T7.3** Add the LFS lines needed for the chunk meshes if PLAN-0002's `Art/Imported/**/*.asset` rule does not already match them (check with `git check-attr`). (FR-6)
+- [x] **T7.3** Add the LFS lines needed for the chunk meshes if PLAN-0002's `Art/Imported/**/*.asset` rule does not already match them (check with `git check-attr`). (FR-6)
   *Done when:* a converted chunk mesh is reported as LFS by `git check-attr`.
+  *Result (2026-11-18):* no new line needed. `git check-attr filter -- Uninarok-client/Assets/Art/Imported/map/prt_fild08/ground/chunk_0_0.asset` gives `filter: lfs` through the existing `.gitattributes` rule `Uninarok-client/Assets/Art/Imported/**/*.asset`; `git lfs ls-files` lists all 389 committed chunk meshes, and the committed blob is an LFS pointer.
 
 ## Phase 8: Verify and close
 
