@@ -49,7 +49,7 @@
 
 ## Phase 3: Surfaces
 
-- [ ] **T3.1** Add `RoGndSurfacesTests` and `RoGndNonSquareTests` (failing, ignored): a flat map has tops only and no walls; a step has exactly one wall per differing edge, with the owning cube's tile; a wall whose tile is `-1` produces nothing; equal heights at one end give a triangle, not a quad; a cube with `TileUp = -1` is a gap; tile id `0` is a valid tile; edge cubes read no neighbour outside the grid and give no warning; `H00` to `H11` land on the right grid corners; on 5 × 3 and 3 × 5 maps the cube at column 4, row 2 and its neighbours come out at the expected position and tile, and the old `column + row * height` index would fail (regression guard). (FR-1, FR-2, FR-4)
+- [x] **T3.1** Add `RoGndSurfacesTests` and `RoGndNonSquareTests` (failing, ignored): a flat map has tops only and no walls; a step has exactly one wall per differing edge, with the owning cube's tile; a wall whose tile is `-1` produces nothing; equal heights at one end give a triangle, not a quad; a cube with `TileUp = -1` is a gap; tile id `0` is a valid tile; edge cubes read no neighbour outside the grid and give no warning; `H00` to `H11` land on the right grid corners; on 5 × 3 and 3 × 5 maps the cube at column 4, row 2 and its neighbours come out at the expected position and tile, and the old `column + row * height` index would fail (regression guard). (FR-1, FR-2, FR-4)
   *Done when:* the tests compile and are ignored with `pending T3.2`.
 - [ ] **T3.2** Implement `Core/Gnd/Surfaces/RoGndRules` (values of T0.3), `RoGndQuad` and `RoGndSurfaces.Enumerate` (plan §4.3). (FR-1, FR-2, FR-3)
   *Done when:* `[Ignore]` removed and the tests of T3.1 pass.
