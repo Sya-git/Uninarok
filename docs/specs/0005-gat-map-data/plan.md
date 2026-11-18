@@ -21,7 +21,7 @@
 Satisfies FR-1 to FR-6.
 
 ```
- map/x.gat ──(IRoSource)──> bytes            map/x.gnd (header only: width, height, zoom)
+ x.gat ──(IRoSource)──> bytes                x.gnd (header only: width, height, zoom)
                   │                                   │
         RoGatReader (GRF adapter)               RoGndReader (PLAN-0004)
                   │                                   │
@@ -39,7 +39,7 @@ Satisfies FR-1 to FR-6.
               MapRoot (runtime component, links the scene to the data) ── gizmos (editor)
 ```
 
-Data flow for `RoImport.MapData("prontera")` (source `map/prontera.gat`):
+Data flow for `RoImport.MapData("prontera")` (source `prontera.gat` at the data root, D9):
 
 1. Ledger check (hashes of the GAT and of the GND header, rules version): current → `Skipped`.
 2. Read the GAT through GRF into `RoGat`; read the GND through `RoGndReader` only for its width, height and zoom. A cell grid that is not exactly `2 × GND width` by `2 × GND height` gives one `GatGndMismatch` issue and no output.
@@ -171,7 +171,7 @@ Satisfies FR-3.
 Satisfies FR-6, FR-8 (uses SPEC-0002 FR-5, FR-6, FR-10, FR-16).
 
 ```csharp
-public sealed class RoMapDataConverter : IRoConverter      // registers RoJobKind.MapData; source path is map/<name>.gat
+public sealed class RoMapDataConverter : IRoConverter      // registers RoJobKind.MapData; source path is <name>.gat at the data root (D9)
 {
     public const int RulesVersion = 1;
     public RoResult<UnityEngine.Object> Convert(RoImportContext ctx, RoPath path);   // returns the MapData asset
@@ -183,7 +183,7 @@ public sealed class RoMapDataConverter : IRoConverter      // registers RoJobKin
 - The asset is written with `RoAssetWriter.UpsertObject` (PLAN-0002 §4.7): the first conversion creates it and Unity assigns the GUID; every later one copies the new content into the existing object, so a scene reference (`MapRoot.mapData`) survives (FR-6). One asset per map, at the predictable path of §3, owned by ledger category `mapdata`.
 - Outputs are written only after the whole arrays are built (no partial output on failure). Content is deterministic (arrays in cell order, no timestamps), so a second forced conversion is byte-identical (FR-16).
 - **Optional type image (FR-8, Should).** `RoGatImage` (pure) makes an RGBA image, one pixel per cell, one colour per `MapCellType` (a fixed palette in the code, listed in the legend of §4.6), row 0 at the bottom as in the map. It is written as a PNG with point filtering and no compression only when the request has `WithImage` set (a window toggle and the batch option `GatImage`), and it is a separate ledger output of the same entry.
-- The menu and window gain the kind `MapData` and `Tools/Ragnarok/Convert All Map Data` (`Enumerate("map/")`, extension `.gat`).
+- The menu and window gain the kind `MapData` and `Tools/Ragnarok/Convert All Map Data` (`Enumerate("")`, the whole data root, extension `.gat`; D9).
 
 ### 4.6 Gizmos: `RoMapDataGizmos`, `RoMapDataOverlay`
 
@@ -245,6 +245,7 @@ Satisfies every FR of the spec. EditMode NUnit tests (command in `CLAUDE.md` §2
 | D6 | Gizmos attach to `MapRoot` through `DrawGizmo`, the data is the project's own asset | A gizmo component with importer code (not allowed in scenes, FR-14); a custom editor window only (not a gizmo, FR-7) |
 | D7 | Cell grid must be exactly `2 × GND` or the map is rejected with `GatGndMismatch` | Silently resampling (hides a wrong pairing of files) |
 | D8 | The type image is optional and separate (`WithImage`) | Always generating it (extra assets in every map) |
+| D9 | (T0.1, 2026-11-18) Map sources are `<name>.gat` at the data root, as PLAN-0004 D11 found for `.gnd` (owner decision there); the batch enumerates the whole root by extension. The old `MapData` assets sit in `Assets/Data/Map/` (capital M, same folder as `Assets/Data/map/` on Windows): T6.1 deletes them and renames the folder to `map` before any real map is converted (T7.x), so the new asset never upserts into an object of the old class | A `map/` source folder (absent from the data); writing next to the old assets and replacing their script (the old fields would linger in the YAML) |
 
 Items for the owner: approve D1 (per-corner heights), the new runtime assembly `Uninarok.Map`, the replacement of `MapData.cs`, and `docs/data/GatCellType.md` (new).
 
