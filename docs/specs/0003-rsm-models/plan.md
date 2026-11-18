@@ -202,6 +202,19 @@ Satisfies FR-2, FR-3. All of this section works in Ragnarok space with column ve
   | §3 나무01, 나무기둥01, 벤치01, 입구초소, iz_bridge01 (9 nodes), 시계탑 (5 nodes, rotation keys), iz_enchant, 이즈루드초소, 동굴입구 | match |
   | all 140 models | match roBrowser and BrowEdit3 numerically |
 
+- **R1 reference values (T0.3, recorded for T3.3).** Computed by the T0.3 scratch implementation over GRF's values (independent of the production code), in Ragnarok space after recentering: the root's rest transform and the model's bounds. `RsmReferenceTests` checks the production code against them within 1e-4.
+
+  | Model | Root position | Root rotation (x, y, z, w) | Root scale | Bounds min | Bounds max |
+  |---|---|---|---|---|---|
+  | 나무잡초꽃/버섯02 | (0.046991, 1.665913, -0.145184) | (0.000000, -0.923878, 0.000000, -0.382688) | (0.090100, 0.090100, 0.090100) | (-4.358802, -5.739874, -3.774851) | (4.358802, 0.000000, 3.774849) |
+  | 나무잡초꽃/버섯01 | (0.046991, 1.665913, -0.145184) | (0.000000, -0.923878, 0.000000, -0.382688) | (0.090100, 0.090100, 0.090100) | (-4.358802, -5.739874, -3.774851) | (4.358802, 0.000000, 3.774849) |
+  | 나무잡초꽃/넝쿨01 | (0.226999, -40.240800, -0.000001) | (0.707108, 0.000000, 0.000000, 0.707106) | (1.000000, 1.000000, 1.000000) | (-20.000000, -80.000000, -0.000148) | (20.000000, 0.000000, 0.000148) |
+  | 나무잡초꽃/덤불02 | (-8.305627, 17.983480, -3.509289) | (0.029820, -0.208807, 0.056931, 0.975843) | (0.181100, 0.181100, 0.181100) | (-25.048090, -14.989550, -24.902880) | (25.048090, 0.000000, 24.902880) |
+  | 나무잡초꽃/덤불01 | (-8.305627, 19.501370, -1.240438) | (0.029820, -0.208807, 0.056931, 0.975843) | (0.181100, 0.181100, 0.181100) | (-25.048090, -13.471660, -22.634030) | (25.048090, 0.000000, 22.634030) |
+  | 나무잡초꽃/야자수01 | (4.419601, 0.000000, -8.387604) | (0.000000, -0.500001, 0.000000, 0.866025) | (1.000000, 1.000000, 1.000000) | (-21.954750, -67.951930, -21.047910) | (21.954750, 0.000000, 21.047910) |
+  | 프론테라/성_기둥 | (0.155977, -193.096600, 3.696754) | (0.000000, 0.831471, 0.000000, 0.555568) | (0.265800, 0.239500, 0.265800) | (-17.868410, -102.102000, -19.082910) | (17.868410, 0.000000, 19.082910) |
+  | 프론테라/휘장 | (2.689514, -7.367931, -0.000003) | (0.707108, 0.000000, 0.000000, 0.707106) | (0.690800, 0.690800, 0.690800) | (-5.785612, -24.320100, -0.000045) | (5.785612, 0.000000, 0.000045) |
+  | 외부소품/이정표01 | (-0.183999, -15.701740, 6.458787) | (0.707108, 0.000000, 0.000000, 0.707106) | (1.000000, 1.000000, 1.000000) | (-21.913400, -24.420230, -3.504345) | (21.913400, 0.000000, 3.504345) |
 - **Shade types (T0.3, plan §4.6 check).** roBrowser: none = one constant normal `(0, -1, 0)` in file space, which is up after the flip (the plan's rule); flat = face normal; smooth = face normals summed per (smoothing group, file vertex index), unweighted. BrowEdit3: none = no normal lighting at all (constant light factor), flat and smooth as roBrowser. The plan's smooth rule differs only where the spec asks for it: it welds by position value (FR-5, no seams where two file vertices share a position) and weights by corner angle (D3). `iz_enchant` and `이즈루드초소` (none), `넝쿨01`, `동굴입구`, `iz_bridge01` (flat) and the smooth models were rendered with these rules in the captures above.
 - **Versions found (T0.3).** The working data has only 1.4 (140 files) and no mirrored scale or mirrored offset matrix (no negative determinant). The full game data has 1.5, 2.2 and 2.3 (`reference-models.md` §6). BrowEdit3 shows that 2.x uses a different rule (no position, rotation or scale fields; the offset vector is an absolute position; children use the inverse of the parent's offset matrix; no recentering); it is recorded here as a lead and gets no `RsmRules` row until 2.x data is available. 1.5 differs from 1.4 only by per-node position keys (read by GRF), so its row equals 1.4's with `hasPosKeys`; it is kept out of the table until a 1.5 file can be checked against a viewer.
 

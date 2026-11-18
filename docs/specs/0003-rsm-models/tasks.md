@@ -50,7 +50,7 @@
   *Done when:* the tests compile and are ignored with `pending T3.2`.
 - [x] **T3.2** Implement `Core/Rsm/Pose/`: `RsmRules` (table from T0.3, one row per known version, none for unknown), `RsmPose.ComputeRest`, `RsmBounds`, and the conversion helpers of plan §4.5 (node transform to `localPosition`/`localRotation`/`localScale` through `RoSpace`, vertex conversion with the extra winding reversal when the offset matrix mirrors). (FR-2, FR-3)
   *Done when:* `[Ignore]` removed and the tests of T3.1 pass.
-- [ ] **T3.3** Add `RsmReferenceTests` part 1 (`NeedsData`): for the four reported models and the control group, the converted root rest transform and the bounds equal the values recorded by T0.3 within 1e-4. (FR-2)
+- [x] **T3.3** Add `RsmReferenceTests` part 1 (`NeedsData`): for the four reported models and the control group, the converted root rest transform and the bounds equal the values recorded by T0.3 within 1e-4. (FR-2)
   *Done when:* the tests pass on the reference data.
 
 ## Phase 4: Meshes
