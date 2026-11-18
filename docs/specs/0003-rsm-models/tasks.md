@@ -39,7 +39,7 @@
 
 ## Phase 2: Hierarchy
 
-- [ ] **T2.1** Add `RsmHierarchyTests` (failing, ignored): a child listed before its parent gives the correct tree and `Order`; names are kept; duplicate names get `_2`, `_3` and one warning; a missing parent makes a root with one warning; a cycle fails with one issue; order is stable for nodes ready at the same time; a model with several roots lists them all. (FR-1)
+- [x] **T2.1** Add `RsmHierarchyTests` (failing, ignored): a child listed before its parent gives the correct tree and `Order`; names are kept; duplicate names get `_2`, `_3` and one warning; a missing parent makes a root with one warning; a cycle fails with one issue; order is stable for nodes ready at the same time; a model with several roots lists them all. (FR-1)
   *Done when:* the tests compile and are ignored with `pending T2.2`.
 - [ ] **T2.2** Implement `Core/Rsm/Tree/RsmHierarchy` and `RsmTree` (plan §4.2). (FR-1)
   *Done when:* `[Ignore]` removed and `RsmHierarchyTests` pass.

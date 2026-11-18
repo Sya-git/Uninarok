@@ -165,6 +165,7 @@ public static class RsmHierarchy { public static bool TryBuild(RoRsm rsm, out Rs
 
 - Parents are resolved by name, independent of file order (FR-1): the order is a topological sort (stable: among nodes ready at the same time, file order).
 - A parent name that matches no node makes that node a root and raises one `RsmParentMissing` warning. A cycle makes the build fail with one `RsmCycle` issue and no output. A name collision keeps the first node as the parent target and renames later ones with `_2`, `_3`, with one `RsmDuplicateName` warning.
+- **Warnings (T2.1).** `TryBuild` returns only the failing issue. The warnings above are collected in `RsmTree.Warnings` (`IReadOnlyList<RoIssue>`, item = node name), one per condition (one per missing parent, one per duplicated name), and the converter reports them with the model as referrer. A node that names itself as its parent becomes a root with one `RsmParentMissing` warning (roBrowser skips such self-references too).
 - RSM version 1.x has one root; versions that allow several roots are handled the same way (each root is recentered, §4.4).
 
 ### 4.3 Texture slots and materials
