@@ -46,6 +46,9 @@ namespace Uninarok.RoImport.Editor.Pipeline
         /// <summary>Convert even when the ledger says an item is current.</summary>
         public bool Force { get; set; }
 
+        /// <summary>Also write the optional cell type image of each map data (PLAN-0005 4.5, FR-8).</summary>
+        public bool GatImage { get; set; }
+
         /// <summary>The ledger of a category (<c>texture</c>, <c>material</c>, ...), loaded once per run.</summary>
         public RoLedger Ledger(string category)
         {
@@ -150,6 +153,12 @@ namespace Uninarok.RoImport.Editor.Pipeline
             Memo(key, typed);
             return typed;
         }
+
+        /// <summary>
+        /// The map data asset of a <c>.gat</c> path, converted on demand when missing or stale (PLAN-0005 4.5), so the map
+        /// converter of PLAN-0006 asks for it. Repeat requests in a run are free.
+        /// </summary>
+        public RoResult<Uninarok.Map.MapData> MapData(RoPath path) => throw new NotImplementedException();
 
         /// <summary>A result already produced in this run, by key (e.g. <c>texture:texture/a.bmp</c>).</summary>
         internal bool TryGetMemo<T>(string key, out T value)

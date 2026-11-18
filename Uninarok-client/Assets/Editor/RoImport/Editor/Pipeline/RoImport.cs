@@ -18,6 +18,9 @@ namespace Uninarok.RoImport.Editor.Pipeline
         /// <summary>Convert even items the ledger says are current.</summary>
         public bool Force;
 
+        /// <summary>Also write the optional cell type image of each map data (PLAN-0005 4.5, FR-8).</summary>
+        public bool GatImage;
+
         /// <summary>Show a cancelable progress bar during a batch.</summary>
         public bool ShowProgress = true;
 
@@ -88,6 +91,13 @@ namespace Uninarok.RoImport.Editor.Pipeline
             using (var session = new Session(options))
                 return session.Context.Ground(path);
         }
+
+        /// <summary>
+        /// Converts the map data of a map (or skips it when current) and returns its asset (PLAN-0005 4.5): the source is
+        /// <c>&lt;mapName&gt;.gat</c> at the data root, with <c>&lt;mapName&gt;.gnd</c> beside it (D9).
+        /// </summary>
+        public static RoResult<Uninarok.Map.MapData> MapData(string mapName, RoImportOptions options = null) =>
+            throw new NotImplementedException();
 
         /// <summary>Runs a batch (plan 4.10): continues past failures and returns the report, whose summary lists them.</summary>
         public static RoReport Run(IEnumerable<RoJob> jobs, RoImportOptions options = null) => RoBatch.Run(jobs, options);
