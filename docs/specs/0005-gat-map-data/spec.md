@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Approved |
+| **Status** | Implemented |
 | **Created** | 2026-11-16 |
 | **Owner** | _(fill in)_ |
 | **Plan** | [plan.md](plan.md) |
@@ -32,9 +32,9 @@ Priority: **M** = must, **S** = should.
 |---|---|---|---|
 | FR-1 | M | The map data asset holds for every cell: its type (walkable, blocked, snipable and so on, mapped to the project's own set of values) and the heights of its four corners. | For sample cells of a reference map the stored type and heights equal the source's. |
 | FR-2 | M | Walkability and height can be queried by cell and by world position. Positions outside the map are non-walkable and never throw. | Querying cell (0,0), the last cell and one outside gives correct results. |
-| FR-3 | M | Cell positions are consistent with the ground of SPEC-0004: a cell lies where the original client shows it, including on non-square maps. | The centre of every walkable sample cell lies on the ground surface within a small tolerance. |
-| FR-4 | M | The asset is available in player builds and does not require the source file. | A build without the source folder queries a cell correctly. |
-| FR-5 | M | Storage is compact: flat data, no per-cell objects, growing linearly with cell count. | The asset for the largest map stays within an agreed size per cell (target 24 bytes). |
+| FR-3 | M | Cell positions are consistent with the ground of SPEC-0004: a cell lies where the original client shows it, including on non-square maps. | No walkable cell centre lies more than a small tolerance below the ground surface; cells above it are walkable model surfaces (bridges, decks) and are counted. On the reference maps without large model floors (prontera, prt_fild08) at least 98% of walkable cells lie on the ground within a tight tolerance, which a mirrored or swapped grid fails. (Owner, 2026-11-18, from the measurements of TASKS-0005 T0.3.) |
+| FR-4 | M | The asset is available in player builds and does not require the source file. | The asset and its queries live in runtime code that references no editor or importer code, and a query needs only the asset. Checked in the editor; no player build is made for this spec (owner, 2026-11-18). |
+| FR-5 | M | Storage is flat: arrays in cell order, no per-cell objects, growing linearly with cell count. No compression or size optimization in this spec (owner, 2026-11-18); it can be added later. | The asset holds flat arrays only, and its size grows linearly with the cell count. The size of the largest map's asset is recorded. |
 | FR-6 | M | There is exactly one map data asset per map, created or updated at a predictable location. Re-conversion updates it in place without changing references to it (SPEC-0002 FR-5). | Converting twice leaves one asset with the same identity. |
 | FR-7 | M | Selecting the map data asset's map shows gizmos: cells coloured by type, corner heights, grid, and a legend. Types and layers can be toggled, and drawing is limited to a region around the selection or a chosen area on large maps. | Walkable and blocked cells show different colours. A toggle hides a type. A large map stays responsive. |
 | FR-8 | S | A flat image of the cell types can be generated for quick inspection, as a separate optional asset. | The image of a reference map shows the same layout as the gizmos. |

@@ -9,7 +9,9 @@ namespace Uninarok.RoImport.Editor.Pipeline
         /// <summary>An RSM model (PLAN-0003).</summary>
         Model,
         /// <summary>A GND ground (PLAN-0004).</summary>
-        Ground
+        Ground,
+        /// <summary>The map data of a GAT file (PLAN-0005).</summary>
+        MapData
     }
 
     /// <summary>One conversion request: a kind and a Ragnarok path (plan 4.10, SPEC-0002 FR-2).</summary>

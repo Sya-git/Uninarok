@@ -1,7 +1,9 @@
 {
     "name": "Uninarok.RoImport.Core",
     "rootNamespace": "Uninarok.RoImport.Core",
-    "references": [],
+    "references": [
+        "Uninarok.Map"
+    ],
     "includePlatforms": [
         "Editor"
     ],
