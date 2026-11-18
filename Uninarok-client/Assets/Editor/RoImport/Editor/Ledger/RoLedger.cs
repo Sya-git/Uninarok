@@ -118,7 +118,7 @@ namespace Uninarok.RoImport.Editor.Ledger
                     throw new ArgumentException($"'{output}' is a hand-made additive scene and cannot be owned by '{entry.Source}'.", nameof(entry));
                 if (_owners.TryGetValue(output, out string owner) && owner != normalized.Source)
                 {
-                    report?.Warn(RoIssueCode.OutputCollision, normalized.Source, owner,
+                    report?.Warn(RoIssueCode.OutputCollision, normalized.Source, null,
                         $"output '{output}' is already produced by '{owner}'; this file is skipped");
                     return false;
                 }

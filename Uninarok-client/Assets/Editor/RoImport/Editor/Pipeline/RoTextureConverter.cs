@@ -62,7 +62,7 @@ namespace Uninarok.RoImport.Editor.Pipeline
 
             string owner = ledger.OwnerOf(output);
             if (owner != null && owner != item)
-                return Placeholder(ctx, RoIssueCode.OutputCollision, item, owner,
+                return Placeholder(ctx, RoIssueCode.OutputCollision, item, referrer,
                     $"output '{output}' is already produced by '{owner}'; this file is skipped");
 
             if (!ctx.Force && ledger.IsCurrent(path, hash, Rules, ctx.Source, ctx.Writer))

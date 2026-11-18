@@ -393,7 +393,7 @@ public sealed class RoLedger
 - Saving happens at the end of each chunk (§4.10), so an aborted batch resumes where it stopped.
 - Details fixed by T4.6:
   - `Load(category, folder = DefaultFolder)` takes a folder, so tests can use a temporary one.
-  - `Record` returns `false` when it refuses an entry. It warns `OutputCollision` with the item set to the refused source and the referrer set to the owner. It throws for an additive-scene output.
+  - `Record` returns `false` when it refuses an entry. It warns `OutputCollision` with the item set to the refused source and the owner named in the message. The referrer stays the real referrer, if any, so the summary never calls the owner a referrer (fixed after T7.1). It throws for an additive-scene output.
   - Re-recording a source replaces its outputs.
   - `Entries` lists the entries in source order.
   - `Save` writes only when the text changed.

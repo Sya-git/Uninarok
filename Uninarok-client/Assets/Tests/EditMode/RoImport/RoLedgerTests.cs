@@ -199,7 +199,7 @@ namespace Uninarok.RoImport.Tests
             var ledger = RoLedger.Load("texture", _folder);
             var report = new RoReport();
             ledger.Record(Entry("texture/a.bmp", "aa", 1, new[] { "Assets/Art/Imported/texture/a.png" }), report);
-            LogAssert.Expect(LogType.Warning, new Regex(@"^\[RoImport\] OutputCollision texture/a\.tga \(referenced by texture/a\.bmp\)"));
+            LogAssert.Expect(LogType.Warning, new Regex(@"^\[RoImport\] OutputCollision texture/a\.tga: output '.*' is already produced by 'texture/a\.bmp'"));
 
             bool recorded = ledger.Record(Entry("texture/a.tga", "tt", 1, new[] { "Assets/Art/Imported/texture/a.png" }), report);
 
