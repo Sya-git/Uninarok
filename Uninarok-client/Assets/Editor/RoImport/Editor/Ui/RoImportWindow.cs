@@ -21,6 +21,7 @@ namespace Uninarok.RoImport.Editor.Ui
 
         [SerializeField] int _kind;
         [SerializeField] bool _force;
+        [SerializeField] bool _gatImage;
         [SerializeField] string _paths = "texture/";
         [SerializeField] Vector2 _scroll;
 
@@ -53,6 +54,8 @@ namespace Uninarok.RoImport.Editor.Ui
             var kinds = RoConverterRegistry.All.Select(c => c.Kind).ToArray();
             _kind = Mathf.Clamp(EditorGUILayout.Popup("Kind", _kind, kinds.Select(k => k.ToString()).ToArray()), 0, kinds.Length - 1);
             _force = EditorGUILayout.Toggle(new GUIContent("Force", "Convert even items the ledger says are current"), _force);
+            if (kinds[_kind] == RoJobKind.MapData)
+                _gatImage = EditorGUILayout.Toggle(new GUIContent("With Image", "Also write the cell type image of each map (PLAN-0005 4.5)"), _gatImage);
 
             EditorGUILayout.LabelField("Ragnarok paths or folders (end a folder with /; / alone is the data root), one per line");
             EditorGUI.BeginChangeCheck();
@@ -95,7 +98,7 @@ namespace Uninarok.RoImport.Editor.Ui
                 _summary = "Nothing to convert.";
                 return;
             }
-            RoReport report = RoImportApi.Run(expansion.Jobs, new RoImportOptions { Force = _force });   // logs the summary once
+            RoReport report = RoImportApi.Run(expansion.Jobs, new RoImportOptions { Force = _force, GatImage = _gatImage });   // logs the summary once
             _summary = report.Summarize();
             _scan = null;
         }

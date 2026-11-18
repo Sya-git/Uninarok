@@ -63,8 +63,9 @@
   *Done when:* the tests compile and are ignored with `pending T4.2`.
 - [x] **T4.2** Implement `Editor/Gat/RoMapDataConverter`, `RoMapDataOutputPaths`, `Core/Gat/RoGatImage` and `Editor/Gat/RoGatImageWriter`; add `RoJobKind.MapData`, the `RoConverterRegistry` entry, `RoImport.MapData(string)` and `RoImportContext.MapData(RoPath)`; the ledger category `mapdata` lists the asset (and the image) as outputs and the GAT and GND header hashes as dependencies. (FR-1, FR-3, FR-6, FR-8)
   *Done when:* `[Ignore]` removed and the tests of T4.1 pass.
-- [ ] **T4.3** Add the kind `MapData` and the `WithImage` toggle to the window and the menu `Tools/Ragnarok/Convert All Map Data` (`Enumerate("")`, extension `.gat`, plan D9). (FR-6, FR-8)
+- [x] **T4.3** Add the kind `MapData` and the `WithImage` toggle to the window and the menu `Tools/Ragnarok/Convert All Map Data` (`Enumerate("")`, extension `.gat`, plan D9). (FR-6, FR-8)
   *Done when:* a synthetic map converts from the window and from the menu with progress and cancel working, with and without the image.
+  *Result (2026-11-18):* `RoMapDataBatchTests` runs the menu's job list (`RoImportMenu.MapDataJobs`: every `.gat` of the data root) through `RoImport.Run`, the same call the window and the menu make: two synthetic maps convert with and without images, a cancel before the second map stops the batch, and a rerun skips both. The window shows a **With Image** toggle for the `MapData` kind, and the menu asks Convert / Convert with images / Cancel. Their modal dialogs were not clicked through the MCP; the owner can check them by hand.
 
 ## Phase 5: Gizmos
 

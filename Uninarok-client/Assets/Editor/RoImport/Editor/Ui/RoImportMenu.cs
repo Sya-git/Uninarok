@@ -59,6 +59,26 @@ namespace Uninarok.RoImport.Editor.Ui
             RoImportApi.Run(jobs);
         }
 
+        [MenuItem("Tools/Ragnarok/Convert All Map Data", priority = 23)]
+        static void ConvertAllMapData()
+        {
+            var source = new RoFolderSource(RoSourceLocation.Resolve());
+            var jobs = MapDataJobs(source);
+            if (jobs.Count == 0)
+            {
+                EditorUtility.DisplayDialog("Ragnarok import", $"No map data (.gat) in {source.Root}.", "OK");
+                return;
+            }
+            int choice = EditorUtility.DisplayDialogComplex("Ragnarok import",
+                $"Convert {jobs.Count} map data files from {source.Root}?", "Convert", "Cancel", "Convert with images");
+            if (choice == 1) return;
+            RoImportApi.Run(jobs, new RoImportOptions { GatImage = choice == 2 });
+        }
+
+        /// <summary>Every <c>.gat</c> in the data root, where the map files sit (PLAN-0005 4.5, D9).</summary>
+        internal static System.Collections.Generic.List<RoJob> MapDataJobs(IRoSource source) =>
+            RoImportJobs.Expand("/", RoJobKind.MapData, source).Jobs;
+
         /// <summary>Every <c>.gnd</c> in the data root, where the map files sit (PLAN-0004 4.6, D11).</summary>
         internal static System.Collections.Generic.List<RoJob> GroundJobs(IRoSource source) =>
             RoImportJobs.Expand("/", RoJobKind.Ground, source).Jobs;
