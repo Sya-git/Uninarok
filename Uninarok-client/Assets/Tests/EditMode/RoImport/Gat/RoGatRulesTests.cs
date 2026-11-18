@@ -11,7 +11,6 @@ namespace Uninarok.RoImport.Tests.Gat
 {
     // TASKS-0005 T3.1 / T3.2 (FR-1): the cell table of PLAN-0005 4.2 (Hercules map_gat2cell, D2), pinned here and against
     // docs/data/GatCellType.md.
-    [Ignore("pending T3.2")]
     public class RoGatRulesTests
     {
         const MapCellFlags W = MapCellFlags.Walkable, S = MapCellFlags.Shootable, A = MapCellFlags.Water;
@@ -67,7 +66,7 @@ namespace Uninarok.RoImport.Tests.Gat
             CollectionAssert.AreEquivalent(Enum.GetNames(typeof(MapCellFlags)).Where(n => n != nameof(MapCellFlags.None)),
                 flagRows.Select(r => r.Groups[1].Value));
             foreach (var r in flagRows)
-                Assert.AreEqual(1 << int.Parse(r.Groups[2].Value), (int)Enum.Parse(typeof(MapCellFlags), r.Groups[1].Value), r.Value);
+                Assert.AreEqual(1 << int.Parse(r.Groups[2].Value), Convert.ToInt32(Enum.Parse(typeof(MapCellFlags), r.Groups[1].Value)), r.Value);
         }
     }
 }

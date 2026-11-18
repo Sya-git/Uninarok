@@ -9,7 +9,6 @@ using Uninarok.RoImport.Core.Results;
 namespace Uninarok.RoImport.Tests.Gat
 {
     // TASKS-0005 T3.1 / T3.2 (FR-1, FR-3, FR-5): the arrays and geometry of the map data, from RoMapSpace and RoGndRules.
-    [Ignore("pending T3.2")]
     public class RoGatBuilderTests
     {
         const float Eps = 1e-5f;
