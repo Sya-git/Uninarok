@@ -108,3 +108,15 @@ Counted by a raw read of the files that does not use GRF (a scratch script of T1
 | 프론테라/도구점 | 1.4 | 2 | 2 | 234 | 293 | 5 |
 | 외부소품/이즈루드초소 | 1.4 | 0 | 1 | 120 | 114 | 0 |
 | 프론테라/프론테라성입구 | 1.4 | 2 | 1 | 452 | 548 | 0 |
+
+## 8. Batch results (TASKS-0003 T7.1)
+
+`RsmReferenceConversionTests` converts every reference model through `RoImport.Model` and the whole `model/` folder in one batch (throwaway output root, temporary ledger), 2026-11-18:
+
+```
+[RoImport] Created 140, Updated 0, Skipped 0, Failed 0, Warnings 1
+  OutputCollision texture/izlude/iz_rookie_06.tga (referenced by model/izlude/iz_enchant.rsm):
+  'texture/izlude/iz_rookie_06.bmp' has the same output and is preferred; it is used instead
+```
+
+140 models, all version 1.4, no failure, no `LogError`. The one warning is a data note: `iz_enchant` names a `.tga` that has a `.bmp` of the same name beside it, and the `.bmp` is used (PLAN-0002 D19). The first batch also showed two material keys (`.tga` and `.bmp`) owning one material file; the converter now names the preferred `.bmp` in the material key (test `TextureNamedAsTgaWithABmpBeside_SharesTheBmpsMaterial_WithoutACollision`).

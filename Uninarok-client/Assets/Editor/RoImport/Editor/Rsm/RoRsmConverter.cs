@@ -184,6 +184,7 @@ namespace Uninarok.RoImport.Editor.Rsm
             {
                 var texturePath = RoPath.Parse("texture").Combine(rsm.Textures[submesh.TextureIndex]);
                 var texture = ctx.Texture(texturePath, referrer);
+                texturePath = Preferred(ctx, texturePath);
                 var surface = RoSurface.Opaque;
                 if (texture.Status != RoStatus.Failed)
                 {
@@ -195,6 +196,18 @@ namespace Uninarok.RoImport.Editor.Rsm
             }
             byKey.Add(key, material);
             return material;
+        }
+
+        /// <summary>
+        /// The texture the pipeline actually uses: a <c>.tga</c> or <c>.png</c> with a <c>.bmp</c> of the same name beside it
+        /// is converted from the <c>.bmp</c> (PLAN-0002 4.5, D19), so the material key names the <c>.bmp</c> too; otherwise two
+        /// keys would own one material file (found by the T7.1 batch on izlude/iz_enchant).
+        /// </summary>
+        static RoPath Preferred(RoImportContext ctx, RoPath texture)
+        {
+            if (texture.Extension == ".bmp" || !ctx.Source.TryGetFile(texture, out _)) return texture;
+            var bmp = texture.WithExtension(".bmp");
+            return ctx.Source.TryGetFile(bmp, out _) ? bmp : texture;
         }
 
         static RoResult<GameObject> Fail(RoImportContext ctx, RoPath path, RoIssueCode code, string message)

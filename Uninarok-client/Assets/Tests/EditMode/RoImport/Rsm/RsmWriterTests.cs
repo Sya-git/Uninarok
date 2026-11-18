@@ -297,6 +297,38 @@ namespace Uninarok.RoImport.Tests.Rsm
         }
 
         [Test]
+        public void TextureNamedAsTgaWithABmpBeside_SharesTheBmpsMaterial_WithoutACollision()
+        {
+            // T7.1 batch: izlude/iz_enchant names iz_rookie_06.tga while the data has .tga and .bmp; the texture pipeline
+            // uses the .bmp (PLAN-0002 D19), so the material key must use the .bmp too, or two keys own one material file.
+            string data = Path.Combine(Path.GetTempPath(), "RoImportTests", Guid.NewGuid().ToString("N"), "data");
+            try
+            {
+                Directory.CreateDirectory(Path.Combine(data, "texture"));
+                File.Copy(Path.Combine(RoFolderSourceTests.FixtureRoot, "texture", "a.bmp"), Path.Combine(data, "texture", "a.bmp"));
+                File.Copy(Path.Combine(RoFolderSourceTests.FixtureRoot, "texture", "alpha32.tga"), Path.Combine(data, "texture", "a.tga"));
+                var ctx = new RoImportContext(new RoFolderSource(data), _roots, _ledgerFolder) { Png = new RoPngCodec() };
+
+                var first = RsmTestModels.Cube("first");
+                var second = RsmTestModels.Cube("second");
+                second.ParentName = "first";
+                second.TextureSlots = new[] { 1 };
+                var model = RsmTestModels.Model(first, second);
+                model.Textures = new[] { "a.tga", "a.bmp" };
+                var prefab = Convert(model, ctx);
+
+                var materials = prefab.GetComponentsInChildren<MeshRenderer>().Select(r => r.sharedMaterial).Distinct().ToList();
+                Assert.AreEqual(1, materials.Count, "one shared material");
+                Assert.IsEmpty(ctx.Report.Issues.Where(i => i.Code == RoIssueCode.OutputCollision && i.Item.Contains("__")),
+                    "no material collision: " + string.Join("; ", ctx.Report.Issues));
+            }
+            finally
+            {
+                Directory.Delete(Path.GetDirectoryName(data), recursive: true);
+            }
+        }
+
+        [Test]
         public void Converter_IsRegistered_ForRsmAndRsm2()
         {
             var converter = RoConverterRegistry.For(RoJobKind.Model);
