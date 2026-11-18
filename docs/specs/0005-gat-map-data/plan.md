@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [spec.md](spec.md) (SPEC-0005) |
-| **Status** | Draft |
+| **Status** | Approved |
 | **Audience** | Architects, senior developers, AI agents |
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. Shared rules (paths, units and axes, results, writer, ledger, batch) come from [PLAN-0002](../0002-ro-import-foundation/plan.md); the map space (`RoMapSpace`), the ground rules and the pure ground height sampler come from [PLAN-0004](../0004-gnd-ground/plan.md). Reference maps are in [`../0003-rsm-models/reference-models.md`](../0003-rsm-models/reference-models.md) §4.

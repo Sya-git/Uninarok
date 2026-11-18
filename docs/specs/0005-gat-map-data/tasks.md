@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Draft |
+| **Status** | Approved |
 
 **How to use this file**
 - Start only when TASKS-0002 phases 0 to 6 and TASKS-0004 phases 0 to 3 are done (the foundation, `RoMapSpace`, the ground rules). Tasks here use those contracts as written in PLAN-0002 and PLAN-0004.
