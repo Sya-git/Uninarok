@@ -173,6 +173,19 @@ public static class RoGndSurfaces { public static IEnumerable<RoGndQuad> Enumera
   3. the UV corner order of the tile for walls (candidate: as for tops),
   4. `RowDirection` (§4.2).
   A rules change touches this one place and the tests that pin it; it never touches the builder's structure.
+- **Verified rules (T0.3, 2026-11-18).** A scratch script built throwaway meshes of the three reference maps from the GRF values of §4.1 with the candidate rules; the owner compared them with the reference viewer (whole maps top-down, the izlude cliff at cube 99,102 from all four sides, the izlude slope at cube 23,76, the prontera gaps at cube 45,89, and the prt_fild08 west and south borders) and **all match**. Final values, row `1.7` of `RoGndRules` (the only version in the data):
+
+  | Rule | Value |
+  |---|---|
+  | Top diagonal | `H10`–`H01`: triangles `(00, 10, 01)` and `(10, 11, 01)` |
+  | Wall facing | toward the side whose edge is lower, comparing the sum of the two end heights of this cube's edge with the neighbour's (Ragnarok Y points down, so the larger sum is lower); the back is culled |
+  | Wall UV order | as for tops, `Uv00` and `Uv10` on this cube's edge (low column or row first), `Uv01` and `Uv11` on the neighbour's edge: front wall `Uv00`→ this `H01`, `Uv10`→ this `H11`, `Uv01`→ next `H00`, `Uv11`→ next `H10`; side wall `Uv00`→ this `H10`, `Uv10`→ this `H11`, `Uv01`→ next `H00`, `Uv11`→ next `H01` |
+  | `RowDirection` | `+1`: `CornerRo(column, row, h) = (column · Zoom, h, row · Zoom)` |
+  | V axis | Unity UV is `(u, 1 − v)`, as for RSM (PLAN-0003 §4.6), with textures stored bottom row first by Unity |
+
+  **Row direction against RSW objects.** Every model of each RSW was placed on the ground with each of the four sign choices for x and z, and the ground height under it compared with its own height. Only `column = (x + Width · Zoom / 2) / Zoom`, `row = (z + Height · Zoom / 2) / Zoom` (no sign change, so `FromRswRo` adds `CentreOffsetRo`) puts the models on the ground: prontera 87.6 % of 1,303 models within 1 unit (best other choice 84.7 %, the city is almost flat), prt_fild08 76.8 % of 570 (best other 45.1 %), izlude 40.9 % of 552 (best other 25.5 %; bridges, the airship and the arena are not on the ground). PLAN-0006 still verifies `FromRswRo` on its own samples.
+
+  **Result by map:** prontera 28,498 tops, 0 walls (the ground is flat; its walls are models), 2 enclosed gaps visible as holes; izlude 20,100 tops, 244 walls; prt_fild08 39,206 tops, 355 walls, including the dark `BACKSIDE` skirt along the south and west borders. All match the reference viewer.
 - **No overlaps and no cracks (FR-3).** Every quad takes its corner positions from one function (`RoMapSpace.CornerUnity` with the height of the cube that owns the corner), so the same corner always yields the same bit pattern: two quads that share a corner height share the exact vertex position. Walls take their top edge from the owning cube and their bottom edge from the neighbour, so they meet both tops exactly. Only top and wall quads exist; no other face is created, so no face is duplicated. The expected triangle count is therefore `2 · (cubes with TileUp ≥ 0) + 2 · (walls that pass the height test)` minus the degenerate triangles, and the tests check it against an oracle written separately from the builder.
 
 ### 4.4 Meshes: `RoGndChunker`, `RoGndMeshBuilder`
