@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Approved |
+| **Status** | Implemented |
 
 **How to use this file**
 - Do tasks **in order**. One task = one reviewable commit. Tick the box in the same commit. Commit message format: `feat(0002): T1.2 implement RoPath` (CLAUDE.md §1.4).
@@ -129,7 +129,7 @@ The whole-game texture run, the visual checks and the build checks (formerly T9.
   *Done when:* the test passes with the rest of the importer tests.
 - [x] **T9.4** Folder lines expand only to files the converter handles (plan §4.11, D21): `IRoConverter.Handles(RoPath)`, used by `RoImportJobs.Expand` for folder lines only. (FR-2, FR-8)
   *Done when:* a test shows `texture/` over the fixtures expands to the 7 images without `unsupported.dds`, while a single `.dds` line still becomes a job.
-- [ ] **T9.5** Close: verify every FR of the spec against the test list and manual evidence; set the status of `spec.md`, `plan.md` and `tasks.md` to `Implemented` (the owner sets `Approved` states; `Implemented` follows the lifecycle in CLAUDE.md §1.3); move leftovers to `docs/specs/BACKLOG.md`.
+- [x] **T9.5** Close: verify every FR of the spec against the test list and manual evidence; set the status of `spec.md`, `plan.md` and `tasks.md` to `Implemented` (the owner sets `Approved` states; `Implemented` follows the lifecycle in CLAUDE.md §1.3); move leftovers to `docs/specs/BACKLOG.md`.
   *Done when:* the traceability table of the plan has a passing test or recorded evidence for each of FR-1 to FR-16, or names the owner's manual check that covers it, and the leftovers are in `BACKLOG.md`.
 
 ---

@@ -2,11 +2,11 @@
 
 | | |
 |---|---|
-| **Status** | Approved |
+| **Status** | Implemented |
 | **Created** | 2026-11-16 |
 | **Owner** | _(fill in)_ |
-| **Plan** | plan.md _(written after approval)_ |
-| **Tasks** | tasks.md _(written after plan approval)_ |
+| **Plan** | [plan.md](plan.md) |
+| **Tasks** | [tasks.md](tasks.md) |
 
 Part of the importer family: 0002 foundation (this), 0003 models (RSM), 0004 ground (GND), 0005 map data (GAT), 0006 map scene (RSW), 0007 sprites (SPR/ACT/PAL). Requirements shared by all of them live here.
 

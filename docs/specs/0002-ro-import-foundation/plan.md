@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [spec.md](spec.md) (SPEC-0002) |
-| **Status** | Approved |
+| **Status** | Implemented |
 | **Audience** | Architects, senior developers, AI agents |
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. The per-format plans (PLAN-0003 to PLAN-0007) build on the contracts here. Where this plan fixes a rule for all converters (units, paths, materials, ledger), the format plans reference it and do not restate it.
@@ -628,21 +628,23 @@ Items marked for the owner's approval: D2 (the folder rename), the art output ro
 
 ## 10. Traceability
 
-| FR | Plan sections |
-|---|---|
-| FR-1 | 4.1, 4.2, 6 |
-| FR-2 | 2, 4.9, 4.10, 4.11 |
-| FR-3 | 3, 4.2, 4.10, 4.14, 6 |
-| FR-4 | 4.5, 4.7, 6 |
-| FR-5 | 2, 4.7, 4.8, 4.10, 6 |
-| FR-6 | 4.8, 4.10, 6 |
-| FR-7 | 4.3, 6 |
-| FR-8 | 4.4, 4.7, 4.12, 6 |
-| FR-9 | 4.6, 6 |
-| FR-10 | 4.9, 4.10, 4.12, 6 |
-| FR-11 | 4.9, 6 |
-| FR-12 | 4.8, 4.13, 6 |
-| FR-13 | 2, 3, 6 |
-| FR-14 | 3, 4.14, 6 |
-| FR-15 | 4.2, 4.14, 7 |
-| FR-16 | 4.5, 4.7, 4.8, 6 |
+"Verified by" was filled in at the close (T9.5, 2026-11-18). Every named test class passes: 318/318 EditMode tests in `Uninarok.RoImport.Tests`, run through the Unity Test Framework in the 6000.7 editor. "Owner" marks the manual checks the owner runs (§6).
+
+| FR | Plan sections | Verified by |
+|---|---|---|
+| FR-1 | 4.1, 4.2, 6 | `RoPathTests`, `RoFolderSourceTests`, `RoHashCacheTests`, `RoSourceLocationTests` |
+| FR-2 | 2, 4.9, 4.10, 4.11 | `RoIdempotencyTests` (`TextureByPath_WorksWithoutAnyUi`), `RoImportContextTests`, `RoBatchTests`, `RoImportJobsTests`; window and script check in `evidence/` (T7.1) |
+| FR-3 | 3, 4.2, 4.10, 4.14, 6 | `RoArchitectureTests` (no import or load hook in the importer assemblies or `Assembly-CSharp-Editor`), `RoSourceLocationTests` (source files have no GUID); T0.2 |
+| FR-4 | 4.5, 4.7, 6 | `RoOutputPathsTests`, `RoAssetWriterTests`, `RoTextureConverterTests` (same name in two folders) |
+| FR-5 | 2, 4.7, 4.8, 4.10, 6 | `RoAssetWriterTests`, `RoLedgerTests`, `RoIdempotencyTests`, `RoMaterialTests` (second run skipped), `RoBatchTests` (resume); owner: whole-game rerun |
+| FR-6 | 4.8, 4.10, 6 | `RoIdempotencyTests` (material in an empty root converts its texture), `RoImportContextTests` (dependency frames) |
+| FR-7 | 4.3, 6 | `RoSpaceTests` (handedness, up axis, 1 cube = 1 unit); owner: visual comparison with the reference viewer, possible once PLAN-0003 to 0006 convert models and maps |
+| FR-8 | 4.4, 4.7, 4.12, 6 | `RoImageReaderTests` (BMP, PNG, JPG, TGA), `RoColorKeyTests`, `RoTextureUsageTests`, `RoTextureConverterTests`, `RoPngCodecTests`, `RoPlaceholdersTests`; owner: leaf texture at close and far range |
+| FR-9 | 4.6, 6 | `RoMaterialKeyTests`, `RoMaterialTests` (1000 requests, one material; `_Cull` 0 when two-sided) |
+| FR-10 | 4.9, 4.10, 4.12, 6 | `RoReportTests`, `RoBatchTests`, `RoTextureConverterTests`, `RoPlaceholdersTests` |
+| FR-11 | 4.9, 6 | `RoReportTests`, `RoBatchTests` (no error log for expected conditions) |
+| FR-12 | 4.8, 4.13, 6 | `RoLedgerTests` (hand-made asset and additive scene survive), `RoAssetWriterTests` (additive scene never written); the additive scene itself arrives with PLAN-0006 |
+| FR-13 | 2, 3, 6 | the rule tests above run in EditMode without fixtures in the project; `RoArchitectureTests` (Core has no `UnityEditor` reference); owner: the CLI batch-mode run (`-batchmode -runTests`), which needs the editor closed |
+| FR-14 | 3, 4.14, 6 | `RoArchitectureTests` (all three asmdefs editor-only); owner: development build |
+| FR-15 | 4.2, 4.14, 7 | `RoSourceLocationTests`; T0.2; full data copy observed in `evidence/` (277,460 files, no `.meta`, no import); owner: development build |
+| FR-16 | 4.5, 4.7, 4.8, 6 | `RoDeterminismTests`, `RoLedgerTests` (file format), `RoPngCodecTests` (deterministic encode), `RoAssetWriterTests` (no rewrite of identical content); owner: whole-game rerun |
