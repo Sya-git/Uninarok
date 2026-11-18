@@ -181,7 +181,7 @@ public sealed class MapData : ScriptableObject
 }
 ```
 
-- **Storage (FR-5).** Per cell: 16 bytes of heights, 1 byte type, 1 byte flags, 1 byte raw type = **19 bytes**, under the target of 24; flat arrays, no per-cell object, linear in the cell count. The largest map (200 × 200 cubes = 400 × 400 cells = 160,000 cells) is about 3 MB; the tasks measure it. Heights stay `float` (the ground uses the same scale; half precision would break the FR-3 tolerance on tall maps).
+- **Storage (FR-5, D14).** Per cell: 16 bytes of heights, 1 byte type, 1 byte flags, 1 byte raw type = **19 bytes of data**; flat arrays, no per-cell object, linear in the cell count. No compression and no size optimization: the asset is written as Unity serializes it. With the project's text serialization (`ForceText`) arrays are written as hex, so the file is about twice the data (T7.2: prt_fild08, 160,000 cells, 6.5 MB, about 41 bytes per cell). Heights stay `float` (the ground uses the same scale; half precision would break the FR-3 tolerance on tall maps). `flags` and `rawTypes` can be rebuilt from `types` for raw values 0 to 6; they are kept so gameplay never needs the table and nothing of the file is lost.
 - **Conversion at import.** The converter fills the geometry fields from `RoMapSpace` so that **the one function of PLAN-0004 §4.2 is the single source of truth** and the runtime code has only arithmetic: a cell `(x, z)` has corner `(x, z)` at `origin + (x · cellSize, z · cellSize · rowSign)`. Heights are converted with `RoSpace` (Ragnarok Y points down; Unity up).
 - **Queries.**
   - `TryGetCell`: `x = floor((p.x - origin.x) / cellSize)`, `z = floor((p.z - origin.y) · rowSign / cellSize)`; out of range gives `false`.
@@ -257,7 +257,7 @@ Satisfies every FR of the spec. EditMode NUnit tests (command in `CLAUDE.md` §2
 | `RoGatBuilderTests` | 1, 3 | a synthetic 4 × 3 cube map (8 × 6 cells) builds the expected heights, types and flags per cell; the cell of a known corner lands at the `RoMapSpace` position; non-square maps are not swapped; a grid that is not `2 × GND` gives `GatGndMismatch` and no output |
 | `MapDataQueryTests` (runtime) | 2 | `IsWalkable` and `TryGetHeight` for cell (0, 0), the last cell, a cell edge, a diagonal and a position outside (all four sides) give the right result and never throw; the interpolated height on the diagonal equals both triangles; no allocation (`GC.GetAllocatedBytesForCurrentThread` before and after 10,000 calls) |
 | `RoGroundSamplerTests` | 3 | a flat, a ramp and a cliff synthetic ground give the expected heights; a gap returns false; the diagonal rule is the one of `RoGndRules` |
-| `MapDataStorageTests` | 5 | per-cell storage is at most 24 bytes (arrays' byte count over cell count); growth is linear (two sizes) |
+| `MapDataStorageTests` | 5 | the data is 19 bytes per cell (arrays' byte count over cell count, pins the layout of 4.3); growth is linear (two sizes) |
 | `MapDataAssemblyTests` | 4 | `Uninarok.Map` references no editor assembly and no importer assembly; the asset class is in it; a built player has no importer type (checked once manually, T7.x) |
 | `RoMapDataWriterTests` | 6 | a synthetic map converts to one asset at the path of §3 with the right fields; the second conversion is `Skipped`; a forced conversion leaves the asset byte-identical and its GUID unchanged; a scene object referencing it (`MapRoot`) keeps the reference; the optional image only exists when requested and equals the layout of the cells |
 | `RoGatImageTests` | 8 | one pixel per cell, the colour of each type, row direction, deterministic |
@@ -275,14 +275,14 @@ Satisfies every FR of the spec. EditMode NUnit tests (command in `CLAUDE.md` §2
 
 - `Assets/Scripts/MapData.cs` (`TileType`, `SetMapData`) is deleted after its users are migrated (T6.1); the old `GatImporter.cs` (`Assets/Editor/GatImporter.cs`) is deleted by T6.2, and with it the debug texture it produced (SPEC-0005 §1: gameplay must not depend on a debug texture).
 - Existing scenes or scripts that reference the old `MapData` get a recorded migration (list of users and what replaces each) in the PR of T6.1; nothing is migrated silently.
-- Output assets in `Assets/Data/map/` are committed as ordinary assets; the asset is a binary-serialised ScriptableObject if the project's asset serialization is binary, otherwise text-serialised with large float arrays; T7.2 records which and the `.gitattributes` line (LFS for `Assets/Data/map/**/*.asset`) is added if the size warrants it.
+- Output assets in `Assets/Data/map/` are committed as ordinary assets, text-serialised (the project uses `ForceText`); T7.2 records their sizes. No `.gitattributes` LFS line is added in this spec (D14); size handling, if needed later, is in `BACKLOG.md`.
 - PLAN-0006 uses `ctx.MapData(...)`, `MapRoot`, and the `settings` field; the contract between the plans: the path of §3, `MapData`'s public API, and one converter owner.
 
 ## 8. Decisions
 
 | # | Decision | Alternatives rejected |
 |---|---|---|
-| D1 (OQ-1) | Four corner heights per cell are stored (19 bytes per cell in total, under the 24 target) | One height per cell (cannot follow slopes; cell centre queries would sink or float on ramps, and the FR-1 acceptance asks for the four corners) |
+| D1 (OQ-1) | Four corner heights per cell are stored (19 bytes of data per cell in total) | One height per cell (cannot follow slopes; cell centre queries would sink or float on ramps, and the FR-1 acceptance asks for the four corners) |
 | D2 (OQ-2) | (owner, 2026-11-18, after T0.2) The cell types and flags follow the Hercules map server's `map_gat2cell` and use its names (`walkable`, `shootable`, `water`; wall, walkable water, cliff; `Type2`, `Type4`, `Type6` where the server has no name), defined for the project in `docs/data/GatCellType.md`; the flags are stored per cell; a raw value with bit 31 set is `Other`, as on the server | GRF's enum names read as rules (first draft: 2 and 4 blocked, 3 plain walkable, bit 31 as water), which disagrees with the server on types 2, 3 and 4 and on bit 31; hard-coding "0 is walkable" |
 | D3 | The runtime asset and its queries are in a runtime assembly `Uninarok.Map` and carry the geometry (origin, cell size, row sign, diagonal) so no importer code is needed at runtime | Putting the asset in an editor assembly (not in builds, FR-4); a second copy of the map space rules at runtime |
 | D4 | One `MapData` asset per map, one owning converter; SPEC-0006 extends the same converter for the map-wide settings | Two assets per map (a scene would need two references; FR-6 and SPEC-0006 FR-7 ask for one) |
@@ -295,6 +295,7 @@ Satisfies every FR of the spec. EditMode NUnit tests (command in `CLAUDE.md` §2
 | D11 | (owner, after T0.3) FR-3 is checked in two parts: never more than 0.3 Unity units below the ground, and at least 98% of walkable cells within 0.05 units on the maps without large model floors; `CellCenter` uses the diagonal rule | One tolerance for every walkable cell (fails on bridges and decks: 21% of izlude); the mean of four corners (worse fit) |
 | D12 | (T4.2) The ledger records the GND as a dependency by its whole-file hash, because the ledger compares file hashes; a GND change converts the map data again (cheap: arrays only). The ledger rules number is `RulesVersion * 1000 + RoGatRules.RulesVersion`, so a change of the cell table converts again. An image requested for a current map converts it again; an image made earlier stays owned when a later run does not ask for it | A GND header hash (the ledger has no partial-file dependency); deleting an earlier image when not requested (surprising output loss) |
 | D13 | (T5.1) Gizmo radius default 38 (77 × 77 = 5,929 cells, under the cap of 6,000) and cells taken in rings nearest the focus first, so the default view is never cut and a cut view keeps the nearest cells | Radius 48 (97 × 97 = 9,409 cells: the cap would always cut it and the notice would always show) |
+| D14 | (owner, 2026-11-18, T7.2) No compression and no size optimization of the map data for now; FR-5 asks for flat, linear storage only. The text-serialised file is about twice the data (hex); it can be optimized later | Deflating the arrays into one byte array unpacked on load (measured: 0.5 to 4.3 bytes per cell on disk), deferred to the backlog; a 24-byte per-cell target on the file (the first draft) |
 
 Items for the owner: approve D1 (per-corner heights), the new runtime assembly `Uninarok.Map`, the replacement of `MapData.cs`, and `docs/data/GatCellType.md` (new).
 
@@ -305,7 +306,7 @@ Items for the owner: approve D1 (per-corner heights), the new runtime assembly `
 | The client reads a cell differently from the server | The table is the server's `map_gat2cell` (D2); one table, one pinning test, and `docs/data/GatCellType.md` changes with it |
 | GAT and GND heights differ more than assumed | T0.3 measures it; the tolerance is a recorded number, any systematic offset is described and decided with the owner |
 | GAT version 1.3 bit 31 or an old prefix is read wrongly by GRF | T0.2 compared raw bytes (exact); bit 31 is kept in the raw type and mapped to `Other`, as on the server |
-| `MapData` for the largest map is large in version control | 19 bytes per cell measured in T7.2; LFS line if needed |
+| `MapData` for the largest map is large in version control | Accepted for now (D14): about 6.5 MB for prt_fild08 in text; compression or LFS later if it becomes a problem (`BACKLOG.md`) |
 | Gizmos are slow on large maps | Radius, region tool and the cap; manual Profiler check |
 | Old scripts depend on the old `MapData` | T0.1 lists the users before anything is deleted |
 

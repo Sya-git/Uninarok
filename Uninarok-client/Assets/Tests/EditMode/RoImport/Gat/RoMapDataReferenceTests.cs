@@ -163,13 +163,13 @@ namespace Uninarok.RoImport.Tests.Gat
         }
 
         [Test]
-        public void TheLargestMap_IsWithin24BytesPerCell()
+        public void TheLargestMap_Holds19DataBytesPerCell()
         {
             var data = Convert("prt_fild08");
 
             double perCell = (double)data.CellDataBytes / (data.CellsX * data.CellsZ);
 
-            Assert.LessOrEqual(perCell, 24.0);
+            Assert.AreEqual(19.0, perCell, "flat arrays, no compression (D14)");
         }
     }
 }

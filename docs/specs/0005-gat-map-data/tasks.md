@@ -34,7 +34,7 @@
 
 - [x] **T1.1** Create `Assets/Scripts/Map/Uninarok.Map.asmdef` (no editor references, no importer references), `MapCellType`, the serialized fields of `MapData` (plan §4.3) and `MapRoot`. Add `Assets/Tests/EditMode/Map/` with an assembly for runtime query tests that references `Uninarok.Map` only. (FR-4, FR-5)
   *Done when:* the project compiles, a test creates a `MapData` in memory with synthetic arrays, and `MapDataAssemblyTests` (written failing, ignored `pending T1.2`) are added.
-- [x] **T1.2** Add `MapDataQueryTests` and `MapDataStorageTests` (failing, ignored): cell (0, 0), the last cell, a cell edge, both triangles of a cell, positions outside on all four sides; heights, flags and types by cell; storage bytes per cell at most 24 and linear growth; no allocation over 10,000 calls; non-square maps and both row signs. (FR-2, FR-5)
+- [x] **T1.2** Add `MapDataQueryTests` and `MapDataStorageTests` (failing, ignored): cell (0, 0), the last cell, a cell edge, both triangles of a cell, positions outside on all four sides; heights, flags and types by cell; storage of 19 data bytes per cell and linear growth; no allocation over 10,000 calls; non-square maps and both row signs. (FR-2, FR-5)
   *Done when:* the tests compile and are ignored with `pending T1.3`.
 - [x] **T1.3** Implement the query methods of `MapData` (`TryGetCell`, `InBounds`, `IsWalkable` ×2, `TypeAt`, `TryGetHeight` with the diagonal rule, `CellCenter`, `CornerHeights`). (FR-2, FR-5)
   *Done when:* `[Ignore]` removed and the tests of T1.2 and `MapDataAssemblyTests` pass.
@@ -89,9 +89,9 @@
 
 - [x] **T7.1** Add `RoMapDataReferenceTests` (`NeedsData`): sample queries on every reference map equal the source cells; the two-part FR-3 check of plan §4.4 (none more than `GroundTolerance` below the ground, at least `OnGroundShare` within `OnGroundTolerance` on prontera and prt_fild08); every `.gat` of the data root reads, with failures listed by name; a second batch skips everything. (FR-1, FR-2, FR-3)
   *Done when:* the tests pass on the owner's data.
-  *Result (2026-11-18):* `RoMapDataReferenceTests` 8/8 on the owner's data (prontera, izlude, prt_fild08): 105 sample cells per map equal the source (type, flags, four heights, position lookup); FR-3 (a) holds on all three maps and (b) on prontera and prt_fild08; the three `.gat` of the data root convert (`Created 3`) and a second batch skips all (`Skipped 3`); prt_fild08 stores 19 bytes per cell.
-- [ ] **T7.2** Run **Convert All Map Data** on the full data set. Record the number converted, warnings by code (especially `GatUnknownType` values and `GatGndMismatch`), failures, total time, the size of the largest map's asset and its bytes per cell, and the serialization mode; add the `.gitattributes` LFS line for `Assets/Data/map/**/*.asset` if the size warrants it. (FR-5, FR-6)
-  *Done when:* every map converts or its failure is one listed issue, a second run skips all, the largest asset is within 24 bytes per cell, and the numbers are in the PR.
+  *Result (2026-11-18):* `RoMapDataReferenceTests` 8/8 on the owner's data (prontera, izlude, prt_fild08): 105 sample cells per map equal the source (type, flags, four heights, position lookup); FR-3 (a) holds on all three maps and (b) on prontera and prt_fild08; the three `.gat` of the data root convert (`Created 3`) and a second batch skips all (`Skipped 3`); prt_fild08 stores 19 bytes of data per cell.
+- [ ] **T7.2** Run **Convert All Map Data** on the full data set. Record the number converted, warnings by code (especially `GatUnknownType` values and `GatGndMismatch`), failures, total time, the size of each asset and its bytes per cell, and the serialization mode. No compression, size optimization or LFS line (plan D14). (FR-5, FR-6)
+  *Done when:* every map converts or its failure is one listed issue, a second run skips all, and the numbers are in the PR.
 - [ ] **T7.3** Build check: make a development player build of an empty scene containing a `MapRoot` for a reference map, with the source folder renamed away; query a walkable cell, a blocked cell and a position outside; search the build output for importer assembly names and for source files. (FR-4)
   *Done when:* the queries are correct in the build and the search finds nothing.
 
