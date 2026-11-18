@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using Uninarok.RoImport.Core.Gnd;
@@ -60,6 +61,42 @@ namespace Uninarok.RoImport.Tests.Gnd
 
         /// <summary>Integer heights, so corners convert exactly and equal corners are equal bit for bit.</summary>
         static float Field(int x, int z) => -((x * 7 + z * 3) % 5);
+
+        /// <summary>
+        /// A copy of <paramref name="gnd"/> whose top tiles use texture 0 or 2 in a checker pattern (walls keep texture 1),
+        /// so neighbouring tops meet across a texture seam.
+        /// </summary>
+        public static RoGnd WithCheckerTops(RoGnd gnd)
+        {
+            var tiles = gnd.Tiles.ToArray();
+            for (int row = 0; row < gnd.Height; row++)
+            for (int column = 0; column < gnd.Width; column++)
+            {
+                int up = gnd.CubeAt(column, row).TileUp;
+                if (up < 0) continue;
+                var t = tiles[up];
+                tiles[up] = new RoGndTile(t.Uv00, t.Uv10, t.Uv01, t.Uv11, (column + row) % 2 == 0 ? 0 : 2);
+            }
+            return Copy(gnd, tiles, new[] { GndTestMaps.TopTexture, GndTestMaps.WallTexture, "test\\top2.bmp" });
+        }
+
+        /// <summary>A copy of <paramref name="gnd"/> whose wall tiles have one texture coordinate at every corner.</summary>
+        public static RoGnd WithUniformWallUv(RoGnd gnd)
+        {
+            var uv = new Vector2(0.5f, 0.5f);
+            var tiles = gnd.Tiles.Select(t => t.Texture == 1 ? new RoGndTile(uv, uv, uv, uv, 1) : t).ToArray();
+            return Copy(gnd, tiles, gnd.Textures);
+        }
+
+        static RoGnd Copy(RoGnd gnd, IReadOnlyList<RoGndTile> tiles, IReadOnlyList<string> textures) => new RoGnd
+        {
+            VersionMajor = gnd.VersionMajor, VersionMinor = gnd.VersionMinor, Width = gnd.Width, Height = gnd.Height,
+            Zoom = gnd.Zoom, Textures = textures, Tiles = tiles, Cubes = gnd.Cubes
+        };
+
+        /// <summary>The vertex normal of a corner of a world triangle.</summary>
+        public static Vector3 NormalAt(IReadOnlyList<RoGndMeshData> meshes, WorldTriangle t, int corner) =>
+            meshes[t.Chunk].Normals[corner == 0 ? t.IndexA : corner == 1 ? t.IndexB : t.IndexC];
 
         /// <summary>The float bits of a position, -0 folded into 0, for exact comparisons.</summary>
         public static (int, int, int) Bits(Vector3 v) => (Bits(v.x), Bits(v.y), Bits(v.z));
