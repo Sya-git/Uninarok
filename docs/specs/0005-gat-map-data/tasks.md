@@ -69,7 +69,7 @@
 
 ## Phase 5: Gizmos
 
-- [ ] **T5.1** Add `RoMapDataGizmoSelectorTests` (failing, ignored): region and radius selection, the cap, per-type hiding, the notice flag when the cap cuts. (FR-7)
+- [x] **T5.1** Add `RoMapDataGizmoSelectorTests` (failing, ignored): region and radius selection, the cap, per-type hiding, the notice flag when the cap cuts. (FR-7)
   *Done when:* the tests compile and are ignored with `pending T5.2`.
 - [ ] **T5.2** Implement `RoMapDataGizmoSelector` (pure, in Core) and `RoMapDataGizmoSettings` (radius, cap, layer and type flags in `EditorPrefs`). (FR-7)
   *Done when:* `[Ignore]` removed and the tests pass.
