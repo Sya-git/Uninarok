@@ -110,7 +110,7 @@
 
 ## Phase 8: Migration
 
-- [ ] **T8.1** Delete `Assets/Editor/BmpImporter.cs` and `Assets/Editor/AssetPostProcessor.cs` (both compiled out since T0.2) with their `.meta` files; if anything in `AssetPostProcessor.cs` turns out to serve more than the old pipeline, list it in `docs/specs/BACKLOG.md`. (FR-3, FR-8)
+- [x] **T8.1** Delete `Assets/Editor/BmpImporter.cs` and `Assets/Editor/AssetPostProcessor.cs` (both compiled out since T0.2) with their `.meta` files; if anything in `AssetPostProcessor.cs` turns out to serve more than the old pipeline, list it in `docs/specs/BACKLOG.md`. (FR-3, FR-8)
   *Done when:* the project compiles; importing a `.bmp` placed anywhere in `Assets/` is no longer touched by importer code (verified by `RoArchitectureTests`); no remaining reference to the deleted classes (search result pasted).
 - [ ] **T8.2** Add the Git LFS rule `Uninarok-client/Assets/Art/Imported/**/*.asset filter=lfs diff=lfs merge=lfs -text` to `.gitattributes` and confirm the existing rules cover `*.png`. (FR-4)
   *Done when:* `git check-attr filter` returns `lfs` for a sample path under `Assets/Art/Imported/_placeholders/` for a `.png` and under a sample `Meshes/` path for a `.asset`, and `lfs` is not returned for a `.mat`.
