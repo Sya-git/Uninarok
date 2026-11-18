@@ -104,7 +104,30 @@ public static class RoGndReader { public static bool TryRead(RoPath path, byte[]
 - A tile index or texture index outside its table is reported as `GndBadIndex` once per map (with a count) and treated as none.
 - The adapter never throws; a rejected read returns `false` with GRF's reason.
 - **Versions.** The format has unversioned, 1.5, 1.7, 1.8 and 1.9 files; they differ in the lightmap and water parts, which this plan does not use, so the geometry rules are the same for all of them. A version GRF cannot read is reported once as `UnsupportedGndVersion` (§4.6). The cube and tile fields of the versions the data uses are checked in T0.1/T0.2. The texture-coordinate V axis of the file points down; the conversion to Unity's texture space is the one of PLAN-0002 §4.4 and is checked by T0.3.
-- **Mapping check (T0.2).** The task prints the header and the first and last cubes of each reference map through GRF and compares them with the raw values of the same files (width, height, zoom, a handful of cubes), then writes into this section one row per `RoGnd` field with the GRF member that supplies it.
+- **Mapping check (T0.2, done 2026-11-18).** A scratch script read each reference map through GRF (`new Gnd((MultiType)bytes)`) and, separately, decoded the raw bytes of the same file following `GND.MD`. Every header value, texture name, tile (`TextureIndex`, the four coordinate pairs) and cube (four heights, three tile ids) is equal in both: prontera 30,576 cubes and 28,511 tiles, izlude 20,100 and 20,358, prt_fild08 40,000 and 39,596, zero differences. Cubes are stored in file order, so `Cubes[i]` is file cube `i`, and GRF's own indexer `gnd[column, row]` is `Cubes[row * Width + column]` on the two non-square maps. Which grid corner and which direction each slot is on the ground is a geometry question, checked by T0.3.
+
+  | `RoGnd` field | GRF member | Raw file field (`GND.MD`) |
+  |---|---|---|
+  | `VersionMajor`, `VersionMinor` | `Header.MajorVersion`, `Header.MinorVersion` | bytes 4 and 5 after `GRGN` |
+  | `Width`, `Height` | `Header.Width`, `Header.Height` | `int32` width, `int32` height |
+  | `Zoom` | `Header.ProportionRatio` | `float` zoom |
+  | `Textures[i]` | `Textures[i]` (strings; read with `EncodingService.DisplayEncoding = Korean`, as `RoRsmReader` does, PLAN-0003 D9) | texture names, `TexturePathSize` (80) bytes each, CP949 |
+  | `Tiles[i].Texture` | `Tiles[i].TextureIndex` (`short`) | `int16` texture id |
+  | `Tiles[i].Uv00`, `Uv10`, `Uv01`, `Uv11` | `Tiles[i].TexCoords[0]`, `[1]`, `[2]`, `[3]` (`X` = u, `Y` = v) | `u[0..3]` then `v[0..3]`: bottom-left, bottom-right, top-left, top-right |
+  | `Cubes[i].H00`, `H10`, `H01`, `H11` | `Cubes[i].BottomLeft`, `BottomRight`, `TopLeft`, `TopRight` | heights `[0]`, `[1]`, `[2]`, `[3]` |
+  | `Cubes[i].TileUp`, `TileFront`, `TileSide` | `Cubes[i].TileUp`, `TileFront`, `TileSide` | `int32` top, north, east surface ids (version 1.6 and later; `int16` before) |
+
+  **Not used** (derived, layout-only or lighting): `Header.Version`, `Header.Magic`, `Header.BuildNumber`, `Header.UnknownData`, `Header.HexVersionFormat`, `Header.TextureCount`, `Header.TexturePathSize`; `Gnd.TexturesPath` (the same list as `Textures`), `Gnd[column, row]` and `Cube[k]` (indexers over the same data), `Cube.Average` (computed); `Gnd.LightmapWidth`, `LightmapHeight`, `LightmapSizeCell`, `PerCell`, `Lightmaps`, `Tile.LightmapIndex`, `Tile.TileColor` (baked lighting, FR-8 not implemented); `Gnd.Water` (water is a non-goal); `Gnd.LoadedPath`; the `UnsafeGnd`, `UCube` and `UTile` types.
+
+  **Reference maps:**
+
+  | Map | Version | Width × Height | Zoom | Textures | Tiles | Tile ids `-1` / `0` / out of range |
+  |---|---|---|---|---|---|---|
+  | prontera | 1.7 | 156 × 196 | 10 | 12 | 28,511 | 63,217 / 1 / 0 |
+  | izlude | 1.7 | 134 × 150 | 10 | 21 | 20,358 | 39,942 / 1 / 0 |
+  | prt_fild08 | 1.7 | 200 × 200 | 10 | 21 | 39,596 | 80,404 / 1 / 0 |
+
+  All three are version 1.7, so the first `RoGndRules` row is 1.7. Tile `0` is used by real cubes (for example prt_fild08 cube 0 has top 0, north 1, east 2), which confirms that `0` is a valid tile. Every tile's texture index is inside the texture table. Examples kept for the reader tests: izlude cube 0 is `H = (59, 59, 59, 60.05)`, top 0, and cube 132 (column 132, row 0) is `H = (59, 59, 61.1, 60.05)`, top 132, north 133; prt_fild08 tile 20100 has `u = (1, 0, 1, 0)`, `v = (1, 1, 0, 0)`, texture 0.
 
 ### 4.2 Map space: `RoMapSpace` (shared contract)
 
