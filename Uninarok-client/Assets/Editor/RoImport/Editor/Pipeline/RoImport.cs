@@ -61,6 +61,21 @@ namespace Uninarok.RoImport.Editor.Pipeline
                 return session.Context.Material(new RoMaterialKey(texture, surface, twoSided));
         }
 
+        /// <summary>
+        /// Converts one RSM model (or skips it when current) and returns its prefab (PLAN-0003 4.9). A model that cannot be
+        /// converted is <see cref="RoStatus.Failed"/> with no value and its reason.
+        /// </summary>
+        public static RoResult<GameObject> Model(string roPath, RoImportOptions options = null)
+        {
+            if (!RoPath.TryParse(roPath, out var path))
+                return RoResult<GameObject>.Failed(new RoIssue(RoIssueCode.SourceMissing, roPath, null, "not a valid Ragnarok path"));
+            using (var session = new Session(options))
+            {
+                var result = RoConverterRegistry.For(RoJobKind.Model).Convert(session.Context, path);
+                return new RoResult<GameObject>(result.Status, result.Value as GameObject, result.Failure);
+            }
+        }
+
         /// <summary>Runs a batch (plan 4.10): continues past failures and returns the report, whose summary lists them.</summary>
         public static RoReport Run(IEnumerable<RoJob> jobs, RoImportOptions options = null) => RoBatch.Run(jobs, options);
 
