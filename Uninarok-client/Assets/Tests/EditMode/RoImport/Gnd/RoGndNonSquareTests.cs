@@ -7,7 +7,6 @@ namespace Uninarok.RoImport.Tests.Gnd
 {
     // TASKS-0004 T3.1 (FR-4): rows and columns on maps whose width differs from height. Every cube of the NonSquare maps
     // sits at its own height -(column + 10 * row), so a swapped or mis-indexed cube shows up as a wrong height.
-    [Ignore("pending T3.2")]
     public class RoGndNonSquareTests
     {
         static float H(int column, int row) => GndTestMaps.CubeHeight(column, row);

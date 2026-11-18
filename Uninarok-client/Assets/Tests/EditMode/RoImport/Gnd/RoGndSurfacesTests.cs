@@ -9,7 +9,6 @@ namespace Uninarok.RoImport.Tests.Gnd
 {
     // TASKS-0004 T3.1 (FR-1, FR-2): tops and walls of PLAN-0004 4.3, on the hand-made maps. Positions are in Ragnarok
     // space (Y down), cube edge 10.
-    [Ignore("pending T3.2")]
     public class RoGndSurfacesTests
     {
         internal static List<RoGndQuad> Quads(RoGnd gnd, RoReport report = null)
