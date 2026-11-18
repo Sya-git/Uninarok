@@ -24,6 +24,10 @@ namespace Uninarok.RoImport.Core.Results
         RsmDuplicateName,
         /// <summary>An RSM face refers to a vertex, texture coordinate or texture slot that does not exist (PLAN-0003 4.3).</summary>
         RsmBadIndex,
+        /// <summary>A GND tile or texture index outside its table; reported once per map with a count, treated as none (PLAN-0004 4.1).</summary>
+        GndBadIndex,
+        /// <summary>A GND version that GRF cannot read or the rules table has no row for (PLAN-0004 4.1, 4.6).</summary>
+        UnsupportedGndVersion,
         Unexpected
     }
 }

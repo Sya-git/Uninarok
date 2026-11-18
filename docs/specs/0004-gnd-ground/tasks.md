@@ -33,7 +33,7 @@
 
 ## Phase 1: Data and reader
 
-- [ ] **T1.1** Add `Core/Gnd/Data/`: `RoGnd`, `RoGndTile`, `RoGndCube` exactly as in plan §4.1, plus a test-only builder `GndTestMaps` in `Assets/Tests/EditMode/RoImport/Gnd/` that creates small maps in code (flat 4 × 4, a step, a ramp, a cliff with a gap, a 5 × 3 and a 3 × 5 map with an asymmetric height pattern, a map with `Zoom = 5`, a 40 × 33 map). Add the issue codes `GndBadIndex` and `UnsupportedGndVersion` to `RoIssueCode`. (FR-1, FR-4, FR-5)
+- [x] **T1.1** Add `Core/Gnd/Data/`: `RoGnd`, `RoGndTile`, `RoGndCube` exactly as in plan §4.1, plus a test-only builder `GndTestMaps` in `Assets/Tests/EditMode/RoImport/Gnd/` that creates small maps in code (flat 4 × 4, a step, a ramp, a cliff with a gap, a 5 × 3 and a 3 × 5 map with an asymmetric height pattern, a map with `Zoom = 5`, a 40 × 33 map). Add the issue codes `GndBadIndex` and `UnsupportedGndVersion` to `RoIssueCode`. (FR-1, FR-4, FR-5)
   *Done when:* the project compiles and a test builds each sample map and checks its width, height, cube count and tile count.
 - [ ] **T1.2** Add `RoGndReaderTests` (`NeedsData`, failing, ignored): the three reference maps read through GRF with the widths and heights of `reference-models.md` §4 and the zoom recorded by T0.2; the cube table length equals `Width · Height`; a tile or texture index outside its table is reported once as `GndBadIndex` and treated as none; a truncated copy and an empty array return false with a reason and never throw. (FR-4, FR-5)
   *Done when:* the tests compile and are ignored with `pending T1.3`.
