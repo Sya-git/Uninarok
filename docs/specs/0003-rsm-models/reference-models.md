@@ -65,11 +65,5 @@ prt_fild08 is the confirmed reference map (the earlier mention of prt_fild09 is 
 Source folder: `Uninarok-client/Assets/Editor/GRF Resources~/data/`.
 
 - Every model of §1 to §3 exists under `model/` (34 of 34). The three reference maps exist with `.rsw`, `.gnd` and `.gat`.
-- `model/` holds 7,044 `.rsm` and 1,893 `.rsm2` files (none outside `model/`). Versions from the file header (`GRSM` + major, minor):
-
-| Extension | Version | Files |
-|---|---|---|
-| `.rsm` | 1.4 | 6,554 |
-| `.rsm` | 1.5 | 490 |
-| `.rsm2` | 2.2 | 258 |
-| `.rsm2` | 2.3 | 1,635 |
+- After the owner trimmed the source folder (2026-11-17), `model/` holds **140 `.rsm` files, all version 1.4, and no `.rsm2`**. All 140 load through GRF and every texture they reference exists under `texture/`.
+- Before the trim the folder held the full data: 7,044 `.rsm` (6,554 of 1.4, 490 of 1.5) and 1,893 `.rsm2` (258 of 2.2, 1,635 of 2.3). Versions 1.5, 2.2 and 2.3 therefore exist in the full game data but are not in the working data set; §5 still applies to it.
