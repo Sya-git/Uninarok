@@ -76,6 +76,37 @@ namespace Uninarok.Map
             rawTypes = cellRawTypes;
         }
 
+        // ---- queries (FR-2): no allocation, no exception; implemented by TASKS-0005 T1.3 ----
+
+        /// <summary>The cell under a Unity position (y ignored); false outside the map.</summary>
+        public bool TryGetCell(Vector3 position, out int x, out int z) => throw new NotImplementedException();
+
+        public bool InBounds(int x, int z) => throw new NotImplementedException();
+
+        /// <summary>Outside the map: false.</summary>
+        public bool IsWalkable(int x, int z) => throw new NotImplementedException();
+
+        /// <summary>Outside the map: false.</summary>
+        public bool IsWalkable(Vector3 position) => throw new NotImplementedException();
+
+        /// <summary>Outside the map: <see cref="MapCellType.Other"/>.</summary>
+        public MapCellType TypeAt(int x, int z) => throw new NotImplementedException();
+
+        /// <summary>Outside the map: <see cref="MapCellFlags.None"/>.</summary>
+        public MapCellFlags FlagsAt(int x, int z) => throw new NotImplementedException();
+
+        /// <summary>Walkable with the water flag; outside the map: false.</summary>
+        public bool IsWalkableWater(int x, int z) => throw new NotImplementedException();
+
+        /// <summary>The height under a position, interpolated on the cell's triangle (D5); false outside the map.</summary>
+        public bool TryGetHeight(Vector3 position, out float y) => throw new NotImplementedException();
+
+        /// <summary>The centre of a cell, y by the diagonal rule (PLAN-0005 4.4, D11).</summary>
+        public Vector3 CellCenter(int x, int z) => throw new NotImplementedException();
+
+        /// <summary>H00, H10, H01, H11 of a cell in Unity units; outside the map: zero.</summary>
+        public Vector4 CornerHeights(int x, int z) => throw new NotImplementedException();
+
         /// <summary>The raw GAT type's low byte of a cell, for tools and the inspector; outside: 0.</summary>
         internal byte RawTypeAt(int x, int z) => InBoundsInternal(x, z) ? rawTypes[z * cellsX + x] : (byte)0;
 

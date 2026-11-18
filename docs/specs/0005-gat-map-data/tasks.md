@@ -34,7 +34,7 @@
 
 - [x] **T1.1** Create `Assets/Scripts/Map/Uninarok.Map.asmdef` (no editor references, no importer references), `MapCellType`, the serialized fields of `MapData` (plan §4.3) and `MapRoot`. Add `Assets/Tests/EditMode/Map/` with an assembly for runtime query tests that references `Uninarok.Map` only. (FR-4, FR-5)
   *Done when:* the project compiles, a test creates a `MapData` in memory with synthetic arrays, and `MapDataAssemblyTests` (written failing, ignored `pending T1.2`) are added.
-- [ ] **T1.2** Add `MapDataQueryTests` and `MapDataStorageTests` (failing, ignored): cell (0, 0), the last cell, a cell edge, both triangles of a cell, positions outside on all four sides; heights, flags and types by cell; storage bytes per cell at most 24 and linear growth; no allocation over 10,000 calls; non-square maps and both row signs. (FR-2, FR-5)
+- [x] **T1.2** Add `MapDataQueryTests` and `MapDataStorageTests` (failing, ignored): cell (0, 0), the last cell, a cell edge, both triangles of a cell, positions outside on all four sides; heights, flags and types by cell; storage bytes per cell at most 24 and linear growth; no allocation over 10,000 calls; non-square maps and both row signs. (FR-2, FR-5)
   *Done when:* the tests compile and are ignored with `pending T1.3`.
 - [ ] **T1.3** Implement the query methods of `MapData` (`TryGetCell`, `InBounds`, `IsWalkable` ×2, `TypeAt`, `TryGetHeight` with the diagonal rule, `CellCenter`, `CornerHeights`). (FR-2, FR-5)
   *Done when:* `[Ignore]` removed and the tests of T1.2 and `MapDataAssemblyTests` pass.
