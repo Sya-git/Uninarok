@@ -41,7 +41,7 @@
 
 ## Phase 2: Data type and reader
 
-- [ ] **T2.1** Add `Core/Gat/RoGat` exactly as in plan §4.1 and the issue codes `GatGndMismatch`, `GatUnknownType`, `GatBadHeader`; add a test-only builder `GatTestMaps` in `Assets/Tests/EditMode/RoImport/Gat/` (a flat 4 × 4 cell map, a ramp, a cliff cell, a 8 × 6 and a 6 × 8 map with an asymmetric pattern, a water cell). (FR-1)
+- [x] **T2.1** Add `Core/Gat/RoGat` exactly as in plan §4.1 and the issue codes `GatGndMismatch`, `GatUnknownType`, `GatBadHeader`; add a test-only builder `GatTestMaps` in `Assets/Tests/EditMode/RoImport/Gat/` (a flat 4 × 4 cell map, a ramp, a cliff cell, a 8 × 6 and a 6 × 8 map with an asymmetric pattern, a water cell). (FR-1)
   *Done when:* the project compiles and a test builds each sample map and checks its counts.
 - [ ] **T2.2** Add `RoGatReaderTests` (`NeedsData`, failing, ignored): the three reference maps read through GRF with `Width = 2 × GND width` and `Height = 2 × GND height`; sample cells equal the raw values recorded by T0.2; a truncated copy and an empty array return false with a reason and never throw. (FR-1)
   *Done when:* the tests compile and are ignored with `pending T2.3`.

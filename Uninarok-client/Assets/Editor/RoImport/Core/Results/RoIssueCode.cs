@@ -28,6 +28,12 @@ namespace Uninarok.RoImport.Core.Results
         GndBadIndex,
         /// <summary>A GND version that GRF cannot read or the rules table has no row for (PLAN-0004 4.1, 4.6).</summary>
         UnsupportedGndVersion,
+        /// <summary>A GAT grid that is not exactly twice its GND in both directions; the map data is not written (PLAN-0005 D7).</summary>
+        GatGndMismatch,
+        /// <summary>GAT cells whose raw type is not 0 to 6; reported once per map with the values and a count (PLAN-0005 4.2).</summary>
+        GatUnknownType,
+        /// <summary>A GAT file whose header GRF or the adapter rejects (magic, size, length) (PLAN-0005 4.1).</summary>
+        GatBadHeader,
         Unexpected
     }
 }
