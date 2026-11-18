@@ -176,7 +176,7 @@ public sealed class MapData : ScriptableObject
     public MapCellFlags FlagsAt(int x, int z);           // outside: None
     public bool IsWalkableWater(int x, int z);           // walkable and water flag; outside: false
     public bool TryGetHeight(Vector3 position, out float y);   // interpolated inside the cell; false outside
-    public Vector3 CellCenter(int x, int z);             // Unity position, y = mean of the four corners
+    public Vector3 CellCenter(int x, int z);             // Unity position, y = height at the centre by the diagonal rule (T0.3)
     public Vector4 CornerHeights(int x, int z);          // H00, H10, H01, H11
 }
 ```
@@ -197,7 +197,18 @@ Satisfies FR-3.
 
 - Cell geometry is `RoMapSpace` of PLAN-0004 with the GND width, height and zoom; a GAT cell `(x, z)` belongs to the ground cube `(x / 2, z / 2)` (`CubeOfGatCell`). Nothing here has its own row direction or offset.
 - `RoGroundSampler.HeightAt(RoGnd gnd, RoGndRules rules, Vector3 roPosition, out float h)` (pure, in Core) returns the height of the ground surface at a position by the same top-quad rules (corners, diagonal) as the mesh builder, `false` over a gap. It is used by the FR-3 test and by PLAN-0006's ground contact check.
-- **FR-3 check.** For a sample of walkable cells on each reference map (fixed seed: the four corners of the map, the centre, and 100 random cells), the height of the cell centre equals `RoGroundSampler` at the same point within `GroundTolerance`. GAT and GND heights are separate fields in the files and may differ slightly; T0.3 measures the real difference on the three reference maps and writes the tolerance (candidate: 0.05 Unity units) and any systematic difference into this section.
+- **FR-3 check (owner, 2026-11-18, after T0.3).** Over every walkable cell of each reference map (types with the walkable flag, cell over a ground top), the GAT height at the cell centre (`TryGetHeight`, diagonal rule) is compared with `RoGroundSampler` at the same point:
+  1. **Never below the ground:** no centre is more than `GroundTolerance = 0.3` Unity units (3 Ragnarok units) below the ground. Centres above the ground by more than that are walkable model surfaces (bridges, decks); they are allowed and their count is reported.
+  2. **On the ground:** on prontera and prt_fild08 at least `OnGroundShare = 98%` of walkable cells are within `OnGroundTolerance = 0.05` Unity units. A grid with mirrored rows gives 69.6% and 20.3%, so the check catches a wrong row direction or a swapped grid. izlude (a town on decks) is reported, not checked.
+- **Measurements (T0.3, 2026-11-18).** A scratch script read each reference map's GAT through GRF and GND through `RoGndReader`, and computed the ground at each walkable cell centre with the 1.7 rules (corners `H00` to `H11` of cube `cell / 2`, diagonal `H10`–`H01`). Results, Ragnarok units unless stated:
+
+  | Map | Walkable cells over ground | Corner `H00` equal to the ground (exact) | Within ±0.05 Unity (diagonal centre) | Rows mirrored | More than 1 RO above the ground | Below the ground: p99 / max |
+  |---|---|---|---|---|---|---|
+  | prontera | 60,813 | 60,176 (99.0%) | 99.73% | 69.64% | 162 (0.3%) | 0 / 0.25 |
+  | izlude | 14,529 | 11,392 (78.4%) | 78.00% | 51.73% | 3,061 (21.1%) | 0.25 / 3.0 |
+  | prt_fild08 | 90,001 | 81,460 (90.5%) | 98.89% | 20.30% | 148 (0.2%) | 0.5 / 2.06 |
+
+  Findings: GAT heights have the same sign and scale as the ground (Ragnarok Y down; the opposite sign is far worse); cell `(x, z)` lies in cube `(x / 2, z / 2)` with the rows of `RoMapSpace.RowDirection` on the two non-square maps (no swap, no mirror); there is no systematic offset (the small differences are symmetric, up to about 1 RO, from cells whose corners do not follow the ground's triangles exactly). The centre height by the diagonal rule fits the ground better than the mean of the four corners (prt_fild08: 492 against 2,361 cells more than 0.5 RO below), so `CellCenter` uses it.
 
 ### 4.5 Converter and optional image: `RoMapDataConverter`, `RoGatImageWriter`
 
@@ -251,7 +262,7 @@ Satisfies every FR of the spec. EditMode NUnit tests (command in `CLAUDE.md` §2
 | `RoGatImageTests` | 8 | one pixel per cell, the colour of each type, row direction, deterministic |
 | `RoMapDataGizmoSelectorTests` | 7 | region and radius selection, cap, per-type hiding |
 | `RoGatReaderTests` (`NeedsData`) | 1 | the three reference maps read through GRF; `Width = 2 × GND width` and `Height = 2 × GND height`; sample cells equal the raw values; a truncated copy returns false with a reason and never throws |
-| `RoMapDataReferenceTests` (`NeedsData`) | 1, 2, 3, 5 | sample queries on every reference map equal the source's cells; the centre of every walkable sample cell lies on the ground within `GroundTolerance`; the size of the largest map's data per cell is within the target; a second batch skips everything |
+| `RoMapDataReferenceTests` (`NeedsData`) | 1, 2, 3, 5 | sample queries on every reference map equal the source's cells; the two-part FR-3 check of §4.4; the size of the largest map's data per cell is within the target; a second batch skips everything |
 
 **Manual checks** (recorded in the PR with screenshots):
 
@@ -280,6 +291,7 @@ Satisfies every FR of the spec. EditMode NUnit tests (command in `CLAUDE.md` §2
 | D8 | The type image is optional and separate (`WithImage`) | Always generating it (extra assets in every map) |
 | D9 | (T0.1, 2026-11-18) Map sources are `<name>.gat` at the data root, as PLAN-0004 D11 found for `.gnd` (owner decision there); the batch enumerates the whole root by extension. The old `MapData` assets sit in `Assets/Data/Map/` (capital M, same folder as `Assets/Data/map/` on Windows): T6.1 deletes them and renames the folder to `map` before any real map is converted (T7.x), so the new asset never upserts into an object of the old class | A `map/` source folder (absent from the data); writing next to the old assets and replacing their script (the old fields would linger in the YAML) |
 | D10 | (T0.2) The GAT version is read by the adapter from bytes 4 and 5, next to its magic and length checks, because GRF does not expose it | Dropping the version from `RoGat` (reports would not show it) |
+| D11 | (owner, after T0.3) FR-3 is checked in two parts: never more than 0.3 Unity units below the ground, and at least 98% of walkable cells within 0.05 units on the maps without large model floors; `CellCenter` uses the diagonal rule | One tolerance for every walkable cell (fails on bridges and decks: 21% of izlude); the mean of four corners (worse fit) |
 
 Items for the owner: approve D1 (per-corner heights), the new runtime assembly `Uninarok.Map`, the replacement of `MapData.cs`, and `docs/data/GatCellType.md` (new).
 
