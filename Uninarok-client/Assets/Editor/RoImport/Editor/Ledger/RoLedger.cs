@@ -129,6 +129,9 @@ namespace Uninarok.RoImport.Editor.Ledger
             return true;
         }
 
+        /// <summary>Removes the entry of a source, releasing its outputs (used when a preferred source takes an output over).</summary>
+        public void Forget(RoPath source) => Remove(source.Canonical);
+
         /// <summary>Writes the file when its content changed. Deterministic: same entries, same bytes.</summary>
         public void Save()
         {

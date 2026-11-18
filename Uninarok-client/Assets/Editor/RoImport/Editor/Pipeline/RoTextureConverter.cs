@@ -56,14 +56,30 @@ namespace Uninarok.RoImport.Editor.Pipeline
             if (!ctx.Source.TryGetFile(path, out var file))
                 return Placeholder(ctx, RoIssueCode.TextureMissing, item, referrer, "no such file in the source folder");
 
+            // The .bmp is preferred when a .tga or .png has the same name and so the same output (plan 4.5, D19).
+            bool isBmp = path.Extension == RoImageReader.Bmp;
+            var bmp = path.WithExtension(RoImageReader.Bmp);
+            if (!isBmp && ctx.Source.TryGetFile(bmp, out _))
+            {
+                ctx.Report.Warn(RoIssueCode.OutputCollision, item, referrer,
+                    $"'{bmp.Canonical}' has the same output and is preferred; it is used instead");
+                var preferred = ctx.Texture(bmp, referrer);
+                return preferred.Status == RoStatus.Failed ? preferred : RoResult<Texture2D>.Skipped(preferred.Value);
+            }
+
             hash = file.ContentHash();
             string output = RoOutputPaths.Texture(ctx.Roots, path);
             var ledger = ctx.Ledger(Category);
 
             string owner = ledger.OwnerOf(output);
             if (owner != null && owner != item)
-                return Placeholder(ctx, RoIssueCode.OutputCollision, item, referrer,
-                    $"output '{output}' is already produced by '{owner}'; this file is skipped");
+            {
+                if (isBmp)
+                    ledger.Forget(RoPath.Parse(owner));        // recorded before the .bmp rule: the .bmp takes its output over
+                else
+                    return Placeholder(ctx, RoIssueCode.OutputCollision, item, referrer,
+                        $"output '{output}' is already produced by '{owner}'; this file is skipped");
+            }
 
             if (!ctx.Force && ledger.IsCurrent(path, hash, Rules, ctx.Source, ctx.Writer))
             {

@@ -235,11 +235,12 @@ namespace Uninarok.RoImport.Tests
             string root = Path.Combine(_temp, "data");
             byte[] bmp = File.ReadAllBytes(Path.Combine(RoFolderSourceTests.FixtureRoot, "texture", "a.bmp"));
             byte[] tga = File.ReadAllBytes(Path.Combine(RoFolderSourceTests.FixtureRoot, "texture", "alpha32.tga"));
+            byte[] png = File.ReadAllBytes(Path.Combine(RoFolderSourceTests.FixtureRoot, "texture", "rgba.png"));
             foreach (string copy in copies)
             {
                 string disk = Path.Combine(root, copy.Replace('/', Path.DirectorySeparatorChar));
                 Directory.CreateDirectory(Path.GetDirectoryName(disk));
-                File.WriteAllBytes(disk, copy.EndsWith(".tga") ? tga : bmp);
+                File.WriteAllBytes(disk, copy.EndsWith(".tga") ? tga : copy.EndsWith(".png") ? png : bmp);
             }
             return new RoFolderSource(root);
         }
@@ -257,19 +258,53 @@ namespace Uninarok.RoImport.Tests
             Assert.IsFalse(ctx.Report.Issues.Any(i => i.Code == RoIssueCode.OutputCollision));
         }
 
+        // Plan 4.5, D19: when X.bmp exists, X.tga and X.png resolve to its output.
+        [TestCase("texture/a.tga")]
+        [TestCase("texture/a.png")]
+        public void SameNameAsABmp_UsesTheBmp_WithOneWarning_WhicheverIsAskedFirst(string other)
+        {
+            var ctx = Context(TempSource("texture/a.bmp", other));
+            LogAssert.Expect(LogType.Warning, new Regex(@"^\[RoImport\] OutputCollision " + Regex.Escape(other) + @" \(referenced by model/m\.rsm\): 'texture/a\.bmp' has the same output and is preferred"));
+
+            var asked = Convert(ctx, other, "model/m.rsm");                 // before the .bmp was ever converted
+            var bmp = Convert(ctx, "texture/a.bmp");
+
+            Assert.AreEqual(RoStatus.Skipped, asked.Status, "the request is satisfied, not failed");
+            Assert.IsTrue(asked.Value == bmp.Value, "both resolve to the .bmp's texture");
+            Assert.AreEqual("texture/a.bmp", ctx.Ledger(RoTextureConverter.Category).OwnerOf(Output("texture/a.bmp")));
+            Assert.IsNull(ctx.Ledger(RoTextureConverter.Category).Find(RoPath.Parse(other)));
+            Assert.AreEqual(new Color32(255, 0, 0, 255), OutputPixels("texture/a.bmp").GetPixel(1, 0), "the output holds the .bmp's pixels");
+            LogAssert.NoUnexpectedReceived();
+        }
+
         [Test]
-        public void TwoSourcesForOneOutput_TheSecondIsSkippedWithAnOutputCollision()
+        public void Bmp_TakesOverAnOutputATgaOwnedBeforeTheRule()
         {
             var ctx = Context(TempSource("texture/a.bmp", "texture/a.tga"));
-            Convert(ctx, "texture/a.bmp");
-            byte[] first = File.ReadAllBytes(RoImportTestRoot.FullPath(Output("texture/a.bmp")));
-            LogAssert.Expect(LogType.Warning, new Regex(@"^\[RoImport\] OutputCollision texture/a\.tga"));
+            ctx.Ledger(RoTextureConverter.Category).Record(new Editor.Ledger.RoLedgerEntry
+                { Source = "texture/a.tga", SourceHash = "old", Rules = RoTextureConverter.Rules, Outputs = new[] { Output("texture/a.tga") } });
+
+            var bmp = Convert(ctx, "texture/a.bmp");
+
+            Assert.AreNotEqual(RoStatus.Failed, bmp.Status);
+            Assert.AreEqual("texture/a.bmp", ctx.Ledger(RoTextureConverter.Category).OwnerOf(Output("texture/a.bmp")));
+            Assert.IsNull(ctx.Ledger(RoTextureConverter.Category).Find(RoPath.Parse("texture/a.tga")));
+            Assert.AreEqual(255, OutputPixels("texture/a.bmp").GetPixel(1, 0).a, "the .bmp's pixels (opaque red), not the .tga's");
+        }
+
+        [Test]
+        public void TwoNonBmpSourcesForOneOutput_TheSecondIsSkippedWithAnOutputCollision()
+        {
+            var ctx = Context(TempSource("texture/a.png", "texture/a.tga"));
+            Convert(ctx, "texture/a.png");
+            byte[] first = File.ReadAllBytes(RoImportTestRoot.FullPath(Output("texture/a.png")));
+            LogAssert.Expect(LogType.Warning, new Regex(@"^\[RoImport\] OutputCollision texture/a\.tga: output '.*' is already produced by 'texture/a\.png'"));
 
             var second = Convert(ctx, "texture/a.tga");
 
             Assert.AreEqual(RoStatus.Failed, second.Status);
             Assert.AreEqual(RoIssueCode.OutputCollision, second.Failure.Code);
-            CollectionAssert.AreEqual(first, File.ReadAllBytes(RoImportTestRoot.FullPath(Output("texture/a.bmp"))), "the first owner's output is untouched");
+            CollectionAssert.AreEqual(first, File.ReadAllBytes(RoImportTestRoot.FullPath(Output("texture/a.png"))), "the first owner's output is untouched");
             LogAssert.NoUnexpectedReceived();
         }
 
