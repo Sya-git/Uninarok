@@ -68,7 +68,7 @@
 
 - [x] **T5.1** Add `RsmAnimationTests` (failing, ignored): position keys convert through `RoSpace.Point` and roots include the recenter translation; rotation keys `(x, y, z, w)` become `(-x, y, -z, w)`; scale keys are unchanged; `RsmTiming` maps file units to seconds with the constant from T0.4 (milliseconds); nodes are grouped by their last key time into loop groups in ascending order, and each group's length equals that time converted; a node whose last key time is 0 holds its first key; quaternion keys keep their file sign; only nodes with keys get curves. (Changed by T0.4, plan D10: per-node loop, no slerp subdivision.) (FR-9)
   *Done when:* the tests compile and are ignored with `pending T5.2`.
-- [ ] **T5.2** Implement `Core/Rsm/Anim/`: `RsmAnimationData`, `RsmNodeCurves`, `RsmKey<T>`, `RsmLoopGroup`, `RsmTiming`, and the key conversion and loop grouping of plan §4.8 (D10). (FR-9)
+- [x] **T5.2** Implement `Core/Rsm/Anim/`: `RsmAnimationData`, `RsmNodeCurves`, `RsmKey<T>`, `RsmLoopGroup`, `RsmTiming`, and the key conversion and loop grouping of plan §4.8 (D10). (FR-9)
   *Done when:* `[Ignore]` removed and `RsmAnimationTests` pass.
 
 ## Phase 6: Editor side

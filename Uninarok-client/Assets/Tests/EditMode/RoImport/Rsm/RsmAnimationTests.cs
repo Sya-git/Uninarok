@@ -7,7 +7,6 @@ using Uninarok.RoImport.Core.Space;
 namespace Uninarok.RoImport.Tests.Rsm
 {
     // TASKS-0003 T5.1 (FR-9): keys converted once in Core (PLAN-0003 4.8, D10).
-    [Ignore("pending T5.2")]
     public class RsmAnimationTests
     {
         const float Eps = 1e-5f;

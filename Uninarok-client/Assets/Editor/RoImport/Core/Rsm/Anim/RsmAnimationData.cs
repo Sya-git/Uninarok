@@ -1,15 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Uninarok.RoImport.Core.Space;
 
 namespace Uninarok.RoImport.Core.Rsm
 {
     /// <summary>File key time units to seconds (PLAN-0003 4.8, D4, D10): 1.x keys are milliseconds (T0.4).</summary>
     public static class RsmTiming
     {
-        public const float SecondsPerUnit = 0.001f;
+        public const float UnitsPerSecond = 1000f;
+        public const float SecondsPerUnit = 1f / UnitsPerSecond;
 
-        public static float Seconds(int units) => units * SecondsPerUnit;
+        /// <summary>Divides rather than multiplies, so that whole milliseconds give the nearest float (750 → 0.75).</summary>
+        public static float Seconds(int units) => units / UnitsPerSecond;
     }
 
     /// <summary>One key of a curve, in seconds and Unity space.</summary>
@@ -57,7 +61,55 @@ namespace Uninarok.RoImport.Core.Rsm
         /// rotations by the Y-flip conjugation <c>(x, y, z, w) → (-x, y, -z, w)</c> keeping the file sign, scales
         /// unchanged; times through <see cref="RsmTiming"/>. Nodes are grouped by their last key time.
         /// </summary>
-        public static RsmAnimationData Build(RoRsm rsm, RsmTree tree, RsmRestPose rest, RsmRules rules) =>
-            new RsmAnimationData();   // TASKS-0003 T5.2
+        public static RsmAnimationData Build(RoRsm rsm, RsmTree tree, RsmRestPose rest, RsmRules rules)
+        {
+            var byLength = new SortedDictionary<int, List<RsmNodeCurves>>();
+            for (int n = 0; n < rsm.Nodes.Count; n++)
+            {
+                var node = rsm.Nodes[n];
+                var scaleKeys = rules.HasScaleKeys ? node.ScaleKeys : Array.Empty<RoRsmScaleKey>();
+                int last = Math.Max(LastTime(node.PosKeys.Select(k => k.Time)),
+                           Math.Max(LastTime(node.RotKeys.Select(k => k.Time)), LastTime(scaleKeys.Select(k => k.Time))));
+                // No keys, or keys that all sit at time 0: the node holds its first key, which is its rest pose.
+                if (last <= 0) continue;
+
+                var offset = tree.Parent[n] < 0 ? rest.Recenter : Vector3.zero;
+                var curves = new RsmNodeCurves
+                {
+                    Node = n,
+                    Position = node.PosKeys.OrderBy(k => k.Time)
+                        .Select(k => new RsmKey<Vector3>(RsmTiming.Seconds(k.Time), RoSpace.Point(k.Position + offset))).ToArray(),
+                    Rotation = node.RotKeys.OrderBy(k => k.Time)
+                        .Select(k => new RsmKey<Quaternion>(RsmTiming.Seconds(k.Time), Conjugate(k.Rotation))).ToArray(),
+                    Scale = scaleKeys.OrderBy(k => k.Time)
+                        .Select(k => new RsmKey<Vector3>(RsmTiming.Seconds(k.Time), RoSpace.Scale(k.Scale))).ToArray()
+                };
+                if (!byLength.TryGetValue(last, out var list)) byLength.Add(last, list = new List<RsmNodeCurves>());
+                list.Add(curves);
+            }
+
+            return new RsmAnimationData
+            {
+                Loops = byLength.Select(g => new RsmLoopGroup
+                {
+                    LengthUnits = g.Key,
+                    LengthSeconds = RsmTiming.Seconds(g.Key),
+                    Nodes = g.Value
+                }).ToList()
+            };
+        }
+
+        static int LastTime(IEnumerable<int> times) => times.DefaultIfEmpty(0).Max();
+
+        /// <summary>
+        /// The Y-flip conjugation <c>F·R·F</c> of a normalized key, <c>(x, y, z, w) → (-x, y, -z, w)</c>. The sign is
+        /// kept as stored: the reference blends the stored quaternions (D10).
+        /// </summary>
+        static Quaternion Conjugate(Quaternion q)
+        {
+            float length = Mathf.Sqrt(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w);
+            if (length <= 0f) return Quaternion.identity;
+            return new Quaternion(-q.x / length, q.y / length, -q.z / length, q.w / length);
+        }
     }
 }
