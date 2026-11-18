@@ -146,6 +146,45 @@ namespace Uninarok.RoImport.Tests
             Assert.AreEqual(255, OutputPixels("texture/basepic/loading.jpg").GetPixel(13, 8).a);
         }
 
+        // Plan 4.4 table, D20: World textures keep their original size.
+        [Test]
+        public void NonPowerOfTwoTexture_KeepsItsSize()
+        {
+            string root = Path.Combine(_temp, "data");
+            Directory.CreateDirectory(Path.Combine(root, "texture", "basepic"));
+            var image = new RoImage(6, 4);
+            for (int i = 0; i < 24; i++) image.SetPixel(i % 6, i / 6, new Color32(10, 200, 30, 255));
+            File.WriteAllBytes(Path.Combine(root, "texture", "basepic", "npot.png"), new RoPngCodec().Encode(image));
+
+            var result = Convert(Context(new RoFolderSource(root)), "texture/basepic/npot.png");
+
+            Assert.AreEqual(RoStatus.Created, result.Status);
+            Assert.AreEqual(TextureImporterNPOTScale.None, Importer("texture/basepic/npot.png").npotScale);
+            Assert.AreEqual((6, 4), (result.Value.width, result.Value.height));
+        }
+
+        [Test]
+        public void OutputConvertedUnderOlderRules_IsConvertedAgain_AndGetsTheNewSettings()
+        {
+            var first = Context();
+            Convert(first, "texture/a.bmp");
+            var importer = Importer("texture/a.bmp");
+            importer.npotScale = TextureImporterNPOTScale.ToNearest;      // what rules 1 left behind
+            importer.SaveAndReimport();
+            var ledger = first.Ledger(RoTextureConverter.Category);
+            var entry = ledger.Find(RoPath.Parse("texture/a.bmp"));
+            entry.Rules = RoTextureConverter.Rules - 1;
+            ledger.Record(entry);
+            first.SaveLedgers();
+
+            var rerun = Context();
+            var again = Convert(rerun, "texture/a.bmp");
+
+            Assert.AreEqual(RoStatus.Updated, again.Status, "same bytes, new import settings");
+            Assert.AreEqual(TextureImporterNPOTScale.None, Importer("texture/a.bmp").npotScale);
+            Assert.AreEqual(RoTextureConverter.Rules, rerun.Ledger(RoTextureConverter.Category).Find(RoPath.Parse("texture/a.bmp")).Rules);
+        }
+
         [Test]
         public void UiTexture_GetsUiSettings()
         {

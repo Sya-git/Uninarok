@@ -125,7 +125,7 @@ The whole-game texture run, the visual checks and the build checks (formerly T9.
   *Done when:* the tests compile and are ignored with `pending T9.2`.
 - [x] **T9.2** Implement JPG support in `RoImageReader` per plan §4.4 (decode through `IRoPngCodec`, no alpha, keyed like BMP). (FR-8)
   *Done when:* `[Ignore]` removed and the tests pass, with the rest of the importer tests.
-- [ ] **T9.3** Keep the original size of non-power-of-two World textures (plan §4.4 table, D20): `npotScale` none in the World settings, texture converter rules version 2; a test converts a 6 x 4 texture and checks the imported size and the importer setting, and an existing output converted under rules 1 is reconverted. (FR-8)
+- [x] **T9.3** Keep the original size of non-power-of-two World textures (plan §4.4 table, D20): `npotScale` none in the World settings, texture converter rules version 2; a test converts a 6 x 4 texture and checks the imported size and the importer setting, and an existing output converted under rules 1 is reconverted. (FR-8)
   *Done when:* the test passes with the rest of the importer tests.
 - [ ] **T9.4** Folder lines expand only to files the converter handles (plan §4.11, D21): `IRoConverter.Handles(RoPath)`, used by `RoImportJobs.Expand` for folder lines only. (FR-2, FR-8)
   *Done when:* a test shows `texture/` over the fixtures expands to the 7 images without `unsupported.dds`, while a single `.dds` line still becomes a job.

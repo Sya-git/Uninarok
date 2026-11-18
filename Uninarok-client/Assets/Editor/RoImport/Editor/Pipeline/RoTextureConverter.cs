@@ -22,7 +22,7 @@ namespace Uninarok.RoImport.Editor.Pipeline
         public const string Category = "texture";
 
         /// <summary>Rules version: bump when decoding, keying, bleeding, encoding or the import settings change (plan 4.8).</summary>
-        public const int Rules = 1;
+        public const int Rules = 2;   // 2: World textures keep their original size (npotScale none, D20)
 
         /// <summary>Prefix of the importer <c>userData</c> that stores the texture's <see cref="RoTextureAlpha"/>.</summary>
         public const string AlphaUserData = "alpha=";
@@ -131,6 +131,7 @@ namespace Uninarok.RoImport.Editor.Pipeline
             else
             {
                 t.textureType = TextureImporterType.Default;
+                t.npotScale = TextureImporterNPOTScale.None;    // keep the original size (D20)
                 t.mipmapEnabled = true;
                 t.mipMapsPreserveCoverage = alpha == RoTextureAlpha.Keyed;
                 t.alphaTestReferenceValue = 0.5f;            // matches the cutout material's _Cutoff (plan 4.6)
