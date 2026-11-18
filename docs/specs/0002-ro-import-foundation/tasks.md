@@ -114,7 +114,7 @@
   *Done when:* the project compiles; importing a `.bmp` placed anywhere in `Assets/` is no longer touched by importer code (verified by `RoArchitectureTests`); no remaining reference to the deleted classes (search result pasted).
 - [x] **T8.2** Add the Git LFS rule `Uninarok-client/Assets/Art/Imported/**/*.asset filter=lfs diff=lfs merge=lfs -text` to `.gitattributes` and confirm the existing rules cover `*.png`. (FR-4)
   *Done when:* `git check-attr filter` returns `lfs` for a sample path under `Assets/Art/Imported/_placeholders/` for a `.png` and under a sample `Meshes/` path for a `.asset`, and `lfs` is not returned for a `.mat`.
-- [ ] **T8.3** Record in `plan.md` §7 which old importers remain, compiled out under `RO_LEGACY_IMPORTERS` (`RsmImpoter.cs`, `RswImporter.cs`, `GNDImporter.cs`, `GatImporter.cs`, `RsmImpoter.bkp.cs`, `UtilExtensions.cs`), and which of PLAN-0003 to PLAN-0006 deletes each, so later plans start from a known state. (FR-3)
+- [x] **T8.3** Record in `plan.md` §7 which old importers remain, compiled out under `RO_LEGACY_IMPORTERS` (`RsmImpoter.cs`, `RswImporter.cs`, `GNDImporter.cs`, `GatImporter.cs`, `RsmImpoter.bkp.cs`, `UtilExtensions.cs`), and which of PLAN-0003 to PLAN-0006 deletes each, so later plans start from a known state. (FR-3)
   *Done when:* the plan lists each file with the plan that removes it.
 
 ## Phase 9: Verify and close

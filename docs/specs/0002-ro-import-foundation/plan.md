@@ -561,6 +561,19 @@ Satisfies FR-13 and every acceptance row of spec §4. Tests are EditMode NUnit t
 - **Hide the source folder.** With Unity closed, rename `Assets/Editor/GRF Resources` to `Assets/Editor/GRF Resources~` and delete `GRF Resources.meta` (and the `.meta` files inside it, if any remain). Unity then ignores the folder (FR-15). Reopen the editor; the folder disappears from the Project window, which is expected.
 - **Old data location.** `Assets/Res/` (the earlier copy of the data used by the old importers) has already been removed by the owner; nothing is left to decide.
 - **Old importers.** T0.2 compiles out every file of the old pipeline in `Assets/Editor/` (`BmpImporter.cs`, `AssetPostProcessor.cs`, `RsmImpoter.cs`, `RsmImpoter.bkp.cs`, `RswImporter.cs`, `GNDImporter.cs`, `GatImporter.cs`, `UtilExtensions.cs`) by wrapping each in `#if RO_LEGACY_IMPORTERS`. The define is not set in any build target, so none of them runs on any file, wherever it sits in `Assets/` (FR-3), and the code stays readable for the format plans that replace it (D15). `BmpImporter.cs` and `AssetPostProcessor.cs` are deleted by T8.1, because they conflict with FR-3 and FR-8. The others are deleted by the task of the plan that replaces each (0003, 0004, 0005, 0006), not here. Setting the define temporarily brings the old pipeline back for comparison.
+
+  State after SPEC-0002 (recorded by T8.3): `BmpImporter.cs` and `AssetPostProcessor.cs` are deleted (T8.1). These remain in `Assets/Editor/`, all compiled out under `RO_LEGACY_IMPORTERS`:
+
+  | File | What it was | Deleted by |
+  |---|---|---|
+  | `RsmImpoter.cs` | `ScriptedImporter` for `.rsm` models | PLAN-0003 (models) |
+  | `RsmImpoter.bkp.cs` | earlier copy of the RSM importer, attribute already commented out | PLAN-0003 (models) |
+  | `UtilExtensions.cs` | GRF `TkVector3` to `Vector3` helpers; used only by `RsmImpoter.cs` | PLAN-0003 (models), with `RsmImpoter.cs` |
+  | `GNDImporter.cs` | `ScriptedImporter` for `.gnd` ground | PLAN-0004 (ground) |
+  | `GatImporter.cs` | `ScriptedImporter` for `.gat` map data | PLAN-0005 (map data) |
+  | `RswImporter.cs` | `ScriptedImporter` for `.rsw` map scenes | PLAN-0006 (map scene) |
+
+  Each later plan deletes its files (and `.meta`) in its own task, and its architecture test then needs no exception for them.
 - **Git LFS.** `.gitattributes` already tracks `*.png`, `*.spr`, `*.act`, `*.rsw`, `*.gat`, `*.grf`, `*.jpg` and audio. A task adds `Uninarok-client/Assets/Art/Imported/**/*.asset filter=lfs diff=lfs merge=lfs -text` for generated meshes. Materials and the ledger JSON stay as text for readable diffs. Whether the source data set itself is committed is outside this plan; the `~` folder works either way.
 - **GRF verification.** T0.4 proves the GRF image classes load the fixture images inside the Unity editor and records the members used (§4.4).
 - **Test framework.** `com.unity.test-framework` is added to `Packages/manifest.json` (shared with PLAN-0001).
