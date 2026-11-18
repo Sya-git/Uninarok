@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [spec.md](spec.md) (SPEC-0004) |
-| **Status** | Approved |
+| **Status** | Implemented |
 | **Audience** | Architects, senior developers, AI agents |
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. Shared rules (paths, units and axes, textures, materials, ledger, results, batch) come from [PLAN-0002](../0002-ro-import-foundation/plan.md) and are used here, not restated. The reference maps are in [`../0003-rsm-models/reference-models.md`](../0003-rsm-models/reference-models.md) §4.
@@ -340,14 +340,14 @@ Items for the owner: none open.
 
 ## 10. Traceability
 
-| FR | Plan sections |
-|---|---|
-| FR-1 | 4.1, 4.3, 6 |
-| FR-2 | 4.3, 6 |
-| FR-3 | 4.3, 4.4, 6 |
-| FR-4 | 4.1, 4.2, 6 |
-| FR-5 | 4.1, 4.2, 6 |
-| FR-6 | 4.4, 4.5, 4.6, 6 |
-| FR-7 | 4.4, 6 |
-| FR-8 | Not implemented (owner decision, §1) |
-| FR-9 | Removed (D16): gizmos are SPEC-0005 FR-7 |
+| FR | Plan sections | Evidence (TASKS-0004 T8.5, 2026-11-18) |
+|---|---|---|
+| FR-1 | 4.1, 4.3, 6 | `RoGndSurfacesTests` (tops from the four corners, `TileUp = -1` is a gap, tile 0 valid, corners on the right grid points); `RoGndWindingTests`; `RoGndReferenceTests` (each reference map: chunk and triangle counts equal the oracle from the raw cube table); T0.3 and T8.1: owner compared with GRF Editor, matching |
+| FR-2 | 4.3, 6 | `RoGndSurfacesTests` (one wall per differing edge with the owner's tile, none on flat ground, `-1` draws nothing, one-ended difference is a triangle, edge cubes read no neighbour and warn nothing); `RoGndWindingTests` (walls face the lower side); T0.3 and T8.1: the izlude cliff from four sides matches the viewer |
+| FR-3 | 4.3, 4.4, 6 | `RoGndCrackTests` (bit-identical shared corners, walls meet tops, triangle count equals the oracle, no duplicate triangles); `RoGndChunkTests` (border walls meet the neighbour chunk exactly); `RoGndReferenceTests` counts; T8.2: no magenta through any crack, including a chunk corner and a grazing view |
+| FR-4 | 4.1, 4.2, 6 | `RoGndNonSquareTests` (5 x 3 and 3 x 5, old index formula guarded); `RoMapSpaceTests` (`RowDirection` pinned); `RoGndReaderTests` (156 x 196, 134 x 150, 200 x 200); T0.3 and T8.1: prontera and izlude neither rotated nor mirrored |
+| FR-5 | 4.1, 4.2, 6 | `RoMapSpaceTests` (`Zoom = 5` gives 0.5-unit cubes, `Zoom = 10` exactly 1 unit, zoom read from the header); `GndTestMaps.Zoom5`. Every ground of the working data has zoom 10 (3 of 3), so a non-default zoom is checked only on a map built in code |
+| FR-6 | 4.4, 4.5, 4.6, 6 | `RoGndChunkTests` (16 x 16 chunks, 16-bit indices, one submesh per texture, shared materials); `RoGndWriterTests` (13, incl. ground materials on Clamp textures, D17); `RoGndIdempotencyTests`; `RoGndReferenceTests` (prt_fild08, 200 x 200, the largest map of the data, converts in a batch; a second batch skips all); T7.2/T8.7: the three maps converted in the project; T8.3: 169, 75 and 4 of 169 chunks in view as the camera moves away, materials equal the textures drawn (11, 20, 21) |
+| FR-7 | 4.4, 6 | `RoGndNormalsTests` (flat is `up` across chunk borders, ramps continuous, texture seams shared, cliff tops not smoothed into the low ground, flat walls, angle-weighted sums); T8.2: even light on flat ground, smooth slopes in low sun, real time shadows cast and received, no tile-row lines after D17 |
+| FR-8 | Not implemented (owner decision, §1) | Not implemented: lighting is Unity's real time lighting (OQ-2, D6) |
+| FR-9 | Removed (D16): gizmos are SPEC-0005 FR-7 | Removed by the owner |

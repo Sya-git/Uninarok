@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Approved |
+| **Status** | Implemented |
 
 **How to use this file**
 - Start only when TASKS-0002 phases 0 to 6 are done (paths, `RoSpace`, writer, ledger, materials, context, batch, texture converter). Tasks here use those contracts as written in PLAN-0002.
@@ -109,8 +109,9 @@ T6.1 to T6.4 (ground gizmos and picking, FR-9) were removed by the owner on 2026
 - [x] **T8.4** Delete `GNDImporter.cs` (and its `.meta`) and the parts of `UtilExtensions.cs` that only the GND importer used, and the whole file if nothing else uses it (a search result is pasted, the remaining users named for PLAN-0005 and PLAN-0006). Update `plan.md` §7 if the list of remaining old importers changes. (FR-4)
   *Done when:* the project compiles with no reference to the deleted classes and `RoArchitectureTests` (TASKS-0002 T7.2) still pass.
   *Result (2026-11-18):* `grep -rn "ToVector3NegativeY\|\.ToVector3()\|UtilExtensions" --include=*.cs Uninarok-client/Assets` finds only three commented-out lines in `RsmImpoter.cs` (120, 121, 159): `GNDImporter.cs` never used the helpers and no other file does, so both `GNDImporter.cs` and `UtilExtensions.cs` (with their `.meta`) are deleted. Remaining users for PLAN-0005 and PLAN-0006: none. No class named `GNDImporter` or `UtilExtensions` is loaded; `RoArchitectureTests` 11/11; no compiler warning or error in Editor.log. Plan §7 lists the old importers still left.
-- [ ] **T8.5** Close: verify each FR of the spec against the tests and manual evidence; set the status of `spec.md`, `plan.md` and `tasks.md` to `Implemented`; move leftovers to `docs/specs/BACKLOG.md`.
+- [x] **T8.5** Close: verify each FR of the spec against the tests and manual evidence; set the status of `spec.md`, `plan.md` and `tasks.md` to `Implemented`; move leftovers to `docs/specs/BACKLOG.md`.
   *Done when:* the traceability table of the plan has a passing test or recorded evidence for each of FR-1 to FR-7, FR-8 is listed as not implemented and FR-9 as removed by owner decision, and the leftovers are in `BACKLOG.md`.
+  *Result (2026-11-18):* plan §10 lists the passing tests and manual evidence for FR-1 to FR-7; FR-8 not implemented, FR-9 removed. Last runs: GND tests 98/98 (`RoGndReferenceTests` 5/5 after T8.6), material, texture, context, RSM writer and architecture tests passing, no compiler warning. Spec, plan and tasks set to Implemented. Leftovers in `BACKLOG.md`: GND versions other than 1.7 and the full Convert All Grounds run, a real map with a non-default zoom; the old-RSM-importer line no longer waits on `UtilExtensions.cs`.
 
 ---
 
