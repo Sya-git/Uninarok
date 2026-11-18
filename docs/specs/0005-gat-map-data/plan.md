@@ -101,7 +101,7 @@ public static class RoGatReader { public static bool TryRead(RoPath path, byte[]
 
   **Not used:** `Cell.Average`, `Cell[k]`, `Cell.CalcNormal`, `Gat[i]`, `Gat[column, row]` (indexers over the same data), `Gat.Image`, `LoadImage`, `IdentifyCells`, `SpecialCells` (preview and analysis helpers), `Gat.LoadedPath`, `GatPreviewImageMaker`.
 
-  **Bit 31 and the old prefix.** GRF keeps bit 31 in `Type` (its `Weird0` to `Weird9` values); none of the reference maps uses it. No reference file has a prefix before `GRAT`: each is exactly `14 + cells × 20` bytes. GRF throws `IndexOutOfRangeException` on a truncated or empty array, so the adapter checks the length (`14 + Width × Height × 20`) before calling GRF and catches anything GRF throws.
+  **Bit 31 and the old prefix.** GRF keeps bit 31 in `Type` (its `Weird0` to `Weird9` values); none of the reference maps uses it. No reference file has a prefix before `GRAT`: each is exactly `14 + cells × 20` bytes. GRF throws `IndexOutOfRangeException` on a truncated or empty array, so the adapter checks the magic before calling GRF, catches anything GRF throws, and then checks the length against GRF's header (`14 + Width × Height × 20`), with no byte parsing of its own (T2.3).
 
   **Reference maps** (sample values kept for the reader tests, `H` in Ragnarok units):
 

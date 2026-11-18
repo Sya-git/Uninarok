@@ -10,7 +10,6 @@ namespace Uninarok.RoImport.Tests.Gat
     // TASKS-0005 T2.2 / T2.3 (FR-1). The expected values come from a raw read of the files that does not use GRF
     // (TASKS-0005 T0.2, PLAN-0005 4.1), so these tests check the adapter, not GRF against itself.
     [Category(GndTestData.Category)]
-    [Ignore("pending T2.3")]
     public class RoGatReaderTests
     {
         static RoGat Read(string map)

@@ -45,7 +45,7 @@
   *Done when:* the project compiles and a test builds each sample map and checks its counts.
 - [x] **T2.2** Add `RoGatReaderTests` (`NeedsData`, failing, ignored): the three reference maps read through GRF with `Width = 2 × GND width` and `Height = 2 × GND height`; sample cells equal the raw values recorded by T0.2; a truncated copy and an empty array return false with a reason and never throw. (FR-1)
   *Done when:* the tests compile and are ignored with `pending T2.3`.
-- [ ] **T2.3** Implement `Core/Formats/RoGatReader` using the GRF members recorded by T0.2. No parsing code of our own. (FR-1)
+- [x] **T2.3** Implement `Core/Formats/RoGatReader` using the GRF members recorded by T0.2. No parsing code of our own. (FR-1)
   *Done when:* `[Ignore]` removed and `RoGatReaderTests` pass; a text search shows no `BinaryReader` or `BitConverter` use added.
 
 ## Phase 3: Rules and builder
