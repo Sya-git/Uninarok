@@ -56,6 +56,80 @@ prt_fild08 is the confirmed reference map (the earlier mention of prt_fild09 is 
 
 ## 5. Gaps (not covered by the current data)
 
-- No model with mirrored (negative) scale.
-- No RSM version other than 1.4 (all 148 scanned models).
+- No model with mirrored (negative) scale in the 148 scanned models (the full folder is scanned by TASKS-0003 T0.3).
+- No RSM version other than 1.4 in the 148 scanned models. The full folder has other versions (§6).
 - No very large map beyond 200 x 200 cubes.
+
+## 6. Full data check (TASKS-0003 T0.1, 2026-11-17)
+
+Source folder: `Uninarok-client/Assets/Editor/GRF Resources~/data/`.
+
+- Every model of §1 to §3 exists under `model/` (34 of 34). The three reference maps exist with `.rsw`, `.gnd` and `.gat`.
+- After the owner trimmed the source folder (2026-11-17), `model/` holds **140 `.rsm` files, all version 1.4, and no `.rsm2`**. All 140 load through GRF and every texture they reference exists under `texture/`.
+- Before the trim the folder held the full data: 7,044 `.rsm` (6,554 of 1.4, 490 of 1.5) and 1,893 `.rsm2` (258 of 2.2, 1,635 of 2.3). Versions 1.5, 2.2 and 2.3 therefore exist in the full game data but are not in the working data set; §5 still applies to it.
+
+## 7. Expected values (TASKS-0003 T1.2)
+
+Counted by a raw read of the files that does not use GRF (a scratch script of T1.2), so the reader tests check the GRF adapter against an independent source. Per node values (names, parents, vertices, texture coordinates, faces, keys) are in `Uninarok-client/Assets/Tests/EditMode/RoImport/Rsm/Fixtures~/reference-nodes.csv`; this table sums them per model. Shade type: 0 none, 1 flat, 2 smooth.
+
+| Model | Version | Shade | Nodes | Vertices | Faces | Rotation keys |
+|---|---|---|---|---|---|---|
+| 나무잡초꽃/버섯02 | 1.4 | 2 | 1 | 21 | 26 | 0 |
+| 나무잡초꽃/버섯01 | 1.4 | 2 | 1 | 21 | 26 | 0 |
+| 나무잡초꽃/넝쿨01 | 1.4 | 1 | 1 | 4 | 2 | 0 |
+| 나무잡초꽃/덤불02 | 1.4 | 2 | 1 | 72 | 64 | 0 |
+| 나무잡초꽃/덤불01 | 1.4 | 2 | 1 | 54 | 48 | 0 |
+| 나무잡초꽃/야자수01 | 1.4 | 2 | 1 | 144 | 114 | 0 |
+| 프론테라/성_기둥 | 1.4 | 2 | 1 | 128 | 182 | 0 |
+| 프론테라/휘장 | 1.4 | 2 | 1 | 4 | 2 | 0 |
+| 외부소품/이정표01 | 1.4 | 2 | 1 | 20 | 16 | 0 |
+| 나무잡초꽃/나무01 | 1.4 | 2 | 1 | 70 | 64 | 0 |
+| 나무잡초꽃/선인장01 | 1.4 | 2 | 1 | 161 | 232 | 0 |
+| 프론테라/성_다리 | 1.4 | 2 | 1 | 104 | 114 | 0 |
+| 나무잡초꽃/나무기둥01 | 1.4 | 2 | 1 | 84 | 127 | 0 |
+| 프론테라/프론테라성기둥 | 1.4 | 2 | 1 | 80 | 102 | 0 |
+| 나무잡초꽃/나뭇잎01 | 1.4 | 2 | 1 | 9 | 10 | 0 |
+| 외부소품/벤치01 | 1.4 | 2 | 1 | 20 | 14 | 0 |
+| 외부소품/동굴입구 | 1.4 | 1 | 1 | 130 | 170 | 0 |
+| 프론테라/성_앞문 | 1.4 | 2 | 1 | 45 | 64 | 0 |
+| 프론테라/입구초소 | 1.4 | 2 | 1 | 130 | 147 | 0 |
+| 라헬/분수 | 1.4 | 0 | 23 | 799 | 1071 | 1078 |
+| 외부소품/게시판 | 1.4 | 2 | 2 | 53 | 80 | 5 |
+| 외부소품/프론아레나 | 1.4 | 2 | 2 | 440 | 552 | 5 |
+| izlude/iz_bridge01 | 1.4 | 1 | 9 | 158 | 144 | 0 |
+| dewata/다약화로01 | 1.4 | 2 | 2 | 76 | 105 | 0 |
+| izlude/iz_fruitshop | 1.4 | 2 | 2 | 108 | 158 | 0 |
+| 프론테라/시계탑 | 1.4 | 2 | 5 | 131 | 142 | 108 |
+| izlude/iz_smelter | 1.4 | 2 | 16 | 339 | 395 | 246 |
+| izlude/iz_enchant | 1.4 | 0 | 4 | 810 | 1536 | 101 |
+| 아인브로크/비공정 | 1.4 | 2 | 7 | 781 | 932 | 126 |
+| 외부소품/퀴즈경기장 | 1.4 | 2 | 6 | 387 | 484 | 29 |
+| 프론테라/교역소 | 1.4 | 2 | 2 | 201 | 219 | 5 |
+| 프론테라/도구점 | 1.4 | 2 | 2 | 234 | 293 | 5 |
+| 외부소품/이즈루드초소 | 1.4 | 0 | 1 | 120 | 114 | 0 |
+| 프론테라/프론테라성입구 | 1.4 | 2 | 1 | 452 | 548 | 0 |
+
+## 8. Batch results (TASKS-0003 T7.1)
+
+`RsmReferenceConversionTests` converts every reference model through `RoImport.Model` and the whole `model/` folder in one batch (throwaway output root, temporary ledger), 2026-11-18:
+
+```
+[RoImport] Created 140, Updated 0, Skipped 0, Failed 0, Warnings 1
+  OutputCollision texture/izlude/iz_rookie_06.tga (referenced by model/izlude/iz_enchant.rsm):
+  'texture/izlude/iz_rookie_06.bmp' has the same output and is preferred; it is used instead
+```
+
+140 models, all version 1.4, no failure, no `LogError`. The one warning is a data note: `iz_enchant` names a `.tga` that has a `.bmp` of the same name beside it, and the `.bmp` is used (PLAN-0002 D19). The first batch also showed two material keys (`.tga` and `.bmp`) owning one material file; the converter now names the preferred `.bmp` in the material key (test `TextureNamedAsTgaWithABmpBeside_SharesTheBmpsMaterial_WithoutACollision`).
+
+### Whole folder into the project (TASKS-0003 T7.2, 2026-11-18)
+
+Same path as the window (`RoImportJobs.Expand("model/", Model)` → `RoImport.Run`), default roots and ledger:
+
+```
+run 1: [RoImport] Created 140, Updated 0, Skipped 0, Failed 0, Warnings 1   (the iz_rookie_06.tga note above)
+run 2: [RoImport] Created 0, Updated 1, Skipped 139, Failed 0, Warnings 0   (iz_enchant stale: .tga dependency with empty hash -> D12)
+run 3: [RoImport] Created 0, Updated 1, Skipped 139, Failed 0, Warnings 0   (after the D12 fix: iz_enchant rebuilt once with the .bmp dependency)
+run 4: [RoImport] Created 0, Updated 0, Skipped 140, Failed 0, Warnings 0
+```
+
+Between run 3 and run 4 none of the 2,348 files under `Assets/Art` and `Assets/Editor/RoImport/Ledger` changed (SHA-256 of every file compared). The outputs are not committed; they are untracked like the folder itself (owner to decide).

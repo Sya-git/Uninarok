@@ -77,7 +77,7 @@ namespace Uninarok.RoImport.Editor.Writing
             }
 
             fresh.name = existing.name;
-            if (EditorJsonUtility.ToJson(existing) == EditorJsonUtility.ToJson(fresh) && SameMesh(existing, fresh))
+            if (EditorJsonUtility.ToJson(existing) == EditorJsonUtility.ToJson(fresh) && SameMesh(existing, fresh) && SameClip(existing, fresh))
             {
                 Object.DestroyImmediate(fresh);
                 return RoStatus.Skipped;
@@ -88,6 +88,22 @@ namespace Uninarok.RoImport.Editor.Writing
             Object.DestroyImmediate(fresh);
             if (!InBatch) AssetDatabase.SaveAssetIfDirty(existing);
             return RoStatus.Updated;
+        }
+
+        /// <summary>
+        /// Saves <paramref name="root"/> as a prefab asset (PLAN-0003 4.7). Saving over an existing prefab replaces its
+        /// content and keeps its GUID, so references to it survive. The in-memory object stays the caller's.
+        /// </summary>
+        public RoResult<GameObject> SavePrefab(string projectPath, GameObject root)
+        {
+            string path = Checked(projectPath);
+            if (root == null) throw new ArgumentNullException(nameof(root));
+            bool existed = File.Exists(Disk(path));
+            EnsureFolder(Parent(path));
+            var saved = PrefabUtility.SaveAsPrefabAsset(root, path, out bool success);
+            if (!success || saved == null)
+                return RoResult<GameObject>.Failed(new RoIssue(RoIssueCode.Unexpected, path, null, "Unity could not save the prefab"));
+            return existed ? RoResult<GameObject>.Updated(saved) : RoResult<GameObject>.Created(saved);
         }
 
         public bool Exists(string projectPath) => File.Exists(Disk(Normalize(projectPath)));
@@ -144,6 +160,48 @@ namespace Uninarok.RoImport.Editor.Writing
             for (int s = 0; s < ma.subMeshCount; s++)
                 if (!SameArray(ma.GetTriangles(s), mb.GetTriangles(s))) return false;
             return true;
+        }
+
+        // An animation clip's curves may not appear in its JSON form either; compare bindings and keys (PLAN-0003 4.8).
+        static bool SameClip(Object a, Object b)
+        {
+            if (!(a is AnimationClip ca) || !(b is AnimationClip cb)) return true;
+            var ba = AnimationUtility.GetCurveBindings(ca);
+            var bb = AnimationUtility.GetCurveBindings(cb);
+            if (!SameArray(ba, bb)) return false;
+            for (int i = 0; i < ba.Length; i++)
+                if (!SameArray(AnimationUtility.GetEditorCurve(ca, ba[i]).keys, AnimationUtility.GetEditorCurve(cb, bb[i]).keys)) return false;
+            var sa = AnimationUtility.GetAnimationClipSettings(ca);
+            var sb = AnimationUtility.GetAnimationClipSettings(cb);
+            return sa.loopTime == sb.loopTime && sa.startTime == sb.startTime && sa.stopTime == sb.stopTime;
+        }
+
+        /// <summary>
+        /// Creates the animator controller at the path, or rebuilds the existing one in place (its GUID kept), with
+        /// <paramref name="build"/>; skipped when <paramref name="isCurrent"/> says the existing one already matches
+        /// (PLAN-0003 4.8). Sub-assets (layers' state machines and states) are added by the controller API itself.
+        /// </summary>
+        public RoStatus UpsertController(string projectPath, Func<UnityEditor.Animations.AnimatorController, bool> isCurrent,
+                                         Action<UnityEditor.Animations.AnimatorController> build)
+        {
+            string path = Checked(projectPath);
+            var existing = AssetDatabase.LoadAssetAtPath<UnityEditor.Animations.AnimatorController>(path);
+            if (existing != null && isCurrent(existing)) return RoStatus.Skipped;
+
+            bool created = false;
+            if (existing == null)
+            {
+                if (File.Exists(Disk(path)))
+                    throw new InvalidOperationException($"'{path}' exists but is not an animator controller; the writer will not replace it.");
+                EnsureFolder(Parent(path));
+                existing = UnityEditor.Animations.AnimatorController.CreateAnimatorControllerAtPath(path);
+                created = true;
+            }
+
+            build(existing);
+            EditorUtility.SetDirty(existing);
+            if (!InBatch) AssetDatabase.SaveAssetIfDirty(existing);
+            return created ? RoStatus.Created : RoStatus.Updated;
         }
 
         static bool SameArray<TItem>(TItem[] a, TItem[] b)

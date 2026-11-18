@@ -28,5 +28,20 @@ namespace Uninarok.RoImport.Editor.Ui
                 return;
             RoImportApi.Run(jobs);
         }
+
+        [MenuItem("Tools/Ragnarok/Convert All Models", priority = 21)]
+        static void ConvertAllModels()
+        {
+            var source = new RoFolderSource(RoSourceLocation.Resolve());
+            var jobs = RoImportJobs.Expand("model/", RoJobKind.Model, source).Jobs;   // .rsm and .rsm2 (PLAN-0003 4.9)
+            if (jobs.Count == 0)
+            {
+                EditorUtility.DisplayDialog("Ragnarok import", $"No models under {source.Root}.", "OK");
+                return;
+            }
+            if (!EditorUtility.DisplayDialog("Ragnarok import", $"Convert {jobs.Count} models from {source.Root}?", "Convert", "Cancel"))
+                return;
+            RoImportApi.Run(jobs);
+        }
     }
 }

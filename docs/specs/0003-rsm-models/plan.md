@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [spec.md](spec.md) (SPEC-0003) |
-| **Status** | Approved |
+| **Status** | Implementing (all tasks done; FR-3 is confirmed with SPEC-0006, then Implemented) |
 | **Audience** | Architects, senior developers, AI agents |
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. Shared rules (paths, units and axes, textures, materials, ledger, results, batch) come from [PLAN-0002](../0002-ro-import-foundation/plan.md) and are used here, not restated. The reference models are in [`reference-models.md`](reference-models.md), which is normative for the checks in §6.
@@ -72,7 +72,7 @@ Output paths (through `RoOutputPaths.Mirror`, PLAN-0002 §4.5). For a source `mo
 |---|---|---|
 | Prefab | `Art/Imported/model/a/b.prefab` | root object named `b`, one child object per node |
 | Mesh per node | `Art/Imported/model/a/b/<node>.asset` | `<node>` = node name made file-safe; duplicate names get `_2`, `_3` in file order |
-| Animation clip | `Art/Imported/model/a/b/b.anim` | only for animated models |
+| Animation clip | `Art/Imported/model/a/b/b.anim`, then `b_2.anim`, `b_3.anim` … | only for animated models; one per loop group (§4.8), in ascending loop length |
 | Animator controller | `Art/Imported/model/a/b/b.controller` | only for animated models |
 
 Node object names inside the prefab keep the original node names; only the mesh file names are made file-safe. Two nodes with the same name keep distinct object names (`name`, `name_2`) so animation paths stay unique.
@@ -113,6 +113,37 @@ public static class RoRsmReader { public static bool TryRead(RoPath path, byte[]
 
 - `RoRsm` holds the file's values as GRF reads them, in Ragnarok space, unconverted: matrices and vectors as in the file, angles in radians, keyframe times in the file's units. No derived or recentered values.
 - **GRF member mapping (T0.2).** The task prints, for each reference model of `reference-models.md`, every `Rsm` and `Mesh` member that could correspond to a file field (the old importer used `Name`, `ParentName`, `LocalPosition`, `GlobalPosition`, `GlobalRotationAxis`, `GlobalRotationAngle`, `GlobalScale`, `TransformationMatrix`, `Vertices`, `TextureVertices`, `Faces`, `TextureIndexes`, `Textures`, and GRF also has `ShadeType`, `AnimationLength`, `PosKeyFrames`, `RotationKeyFrames`, `ScaleKeyFrames`, `SmoothGroup`, `Rsm2` and `Rsm2Converter`), and compares them with the raw values already recorded for the four reported models (single node, rotation and position non-zero). The result, one row per `RoRsm` field with the GRF member that supplies it, is written into this section. Fields GRF does not supply (for example a version without shade type) are left at their defaults with `HasShadeType = false`.
+- **T0.2 result (2026-11-17).** Checked against a raw read of the RSM 1.4 layout for `나무잡초꽃/버섯02`, `나무잡초꽃/넝쿨01` (single node, rotation and position non-zero), `dewata/다약화로01` (parent and child) and `프론테라/시계탑` (5 nodes, animated): every value below equals the raw value bit for bit. Despite their names, GRF's `Local*`/`Global*` node members are the plain file fields, not derived values.
+
+  | `RoRsm` field | GRF member | Notes |
+  |---|---|---|
+  | `VersionMajor`, `VersionMinor` | `Rsm.Header.MajorVersion`, `.MinorVersion` | `Rsm.Version` (double) is the same, not used |
+  | `ShadeType`, `HasShadeType` | `Rsm.ShadeType` (int: 0 none, 1 flat, 2 smooth) | every 1.x file in the data has it; `HasShadeType` comes from the `RsmRules` row |
+  | `AnimationLength` | `Rsm.AnimationLength` | file units (`시계탑`: 768000) |
+  | `Textures` | `Rsm.Textures` | relative to `texture/`, `\` separators; **needs the Korean encoding** (below) |
+  | `Nodes` | `Rsm.Meshes` | file order |
+  | `Name`, `ParentName` | `Mesh.Name`, `Mesh.ParentName` | `""` for a root |
+  | `TextureSlots` | `Mesh.TextureIndexes` | node slot → index into `Rsm.Textures` |
+  | `OffsetMatrix` | `Mesh.TransformationMatrix` (`TkMatrix3`, `[row, col]`) | row-major as in the file (raw `1,0,0, 0,0,1, 0,-1,0` = rows printed by GRF) |
+  | `Offset` | `Mesh.LocalPosition` | the file's offset vector (first 3 floats after the matrix); non-zero on 17 nodes of the data |
+  | `Position` | `Mesh.GlobalPosition` | the file's position (next 3 floats) |
+  | `RotationAngle`, `RotationAxis` | `Mesh.GlobalRotationAngle`, `Mesh.GlobalRotationAxis` | radians; axis `(0,0,0)` with angle 0 means no rotation |
+  | `Scale` | `Mesh.GlobalScale` | |
+  | `Vertices` | `Mesh.Vertices` (`TkVector3`) | |
+  | `TexCoords` | `Mesh.TextureVertices` (`U`, `V`, `C` color) | |
+  | `Faces[].V0..V2`, `T0..T2` | `Face.VertexIds`, `Face.TextureVertexIds` | `ushort[3]` |
+  | `Faces[].TextureSlot` | `Face.TextureId` | node-local slot; no out-of-range slot in the data |
+  | `Faces[].TwoSided` | `Face.TwoSide != 0` | |
+  | `Faces[].SmoothGroup` | `Face.SmoothGroup[0]` | GRF stores `int[3]`; in all 21,184 faces of the data the three are equal, values 0 to 7 (an integer group id, not a mask) |
+  | `PosKeys` | `Mesh.PosKeyFrames` (`Frame`, `Position`) | per node from 1.5; none in the 1.4 data (1.4's global position keys are empty in every file) |
+  | `RotKeys` | `Mesh.RotationKeyFrames` (`Frame`, `Quaternion` X, Y, Z, W) | 44 nodes in the data have them |
+  | `ScaleKeys` | `Mesh.ScaleKeyFrames` (`Frame`, `Scale`) | 2.x only; empty for 1.x |
+
+  **Not used** (derived by GRF or for features out of scope): `Mesh.Parent`, `Mesh.Children` (we resolve parents by name, §4.2), `Mesh.Matrix1`, `Mesh.Matrix2`, `Mesh.InvertTransformationMatrix`, `Mesh.BoundingBox`, `Mesh.CalculateBoundingBox()`, `Rsm.Box`, `Rsm.MainMesh`, `Rsm.MainMeshNames`, `Mesh.Textures` (empty for 1.x), `Mesh.TextureKeyFrameGroup` (texture animation, not in this spec), `Rsm.VolumeBoxes`, `Rsm.Alpha`, `Rsm.FrameRatePerSecond` (0 for 1.x; a 2.x timing input to be checked when 2.x data is available), `Rsm.ScaleKeyFrames`, `Rsm.Flatten()`, `Rsm.Downgrade()`, `Rsm2Converter`.
+
+  **Text encoding.** GRF decodes strings with `Utilities.Services.EncodingService.DisplayEncoding`, which is UTF-8 in the editor; Korean texture names (CP949 in the file) come out as replacement characters, which cannot be undone. The adapter sets `DisplayEncoding = EncodingService.Korean` for the read and restores the previous value in a `finally` (main thread only, §5); with it all texture paths of the 140 models resolve. Node names in the data are ASCII.
+
+  **Versions and `.rsm2`.** The working data set has 140 `.rsm` files, all 1.4; all load through `new Rsm((GRF.MultiType)bytes)` with no failure. The full game data has 1.5, 2.2 and 2.3 (`reference-models.md` §6) but none of them is in the working set, so whether `.rsm2` loads through GRF in the editor is **not verified**; until a file is available, those versions get no `RsmRules` row and are reported `UnsupportedRsmVersion` (§4.1, §4.4).
 - Versions: the adapter records the version and passes through whatever GRF returns for it, including `.rsm2` through GRF's own `Rsm2` handling if it loads in the editor. A file GRF cannot read gives `false` with GRF's reason and the converter reports one `CorruptFile` issue; a version GRF reads but our rules table (§4.4) has no row for gives one `UnsupportedRsmVersion` issue and no output (FR-8). No version is guessed.
 - The adapter never throws to its caller.
 
@@ -134,6 +165,7 @@ public static class RsmHierarchy { public static bool TryBuild(RoRsm rsm, out Rs
 
 - Parents are resolved by name, independent of file order (FR-1): the order is a topological sort (stable: among nodes ready at the same time, file order).
 - A parent name that matches no node makes that node a root and raises one `RsmParentMissing` warning. A cycle makes the build fail with one `RsmCycle` issue and no output. A name collision keeps the first node as the parent target and renames later ones with `_2`, `_3`, with one `RsmDuplicateName` warning.
+- **Warnings (T2.1).** `TryBuild` returns only the failing issue. The warnings above are collected in `RsmTree.Warnings` (`IReadOnlyList<RoIssue>`, item = node name), one per condition (one per missing parent, one per duplicated name), and the converter reports them with the model as referrer. A node that names itself as its parent becomes a root with one `RsmParentMissing` warning (roBrowser skips such self-references too).
 - RSM version 1.x has one root; versions that allow several roots are handled the same way (each root is recentered, §4.4).
 
 ### 4.3 Texture slots and materials
@@ -157,6 +189,39 @@ Satisfies FR-2, FR-3. All of this section works in Ragnarok space with column ve
 5. **Recentering (FR-3).** From the rest-pose model-space vertices of **all** nodes, take the axis-aligned bounds. With Ragnarok's Y axis pointing down, the model's origin is the bottom center: `Recenter = T(-center.x, -max.y, -center.z)`. It is applied to every root: `Local(root) := Recenter · Local(root)`, which for a root with position keys means adding the same translation to every position key.
 6. The recentering uses the rest pose and ignores animation after frame 0, as the viewers do.
 
+- **Offset matrix convention (T0.3).** The file's nine floats are three groups of three, and **each group is a column** of `OffsetMatrix` (equivalently, the file matrix multiplies row vectors: `v' = v · M_file`). Both reference viewers read it this way (roBrowser `mat3.toMat4`, BrowEdit3 `offset[i][j]` in column-major `glm`). Reading the groups as rows changes the result of 139 of the 140 models of the data, so `RoRsm.OffsetMatrix` keeps the file order and `RsmPose` builds the matrix as `A[r, c] = OffsetMatrix[3c + r]`; a test pins this on `나무잡초꽃/버섯02` (`1,0,0, 0,0,1, 0,-1,0`).
+- **R1 result (T0.3, 2026-11-17).** R1 was checked in three ways.
+  1. **Against the reference implementations.** The 1.x code of roBrowser (`src/Loaders/Model.js`) and BrowEdit3 (`components/Rsm.cpp`, `RsmRenderer.cpp`) was re-implemented in a scratch script and run on all 140 models of the data. After each implementation's own recentering, every vertex of R1 equals roBrowser within 1e-5 and BrowEdit3 within 1.4e-4 Ragnarok units (float rounding). The viewers differ in details that cancel out: roBrowser skips the offset vector of a single-node model, BrowEdit3 ignores the root's position and recenters twice; any constant translation of the whole model disappears in the bottom-center recentering, so all three give the same model.
+  2. **Visually.** The four reported models, the control group and one model per arrangement of `reference-models.md` §3 (18 models) were built with R1 in a scratch scene and captured from front, side, back and top (`Uninarok-client/Screenshots/0003-T0.3/`). Every model stands upright with its bottom center at the origin; closed buildings show their outside; no model is offset or rotated.
+  3. **Handedness.** BrowEdit3 places models with a flip of both Y and Z (a rotation), which treats the file space as right-handed; the single Y flip of `RoSpace` (PLAN-0002 D6) is the one reflection from that space to Unity's left-handed space, so models are not mirrored. One observation is left for the reference viewer: the two-sided sign planes of `외부소품/이정표01` read correctly from their back face (the texture is mirrored on the side their winding faces), which is how the plane was authored: the owner compared all 18 captures with the reference viewer and they match (2026-11-17).
+
+  | Model | R1 result |
+  |---|---|
+  | §1 버섯02, 버섯01, 넝쿨01, 덤불02 | match the viewer formulas; upright, bottom center at origin |
+  | §2 덤불01, 야자수01, 성_기둥, 휘장, 이정표01 | match; 이정표01 sign reading side to confirm in the viewer |
+  | §3 나무01, 나무기둥01, 벤치01, 입구초소, iz_bridge01 (9 nodes), 시계탑 (5 nodes, rotation keys), iz_enchant, 이즈루드초소, 동굴입구 | match |
+  | all 140 models | match roBrowser and BrowEdit3 numerically |
+
+- **R1 reference values (T0.3, recorded for T3.3).** Computed by the T0.3 scratch implementation over GRF's values (independent of the production code), in Ragnarok space after recentering: the root's rest transform and the model's bounds. `RsmReferenceTests` checks the production code against them within 1e-4.
+
+  | Model | Root position | Root rotation (x, y, z, w) | Root scale | Bounds min | Bounds max |
+  |---|---|---|---|---|---|
+  | 나무잡초꽃/버섯02 | (0.046991, 1.665913, -0.145184) | (0.000000, -0.923878, 0.000000, -0.382688) | (0.090100, 0.090100, 0.090100) | (-4.358802, -5.739874, -3.774851) | (4.358802, 0.000000, 3.774849) |
+  | 나무잡초꽃/버섯01 | (0.046991, 1.665913, -0.145184) | (0.000000, -0.923878, 0.000000, -0.382688) | (0.090100, 0.090100, 0.090100) | (-4.358802, -5.739874, -3.774851) | (4.358802, 0.000000, 3.774849) |
+  | 나무잡초꽃/넝쿨01 | (0.226999, -40.240800, -0.000001) | (0.707108, 0.000000, 0.000000, 0.707106) | (1.000000, 1.000000, 1.000000) | (-20.000000, -80.000000, -0.000148) | (20.000000, 0.000000, 0.000148) |
+  | 나무잡초꽃/덤불02 | (-8.305627, 17.983480, -3.509289) | (0.029820, -0.208807, 0.056931, 0.975843) | (0.181100, 0.181100, 0.181100) | (-25.048090, -14.989550, -24.902880) | (25.048090, 0.000000, 24.902880) |
+  | 나무잡초꽃/덤불01 | (-8.305627, 19.501370, -1.240438) | (0.029820, -0.208807, 0.056931, 0.975843) | (0.181100, 0.181100, 0.181100) | (-25.048090, -13.471660, -22.634030) | (25.048090, 0.000000, 22.634030) |
+  | 나무잡초꽃/야자수01 | (4.419601, 0.000000, -8.387604) | (0.000000, -0.500001, 0.000000, 0.866025) | (1.000000, 1.000000, 1.000000) | (-21.954750, -67.951930, -21.047910) | (21.954750, 0.000000, 21.047910) |
+  | 프론테라/성_기둥 | (0.155977, -193.096600, 3.696754) | (0.000000, 0.831471, 0.000000, 0.555568) | (0.265800, 0.239500, 0.265800) | (-17.868410, -102.102000, -19.082910) | (17.868410, 0.000000, 19.082910) |
+  | 프론테라/휘장 | (2.689514, -7.367931, -0.000003) | (0.707108, 0.000000, 0.000000, 0.707106) | (0.690800, 0.690800, 0.690800) | (-5.785612, -24.320100, -0.000045) | (5.785612, 0.000000, 0.000045) |
+  | 외부소품/이정표01 | (-0.183999, -15.701740, 6.458787) | (0.707108, 0.000000, 0.000000, 0.707106) | (1.000000, 1.000000, 1.000000) | (-21.913400, -24.420230, -3.504345) | (21.913400, 0.000000, 3.504345) |
+- **Shade types (T0.3, plan §4.6 check).** roBrowser: none = one constant normal `(0, -1, 0)` in file space, which is up after the flip (the plan's rule); flat = face normal; smooth = face normals summed per (smoothing group, file vertex index), unweighted. BrowEdit3: none = no normal lighting at all (constant light factor), flat and smooth as roBrowser. The plan's smooth rule differs only where the spec asks for it: it welds by position value (FR-5, no seams where two file vertices share a position) and weights by corner angle (D3). `iz_enchant` and `이즈루드초소` (none), `넝쿨01`, `동굴입구`, `iz_bridge01` (flat) and the smooth models were rendered with these rules in the captures above.
+- **Versions found (T0.3).** The working data has only 1.4 (140 files) and no mirrored scale or mirrored offset matrix (no negative determinant). The full game data has 1.5, 2.2 and 2.3 (`reference-models.md` §6). BrowEdit3 shows that 2.x uses a different rule (no position, rotation or scale fields; the offset vector is an absolute position; children use the inverse of the parent's offset matrix; no recentering); it is recorded here as a lead and gets no `RsmRules` row until 2.x data is available. 1.5 differs from 1.4 only by per-node position keys (read by GRF), so its row equals 1.4's with `hasPosKeys`; it is kept out of the table until a 1.5 file can be checked against a viewer.
+
+  | Version | restFromFirstKey | hasScaleKeys | recenter | offsetVectorInVertexMatrix | Status |
+  |---|---|---|---|---|---|
+  | 1.4 | yes | no | bottom center of rest-pose bounds | yes | verified (T0.3) |
+  | other | — | — | — | — | `UnsupportedRsmVersion` |
 - The rules live in `RsmRules` as a small table keyed by `(major, minor)` of `{ restFromFirstKey, hasScaleKeys, recenter, offsetVectorInVertexMatrix }` with a row for 1.4 from the reference data and a conservative default row for other 1.x versions that has to be confirmed by T0.3 when such a file is found; for a version with no row and no safe default the converter reports `UnsupportedRsmVersion` (§4.1). Nothing else in the code branches on the version.
 - **Why this addresses the reference failures.** The four models in `reference-models.md` §1 are single-node models with a non-zero rotation and position, so the whole result depends on how the rotation, the position, the offset and the recentering combine. R1 does it with one matrix chain in one space, and computes the bounds from our own transformed vertices rather than from values GRF derives for its viewer. The control group of §2 of the reference file (same arrangement, not reported wrong) is part of the same tests so that a rule that fixes the four and breaks the five fails.
 - `RsmPose` exposes `ComputeRest(RoRsm, RsmTree, RsmRules) → RsmRestPose` (per-node `Local` and `Model` matrices, `Recenter`) and `RsmBounds.OfRestPose(...)`. Both are pure and take `Matrix4x4` and `Vector3`.
@@ -201,7 +266,7 @@ public static class RsmMeshBuilder
 | Shade type | Normal group key | Result |
 |---|---|---|
 | Smooth, or the version has no shade type | `(welded position, face.SmoothGroup)` | faces that meet at a position and are in the same smoothing group share one normal, **across texture seams too** because the position is welded by value, not by (position, uv); faces in different groups keep a hard edge; a version without smoothing groups has every face in group 0, which is smooth everywhere as in the original client |
-| Flat | face index | every face keeps its own normal (crisp facets) |
+| Flat | the face's normal, rounded to 1e-4 (D11) | every face keeps its own normal (crisp facets); coplanar faces share their corners |
 | None | a constant | all vertices get one fixed normal (up, in Unity space), which gives the uniform look of an unshaded model; verified on the `iz_enchant` and `이즈루드초소` references in T0.3 |
 
 - A shared normal is the sum of the face normals at that position and group, **weighted by the corner angle** of each face at that position and then normalized. Angle weighting makes the result independent of how a surface is triangulated.
@@ -216,6 +281,7 @@ public static class RsmMeshBuilder
 Satisfies FR-1, FR-7, FR-10.
 
 - An in-memory `GameObject` root named after the model; one child per node, created in `RsmTree.Order`, parented by the tree, named `UniqueNames`, with local transforms from §4.5. Nodes with at least one face get a `MeshFilter` (the node's mesh asset) and a `MeshRenderer` (materials in submesh order, shadow casting and receiving left at Unity defaults, light probes off, per SPEC-0003 non-goals).
+- (T6.3) The save goes through a new `RoAssetWriter.SavePrefab(path, root)` (path checked against the output roots, folder created, `PrefabUtility.SaveAsPrefabAsset` inside), so the writer stays the only code that writes assets (PLAN-0002 4.7).
 - The prefab is saved with `PrefabUtility.SaveAsPrefabAsset` at the mirrored path, then the in-memory object is destroyed. Saving to an existing path replaces its content and keeps its GUID; mesh and material references are to asset objects (meshes upserted first through `RoAssetWriter.UpsertObject`, in place, PLAN-0002 §4.7), so references to the model from maps (PLAN-0006) survive re-conversion (SPEC-0002 FR-5).
 - Meshes and materials are separate assets of the model (FR-10): a mesh can be assigned to a collider, a material can be changed without touching the source.
 - A model with no animation has no `Animator` and no scripts; a model with animation also gets the `Animator` of §4.8.
@@ -227,19 +293,24 @@ Satisfies FR-9.
 ```csharp
 public sealed class RsmAnimationData
 {
-    public float LengthSeconds;                    // from AnimationLength via RsmTiming
-    public IReadOnlyList<RsmNodeCurves> Nodes;     // only nodes with keyframes
+    public IReadOnlyList<RsmLoopGroup> Loops;      // one per distinct node loop length, ascending by length
+}
+public sealed class RsmLoopGroup
+{
+    public int LengthUnits; public float LengthSeconds;   // the nodes' last key time, and via RsmTiming
+    public IReadOnlyList<RsmNodeCurves> Nodes;     // only nodes with keyframes that loop on this length
 }
 public sealed class RsmNodeCurves { public int Node; public RsmKey<Vector3>[] Position; public RsmKey<Quaternion>[] Rotation; public RsmKey<Vector3>[] Scale; }
 public readonly struct RsmKey<T> { public float Time; public T Value; }
-public static class RsmTiming { public const float SecondsPerUnit = 0.001f; }                  // candidate, §below
+public static class RsmTiming { public const float SecondsPerUnit = 0.001f; }                  // verified by T0.4
 ```
 
-- **Keys are converted once, in Core.** Position keys are `RoSpace.Point`; for a root they include the `Recenter` translation (§4.4 step 5). Rotation keys (quaternions) become matrices, go through `RoSpace.Rotation` and back to quaternions (this is the conjugation by the Y flip; for a quaternion `(x, y, z, w)` it gives `(-x, y, -z, w)`, which the tests assert). Scale keys are unchanged. A negative `w` is flipped to the nearest sign to the previous key so interpolation takes the short way.
-- **Timing (D4).** `RsmTiming` converts the file's keyframe units to seconds with one constant. The working assumption is that they are milliseconds of the original client's animation clock; T0.4 checks it on the clock tower (`reference-models.md` §3), against the reference viewer's speed and direction, and the constant (and any per-version difference, as a column of the `RsmRules` table) is corrected there. The clip length is `AnimationLength` converted the same way.
-- **Rotation interpolation.** The original interpolates rotation keys spherically; an `AnimationClip` quaternion curve is interpolated per component and normalized. To keep the motion equal (FR-9), `RsmClipBuilder` inserts extra keys, computed with an exact slerp, wherever two consecutive rotation keys differ by more than 10° (constant), so the per-component interpolation never strays visibly. Position and scale curves are linear with linear tangents (no smoothing). Keys are written in time order; the result is deterministic.
-- **Clip.** One `AnimationClip` per animated model, with curves for `localPosition`, `localRotation` and `localScale` on the path of each animated node (path = names from the root, `UniqueNames`). Loop time is on, with the first key at time 0 as the rest pose of §4.4 and the clip length as above. Nodes without keys keep their static transform.
-- **Playback.** The prefab gets one `Animator` whose controller is `b.controller` (`UnityEditor.Animations.AnimatorController`): one layer, one looping state `Play` with the clip, default state, no transitions, no parameters. The animator uses `cullingMode = CullUpdateTransforms` (no transform updates while off-screen) and no root motion. Nothing here needs a runtime script, so the importer assembly stays editor-only and the prefab references only Unity types.
+- **Keys are converted once, in Core.** Position keys are `RoSpace.Point`; for a root they include the `Recenter` translation (§4.4 step 5). Rotation keys (quaternions) become matrices, go through `RoSpace.Rotation` and back to quaternions (this is the conjugation by the Y flip; for a quaternion `(x, y, z, w)` it gives `(-x, y, -z, w)`, which the tests assert). Scale keys are unchanged. Key signs are kept as in the file (no flip to the short way): the reference blends the stored quaternions as they are, and `라헬/분수` has consecutive keys 174° apart whose path depends on it (T0.4).
+- **Timing (D4, verified by T0.4).** Key times and `AnimationLength` of 1.x are **milliseconds**: `RsmTiming.SecondsPerUnit = 0.001`. This is the unit of BrowEdit3 (`tick = time * 1000`) and was confirmed by the owner against the reference viewer on `프론테라/시계탑` (minute hand: 49 keys 16000 apart, 90° each, one turn in 64 s; hour hand: 5 keys 192000 apart, one turn in 12.8 min; both clockwise seen from the dial) and on `라헬/분수`. The 160-unit key spacing common in the data is 0.16 s. 2.x multiplies times by the header frame rate (BrowEdit3), a lead for when 2.x data exists.
+- **Loop (T0.4).** Each animated node loops on **its own last key time**, not on `AnimationLength` (BrowEdit3: `tick = time % lastKey.time`; confirmed on `라헬/분수`, whose `Object*` nodes loop at 12.8 s and `Cylinder*` nodes at 19.36 s while `AnimationLength` is 12.8 s). The last key is reached at the end of the loop and the next loop starts at the first key; the segment from the last key back to the first is never interpolated. A node whose last key time is 0 holds its first key. `AnimationLength` is not used for playback.
+- **Rotation interpolation (T0.4).** Between two keys the reference blends the quaternions linearly and normalizes (`glm::mix` + `normalize`), which is how Unity samples a `localRotation` curve with linear tangents. So rotation curves are written key for key with linear tangents, with no extra keys and no sign changes. Position and scale curves are linear with linear tangents. Keys are written in time order; the result is deterministic.
+- **Clips.** Nodes are grouped by loop length (`RsmLoopGroup`). One `AnimationClip` per group, with curves for `localPosition`, `localRotation` and `localScale` on the path of each node of the group (path = names from the root, `UniqueNames`), loop time on, length = the group's loop length, first key at time 0 (the rest pose of §4.4). Nodes without keys keep their static transform. Most models have one group; `라헬/분수` has two.
+- **Playback.** The prefab gets one `Animator` whose controller is `b.controller` (`UnityEditor.Animations.AnimatorController`): one layer per loop group (layer 0 base, the others override with weight 1; their nodes are disjoint, so no layer overrides another), each with one looping state `Play` holding that group's clip, default state, no transitions, no parameters. The animator uses `cullingMode = CullUpdateTransforms` (no transform updates while off-screen) and no root motion. Nothing here needs a runtime script, so the importer assembly stays editor-only and the prefab references only Unity types.
 - **Budget (FR-9, D5).** The "agreed budget" of the spec is proposed here and is part of the plan's approval: a map with 200 instances of an animated model produces **no managed allocation per frame** in steady state (Unity Profiler `GC.Alloc` is zero for the animator update), and costs at most **0.5 ms** of main-thread animation update per frame in a standalone development build on the owner's development machine, with off-screen instances costing close to nothing (culling). Measured by T9.x with 200 instances of the clock tower; if the budget is missed the fallback is in D5.
 
 ### 4.9 Converter: `RoRsmConverter`
@@ -311,6 +382,10 @@ Satisfies every FR of the spec. EditMode NUnit tests in `Uninarok.RoImport.Tests
 | D6 | One mesh per node, nodes stay separate (spec non-goal), with the node's own offset baked into its vertices | Merging static nodes (non-goal); baking the whole chain into vertices (breaks animation) |
 | D7 | Two-sided faces go to separate submeshes with a two-sided material | Duplicating the triangles with reversed winding (doubles index data, breaks smooth normals); making whole models two-sided (see-through walls and z-fighting) |
 | D8 | Mesh and animation assets are separate files per node and per model | Sub-assets of the prefab (read-only in the editor, spec FR-10 forbids) |
+| D9 | (T0.2, T0.3, 2026-11-17) The offset matrix's file groups are columns; the reader sets GRF's display encoding to Korean for the read; the rules table has a verified row for 1.4 only, and 1.5 and 2.x stay `UnsupportedRsmVersion` until a file of that version is checked | Reading the matrix as rows (rotates 139 of 140 models wrongly); post-correcting garbled texture names (lossy); a guessed "conservative default row" for other 1.x versions (§4.4 first draft: nothing in the working data can verify it) |
+| D10 | (T0.4, 2026-11-17) 1.x key times in milliseconds; per-node loop on the node's last key time, one clip and one animator layer per distinct loop length; linear quaternion blending written key for key (Unity's own curve sampling), no slerp subdivision and no sign flips | One clip of `AnimationLength` for the whole model (wrong period for `라헬/분수`'s 19.36 s nodes); one clip of the least common multiple of the loop lengths (25.8 min for `라헬/분수`); slerp subdivision (§4.8 first draft: the reference does not slerp, so it would change the motion); flipping key signs to the short way (changes the 174° swings of `라헬/분수`) |
+| D11 | (T4.4, 2026-11-18) Flat shading keys a corner's normal group by the face's normal (rounded to 1e-4), not by the face index: coplanar faces share their corners, every edge between faces of different normals stays hard. The flat reference models drop below three vertices per face as FR-4 asks | Face index (§4.6 first draft): the flat models `넝쿨01`, `동굴입구`, `iz_bridge01` kept exactly three vertices per face, duplicating corners whose position, uv and normal are all equal |
+| D12 | (T7.1, T7.2, 2026-11-18; owner rule: anything over a `.tga`) A model's texture name is resolved before it is requested: a `.tga` with a `.bmp`, else a `.png`, of the same name beside it uses that file; a `.png` with a `.bmp` uses the `.bmp` (PLAN-0002 D19). The material key and the ledger dependency both name the file actually used | Requesting the name as written: the texture pipeline redirects to the `.bmp`, but the material key kept the `.tga` (two keys owned one material file) and the ledger recorded the `.tga` with an empty hash, so `izlude/iz_enchant` was rebuilt on every run |
 
 Items for the owner's approval: D3's spec wording, and the animation budget of §4.8 (D5).
 
@@ -330,15 +405,15 @@ Items for the owner's approval: D3's spec wording, and the animation budget of �
 
 ## 10. Traceability
 
-| FR | Plan sections |
-|---|---|
-| FR-1 | 3, 4.2, 4.7, 6 |
-| FR-2 | 2, 4.1, 4.4, 4.5, 6 |
-| FR-3 | 4.4, 6 (closed with PLAN-0006) |
-| FR-4 | 4.6, 6 |
-| FR-5 | 4.6, 6 |
-| FR-6 | 4.3, 4.5, 4.6, 6 |
-| FR-7 | 4.3, 4.7, 6 |
-| FR-8 | 4.1, 4.9, 6 |
-| FR-9 | 4.8, 5, 6 |
-| FR-10 | 3, 4.7, 4.9, 6 |
+| FR | Plan sections | Evidence (TASKS-0003 T8.5, 2026-11-18) |
+|---|---|---|
+| FR-1 | 3, 4.2, 4.7, 6 | `RsmHierarchyTests` (child before parent, names, duplicates, missing parent, cycle, several roots); `RsmWriterTests.PrefabHierarchy_EqualsTheTree_WithUniqueNames`; `RsmOutputPathsTests` |
+| FR-2 | 2, 4.1, 4.4, 4.5, 6 | `RsmPoseTests`, `RsmSpaceConversionTests` (incl. mirrored scale and offset matrix, old-formula guard); `RsmReferenceTests` part 1 and `RsmReferenceConversionTests` (recorded root transforms and bounds of the reported and control models); T0.3: R1 equals roBrowser and BrowEdit3 on all 140 models, and the owner compared the 18 captures with the reference viewer |
+| FR-3 | 4.4, 6 | Rule: bottom center of the rest-pose bounds at the origin, `RsmPoseTests.Recenter_*`, reference bounds max y = 0. **Pending:** the ground-contact check of SPEC-0006 on prontera, izlude, prt_fild08 |
+| FR-4 | 4.6, 6 | `RsmMeshBuilderTests` (24/8 cube, seam, weld by value, 16/32-bit); `RsmReferenceTests` part 2 (every reference model below 3 vertices per face, counts = distinct (position, uv[, normal group])); D11 |
+| FR-5 | 4.6, 6 | `RsmShadingTests` (seam, angle weighting, flat, groups, none, no shade type); `RsmReferenceTests` part 2 (none, flat and smooth samples); T0.3 captures of the shade samples seen by the owner |
+| FR-6 | 4.3, 4.5, 4.6, 6 | `RsmSubmeshTests` (grouping, two-sided not duplicated, material key); `RsmSpaceConversionTests` (outward facing); `RsmWriterTests.TwoSidedFaces_UseTheTwoSidedMaterial` |
+| FR-7 | 4.3, 4.7, 6 | `RsmWriterTests` (shared materials from the pipeline, 1000 nodes one material, tga/png/bmp resolution D12) |
+| FR-8 | 4.1, 4.9, 6 | `RoRsmReaderTests` (34 reference models against a raw read, truncated and empty input); `RsmWriterTests.FailingModel_*`; T7.1/T7.2: 140 of 140 models convert, rerun all Skipped with no file changed (`reference-models.md` §8). 1.5 and 2.x: `UnsupportedRsmVersion` (D9), none in the working data |
+| FR-9 | 4.8, 5, 6 | `RsmAnimationTests`; `RsmWriterTests.AnimatedModel_*`, `TwoLoopLengths_*`; T0.4: clock tower and fountain timing, direction and loop confirmed by the owner. The 200-instance budget was not measured (T8.3 removed by the owner) |
+| FR-10 | 3, 4.7, 4.9, 6 | `RsmWriterTests.MeshAndMaterial_AreEditableWithoutTouchingTheSource`, separate mesh/material assets; `RsmIdempotencyTests` (skip, byte-identical forced rerun, GUIDs kept) |
