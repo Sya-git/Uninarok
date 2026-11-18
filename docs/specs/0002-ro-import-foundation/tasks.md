@@ -117,16 +117,16 @@
 - [x] **T8.3** Record in `plan.md` §7 which old importers remain, compiled out under `RO_LEGACY_IMPORTERS` (`RsmImpoter.cs`, `RswImporter.cs`, `GNDImporter.cs`, `GatImporter.cs`, `RsmImpoter.bkp.cs`, `UtilExtensions.cs`), and which of PLAN-0003 to PLAN-0006 deletes each, so later plans start from a known state. (FR-3)
   *Done when:* the plan lists each file with the plan that removes it.
 
-## Phase 9: Verify and close
+## Phase 9: JPG support and close
 
-- [ ] **T9.1** Whole-game texture run: convert every texture under the full data set (`texture/`) with the window. Then run the same batch a second time. (FR-5, FR-8, FR-10, FR-16)
-  *Done when:* the first run ends with a failure list that is empty or fully explained (each entry a real bad or unsupported file, pasted into the PR); the second run reports every item `Skipped` and `git status` shows no changed file.
-- [ ] **T9.2** Visual checks recorded with screenshots in the PR: the leaf texture at close and far range with no pink edge, a World and a Ui texture with their import settings, the placeholder shown in place of a deliberately removed texture. (FR-7 reference data, FR-8)
-  *Done when:* the screenshots and the checklist are in the PR; any difference from the reference viewer is listed.
-- [ ] **T9.3** Build checks: make a development build and search it for `Uninarok.RoImport` assemblies and for any file from the source folder; copy the full data set into the source folder with the editor open and watch the console and the Project window. (FR-14, FR-15)
-  *Done when:* neither search finds anything and the copy starts no import; results pasted into the PR.
-- [ ] **T9.4** Close: verify every FR of the spec against the test list and manual evidence; set the status of `spec.md`, `plan.md` and `tasks.md` to `Implemented` (the owner sets `Approved` states; `Implemented` follows the lifecycle in CLAUDE.md §1.3); move leftovers to `docs/specs/BACKLOG.md`.
-  *Done when:* the traceability table of the plan has a passing test or recorded evidence for each of FR-1 to FR-16, and the leftovers are in `BACKLOG.md`.
+The whole-game texture run, the visual checks and the build checks (formerly T9.1 to T9.3) were removed from this list on 2026-11-18. The owner runs them (plan §6, manual checks).
+
+- [ ] **T9.1** Add JPG to the reader tests and the converter tests (failing, ignored): a JPG built in the test with Unity's encoder decodes through `IRoPngCodec` with `SourceHadAlpha` false; its magenta (within tolerance, despite compression noise) is keyed; `IsSupportedExtension` accepts `.jpg` and `.jpeg`; a JPG source converts to a PNG at the mirrored path with World settings; a half-length JPG fails with a reason. (FR-8)
+  *Done when:* the tests compile and are ignored with `pending T9.2`.
+- [ ] **T9.2** Implement JPG support in `RoImageReader` per plan §4.4 (decode through `IRoPngCodec`, no alpha, keyed like BMP). (FR-8)
+  *Done when:* `[Ignore]` removed and the tests pass, with the rest of the importer tests.
+- [ ] **T9.3** Close: verify every FR of the spec against the test list and manual evidence; set the status of `spec.md`, `plan.md` and `tasks.md` to `Implemented` (the owner sets `Approved` states; `Implemented` follows the lifecycle in CLAUDE.md §1.3); move leftovers to `docs/specs/BACKLOG.md`.
+  *Done when:* the traceability table of the plan has a passing test or recorded evidence for each of FR-1 to FR-16, or names the owner's manual check that covers it, and the leftovers are in `BACKLOG.md`.
 
 ---
 
@@ -138,15 +138,17 @@
 | FR-2 | T5.2, T6.2, T6.4, T7.1 |
 | FR-3 | T0.2, T7.2, T8.1, T8.3 |
 | FR-4 | T4.1, T4.3, T4.4, T6.1, T8.2 |
-| FR-5 | T4.3, T4.4, T4.5, T4.6, T6.2, T6.3, T6.4, T6.5, T9.1 |
+| FR-5 | T4.3, T4.4, T4.5, T4.6, T6.2, T6.3, T6.4, T6.5 |
 | FR-6 | T5.2, T5.3, T6.2, T6.3 |
-| FR-7 | T1.4, T1.5, T9.2 |
+| FR-7 | T1.4, T1.5 |
 | FR-8 | T0.3, T0.4, T3.1–T3.4, T4.2, T5.4, T6.1, T6.2, T8.1, T9.1, T9.2 |
 | FR-9 | T5.1, T5.3 |
-| FR-10 | T1.1, T5.4, T6.1, T6.2, T6.4, T6.5, T9.1 |
+| FR-10 | T1.1, T5.4, T6.1, T6.2, T6.4, T6.5 |
 | FR-11 | T1.1, T6.4, T6.5 |
 | FR-12 | T4.5, T4.6 |
 | FR-13 | T0.1, T7.2 |
-| FR-14 | T0.1, T7.2, T9.3 |
-| FR-15 | T0.2, T2.3, T9.3 |
-| FR-16 | T2.2, T4.1, T4.3, T4.4, T4.5, T4.6, T5.4, T6.3, T9.1 |
+| FR-14 | T0.1, T7.2 |
+| FR-15 | T0.2, T2.3 |
+| FR-16 | T2.2, T4.1, T4.3, T4.4, T4.5, T4.6, T5.4, T6.3 |
+
+Owner's manual checks outside this list (plan §6): the whole-game run and its rerun (FR-5, FR-8, FR-10, FR-16), the visual checks (FR-7, FR-8), and the development build (FR-14, FR-15).
