@@ -79,8 +79,9 @@
 
 ## Phase 6: Migration
 
-- [ ] **T6.1** Migrate every user of the old `MapData` listed by T0.1 to the new asset (or record that it is replaced by SPEC-0006's map scene), then delete `Assets/Scripts/MapData.cs` and its `.meta`. (FR-4)
+- [x] **T6.1** Migrate every user of the old `MapData` listed by T0.1 to the new asset (or record that it is replaced by SPEC-0006's map scene), then delete `Assets/Scripts/MapData.cs` and its `.meta`. (FR-4)
   *Done when:* the project compiles with no reference to the deleted class and the list of migrated users is in the PR.
+  *Result (2026-11-18):* users from T0.1: `Assets/Editor/GatImporter.cs` (compiled out by `RO_LEGACY_IMPORTERS`, deleted by T6.2, replaced by `RoMapDataConverter`) and the six empty assets of `Assets/Data/Map/` (`1@4igd`, `izlude`, `prontera`, `prt_fild01`, `prt_fild02`, `prt_fild08`; no scene, prefab or script referenced them; replaced by the converted `Assets/Data/map/<name>.asset` of T7.2). Deleted with the class; the folder `Assets/Data` was left empty and removed with its `.meta` (the converter recreates `Assets/Data/map`, lower case, plan D9). The project compiles; `Uninarok.Map.Tests` 36/36.
 - [ ] **T6.2** Delete `Assets/Editor/GatImporter.cs` (and its `.meta`) and any debug texture generation; update `plan.md` §7 if the list of remaining old importers changes. (FR-4)
   *Done when:* the project compiles, nothing in the project refers to a generated GAT debug texture, and `RoArchitectureTests` (TASKS-0002 T7.2) still pass.
 
