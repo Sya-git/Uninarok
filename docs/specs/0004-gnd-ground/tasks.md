@@ -14,6 +14,7 @@
 - Paths are relative to `Uninarok-client/Assets/Editor/RoImport/` unless written in full. Class names and contracts are in `plan.md` §4; do not redesign them here. If a spike (phase 0) shows a plan rule is wrong, stop and update `plan.md` first with a note under Decisions.
 - Spike scripts are scratch code: delete them when the task is done. They are the only code that may print or inspect raw values; production code never parses GND bytes (PLAN-0002 §1).
 - FR-8 (baked ground lighting) is **not implemented** (owner decision on OQ-2); there are no tasks for it.
+- FR-9 (ground gizmos) is **removed** (owner, plan D16); the walkability gizmos are SPEC-0005 FR-7.
 - Steps that need the running editor (scratch scenes, screenshots, Profiler) are done with the Unity MCP when it is connected, otherwise by the owner.
 - Unrelated problems go to `docs/specs/BACKLOG.md` as one line each.
 
@@ -73,16 +74,9 @@
   *Done when:* a synthetic ground converts from the window and from the menu, with progress and cancel working, as in the foundation.
   *Result (2026-11-18):* `/` alone in the window's path list names the data root, and the menu lists every `.gnd` there (`RoImportJobsTests`). In the editor (Unity MCP), with a temporary data folder holding a copy of izlude and a throwaway output root, the window's list and the menu's list each gave the one job `Ground izlude.gnd`; the run with the progress bar created it (90 chunks, 6.5 s), a rerun skipped it, a run cancelled before the job converted nothing. The menu's confirmation dialogs were not clicked through (they are modal).
 
-## Phase 6: Gizmos and picking
+## Phase 6: (removed)
 
-- [ ] **T6.1** Add `RoGndInspectorTests` and `RoGndPickerTests` (failing, ignored): converting a synthetic map and inspecting its chunk meshes gives back every cube's coordinates, face kind, four corner heights and texture; a gap is a cube without a top; front and side walls are told apart on a non-square map; `RoGndPicker` returns the right cube and face for rays from above and from the side on a step map, and nothing for a ray that misses or passes through a gap. (FR-9)
-  *Done when:* the tests compile and are ignored with `pending T6.2`.
-- [ ] **T6.2** Implement `Core/Gnd/Debug/RoGndMeshInspector` and `RoGndPicker` (plan §4.7). The gap layer needs the map size from the map data of SPEC-0005; until that exists the inspector takes the size as a parameter and the editor side leaves the gap layer off. (FR-9)
-  *Done when:* `[Ignore]` removed and the tests of T6.1 pass.
-- [ ] **T6.3** Implement `Editor/Gnd/Gizmos/RoGndGizmoSettings` (radius, layer flags in `EditorPrefs`) and the per-mesh cache of inspected chunks (dropped on deselect and domain reload). (FR-9)
-  *Done when:* a scratch check shows a chunk is inspected once per selection and dropped on deselect, with nothing read from the source folder.
-- [ ] **T6.4** Implement `RoGndGizmos` (`[DrawGizmo(GizmoType.Selected | GizmoType.InSelectionHierarchy, typeof(MeshFilter))]`, layers: grid, coordinates, corner heights, face kind with texture, gaps) and `RoGndSceneTools` (overlay "Ragnarok Ground" with the layer switches, hover data, click to pin). (FR-9)
-  *Done when:* on a converted reference map, selecting `Ground`, a chunk or the map object draws only chunks within the radius, each layer switches off, hovering shows the cube data, and with nothing selected the Profiler shows no gizmo time.
+T6.1 to T6.4 (ground gizmos and picking, FR-9) were removed by the owner on 2026-11-18: gizmos belong to the walkability data, SPEC-0005 FR-7 (plan D16).
 
 ## Phase 7: Whole data set
 
@@ -104,7 +98,7 @@
 - [ ] **T8.4** Delete `GNDImporter.cs` (and its `.meta`) and the parts of `UtilExtensions.cs` that only the GND importer used, and the whole file if nothing else uses it (a search result is pasted, the remaining users named for PLAN-0005 and PLAN-0006). Update `plan.md` §7 if the list of remaining old importers changes. (FR-4)
   *Done when:* the project compiles with no reference to the deleted classes and `RoArchitectureTests` (TASKS-0002 T7.2) still pass.
 - [ ] **T8.5** Close: verify each FR of the spec against the tests and manual evidence; set the status of `spec.md`, `plan.md` and `tasks.md` to `Implemented`; move leftovers to `docs/specs/BACKLOG.md`.
-  *Done when:* the traceability table of the plan has a passing test or recorded evidence for each of FR-1 to FR-7 and FR-9, FR-8 is listed as not implemented by owner decision, and the leftovers are in `BACKLOG.md`.
+  *Done when:* the traceability table of the plan has a passing test or recorded evidence for each of FR-1 to FR-7, FR-8 is listed as not implemented and FR-9 as removed by owner decision, and the leftovers are in `BACKLOG.md`.
 
 ---
 
@@ -120,4 +114,4 @@
 | FR-6 | T0.1, T4.2, T4.3, T5.1, T5.2, T5.3, T7.1, T7.2, T7.3, T8.3 |
 | FR-7 | T4.2, T4.3, T7.1, T8.2 |
 | FR-8 | Not implemented (owner decision, OQ-2) |
-| FR-9 | T6.1, T6.2, T6.3, T6.4 |
+| FR-9 | Removed (owner, plan D16; SPEC-0005 FR-7) |
