@@ -29,6 +29,9 @@ namespace Uninarok.RoImport.Editor.Pipeline
 
         public RoJobKind Kind => RoJobKind.Texture;
 
+        /// <summary>BMP, PNG, JPG and TGA files.</summary>
+        public bool Handles(RoPath path) => RoImageReader.IsSupportedExtension(path.Extension);
+
         public RoResult<UnityEngine.Object> Convert(RoImportContext ctx, RoPath path)
         {
             var result = ctx.Texture(path);

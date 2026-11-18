@@ -21,12 +21,28 @@ namespace Uninarok.RoImport.Tests
             Assert.AreEqual(2, expansion.Invalid.Count, "an empty folder and an invalid path are reported, not converted");
         }
 
+        // Plan 4.11, D21: folders expand only to files the converter handles; a single path is always a job.
         [Test]
-        public void TheWholeTextureFolder_ExpandsToEveryFixture()
+        public void AFolder_ExpandsToTheImagesOnly_ButASingleUnsupportedPathIsStillAJob()
         {
-            var expansion = RoImportJobs.Expand("texture/", RoJobKind.Texture, new RoFolderSource(RoFolderSourceTests.FixtureRoot));
+            var source = new RoFolderSource(RoFolderSourceTests.FixtureRoot);
 
-            Assert.AreEqual(8, expansion.Jobs.Count);
+            var folder = RoImportJobs.Expand("texture/", RoJobKind.Texture, source);
+            var single = RoImportJobs.Expand("texture/unsupported.dds", RoJobKind.Texture, source);
+
+            Assert.AreEqual(7, folder.Jobs.Count, "8 fixture files, the .dds skipped silently");
+            Assert.IsFalse(folder.Jobs.Any(j => j.Path.Extension == ".dds"));
+            CollectionAssert.IsEmpty(folder.Invalid, "skipping is silent");
+            CollectionAssert.AreEqual(new[] { "texture/unsupported.dds" }, single.Jobs.Select(j => j.Path.Canonical),
+                "an explicit request still reaches the converter, which warns (FR-8)");
+        }
+
+        [Test]
+        public void AFolderWithoutImages_IsReported()
+        {
+            var expansion = RoImportJobs.Expand("texture/", RoJobKind.Texture, new RoFolderSource(System.IO.Path.Combine(RoFolderSourceTests.FixtureRoot, "no-such-root")));
+
+            Assert.AreEqual(1, expansion.Invalid.Count);
         }
     }
 }

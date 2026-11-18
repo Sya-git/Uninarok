@@ -54,6 +54,7 @@ namespace Uninarok.RoImport.Tests
         {
             readonly IRoConverter _real = new RoTextureConverter();
             public RoJobKind Kind => RoJobKind.Texture;
+            public bool Handles(RoPath path) => _real.Handles(path);
 
             public RoResult<UnityEngine.Object> Convert(RoImportContext ctx, RoPath path)
             {
