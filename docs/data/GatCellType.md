@@ -1,31 +1,35 @@
 # GatCellType
 
-- **Kind:** Shared enum
+- **Kind:** Shared enums (`MapCellType`, `MapCellFlags`)
 - **Namespace:** `Uninarok.Map` (runtime assembly `Uninarok.Map`)
 - **Underlying type:** `byte`
-- **Source of the values:** the `GatType` enum of `GRF.dll` (`GRF.FileFormats.GatFormat.GatType`, `Assets/Editor/Library/GRF.dll`), which is how the GAT file's 32-bit terrain type is defined for the client. The names below keep GRF's names so the two can be compared at a glance.
-- **Description:** The terrain type of one GAT cell as stored in the map data asset. The raw GAT value is a 32-bit number; its low bits are the type below, and bit 31 (`0x80000000`) is the **water flag** of GAT 1.3 and later (GRF lists these as `Weird0` to `Weird9`, `0x80000000` plus the type; its separate `SpecialCellTypes.Water` is the same idea). The water flag is stored as a separate cell flag, not as a type.
+- **Source of the values:** the Hercules map server, `map_gat2cell` in `src/map/map.cpp` (the Hercules tree in this repository), which turns the GAT file's 32-bit terrain type into the cell flags the server checks movement and attacks against. The names are the server's: its cell flags `walkable`, `shootable` and `water` (`struct mapcell`), and its cell checks and comments for the types (walkable ground, wall `CELL_CHKWALL`, walkable water `CELL_CHKWATER`, cliff `CELL_CHKCLIFF`). Types 2, 4 and 6 have no name on the server ("???") and are called `Type2`, `Type4`, `Type6`. Decided by the owner in SPEC-0005 (plan D2, 2026-11-18).
+- **Description:** The terrain type of one GAT cell as stored in the map data asset, and the flags derived from it. The raw GAT value is a 32-bit number. Values 0 to 6 are the types below; any other value (the absent cell `-1`, a value above 6, or a value with bit 31 set, which GRF calls `Weird0` to `Weird9` and the format document calls the water flag of GAT 1.3) is "unrecognized" on the server and gets no flag.
 
-| Name | Value | Walkable | Snipable | Description |
-|---|---:|:---:|:---:|---|
-| `Walkable` | `0` | yes | n/a | Regular walkable terrain. |
-| `NoWalkable` | `1` | no | no | Obstructed terrain. |
-| `NoWalkableNoSnipable` | `2` | no | no | Obstructed terrain that attacks do not pass. |
-| `Walkable2` | `3` | yes | n/a | Walkable terrain (a second walkable type; GRF name `Walkable2`). |
-| `Unknown` | `4` | no | no | Unknown meaning in GRF; treated as blocked until the data shows otherwise. |
-| `NoWalkableSnipable` | `5` | no | yes | Obstructed terrain that attacks and spells pass over (cliff). |
-| `Walkable3` | `6` | yes | n/a | Walkable terrain (a third walkable type; GRF name `Walkable3`). |
-| `Other` | `255` | no | no | Any other raw value (including the absent cell, raw `-1` / `NoGat`); the raw value is kept in the cell's raw byte and reported once per map. |
+## MapCellType
 
-## Cell flags (separate from the type)
+| Name | Value | Walkable | Shootable | Water | Description |
+|---|---:|:---:|:---:|:---:|---|
+| `Walkable` | `0` | yes | yes | no | Walkable ground. |
+| `Wall` | `1` | no | no | no | Wall: neither walking nor attacks pass. |
+| `Type2` | `2` | yes | yes | no | No name on the server; behaves as walkable ground. |
+| `Water` | `3` | yes | yes | yes | Walkable water. |
+| `Type4` | `4` | yes | yes | no | No name on the server; behaves as walkable ground. |
+| `Cliff` | `5` | no | yes | no | Cliff or gap: not walkable, attacks and spells pass over (snipable). |
+| `Type6` | `6` | yes | yes | no | No name on the server; behaves as walkable ground. |
+| `Other` | `255` | no | no | no | Any other raw value; the raw value's low byte is kept in the cell's raw byte, and the map reports `GatUnknownType` once with the values and a count. |
+
+## MapCellFlags (stored per cell)
 
 | Flag | Bit | Description |
 |---|---:|---|
-| Walkable | 0 | Derived from the type: `Walkable`, `Walkable2`, `Walkable3`. |
-| Snipable | 1 | Derived from the type: `NoWalkableSnipable`. |
-| Water | 2 | Raw bit 31 (GAT 1.3 and later). A walkable cell with this flag is **walkable water**. |
+| `Walkable` | 0 | The server's `walkable`: a character can stand on and move through the cell. |
+| `Shootable` | 1 | The server's `shootable`: ranged attacks and spells pass over the cell. |
+| `Water` | 2 | The server's `water`: the cell is water (`Water` type). |
 
 ## Notes
 
-- The set above is read from GRF's own definition; the walkable and snipable columns are the project's reading of the names and are pinned by the `RoGatRulesTests` of SPEC-0005. If the data shows a type behaving differently (checked in T0.2 of TASKS-0005), this file and the table in `RoGatRules` change together.
+- The table is `map_gat2cell` exactly and is pinned by the `RoGatRulesTests` of SPEC-0005. If the server's table changes, this file, `RoGatRules` and the tests change together.
+- The server also marks a `Walkable` (type 0) cell as water when its first height is below the map's water level from the RSW (`map_readgat`). That rule needs the RSW and belongs to SPEC-0006.
+- The reference maps (prontera, izlude, prt_fild08, all GAT 1.2) use only types 0, 1 and 5.
 - Consumers: `MapData` (SPEC-0005), the gizmos of the map data, and gameplay movement rules.

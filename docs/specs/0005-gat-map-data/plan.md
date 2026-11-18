@@ -13,7 +13,7 @@
 - Code lives in the editor assemblies of PLAN-0002 under `Core/Gat/`, `Core/Formats/` (adapter) and `Editor/Gat/`; the **data asset and its query API are runtime code** in a new runtime assembly `Uninarok.Map` (`Assets/Scripts/Map/`), because the asset must exist in player builds without the source file (FR-4). The runtime assembly references nothing from the importer; the importer references it.
 - **GAT files are read by the GRF library** (the `Gat` class of `GRF.dll`) through one adapter, `RoGatReader`, in `Core/Formats/` (PLAN-0002 §1). After the adapter, everything works on our own type `RoGat`.
 - Format facts used here, from the community GAT document: a 14-byte header (`GRAT`, version, width and height in cells), then `Width × Height` cells of 20 bytes: four corner altitudes (south-west, south-east, north-west, north-east) and a 32-bit terrain type; version 1.2 knows types 0 (walkable), 1 (obstructed) and 5 (obstructed but snipable); version 1.3 embeds a water flag in the type field; other types exist and their client meaning is unclear. The document does not state the cell order, the relation to ground cubes, the row direction or the height sign; those come from PLAN-0004 (cubes are stored south row first, `row * width + column`, a cube is 2 × 2 cells) and are verified by T0.2/T0.3 of this plan.
-- OQ-1 (per-corner or per-cell height) is **decided in this plan** (§8, D1). OQ-2 (which types are walkable) is **answered by the owner**: the types are the ones GRF.dll defines (`Walkable`, `Walkable2`, `Walkable3`, water by flag), and the definition is kept in `docs/data/GatCellType.md` (§4.2, D2).
+- OQ-1 (per-corner or per-cell height) is **decided in this plan** (§8, D1). OQ-2 (which types are walkable) is **answered by the owner** (after T0.2, 2026-11-18): the cell types and their meaning follow the Hercules map server (`map_gat2cell`, `src/map/map.cpp`) and use its names; the definition is kept in `docs/data/GatCellType.md` (§4.2, D2).
 - The old runtime `Assets/Scripts/MapData.cs` (a ScriptableObject with `TileType` and `SetMapData`) is replaced; its users are found and migrated by T0.1 and T6.1.
 
 ## 2. Architecture
@@ -83,37 +83,69 @@ public sealed class RoGat
     public int VersionMajor, VersionMinor;
     public int Width, Height;                 // cells, from the header
     public float[] Heights;                   // 4 per cell: H00, H10, H01, H11 (south-west, south-east, north-west, north-east), Ragnarok units, unconverted
-    public uint[] Types;                      // raw 32-bit terrain type per cell, version flags removed (see below)
-    public bool[] WaterFlag;                  // water flag of version 1.3 and later, false before
+    public uint[] Types;                      // raw 32-bit terrain type per cell, unchanged (the rules of §4.2 read it, D2)
 }
 public static class RoGatReader { public static bool TryRead(RoPath path, byte[] bytes, out RoGat gat, out string reason); }
 ```
 
 - Cell index `row * Width + column`, `Width` from the header; heights follow the grid corner naming of PLAN-0004 §4.1 (`H00` low column and low row).
 - The adapter never throws; a rejected read returns `false` with GRF's reason (`CorruptFile`).
-- **Mapping check (T0.2).** The task prints the header and a handful of cells through GRF, compares them with the raw bytes, and writes into this section one row per `RoGat` field with the GRF member that supplies it, including how GRF exposes the water flag of 1.3 and how it handles the zero-byte prefix of old 1.2 files.
+- **Mapping check (T0.2, done 2026-11-18).** A scratch script read each reference map through GRF (`new Gat((MultiType)bytes)`) and compared every cell with the raw bytes (four `float` heights at offsets 0 to 12 and the `uint32` type at 16 of each 20-byte cell after the 14-byte header): prontera 122,304 cells, izlude 80,400, prt_fild08 160,000, zero differences. `Cells[i]` is file cell `i`, and GRF's indexer `gat[column, row]` is `Cells[row * Width + column]` on the two non-square maps. Which corner each height is on the ground is checked by T0.3.
+
+  | `RoGat` field | GRF member | Raw file field |
+  |---|---|---|
+  | `VersionMajor`, `VersionMinor` | none: `GatHeader` exposes only `Width` and `Height`; the adapter reads bytes 4 and 5 itself, next to its `GRAT` magic check (D10) | bytes 4 and 5 after `GRAT` |
+  | `Width`, `Height` | `Header.Width`, `Header.Height` (equal to `Gat.Width`, `Gat.Height`) | `int32` at 6, `int32` at 10 |
+  | `Heights[4i]` to `[4i+3]` (`H00`, `H10`, `H01`, `H11`) | `Cells[i].H0`, `H1`, `H2`, `H3` | heights `[0]` to `[3]`: south-west, south-east, north-west, north-east |
+  | `Types[i]` | `(uint)(int)Cells[i].Type` (`GatType` holds the raw `int32`; nothing is changed while `Gat.AutomaticallyFixNegativeGatTypes` is `false`, its default, which the adapter never sets) | `uint32` type |
+
+  **Not used:** `Cell.Average`, `Cell[k]`, `Cell.CalcNormal`, `Gat[i]`, `Gat[column, row]` (indexers over the same data), `Gat.Image`, `LoadImage`, `IdentifyCells`, `SpecialCells` (preview and analysis helpers), `Gat.LoadedPath`, `GatPreviewImageMaker`.
+
+  **Bit 31 and the old prefix.** GRF keeps bit 31 in `Type` (its `Weird0` to `Weird9` values); none of the reference maps uses it. No reference file has a prefix before `GRAT`: each is exactly `14 + cells × 20` bytes. GRF throws `IndexOutOfRangeException` on a truncated or empty array, so the adapter checks the length (`14 + Width × Height × 20`) before calling GRF and catches anything GRF throws.
+
+  **Reference maps** (sample values kept for the reader tests, `H` in Ragnarok units):
+
+  | Map | Version | Cells | Raw types (count) | Heights | Samples |
+  |---|---|---|---|---|---|
+  | prontera | 1.2 | 312 × 392 | 0: 61,516; 1: 60,788 | -11 to 33.5 | cell 0 `(0, 0, 0, 0)` type 1; cell 311 (col 311, row 0) `(0, 0, 0, 0)` type 0; cell 120531 (col 99, row 386) `(15, 30, 7.5, 15)` type 1 |
+  | izlude | 1.2 | 268 × 300 | 0: 14,529; 1: 65,871 | -9.83 to 85 | cell 0 `(59, 59, 59, 59.2625)` type 1; cell 401 (col 133, row 1) `(60.75, 60.75, 62.5, 62.5)` type 1; cell 80399 (last) `(59.32813, 0, 0, 0)` type 0 |
+  | prt_fild08 | 1.2 | 400 × 400 | 0: 90,798; 1: 61,303; 5: 7,899 | -97 to 60 | cell 401 (col 1, row 1) `(0, 0, 0, -40)` type 1; cell 13707 (col 107, row 34) `(-1.5, -3, -1, -1.5)` type 5; cell 80200 (col 200, row 200) `(3, 4.5, 3, 4.5)` type 0 |
+
+  Every grid is exactly twice its GND (156 × 196, 134 × 150, 200 × 200 cubes).
 
 ### 4.2 Cell types: `RoGatRules`
 
 Satisfies FR-1 (and OQ-2).
 
 ```csharp
-public enum MapCellType : byte { Walkable = 0, NoWalkable = 1, NoWalkableNoSnipable = 2, Walkable2 = 3, Unknown = 4, NoWalkableSnipable = 5, Walkable3 = 6, Other = 255 }   // runtime enum, Uninarok.Map
+public enum MapCellType : byte { Walkable = 0, Wall = 1, Type2 = 2, Water = 3, Type4 = 4, Cliff = 5, Type6 = 6, Other = 255 }   // runtime, Uninarok.Map
+[Flags] public enum MapCellFlags : byte { None = 0, Walkable = 1, Shootable = 2, Water = 4 }                                      // runtime, Uninarok.Map
 public static class RoGatRules
 {
     public const int RulesVersion = 1;
-    public static MapCellType TypeOf(int rawType);        // the low bits of the raw type; anything else is Other
-    public static bool IsWalkable(MapCellType type);      // Walkable, Walkable2, Walkable3
-    public static bool IsSnipable(MapCellType type);      // NoWalkableSnipable
-    public static bool HasWaterFlag(int rawType);         // bit 31
+    public static MapCellType TypeOf(uint rawType);       // 0 to 6 as themselves; anything else (bit 31 set, -1, above 6) is Other
+    public static MapCellFlags FlagsOf(MapCellType type); // the table below
 }
 ```
 
-- **The set of types is GRF's own.** The owner pointed out that GRF.dll already defines the types, and that the definition belongs in `docs/data`. `GRF.FileFormats.GatFormat.GatType` has `NoGat` (-1), `Walkable` (0), `NoWalkable` (1), `NoWalkableNoSnipable` (2), `Walkable2` (3), `Unknown` (4), `NoWalkableSnipable` (5), `Walkable3` (6), and ten values `Weird0` to `Weird9` that are `0x80000000` plus 0 to 9 (the water flag of GAT 1.3 and later); a separate `SpecialCellTypes` has `Water`, `InnerGutterLine` and `OutterGutterLine`. `MapCellType` keeps GRF's names and values for 0 to 6 and adds `Other` (255). **`docs/data/GatCellType.md` is the project's definition of the enum** (it did not exist; it is created with this plan, in the style of the other files of `docs/data`) and is the source the runtime enum, the rules table and the tests follow.
-- **Water is a flag, not a type.** Bit 31 of the raw value is stored as the water flag; a walkable cell with the flag is walkable water (`MapData.IsWalkableWater`). The type of such a cell is the low-bit type.
-- **Walkable table** (pinned by `RoGatRulesTests`): walkable = types 0, 3 and 6; snipable = type 5; blocked = 1, 2, 4, 5; `Other` (absent cell `-1`, values above 6) is blocked and reported once per map as `GatUnknownType` with the value and a count. T0.2 checks, on the reference maps, which types actually occur and that the walkable and snipable reading of each matches what the reference viewer shows; a difference changes `docs/data/GatCellType.md` and the table together.
+- **The server decides (owner, 2026-11-18).** Movement is checked by the Hercules map server, so the client reads cells the way the server does: `map_gat2cell` (`src/map/map.cpp` of the Hercules tree in this repository) turns the raw type into three flags, `walkable`, `shootable` and `water`, and the client stores the same three flags with the same names. The type names are the server's where it has one (`cell_chk` and the comments of `map_gat2cell`: walkable ground, wall, walkable water, cliff); types 2, 4 and 6 have no name there ("???") and are `Type2`, `Type4`, `Type6`. **`docs/data/GatCellType.md` is the project's definition of the enum and the flags** and is the source the runtime enums, the rules table and the tests follow.
+- **Table** (pinned by `RoGatRulesTests`, equal to `map_gat2cell`):
+
+  | Raw | `MapCellType` | Walkable | Shootable | Water |
+  |---:|---|:-:|:-:|:-:|
+  | 0 | `Walkable` | yes | yes | no |
+  | 1 | `Wall` | no | no | no |
+  | 2 | `Type2` | yes | yes | no |
+  | 3 | `Water` | yes | yes | yes |
+  | 4 | `Type4` | yes | yes | no |
+  | 5 | `Cliff` | no | yes | no |
+  | 6 | `Type6` | yes | yes | no |
+  | other | `Other` | no | no | no |
+
+- **Bit 31 is not water here.** GRF names raw values with bit 31 set `Weird0` to `Weird9`, and the format document calls the bit a water flag of GAT 1.3, but the server does not mask it: such a value is "unrecognized" and the cell gets no flag. The client does the same: the cell is `Other`, blocked and not shootable, and the map reports `GatUnknownType` once with the values and a count. None of the reference maps uses it (T0.2).
+- **Water from the RSW water level is not applied here.** The server also turns a type-0 cell whose first height is below the map's water level into type 3 (`map_readgat`). The water level is in the RSW, so this rule belongs to PLAN-0006, which owns the map settings of the same asset (§4.3).
 - The **raw type is stored as well** (its low byte) next to the mapped type, so nothing is lost and a rules change needs no new reading of the file.
-- The walkable, snipable and water bits are stored per cell in the asset (§4.3) so gameplay never needs the table.
+- The flags are stored per cell in the asset (§4.3) so gameplay never needs the table.
 
 ### 4.3 The data asset: `MapData`, `MapCell`, `MapRoot` (runtime)
 
@@ -132,7 +164,7 @@ public sealed class MapData : ScriptableObject
     // cell data, flat arrays
     [SerializeField] float[] heights;                    // 4 per cell, Unity units (up is +y): H00, H10, H01, H11
     [SerializeField] byte[] types;                       // MapCellType per cell
-    [SerializeField] byte[] flags;                       // bit 0 walkable, bit 1 snipable, bit 2 water (docs/data/GatCellType.md)
+    [SerializeField] byte[] flags;                       // MapCellFlags: bit 0 walkable, bit 1 shootable, bit 2 water (docs/data/GatCellType.md)
     [SerializeField] byte[] rawTypes;                    // raw GAT type per cell (low byte; the value range seen is recorded by T0.2)
     // queries (no allocation, no exception)
     public int CellsX { get; } public int CellsZ { get; } public float CellSize { get; }
@@ -141,6 +173,7 @@ public sealed class MapData : ScriptableObject
     public bool IsWalkable(int x, int z);                // outside the map: false
     public bool IsWalkable(Vector3 position);            // outside the map: false
     public MapCellType TypeAt(int x, int z);             // outside: Other
+    public MapCellFlags FlagsAt(int x, int z);           // outside: None
     public bool IsWalkableWater(int x, int z);           // walkable and water flag; outside: false
     public bool TryGetHeight(Vector3 position, out float y);   // interpolated inside the cell; false outside
     public Vector3 CellCenter(int x, int z);             // Unity position, y = mean of the four corners
@@ -190,7 +223,7 @@ public sealed class RoMapDataConverter : IRoConverter      // registers RoJobKin
 Satisfies FR-7.
 
 - `MapData` is an asset, not a scene object, so the gizmos attach to its scene handle: `[DrawGizmo(GizmoType.Selected | GizmoType.InSelectionHierarchy, typeof(MapRoot))]` on a static method in the editor assembly. It draws only when the `MapRoot` or one of its ancestors or children is selected, and returns immediately otherwise. A map data asset selected in the Project window also shows its overlay information (legend and counts) through a custom inspector.
-- **Layers**, each switchable in the "Ragnarok Map Data" overlay, values in `EditorPrefs`: cells coloured by type (one toggle per group: walkable (types 0, 3, 6), blocked (1, 2, 4), snipable (5), other, and water); cell grid; corner heights (labels); legend. A hidden type is not drawn.
+- **Layers**, each switchable in the "Ragnarok Map Data" overlay, values in `EditorPrefs`: cells coloured by type (one toggle per group: walkable (types 0, 2, 4, 6), water (3), wall (1), cliff (5), other); cell grid; corner heights (labels); legend. A hidden type is not drawn.
 - **Bounded cost on large maps.** Drawing is limited to cells within `RoMapDataGizmoSettings.Radius` (default 48 cells) of the scene camera's focus point, or to a rectangle the user picks by dragging in the scene view (a "Region" tool in the overlay); the number of drawn cells is capped (default 6000) and a one-line notice appears when the cap cuts the view. Cells are drawn as batched quads with `Handles`/`Gizmos` calls in a single pass per type.
 - The gizmos read the arrays of the `MapData` that already exists in the project; they never read the source.
 - Pure helper `RoMapDataGizmoSelector` (which cells are in the region, capped, by type) is tested; the drawing is checked manually.
@@ -208,7 +241,7 @@ Satisfies every FR of the spec. EditMode NUnit tests (command in `CLAUDE.md` §2
 
 | Test class | FR | Checks |
 |---|---|---|
-| `RoGatRulesTests` | 1 | the table of §4.2 (every raw type 0 to 7, the absent cell -1 and a high value), the water flag (bit 31, with each of the types), walkable and snipable per type, `GatUnknownType` once per map with a count; the enum values equal the table of `docs/data/GatCellType.md` |
+| `RoGatRulesTests` | 1 | the table of §4.2 (every raw type 0 to 7, the absent cell -1, bit 31 with each type and a high value), walkable, shootable and water per type, `GatUnknownType` once per map with a count; the enum values equal the table of `docs/data/GatCellType.md` |
 | `RoGatBuilderTests` | 1, 3 | a synthetic 4 × 3 cube map (8 × 6 cells) builds the expected heights, types and flags per cell; the cell of a known corner lands at the `RoMapSpace` position; non-square maps are not swapped; a grid that is not `2 × GND` gives `GatGndMismatch` and no output |
 | `MapDataQueryTests` (runtime) | 2 | `IsWalkable` and `TryGetHeight` for cell (0, 0), the last cell, a cell edge, a diagonal and a position outside (all four sides) give the right result and never throw; the interpolated height on the diagonal equals both triangles; no allocation (`GC.GetAllocatedBytesForCurrentThread` before and after 10,000 calls) |
 | `RoGroundSamplerTests` | 3 | a flat, a ramp and a cliff synthetic ground give the expected heights; a gap returns false; the diagonal rule is the one of `RoGndRules` |
@@ -238,7 +271,7 @@ Satisfies every FR of the spec. EditMode NUnit tests (command in `CLAUDE.md` §2
 | # | Decision | Alternatives rejected |
 |---|---|---|
 | D1 (OQ-1) | Four corner heights per cell are stored (19 bytes per cell in total, under the 24 target) | One height per cell (cannot follow slopes; cell centre queries would sink or float on ramps, and the FR-1 acceptance asks for the four corners) |
-| D2 (OQ-2) | The cell types are GRF's own `GatType` (owner's answer), defined for the project in `docs/data/GatCellType.md`; water is a flag; walkability, snipability and water are stored per cell as flags | Hard-coding "0 is walkable" (the client has more types); a project-specific set unrelated to GRF's (two definitions to keep in step); reading the server's source (not needed, GRF defines the types) |
+| D2 (OQ-2) | (owner, 2026-11-18, after T0.2) The cell types and flags follow the Hercules map server's `map_gat2cell` and use its names (`walkable`, `shootable`, `water`; wall, walkable water, cliff; `Type2`, `Type4`, `Type6` where the server has no name), defined for the project in `docs/data/GatCellType.md`; the flags are stored per cell; a raw value with bit 31 set is `Other`, as on the server | GRF's enum names read as rules (first draft: 2 and 4 blocked, 3 plain walkable, bit 31 as water), which disagrees with the server on types 2, 3 and 4 and on bit 31; hard-coding "0 is walkable" |
 | D3 | The runtime asset and its queries are in a runtime assembly `Uninarok.Map` and carry the geometry (origin, cell size, row sign, diagonal) so no importer code is needed at runtime | Putting the asset in an editor assembly (not in builds, FR-4); a second copy of the map space rules at runtime |
 | D4 | One `MapData` asset per map, one owning converter; SPEC-0006 extends the same converter for the map-wide settings | Two assets per map (a scene would need two references; FR-6 and SPEC-0006 FR-7 ask for one) |
 | D5 | Height queries split the cell by the ground's diagonal | Bilinear interpolation (a surface the ground mesh does not have, a visible step between the data and the ground) |
@@ -246,6 +279,7 @@ Satisfies every FR of the spec. EditMode NUnit tests (command in `CLAUDE.md` §2
 | D7 | Cell grid must be exactly `2 × GND` or the map is rejected with `GatGndMismatch` | Silently resampling (hides a wrong pairing of files) |
 | D8 | The type image is optional and separate (`WithImage`) | Always generating it (extra assets in every map) |
 | D9 | (T0.1, 2026-11-18) Map sources are `<name>.gat` at the data root, as PLAN-0004 D11 found for `.gnd` (owner decision there); the batch enumerates the whole root by extension. The old `MapData` assets sit in `Assets/Data/Map/` (capital M, same folder as `Assets/Data/map/` on Windows): T6.1 deletes them and renames the folder to `map` before any real map is converted (T7.x), so the new asset never upserts into an object of the old class | A `map/` source folder (absent from the data); writing next to the old assets and replacing their script (the old fields would linger in the YAML) |
+| D10 | (T0.2) The GAT version is read by the adapter from bytes 4 and 5, next to its magic and length checks, because GRF does not expose it | Dropping the version from `RoGat` (reports would not show it) |
 
 Items for the owner: approve D1 (per-corner heights), the new runtime assembly `Uninarok.Map`, the replacement of `MapData.cs`, and `docs/data/GatCellType.md` (new).
 
@@ -253,9 +287,9 @@ Items for the owner: approve D1 (per-corner heights), the new runtime assembly `
 
 | Risk | Mitigation |
 |---|---|
-| A type behaves differently from the reading of its GRF name (`Unknown`, `Walkable2`, `Walkable3`) | T0.2 checks the types that occur on the reference maps against the reference viewer; one table, one pinning test, and `docs/data/GatCellType.md` changes with it |
+| The client reads a cell differently from the server | The table is the server's `map_gat2cell` (D2); one table, one pinning test, and `docs/data/GatCellType.md` changes with it |
 | GAT and GND heights differ more than assumed | T0.3 measures it; the tolerance is a recorded number, any systematic offset is described and decided with the owner |
-| GAT version 1.3 water flag or old 1.2 prefix is read wrongly by GRF | T0.2 compares raw bytes; the adapter strips flags and records the version |
+| GAT version 1.3 bit 31 or an old prefix is read wrongly by GRF | T0.2 compared raw bytes (exact); bit 31 is kept in the raw type and mapped to `Other`, as on the server |
 | `MapData` for the largest map is large in version control | 19 bytes per cell measured in T7.2; LFS line if needed |
 | Gizmos are slow on large maps | Radius, region tool and the cap; manual Profiler check |
 | Old scripts depend on the old `MapData` | T0.1 lists the users before anything is deleted |
