@@ -69,8 +69,9 @@
   *Done when:* the tests compile and are ignored with `pending T5.2`.
 - [x] **T5.2** Implement `Editor/Gnd/RoGndConverter`, `RoGndPrefabBuilder` and `RoGndOutputPaths`; add `RoJobKind.Ground`, the `RoConverterRegistry` entry, `RoImport.Ground(string)` and `RoImportContext.Ground(RoPath)`; the ledger category `ground` lists the prefab and meshes as outputs and the texture hashes as dependencies. (FR-1, FR-6)
   *Done when:* `[Ignore]` removed and the tests of T5.1 pass.
-- [ ] **T5.3** Add the kind `Ground` to the window and the menu `Tools/Ragnarok/Convert All Grounds` (`Enumerate("")`, extension `.gnd`, plan D11). (FR-6)
+- [x] **T5.3** Add the kind `Ground` to the window and the menu `Tools/Ragnarok/Convert All Grounds` (`Enumerate("")`, extension `.gnd`, plan D11). (FR-6)
   *Done when:* a synthetic ground converts from the window and from the menu, with progress and cancel working, as in the foundation.
+  *Result (2026-11-18):* `/` alone in the window's path list names the data root, and the menu lists every `.gnd` there (`RoImportJobsTests`). In the editor (Unity MCP), with a temporary data folder holding a copy of izlude and a throwaway output root, the window's list and the menu's list each gave the one job `Ground izlude.gnd`; the run with the progress bar created it (90 chunks, 6.5 s), a rerun skipped it, a run cancelled before the job converted nothing. The menu's confirmation dialogs were not clicked through (they are modal).
 
 ## Phase 6: Gizmos and picking
 

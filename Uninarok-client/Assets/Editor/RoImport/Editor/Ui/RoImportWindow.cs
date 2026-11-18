@@ -54,7 +54,7 @@ namespace Uninarok.RoImport.Editor.Ui
             _kind = Mathf.Clamp(EditorGUILayout.Popup("Kind", _kind, kinds.Select(k => k.ToString()).ToArray()), 0, kinds.Length - 1);
             _force = EditorGUILayout.Toggle(new GUIContent("Force", "Convert even items the ledger says are current"), _force);
 
-            EditorGUILayout.LabelField("Ragnarok paths or folders (end a folder with /), one per line");
+            EditorGUILayout.LabelField("Ragnarok paths or folders (end a folder with /; / alone is the data root), one per line");
             EditorGUI.BeginChangeCheck();
             _paths = EditorGUILayout.TextArea(_paths, GUILayout.MinHeight(80));
             if (EditorGUI.EndChangeCheck()) EditorPrefs.SetString(PathsPref, _paths);

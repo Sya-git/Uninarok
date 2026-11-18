@@ -43,5 +43,24 @@ namespace Uninarok.RoImport.Editor.Ui
                 return;
             RoImportApi.Run(jobs);
         }
+
+        [MenuItem("Tools/Ragnarok/Convert All Grounds", priority = 22)]
+        static void ConvertAllGrounds()
+        {
+            var source = new RoFolderSource(RoSourceLocation.Resolve());
+            var jobs = GroundJobs(source);
+            if (jobs.Count == 0)
+            {
+                EditorUtility.DisplayDialog("Ragnarok import", $"No grounds (.gnd) in {source.Root}.", "OK");
+                return;
+            }
+            if (!EditorUtility.DisplayDialog("Ragnarok import", $"Convert {jobs.Count} grounds from {source.Root}?", "Convert", "Cancel"))
+                return;
+            RoImportApi.Run(jobs);
+        }
+
+        /// <summary>Every <c>.gnd</c> in the data root, where the map files sit (PLAN-0004 4.6, D11).</summary>
+        internal static System.Collections.Generic.List<RoJob> GroundJobs(IRoSource source) =>
+            RoImportJobs.Expand("/", RoJobKind.Ground, source).Jobs;
     }
 }

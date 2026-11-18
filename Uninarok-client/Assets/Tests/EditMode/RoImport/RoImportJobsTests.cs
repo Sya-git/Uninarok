@@ -37,6 +37,41 @@ namespace Uninarok.RoImport.Tests
                 "an explicit request still reaches the converter, which warns (FR-8)");
         }
 
+        // PLAN-0004 D11, TASKS-0004 T5.3: the map files sit at the data root; "/" alone names the root.
+        [Test]
+        public void ARootLine_CoversTheWholeDataRoot()
+        {
+            var source = new RoFolderSource(RoFolderSourceTests.FixtureRoot);
+
+            var root = RoImportJobs.Expand("/", RoJobKind.Texture, source);
+            var texture = RoImportJobs.Expand("texture/", RoJobKind.Texture, source);
+
+            CollectionAssert.AreEqual(texture.Jobs.Select(j => j.Path.Canonical), root.Jobs.Select(j => j.Path.Canonical),
+                "every image of the fixture is under texture/");
+            CollectionAssert.IsEmpty(root.Invalid);
+        }
+
+        [Test]
+        public void ConvertAllGrounds_ListsEveryGndInTheDataRoot()
+        {
+            string data = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "RoImportTests", System.Guid.NewGuid().ToString("N"));
+            try
+            {
+                System.IO.Directory.CreateDirectory(System.IO.Path.Combine(data, "texture"));
+                foreach (string f in new[] { "b.gnd", "a.gnd", "a.gat", "a.rsw", "texture/c.gnd" })
+                    System.IO.File.WriteAllBytes(System.IO.Path.Combine(data, f), new byte[] { 1 });
+
+                var jobs = RoImportMenu.GroundJobs(new RoFolderSource(data));
+
+                CollectionAssert.AreEqual(new[] { "a.gnd", "b.gnd", "texture/c.gnd" }, jobs.Select(j => j.Path.Canonical));
+                Assert.IsTrue(jobs.All(j => j.Kind == RoJobKind.Ground));
+            }
+            finally
+            {
+                System.IO.Directory.Delete(data, recursive: true);
+            }
+        }
+
         [Test]
         public void AFolderWithoutImages_IsReported()
         {
