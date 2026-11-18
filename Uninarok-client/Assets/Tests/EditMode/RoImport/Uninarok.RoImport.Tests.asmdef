@@ -5,7 +5,8 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Uninarok.RoImport.Core",
-        "Uninarok.RoImport.Editor"
+        "Uninarok.RoImport.Editor",
+        "Uninarok.Map"
     ],
     "includePlatforms": [
         "Editor"

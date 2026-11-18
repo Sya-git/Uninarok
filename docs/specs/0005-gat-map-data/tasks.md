@@ -50,7 +50,7 @@
 
 ## Phase 3: Rules and builder
 
-- [ ] **T3.1** Add `RoGatRulesTests` and `RoGatBuilderTests` (failing, ignored): the type table of plan §4.2 and `docs/data/GatCellType.md` (raw 0 to 7, the absent cell -1, a high value, bit 31 with each type), walkable, shootable and water per type, `GatUnknownType` once per map with a count; a synthetic 4 × 3 cube map (8 × 6 cells) builds the expected heights, types and flags; a known corner lands at the `RoMapSpace` position; non-square maps are not swapped; a grid that is not `2 × GND` gives `GatGndMismatch` and no output; heights are converted to Unity up. (FR-1, FR-3)
+- [x] **T3.1** Add `RoGatRulesTests` and `RoGatBuilderTests` (failing, ignored): the type table of plan §4.2 and `docs/data/GatCellType.md` (raw 0 to 7, the absent cell -1, a high value, bit 31 with each type), walkable, shootable and water per type, `GatUnknownType` once per map with a count; a synthetic 4 × 3 cube map (8 × 6 cells) builds the expected heights, types and flags; a known corner lands at the `RoMapSpace` position; non-square maps are not swapped; a grid that is not `2 × GND` gives `GatGndMismatch` and no output; heights are converted to Unity up. (FR-1, FR-3)
   *Done when:* the tests compile and are ignored with `pending T3.2`.
 - [ ] **T3.2** Implement `Core/Gat/RoGatRules` (the table of plan §4.2) and `RoGatBuilder` (arrays for `MapData`, geometry fields from `RoMapSpace`, `diagonalFlip` from `RoGndRules`, `rowSign` from `RoMapSpace.RowDirection`). (FR-1, FR-3, FR-5)
   *Done when:* `[Ignore]` removed and the tests of T3.1 pass.
