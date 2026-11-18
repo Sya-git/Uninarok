@@ -9,7 +9,6 @@ namespace Uninarok.RoImport.Tests.Gat
 {
     // TASKS-0005 T5.1 / T5.2 (FR-7): which cells the map data gizmos draw (PLAN-0005 4.6): a radius around the focus or a
     // chosen region, nearest cells first, per-group hiding, and a cap with a notice.
-    [Ignore("pending T5.2")]
     public class RoMapDataGizmoSelectorTests
     {
         MapData _data;

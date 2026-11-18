@@ -71,7 +71,7 @@
 
 - [x] **T5.1** Add `RoMapDataGizmoSelectorTests` (failing, ignored): region and radius selection, the cap, per-type hiding, the notice flag when the cap cuts. (FR-7)
   *Done when:* the tests compile and are ignored with `pending T5.2`.
-- [ ] **T5.2** Implement `RoMapDataGizmoSelector` (pure, in Core) and `RoMapDataGizmoSettings` (radius, cap, layer and type flags in `EditorPrefs`). (FR-7)
+- [x] **T5.2** Implement `RoMapDataGizmoSelector` (pure, in Core) and `RoMapDataGizmoSettings` (radius, cap, layer and type flags in `EditorPrefs`). (FR-7)
   *Done when:* `[Ignore]` removed and the tests pass.
 - [ ] **T5.3** Implement `RoMapDataGizmos` (`[DrawGizmo(GizmoType.Selected | GizmoType.InSelectionHierarchy, typeof(MapRoot))]`: coloured cells per type, grid, corner heights), `RoMapDataOverlay` (type toggles, layers, legend, region tool, cap notice) and the custom inspector of `MapData` with the legend and counts. (FR-7)
   *Done when:* on a converted reference map, selecting a `MapRoot` shows walkable and blocked cells in different colours, a toggle hides a type, the region tool limits drawing, prt_fild08 stays responsive, and with nothing selected the Profiler shows no gizmo time.
