@@ -8,7 +8,6 @@ namespace Uninarok.RoImport.Tests.Rsm
 {
     // TASKS-0003 T3.1 (FR-2, FR-3): rule set R1 of PLAN-0003 4.4, in Ragnarok space with column vectors.
     // Expected values are worked out by hand in the comments.
-    [Ignore("pending T3.2")]
     public class RsmPoseTests
     {
         const float Eps = 1e-4f;

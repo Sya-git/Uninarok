@@ -19,8 +19,23 @@ namespace Uninarok.RoImport.Core.Rsm
         /// <summary>The rules of a version, or <c>false</c> when the version has no row (UnsupportedRsmVersion).</summary>
         public static bool TryGet(int major, int minor, out RsmRules rules)
         {
+            // One row per version verified against the reference viewer (PLAN-0003 4.4 table, TASKS-0003 T0.3).
+            if (major == 1 && minor == 4)
+            {
+                rules = new RsmRules
+                {
+                    Major = 1,
+                    Minor = 4,
+                    RestFromFirstKey = true,
+                    HasScaleKeys = false,
+                    Recenter = true,
+                    OffsetVectorInVertexMatrix = true
+                };
+                return true;
+            }
+
             rules = null;
-            return false;   // TASKS-0003 T3.2
+            return false;
         }
     }
 }

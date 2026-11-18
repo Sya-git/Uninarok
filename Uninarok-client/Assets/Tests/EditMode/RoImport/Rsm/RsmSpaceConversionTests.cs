@@ -8,7 +8,6 @@ namespace Uninarok.RoImport.Tests.Rsm
 {
     // TASKS-0003 T3.1 (FR-2, FR-6): PLAN-0003 4.5. The prefab's transform hierarchy with the converted vertices must
     // equal the Ragnarok matrix chain converted by RoSpace, and faces must stay outward facing.
-    [Ignore("pending T3.2")]
     public class RsmSpaceConversionTests
     {
         static RsmRules R14
