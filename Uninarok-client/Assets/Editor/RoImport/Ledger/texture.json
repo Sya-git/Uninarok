@@ -1,0 +1,3127 @@
+{
+    "entries": [
+        {
+            "Source": "texture/dewata/indo_17.bmp",
+            "SourceHash": "ec36a5202c2964f50b6771308d644d02f1be51df96bdd5184e6b47b6361c9d67",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/dewata/indo_17.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/dewata/indo_20.bmp",
+            "SourceHash": "d2635d0659efe4055e8fea73e7f0c72f605ced00d4d62b3f7ae9b0879e290d75",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/dewata/indo_20.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/event/3rd_pilar01.bmp",
+            "SourceHash": "4dd3f08f38ed5f91bd97878c8b2ad2d4b619d9b67937cccbd42579a2c0565e57",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/event/3rd_pilar01.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/izlude/iz_rookie001.bmp",
+            "SourceHash": "2f856e78bff658bf1d688a05483819cb68046ad0d02dc289f16cd7aea7de793d",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/izlude/iz_rookie001.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/izlude/iz_rookie002.bmp",
+            "SourceHash": "b7d065fc16664927f1dfc05bcf7a025b3f51c37398e570b93febc4ec4bd8022f",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/izlude/iz_rookie002.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/izlude/iz_rookie003.bmp",
+            "SourceHash": "067e855008eec87994e9076f848c0f720bb1c86d7b25e170f78fa67be5feca1c",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/izlude/iz_rookie003.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/izlude/iz_rookie004.bmp",
+            "SourceHash": "fecb59ffe0abbe98a9a309768aeec0b7e4d201314b42132ac0d386216b3eb54a",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/izlude/iz_rookie004.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/izlude/iz_rookie005.bmp",
+            "SourceHash": "5180368dcac5f074a2a8219e74a6f4db7570d3fd1070181da0532a151f3a4d4d",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/izlude/iz_rookie005.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/izlude/iz_rookie006.bmp",
+            "SourceHash": "77d351a2cf6cbbf03fa9e5d86abbfe667eadb645dcc991d897ea731ce001050c",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/izlude/iz_rookie006.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/izlude/iz_rookie007.bmp",
+            "SourceHash": "769bdc0b6cd2c11c0418befe1a9d6b2d08cb6cf46e01d46b3d59a7f85e307b50",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/izlude/iz_rookie007.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/izlude/iz_rookie008.bmp",
+            "SourceHash": "9b97e91abf10fd1a72299295e43abf474a7d45a11225a9e8d5ccbaa1add5583b",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/izlude/iz_rookie008.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/izlude/iz_rookie009.bmp",
+            "SourceHash": "82623b11d03c5cec3c912d18b1d3c0b2bfb8b47c0efa23e64bb285e3ee428d0c",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/izlude/iz_rookie009.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/izlude/iz_rookie010.bmp",
+            "SourceHash": "3dd4f81c0d422fd883807090e2d5338df1f6eb500090dc23fedbefdbe878ca1e",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/izlude/iz_rookie010.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/izlude/iz_rookie011.bmp",
+            "SourceHash": "0238f43e368e15d42fae9d44b8fac4693e40cea11379bdcaab1e043dd7865fa1",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/izlude/iz_rookie011.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/izlude/iz_rookie012.bmp",
+            "SourceHash": "ccea54ccc3d92785e8341ea8e00bc2694ace7182e70fd36868322469668cecbd",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/izlude/iz_rookie012.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/izlude/iz_rookie013.bmp",
+            "SourceHash": "a338958a39140f0e215423954ee010c4738a2cca791601f22485951c484ce0a1",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/izlude/iz_rookie013.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/izlude/iz_rookie014.bmp",
+            "SourceHash": "10af67bd938061d39e6598ba7e3c544d1d71c75eff5885dd82b63333d4b29ec4",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/izlude/iz_rookie014.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/izlude/iz_rookie015.bmp",
+            "SourceHash": "df2d7ac8c0870c718c5a052348afae4e45591e22c2804d90882dfbabaafea636",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/izlude/iz_rookie015.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/izlude/iz_rookie_01.bmp",
+            "SourceHash": "7ffc0879ad22d9a1ad0b3f154db4de44c1ff4a4613dee448b12da18622179200",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/izlude/iz_rookie_01.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/izlude/iz_rookie_02.bmp",
+            "SourceHash": "512baa1c6675f1b92f867b1243a1c18cf56bdc58cca52dee6fee21d9ce7e5554",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/izlude/iz_rookie_02.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/izlude/iz_rookie_03.bmp",
+            "SourceHash": "75b5047758577d21075dc0a94f87bb713bc1f4e381a815675cc0082ff6e8d9e9",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/izlude/iz_rookie_03.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/izlude/iz_rookie_04.bmp",
+            "SourceHash": "0f707535dd62ef4eacf7119fafc1e255c16b3632bbe5cadb3279f7add90fe0f0",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/izlude/iz_rookie_04.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/izlude/iz_rookie_05.bmp",
+            "SourceHash": "85f855bf1f29482f92f6761c249347a902fba566e0889d2271f3181a772117d3",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/izlude/iz_rookie_05.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/izlude/iz_rookie_06.bmp",
+            "SourceHash": "7101c060620dacb7473c725847cfdcdf8265a3e7941443030640e596b76840ff",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/izlude/iz_rookie_06.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/izlude/iz_rookie_07.bmp",
+            "SourceHash": "419954aff933b123ca1a5a3c90a1aee17759967aacf0c28d3cd98979976b1e77",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/izlude/iz_rookie_07.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/malangdo/mal_28.bmp",
+            "SourceHash": "29ad511ed578c6868783dda246930060a6049fd6170b6986825633119f6c00fe",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/malangdo/mal_28.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/malaya/ma_tree01.bmp",
+            "SourceHash": "4fa392b9e4d3bc0a034978727fccb9138777ec482313c9a2c29e85cb5b827eb9",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/malaya/ma_tree01.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/malaya/ma_tree02.bmp",
+            "SourceHash": "c7b093e158ec33b9aa18455ae2b1a2a35487189051f3e9989ec2405709243f80",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/malaya/ma_tree02.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/pron-ch1.bmp",
+            "SourceHash": "1f7923af057cf535a65dae9209fbbf20b4be6f4e9e7552d6c20504c74b8db329",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/pron-ch1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/pron-ch2.bmp",
+            "SourceHash": "8c03a0e30e93305abf1dfcb6609a41f5a0111eda1504f3af485c4c22f614e5b0",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/pron-ch2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/pron-ch3.bmp",
+            "SourceHash": "c9b314db85e6d39294e2b8963a6c0968f0b085657fa8b8b8f022383cee834db4",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/pron-ch3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/pron-ch4.bmp",
+            "SourceHash": "f0c541bf9a457d7130c3ed08b4dcf757ac13f148f9fbe06079a63c5a575616fe",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/pron-ch4.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/pron-ch5.bmp",
+            "SourceHash": "5d7cf0675d080f7e37cac3080f37da870f1a1160a48f11c8ab7cae491a2dea4e",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/pron-ch5.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/pron-ch6.bmp",
+            "SourceHash": "3e40b8102f63a21cbc373d6f563915c7bbab489416bbe6eb992e9315d2293757",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/pron-ch6.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/pron-ch7.bmp",
+            "SourceHash": "2061578f9ad28d203cca26ba507ed2708695156a3745bb90c436452f76baee3e",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/pron-ch7.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/pron-ch8.bmp",
+            "SourceHash": "83cfaa66376e12d36d2e01c816ea73827891eba4757f8a1c8a8a02566e5c055f",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/pron-ch8.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/pron-ch9.bmp",
+            "SourceHash": "5e2668eba8c744d7e7d8c5567df412d08933d0a66112944938755645a160e39f",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/pron-ch9.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/al-ship1.bmp",
+            "SourceHash": "c9a2f607edf91c33f7676763ea52b23ab2dd7d9849de0e01be664666a4c1b6a7",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/al-ship1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/al-ship2.bmp",
+            "SourceHash": "942f86137367e944c688f5638d2111a505b44d4944be70e72a1b9097c58f4780",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/al-ship2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/al-ship3.bmp",
+            "SourceHash": "545ab7ec16309e9490d61e590d6a2e15c9c8dda4406e550479feb4c1e8866148",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/al-ship3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/al-ship4.bmp",
+            "SourceHash": "9cc0bd5efcbc496c8b5ba0f269ad4b70b031f9e8cad9e6f99dc959c4dcf0a5ef",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/al-ship4.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/al-ship5.bmp",
+            "SourceHash": "03874bc0d12670b2914c261b5cf01b36193818598611d35c053f017496d12966",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/al-ship5.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/al-ship6.bmp",
+            "SourceHash": "449fd5b51edad3a89988fa6a27575c0861ed81ed205d75d91a30c3e19c987661",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/al-ship6.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/aru_board.bmp",
+            "SourceHash": "2cf280f2b500c76667148d6126ce2c9efc70486eeadd77ca82e8d42c01f77000",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/aru_board.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/desert_board.bmp",
+            "SourceHash": "acca439fd6a667051cd812f515c5c975efbc2800f8019de6201c2c7fe4bc0509",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/desert_board.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/desert_post.bmp",
+            "SourceHash": "4c21ee5232a7b0d25a99173f5be5d37ff80334ce4e5cf0a13fed6eedf4eddc54",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/desert_post.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/hand_01.bmp",
+            "SourceHash": "fc699adf33d9dbdb9962d65730b828fde4f73c323355abaae18516e507699d9f",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/hand_01.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/hand_02.bmp",
+            "SourceHash": "75b71b0a8b1e491997df33fafa664f1f7d0904bc7ee1c3b0f2f3684584dc6706",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/hand_02.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/hu_fru03.bmp",
+            "SourceHash": "d553871b1eaa139da42a3191c14481fa473d5b60cb04f758d35a340cfd8207d8",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/hu_fru03.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/hu_fru04.bmp",
+            "SourceHash": "b10746d851dade5e15547682a19edc14fde39aab72c3da4e79cc15e267dc2c4a",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/hu_fru04.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/izld-br1.bmp",
+            "SourceHash": "4eda5e9af4ada0fd8b4c26903b5a0489dc61040a159c96ebcef94d79d2bd4589",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/izld-br1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/izld-br2.bmp",
+            "SourceHash": "20d2130c2129f77b5c64db2babb637644577c6f8de1fccbe21a4a44e26159785",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/izld-br2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/izld-br3.bmp",
+            "SourceHash": "10c9ad5b5e7ed0e3e6b1ddfd4a453b78862986d1ba6ce28fa01ba9dd8c2ec0c1",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/izld-br3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/izld-br4.bmp",
+            "SourceHash": "dcafda1e0a9c4ef22565b92c03188f9c703c0d18efbc6964171291ce94853e19",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/izld-br4.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/izld-br5.bmp",
+            "SourceHash": "3d57106ef6e36281d6f15b568e13d30d833a97d92b6b8ff97f6f42e07749d185",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/izld-br5.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/lt_tree01.bmp",
+            "SourceHash": "c4f6f95b13923b1d289c5d8a398eab2ca29f78db0edff45bbe32883e1af70907",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/lt_tree01.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/lt_tree02.bmp",
+            "SourceHash": "e785733d91acf37efd3023a9fbc0579d7323051ab9ca8dbbc62691b0b248684b",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/lt_tree02.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/oxfront.bmp",
+            "SourceHash": "6b4c0495ffef74b05349302d8bdb194ebe9503692a87366f4222dc2ad63c8255",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/oxfront.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/oxside.bmp",
+            "SourceHash": "c3d105b78c698706a62dcee2f64849b01228815e542f5fbe5917b76c0259ee11",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/oxside.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/oxside01.bmp",
+            "SourceHash": "573830670af9b2f09f0b4db24cc27203e74c111b4163b10d5f6f2532a0f2cfee",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/oxside01.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/oxside02.bmp",
+            "SourceHash": "0e2f2902e194d31bd3fadd299970cd53866d329638adc14035dc94c7d6b712de",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/oxside02.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/oxside03.bmp",
+            "SourceHash": "0612322a65df96fefee11d7398741285b77395d0ce1640b0ab1330515c98e655",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/oxside03.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/pron-swman1.bmp",
+            "SourceHash": "c99a078a7b02d87b5403a7ddc9be6d2e09ad0fab1f8a14db9b6d69ba23246f0e",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/pron-swman1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/pron-swman2.bmp",
+            "SourceHash": "e55e179596f73693a5abac89878a57a697905e947a4ab11621af400dcf89eda8",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/pron-swman2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/pron-swman3.bmp",
+            "SourceHash": "aec4ac67a03fe5f29417134a179a8f39faf6795063a6ccf424bcc70c1a574421",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/pron-swman3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/pron-swman4.bmp",
+            "SourceHash": "458df5c1237bb5111d64915a37de0a6810ebc90ad098a76aca8e4e9e83114da7",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/pron-swman4.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/pron-swman5.bmp",
+            "SourceHash": "ab50dcb01d2756bd80bae87ddd8674c1ccbaa6f04c454552fba819a2c794b322",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/pron-swman5.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/pron-swman6.bmp",
+            "SourceHash": "072c9bcf57649a012cd0d7d7630efbdd2db480edd9044c5905e035a7911f46ca",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/pron-swman6.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/st_bi_01.bmp",
+            "SourceHash": "69201f3376c2f05440e9ae5e8dc2345df739f05036596e89c167b7ecdc6227e3",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/st_bi_01.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/st_bi_02.bmp",
+            "SourceHash": "44d70a5a907facae4d5711cf0694a18ec3dce1a2f3274068b27c909128a536af",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/st_bi_02.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/st_bi_03.bmp",
+            "SourceHash": "54a418a17638c7243414ad49ab4df06b7f6d18e129ddcabb77a52bb828a30beb",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/st_bi_03.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/st_bi_04.bmp",
+            "SourceHash": "1f45285b3ffe68c8bea0c5c450e461926d619db14734c163975ae9cfe76b59d7",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/st_bi_04.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/st_bi_05.bmp",
+            "SourceHash": "4875cfadceba871bcb980bd08645614f7b458d89e053d1016e5525052f862377",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/st_bi_05.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/st_bi_06.bmp",
+            "SourceHash": "81860e15d8d37e326b03dbd86929605012705562cdcf94f1ea506bab5824bf64",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/st_bi_06.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/st_bi_07.bmp",
+            "SourceHash": "875cf141e66936bd54f9b6245be7cdf4e1e3dea3a6537e94b4c643f85d02e69f",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/st_bi_07.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/st_bi_08.bmp",
+            "SourceHash": "c1cabd20b885b18fdef8fa992c57058817dc09516ef0c8be4987f9fa2d22fcc3",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/st_bi_08.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/st_mu05.bmp",
+            "SourceHash": "0fb72ae3c817d8e8ec85aec13c9539fe58b41d343d163c58151e588ff0011ffb",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/st_mu05.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/st_obch.bmp",
+            "SourceHash": "3ba7ee11af4ba79e4bcd2142e16eade699918b95ec6d7f4f163b7c5a843062ea",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/st_obch.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/te_boway.bmp",
+            "SourceHash": "c2b82c476c34f9af64782299d5bfe3da7b68d1d913344093c58a309404ecf060",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/te_boway.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/tru_wu1 copy.bmp",
+            "SourceHash": "cb516c8c4568974b32d57b74437492b17df3a7b204420ee71d40f05fb78c2f23",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/tru_wu1 copy.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/tru_wu2 copy.bmp",
+            "SourceHash": "63ff23222aada068bf0deff6830f32a71939dd8bdb909d15267af0764dc11a57",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/tru_wu2 copy.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/tru_wu3 copy.bmp",
+            "SourceHash": "cb77a311864575e156650ae51f53974f34ccd346ad6b756c9c49498d257f3330",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/tru_wu3 copy.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/tru_wu4 copy.bmp",
+            "SourceHash": "d1701730160963e3637e321dafb3f5901c5a9d61f37e5762f5e7686873c2e9ac",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/tru_wu4 copy.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/tru_wu5 copy.bmp",
+            "SourceHash": "61c9727735245b5f6982b10cb58978342d98958a81632ca47f2a96ef41718bf7",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/tru_wu5 copy.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을/tru_wu6 copy.bmp",
+            "SourceHash": "d7f39d8c9b9df1e77a1ae6e2e7ea724449a6f652e64024fecf9aa6703d53bb1d",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을/tru_wu6 copy.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을내부/ch_weapon02.bmp",
+            "SourceHash": "be29e830d133f916968f197dd1db11d746468910f5b2aecf0a061a113e60f696",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을내부/ch_weapon02.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을내부/ch_weapon04.bmp",
+            "SourceHash": "abf0c68983561b8878dfa55a7acb5ef4de5f22e0972d16c872230c49738de612",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을내부/ch_weapon04.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을내부/st_ino09.bmp",
+            "SourceHash": "0aac55993467afe9d9909f7f20fbac671655139ec73215f8f426a5c48be4045c",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을내부/st_ino09.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을내부/tai_hwa copy.bmp",
+            "SourceHash": "a44135a9ec76f39e321887f62cf2e86cad5b8e9f381f6ec4f187f5a410150312",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을내부/tai_hwa copy.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을내부/xmas_bread.bmp",
+            "SourceHash": "f0622302f7d1d9ba8032b5afaca85f3702e6a1bfd88f6f35afe789f641a7dc34",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을내부/xmas_bread.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/기타마을내부/xmas_bread0.bmp",
+            "SourceHash": "b142737e3437c605156a93a6c6ea3ca7f24ed90c1141d69731c6ca087e1dda06",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/기타마을내부/xmas_bread0.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/leaf_10.bmp",
+            "SourceHash": "e203d5f63e7332b021a3b23d756a53e9cc441abb3739cbc97ef4dff15cadbbf3",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/leaf_10.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/mo-leaves1.bmp",
+            "SourceHash": "d42f5857feb79005544c8c8b24b8e75c510383bf13a377ae1d78642e0aa29076",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/mo-leaves1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/mo-leaves1_2.bmp",
+            "SourceHash": "99a99159cdb5c250ed3731be0c3d9cef143ab46d01a65c876a124f8826c7e66b",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/mo-leaves1_2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/mo-tree-block.bmp",
+            "SourceHash": "ab4ee6dff9258a36105afb7a495b0d03c6f016cd5f951075818784bfecfea44c",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/mo-tree-block.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/mo-tree1.bmp",
+            "SourceHash": "fb38ac3fd835bc9b078ade38d666ba8281a35baaa2e73fa9525b74d1dc250b2a",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/mo-tree1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/mo-tree2.bmp",
+            "SourceHash": "75049faf4143d14c99bff327fbc0fd085d117660c51e763fa316ae4dc69626af",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/mo-tree2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/mo-v-1.bmp",
+            "SourceHash": "c8090d612e367e5544e1b4f2b0900b6e9f891c635dd29fe94f9def297a6cb6e7",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/mo-v-1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/moro_sun01.bmp",
+            "SourceHash": "5030c8a6d521f4f54f7c4e0959fd301cc6b87c502611117f2b29d0336c217e12",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/moro_sun01.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/moro_sun02.bmp",
+            "SourceHash": "043026f52bd9cd022cbeb6612ad549af6affd3264be372766ef93e2f64b81b98",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/moro_sun02.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/moro_tree1_01.bmp",
+            "SourceHash": "d11786f68acb91904cab3515a28b77025cb8db19b95a6b606dd4f52582c20aec",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/moro_tree1_01.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/moro_tree1_02.bmp",
+            "SourceHash": "c907c6fbb9e4039c40273a806d76bae91cc68c3f45c9febe6d8c6b27af414f7e",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/moro_tree1_02.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/moro_tree1_03.bmp",
+            "SourceHash": "fefdc244b61ad275caec856d204f82df3a50714f2514d61bde5ce93498cb75de",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/moro_tree1_03.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/newtree_01.bmp",
+            "SourceHash": "fc7799ecf4b1823e101ccb61c2dfddea13913e6459a601dd495b081165a17d84",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/newtree_01.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/newtree_02.bmp",
+            "SourceHash": "c34e5513828e4e71a11905dde0b9b189f36249307a5adc1232bb13e177d37f97",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/newtree_02.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/p-ba.bmp",
+            "SourceHash": "ad62dc92a1f25aa0ce8201d42534b548eab0d93289ba2e8cfcf55a9e386a224e",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/p-ba.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/pron-fpot1.bmp",
+            "SourceHash": "fea8f79cbcbe943b268e8b3ed4db078dfb92bfc46c1d9a29c647971ec60fe398",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/pron-fpot1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/pron-fpot2.bmp",
+            "SourceHash": "6246d97dc8607e8031a30b5daf72495924c9375ee476ab22542ceade8bb8fd9d",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/pron-fpot2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/prt-fie-tree2.bmp",
+            "SourceHash": "af0de1a817ae9d3a1f750b8fbeb7f422bef88b87b84623e9f1a27510af16d091",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/prt-fie-tree2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/prt-fie-tree3.bmp",
+            "SourceHash": "5a0b8ac519b157c143e9dd949f6381e289bb12cfc5657001724f8f1463caa8a1",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/prt-fie-tree3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/prt-leaf1.bmp",
+            "SourceHash": "a4b987faa0b565ff1e5a2e0962246dffc6a05ad9db79cb404c73ec3928223ef5",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/prt-leaf1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/sun-1.bmp",
+            "SourceHash": "a8a6824f9860a1d495e607515b5838800e8e521df8b1748a2c6923e8cc9fdb8b",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/sun-1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/sun-2.bmp",
+            "SourceHash": "23d57fdaebcf6bf8db0233784ca97c9b286cf7dc79e0ec31e5ad1e0b6b64fffc",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/sun-2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/sun.bmp",
+            "SourceHash": "1bcbfb83e2a9f7810c800199e334170d06b1772adb7c7ec1b70b2db886188c78",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/sun.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/나무잡초꽃/treeside1.bmp",
+            "SourceHash": "a52acdf0a9bbfec86e6beb3c7749e8eaa0e8162594c452034666731f2d46bc63",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/나무잡초꽃/treeside1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/box2-side.bmp",
+            "SourceHash": "1e81f4d5e93b9a91d49fb56051854ead749719ab9389eeb4343e941b850255de",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/box2-side.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/box2.bmp",
+            "SourceHash": "ba03c222419c0a0cc8ddc52144b07071b54f38512e97be4066e364a12e45f9da",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/box2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/ch-side1.bmp",
+            "SourceHash": "1fecff814ca56c6cf38c190fdf80422c4279419819ea6539ff2e0d3877be20cf",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/ch-side1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/ch-side2.bmp",
+            "SourceHash": "2a8dc08b8b0f4f6c0da56b645f468444165c631a6c0839723e1cf4e5536bb6a9",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/ch-side2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/ch-side3.bmp",
+            "SourceHash": "684ef6cdd3c44b663b2a96bd94f65c07f5482f10407df1861db5c10fa59025ec",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/ch-side3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/ch4-side1.bmp",
+            "SourceHash": "e86f76add60b5a393563582112aa40778eb5ab1726c046b40b2e639c8f3c4905",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/ch4-side1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/cha2-side1.bmp",
+            "SourceHash": "a30f150c4a9cc002e53dd72c63f828362dcdc99deb3d6a5f7c2a4773455924dc",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/cha2-side1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/cha2-side2.bmp",
+            "SourceHash": "5da1e1e7a6cd711ebb1a6a089da2d5911cddff4721bd669db0425b922b967e68",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/cha2-side2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/cha2-side3.bmp",
+            "SourceHash": "5c5fad3805dbc4215261a87659d8327791cea2668955be0e306b75d1fdc9509f",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/cha2-side3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/chch-side1.bmp",
+            "SourceHash": "9fa165545a98f0c592e5603b6a3423b6393cee411c37a82c099a8bf5eb36a444",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/chch-side1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/cup-side1.bmp",
+            "SourceHash": "0251a76c33b7f9ec68431868a97d70866c99f4b30b6883e74550439611572e6a",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/cup-side1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/cup-side2.bmp",
+            "SourceHash": "805ae3244239a90338ba8be0835910994087f67cb6022a7534d3de157f8fefd5",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/cup-side2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/cup1-side1.bmp",
+            "SourceHash": "bd141664947f8ab605e56e884ea466e23568ed646d887cf8b2f63fc267feb203",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/cup1-side1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/cup1-side2.bmp",
+            "SourceHash": "f0fcf8d152dd38b57831c15f426bc5f90b5e0fb265ab74d84bdd2dbdb83c8cdd",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/cup1-side2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/d-w.bmp",
+            "SourceHash": "e7345a4e8e70aa9111322ac335df8e8321688364978bc3ae46f7304b7e1a549d",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/d-w.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/delight1.bmp",
+            "SourceHash": "f335698372412a57d874d51f88ff0fc870b0b98db1d3a8a2e889968b60778756",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/delight1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/drum-1.bmp",
+            "SourceHash": "06be80921bbaab63df6ae2bfcd21faf1f965284db1fb82b87bf9debed1df785d",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/drum-1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/drum-2.bmp",
+            "SourceHash": "cea38aa38c07df6a9f200c3a5da6f291f5ff1ce4036dd38a41cbf636865840a9",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/drum-2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/durm-1.bmp",
+            "SourceHash": "077e3f33f8175bfdd7e2ef6f2064625b9ebfb242e4083a11d0ba0f8f9ece25c9",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/durm-1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/halberd.bmp",
+            "SourceHash": "655f6886fc51fd1452f3978903fd3fbffc0919ab3862ab922983327e47c542d0",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/halberd.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/head.bmp",
+            "SourceHash": "0fcb0e88ee76dfd9fbb35db384f524110e795b4bfedb0d7e2c5865c3fd8e8b5a",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/head.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/ju-front.bmp",
+            "SourceHash": "3d354a65fcf9c6d462324a5f7d15f3a5faceda5fe05053adfa0c9ce867887f0b",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/ju-front.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/ju-side1.bmp",
+            "SourceHash": "5f593f4669d444e28f5551ae338224a5ae367c5562aee9de8b2243ef564adb95",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/ju-side1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/ju-side2.bmp",
+            "SourceHash": "e622e808692318a31c745d88f27cc0c6a8a61bc625fa3ba5f5d966efc3145bf2",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/ju-side2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/ju-side3.bmp",
+            "SourceHash": "a2c6d383650244b461d542d886e70ff9d3ba2d4cf73a46eed6b2c247575e69ab",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/ju-side3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/ju-smallside1.bmp",
+            "SourceHash": "96262772e91110f3c5b25c030a22eef279623311f6152fd5b3d380f991a5d09f",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/ju-smallside1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/ju-up.bmp",
+            "SourceHash": "c7eefc7b8b371dd88fe136be5914660d2691f42664e603a6f336fc628a88d8ef",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/ju-up.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/leg.bmp",
+            "SourceHash": "be350bf496f8bf8aaa9255c8368357c265ceffe87a564a6d7ab28a4fbe97a794",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/leg.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/seokse copy.bmp",
+            "SourceHash": "180fcd9db3253e7dfe0b38f46cd82810b8145e1fc9dc3665f8eec1f67cf3e5f4",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/seokse copy.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/w_inarms.bmp",
+            "SourceHash": "4fe839d08a9ab0f100f174bc5f0a71cdc2a67eaacf3f34d1b64536c21a707dc9",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/w_inarms.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/myo-brd1.bmp",
+            "SourceHash": "df08908e1ca3fa12e524ce1fd3660b3ccf017159c6e3d5adf6890e24bda71de0",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/myo-brd1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/myo-msign1.bmp",
+            "SourceHash": "0e81068a43c0c7a4d0b35c5c701e709e6d003d3826209822757efdf070dca5d1",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/myo-msign1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/pron-b-01.bmp",
+            "SourceHash": "60a5b5bc45ece58c0d04a53b0437bb1e551ced499ab4cf33166680d991980d73",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/pron-b-01.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/pron-b-02.bmp",
+            "SourceHash": "9cf8ca6826a40f088c5826f02c8393bdc4ab9b38df3c9164010e0ba164e7b88f",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/pron-b-02.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/pron-b.bmp",
+            "SourceHash": "ec563c884bc47d57e1e35def491d03b9f39d6620023e1f84e10df0a5c4042aff",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/pron-b.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/pron-bench1.bmp",
+            "SourceHash": "f5748410859c3281629a83e5ed8062c78d61f8da7ffdc7952043c596e097b2b0",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/pron-bench1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/pron-bench2.bmp",
+            "SourceHash": "e5ad0f7b349a9887627fd8227782fd7f0b04eb205c2d840f6aa1b5ff5a17c1d2",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/pron-bench2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/pron-bench3.bmp",
+            "SourceHash": "cf3ea0d8786300df087168274c183944101987f77b88d333b48f085070a1f918",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/pron-bench3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/pron-fcave1.bmp",
+            "SourceHash": "a6756e74b09eb616c550af5e4c9144b8e1b6a67d4681862b568946c87b2547b4",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/pron-fcave1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/pron-fcave2.bmp",
+            "SourceHash": "b1cec98315728786dcb5899992ec5af47bc40ab8114683a9ff9283e8ea06de80",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/pron-fcave2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/pron-point-1.bmp",
+            "SourceHash": "a7cc0805a6d50f85dfc1e81dbf59e0d8ad657b726caa2cd70d0c8280775fb406",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/pron-point-1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/pron-point-2.bmp",
+            "SourceHash": "df7a384cfc7dc2159f01c96b811c3465dbc5e0df07a69ec38506f2887b88b1b6",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/pron-point-2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/pron-point-3.bmp",
+            "SourceHash": "5e4da86e6a2af100c500edb66be9a50a6865d393d12a6a12001c68c5154ab13e",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/pron-point-3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/pron-point.bmp",
+            "SourceHash": "c4d7f9840834f2dd7438fc6ca4e2cb8362ffb39d73ecf968fe9c80f92c797ba4",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/pron-point.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/pron-wag1.bmp",
+            "SourceHash": "b612f56d1b5205d6c3e65def6f87801f355e0eff97a5911fd426a2dbb6e019e2",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/pron-wag1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/pron-wag2.bmp",
+            "SourceHash": "7b579add7c59e06cee13610bd6c8534a074a94d7ef6ca20fa47aa1f2985eec2c",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/pron-wag2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/pron-wag3.bmp",
+            "SourceHash": "75720e0f88f6a11d5505ad7445cb229c953616962157c6add05fc9e27aa6987a",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/pron-wag3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/prt_arena_01.bmp",
+            "SourceHash": "88885f535422ae24b943f7ea652bef94b2a243d9a1fb76c85ef05298ad8ee176",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/prt_arena_01.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/prt_arena_02.bmp",
+            "SourceHash": "0726d806837c0459baaeb8ecbe814610decaebbd09ea7944a235f25146034a5f",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/prt_arena_02.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/prt_arena_03.bmp",
+            "SourceHash": "d23e5468efb61328ed6dbaf0bd3ee6eb12fde33de0eb4e8c5eaa39a18b55a3e9",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/prt_arena_03.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/prt_arena_04.bmp",
+            "SourceHash": "fa453963da91e2bbf73f5bbfa7f90b79561f61d60363d9547dc1bd34f1d6b05c",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/prt_arena_04.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/prt_arena_05.bmp",
+            "SourceHash": "b334cd125053f67c4ddbfb1674c97913cd4566a3b4f23aa30de5e4dadbdef85a",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/prt_arena_05.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/prt_arena_06.bmp",
+            "SourceHash": "c4281b9c4aa08f196966319f9946ccfab1a3bab307d38fbf7ec9245cbf2a9a02",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/prt_arena_06.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/prt_arena_07.bmp",
+            "SourceHash": "399b9e7ec7e958c037a92634d89341376b3c12795fe3191d5a3c47c7dd83272b",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/prt_arena_07.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/prt_arena_08.bmp",
+            "SourceHash": "c0dd818f94b5114ded8ae8d861e8dc6516e116309eb1e73cafe6edc4bfcd5637",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/prt_arena_08.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/prt_arena_09.bmp",
+            "SourceHash": "574364d497d38c41a814cdad8c60597cb907763b85dc870f206a2cc09d3e27aa",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/prt_arena_09.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/prt_arena_10.bmp",
+            "SourceHash": "d1908f7555cf29d21fd2aa5c040068978ffaf79971d9e3e81eabab95bfe1ad9c",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/prt_arena_10.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/prt_arena_11.bmp",
+            "SourceHash": "9c751f221fe821e5ae23d62a030295ccedfe8222954b9a98bfb81960e42a07d6",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/prt_arena_11.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/외부소품/statue-support.bmp",
+            "SourceHash": "dc440ff2cd50723d62a14f49736a511b8d4cfc6aa9c797037ba96601e90b5f8e",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/statue-support.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/al-hou-r1.bmp",
+            "SourceHash": "4343d98146a279bd5a54ca016c5bb177f2497b211a69442d28a628a6d0dd1008",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/al-hou-r1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/al-hou-sw1.bmp",
+            "SourceHash": "6fef1381378231d6efb639a0ea447f478181815366181d5d0b1d1fd47b097681",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/al-hou-sw1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/al-hou-w1.bmp",
+            "SourceHash": "d994617f6515b8a4cd42e23d0de9baf7bd63ccc2475341aca05dbb2baaafd0d9",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/al-hou-w1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/al-hou-w2.bmp",
+            "SourceHash": "4a1225616fe8081cd9acbe8b42deefb171cd79cc426853505335791ecc0a62e2",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/al-hou-w2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/al-hou-w3.bmp",
+            "SourceHash": "ace8d520d84b830026e7daa3ba4435aa0d513a9e27700dbb1a7afbdbfa00cfe0",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/al-hou-w3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/al-hou-w4.bmp",
+            "SourceHash": "e68274f2038ecfb42205a46519d0a39b55b21b41416e65c93d50a4c5fe0eff2e",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/al-hou-w4.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/body.bmp",
+            "SourceHash": "f85029dd53e76040ebf0dc6b8c43f8e1d7b5559193ec14afc869f3c96319fc43",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/body.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/bri-1.bmp",
+            "SourceHash": "d5f6721b1bc157eb7f1816c37623fa444f9f15cb6e6f57327556f30ed44ae6f1",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/bri-1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/bri-2.bmp",
+            "SourceHash": "98865f0a60cf9e24697f9db223c70bd4d03aa403fc19466aed137e1408223f15",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/bri-2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/bri-3.bmp",
+            "SourceHash": "3e91735cd22f159480c04942f67d0ecaa2bc1327de3d7ff2c33cc05f4d0a068d",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/bri-3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/d-side.bmp",
+            "SourceHash": "44577d2811ae2662f5a4d24f46b368a47511f954af30ca6daa15e5926ad82014",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/d-side.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/dong-d-1.bmp",
+            "SourceHash": "6de53ef2f6faf5626ca7b9a0fbea507caa46bf167601ec522be9b09511872e0f",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/dong-d-1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/dong-d-2.bmp",
+            "SourceHash": "4107d0bd5bdc033ca3abb2db32a92040140b1a57070c1518f9ad2450e89a2ce2",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/dong-d-2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/dong-d-3.bmp",
+            "SourceHash": "86021a3541d2b8fa94c6a085c5a68ace1c6854e9a86c386b142c7bb0e03ba505",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/dong-d-3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/dong-d-4.bmp",
+            "SourceHash": "e2ad1f2af0dd966143c3d59e141312e957cf150a5743b1fa68b6691ccc69c10f",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/dong-d-4.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/dong-d-5.bmp",
+            "SourceHash": "160feb795f9f676b66c959dcc4a7f817e7df056d0c8ee9d9042b524de57ef3db",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/dong-d-5.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/dong-ho.bmp",
+            "SourceHash": "af8c29e8e9e88ba930166eb67092679d1513fce6b1f72bed851f118b30aa4572",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/dong-ho.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/dong-land.bmp",
+            "SourceHash": "065dfdcc59dd70dd9f7ad45a5343e25e299f47264afae03a833099936761040e",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/dong-land.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/dong.bmp",
+            "SourceHash": "549ca75a40d1116d85c674e19ca2a0737f7d3559bb93fd44b87b927f9c353bc1",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/dong.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/gid..(side).bmp",
+            "SourceHash": "290955033321ce771e5a86a671117c2977958260383cd98a693e7d6d4abbd531",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/gid..(side).png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/gid..down(side).bmp",
+            "SourceHash": "cce88246cfc663e43b3109e7b44c70eafc8f19b6ff7726bbc5f5b77dd9ce0e68",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/gid..down(side).png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/go-1.bmp",
+            "SourceHash": "51e3915b181735167aeec6713bbb5562a3683a4a5eb7193cfd6270876e96b197",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/go-1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/go-2.bmp",
+            "SourceHash": "6f1851e781469dd386f498d8403efd6ae15724c8a2bc35387ef6fade8b0462f0",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/go-2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/go-3.bmp",
+            "SourceHash": "847ce7ae008e47a1524f4cd31f3b8a868d10e2d500eee7116f49bd710a6d5aa4",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/go-3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/go-roof.bmp",
+            "SourceHash": "08394a30ed85d415e684587c772d18fa20266a0ea00f6ec35871a051ad8e1c65",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/go-roof.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/ho-roof-1.bmp",
+            "SourceHash": "d9da66b65c809be9724596f00730dff35fa6b966efc27a93db66fcb9e1beedd5",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/ho-roof-1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/ho-roof.bmp",
+            "SourceHash": "d98f2439dc3704f5bff9f502ff7ddb9d2bdc6b8a234faf09d5d28c2e5eb99ab3",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/ho-roof.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/ho-wall-1.bmp",
+            "SourceHash": "7d61f3297ad10a9ca09513d8a4164e6b63de462c687a6a88d2c712ea5b73bdfe",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/ho-wall-1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/ho-wall-2.bmp",
+            "SourceHash": "16b621e17efaa20bc7161de42958a2d394bdfde66e3f8762172b1feb3643eb5f",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/ho-wall-2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/ho-wall-3.bmp",
+            "SourceHash": "3d87a7e887ca41206816e7bc21181943c27fca3563781b801bb05d31d0543d37",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/ho-wall-3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/ho-wall-4.bmp",
+            "SourceHash": "47f620a4d04e5b961cd96b3264e3e26ce218b30e1ed79f695d10e4b8fd4cf82e",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/ho-wall-4.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/ho-wall-b-1.bmp",
+            "SourceHash": "e3178b8cba57f81e4cb59a531cead39bfba691d3ff1bfdf3d76ed7b2f83463f7",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/ho-wall-b-1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/ho-wall-b.bmp",
+            "SourceHash": "2a4c4a5b1f650aa298ee5b34e0d98ddeb3cc6a8a267dbadba3cb7eded575e2e6",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/ho-wall-b.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/ho-wall.bmp",
+            "SourceHash": "358e54a7dc9d1ea79f808065103e3c775ac30440cb8865146f80415f8f5d2958",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/ho-wall.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/jop-f.bmp",
+            "SourceHash": "d9f81a7afa2034b63d2e3a57b08682ac257aeda4f2d77dad2ef218ab05355f91",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/jop-f.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/jop-open.bmp",
+            "SourceHash": "aea562aef54ee0a041dbaf26ae15affe0ceacce7b3e17a6b2f9b6aff8e705383",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/jop-open.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/jop-roof-1.bmp",
+            "SourceHash": "8d620f71c321f9fcf02e9aef8884bc6c89d68b206d8975aa68eb63a1bca3fff4",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/jop-roof-1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/jop-roof.bmp",
+            "SourceHash": "ee220ad07b13155b08285f7b91c9b0ab406567e5587d483a4758e3076a188a84",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/jop-roof.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/jop-wall-1.bmp",
+            "SourceHash": "ba9e053b4302d91bec8f5030d928ed115cf85c3aa0903152e158924c6377ae4c",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/jop-wall-1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/jop-wall-2.bmp",
+            "SourceHash": "566ffdb4b2beba996e94c40c8625f57a914b018f308ef97e278d78a3ecf09353",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/jop-wall-2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/jop-wall-3.bmp",
+            "SourceHash": "6c7e7f4f95b24c0340308197a6105f6d87db3354bbf5c898b21490a6aa83693f",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/jop-wall-3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/jop-wall-4.bmp",
+            "SourceHash": "d224d30276b2e79af5b4711c24d276f8212538cad04441e3fcdf7b8f116faeaa",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/jop-wall-4.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/jop-wall-5.bmp",
+            "SourceHash": "91eaf67d157ae9cfddc732b817438b6683e36c32330d93ec98bd25d3b1662642",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/jop-wall-5.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/jop-wall.bmp",
+            "SourceHash": "82d9bbb8048e14af0a392f196b49e451b95fb4e8afc62469c424f9856a1705b8",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/jop-wall.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-bak1.bmp",
+            "SourceHash": "00a9939c1e5f66e736edf3b8ec82d82657edaaa600a334d4c4214da5148aeedd",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-bak1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-bak2.bmp",
+            "SourceHash": "e9a298eb239d0755e6dc5a102bca1e94b35fa4ec9bbb9a39a18e80a54afe6353",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-bak2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-bgate1.bmp",
+            "SourceHash": "0a04b404769c9c557d1cf4bce236554da68f73945ae4b786c3f901b9a6894ac7",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-bgate1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-bgate2.bmp",
+            "SourceHash": "7f986275fa037060705040649010e5f074b4e985a2e0ad5e909b036b7d1c8332",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-bgate2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-bgate3.bmp",
+            "SourceHash": "2bc0143f17766331aff8ad183d465f34dd8b77911325caeddf7d76ed0fb99e5a",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-bgate3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-castle-2.bmp",
+            "SourceHash": "cfeaa6deba6e29f60ed6e9a3a64b36dfff870534dc0a059187c2aebf34ff04ac",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-castle-2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-castle1.bmp",
+            "SourceHash": "6ba1997224e34b5bfe1fe23676e6c77d0c447378e378d51c98edb5c6ac56e17e",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-castle1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-castle2.bmp",
+            "SourceHash": "40d3a7ceb72e3d8f1bb62363b75766dbd3ece3c67ffdbdfa3102325a7413c5c3",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-castle2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-castle3.bmp",
+            "SourceHash": "645a764eb2055e1f078348fe4f0be74a02c75bea2b2543e9fcc94d893559da04",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-castle3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-castle4.bmp",
+            "SourceHash": "37513df6892079e22ff1613abfffd4246369a3907ec1f3e73bea551dde720ec3",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-castle4.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-castle5.bmp",
+            "SourceHash": "1bc56a541226996c931c41bd59a8da8881f86f18e46c51f2284fe9fccf0e1bf5",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-castle5.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-castle6.bmp",
+            "SourceHash": "52a6d6dc95575e8166fa02a05b7ac636cfc281fd300825a6f5fb4faf916b3a8b",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-castle6.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-castle7.bmp",
+            "SourceHash": "458945f23a557c7881b8645c24056c43c6d9b21a7dfe52c054250e8778d70f1f",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-castle7.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-ctwr1.bmp",
+            "SourceHash": "b54edb3d60a9f018ab721275875c5d6963d8e6415d1755782f3cf5179f03035d",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-ctwr1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-ctwr2.bmp",
+            "SourceHash": "dbeb99b45da85f7e71fa58a50bce45cca456eb5f0b6c2af1f949b3f313bbdd52",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-ctwr2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-ctwr3.bmp",
+            "SourceHash": "424712f6fdd1de53428b858ece932f888ad7e404583e0fc059a2c7dcf650aa75",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-ctwr3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-ctwr4.bmp",
+            "SourceHash": "31cb7c9808c06662f12c7fc0c5192d8e94aa461c40ba1d2fb57a17a55b92c1b0",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-ctwr4.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-fishm1.bmp",
+            "SourceHash": "0730201fcf77223e35987b586be5fdff871edc2628bb7fbbb2e8c66a2f74ee9e",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-fishm1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-fishm2.bmp",
+            "SourceHash": "410773136d7c8dad62bfe54a0fd6d092ecabfad11a4a3fb660c9d109f2068151",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-fishm2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-flo-bloc.bmp",
+            "SourceHash": "89836d98f05e1fbba3a797ff13f6c3d67e6139074057ed8a09813113e9810ccb",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-flo-bloc.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-flo-f.bmp",
+            "SourceHash": "95430d973323cb756f618e17de11819af21001f9da031df9aea6d0e99f261780",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-flo-f.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-floshp1.bmp",
+            "SourceHash": "fc52ce177ff09e009079de07ae683ae40f643d694e6a68b376141e9649164257",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-floshp1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-floshp2.bmp",
+            "SourceHash": "ac45fc2bbb826cb74bb63f1112aa9cc48124531a036c2464c083f8a304f68637",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-floshp2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-floshp3.bmp",
+            "SourceHash": "6e479f76495f28c7b40eda7d38d19b2ed143d36fb7473479dd5e724f2c268801",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-floshp3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-floshp4.bmp",
+            "SourceHash": "1da0715d78e68019e697f8763c8b70aec5cc59e15ecb65b089f5332f0b6a5bc0",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-floshp4.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-frm1.bmp",
+            "SourceHash": "fa8f88265c7421fe514ed365dddb572406f1fde92764df4469cb7611a1fd7fe9",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-frm1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-frm2.bmp",
+            "SourceHash": "639784c569371e7ab9ff54606efd3891e80dbb667992a894bb7a0d21b73d3aa2",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-frm2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-guar.bmp",
+            "SourceHash": "22f03b649ebebe0a1fe2c135ff1d5f59ef9feb058d5821817dc3a899de38dc3f",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-guar.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-guaw1.bmp",
+            "SourceHash": "b0cbd6450fabbc2954fb44c2c21c673b8f44441c933ca02d9b4c3fd61db363cc",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-guaw1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-house-1.bmp",
+            "SourceHash": "f0f5fd6d767cc6f3b0a49e5446170ebd6661984d92a4331bcb295988db8f233e",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-house-1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-house-2.bmp",
+            "SourceHash": "3f2ca721ba75505d8dfcc7b125df9e1fcc448f2c5253a14727256ea7ffbc2437",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-house-2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-house-3.bmp",
+            "SourceHash": "f6d5b04b73ab7ad0f25dc9ec3a5335c38a149b59d2ca0ec342867ae39da12dd0",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-house-3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-house-4.bmp",
+            "SourceHash": "b9271770e168b950c1296162caafc00cc1aa8239171ca3f82665758053b5f88e",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-house-4.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-house-5.bmp",
+            "SourceHash": "42cd5ab5c3876b644f5f7deb9d6f86b8049a6bfbb8fb52b91deedf2f5c5a2a1f",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-house-5.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-house-roof-2.bmp",
+            "SourceHash": "2285b691f02512223d60c4237fca948f0939f694e3cef9fd6e11d9c6350c7482",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-house-roof-2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-house-roof.bmp",
+            "SourceHash": "974bf5d539394be42d5e69b544e32ad5095a76b1f995849261f56d7c6a9c2860",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-house-roof.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-house.bmp",
+            "SourceHash": "41809218558871d566b5f2d18e2634979510ececfde2c3d18a5e4ecf022ba060",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-house.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-hrcol1.bmp",
+            "SourceHash": "031afc94e30043665a2a8a32d873c13fa61da33be83ab25c17a458b7e70bb0b4",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-hrcol1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-hrcol2.bmp",
+            "SourceHash": "f6e3f69761404dbf20dc3964aafaf36a152b1b82fc8965d75772c47939fee3e9",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-hrcol2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-ju-roof-1.bmp",
+            "SourceHash": "6703b97a2a75f0063971b0596bc87b1b324f9d76c27f56e819df1a2831795f4b",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-ju-roof-1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-ju-roof.bmp",
+            "SourceHash": "0d4a454e1c53c59487442d1b084216f6dbdd5b2d0688f169026e2eace2d6c82f",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-ju-roof.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-ju-wall-1.bmp",
+            "SourceHash": "1c4477588fbbefc3e123fd2418e7f9b4b4cf0028b816475dc8b3dbd355d1e078",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-ju-wall-1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-ju-wall-2.bmp",
+            "SourceHash": "5e0f4131903dc6fa8e3605d24dba4cb536152edb6b1c2f317869924767a3d569",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-ju-wall-2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-ju-wall-4.bmp",
+            "SourceHash": "5cb391378a7c0dd8b1344a1c07a39bbc23645e8061748e512664de0d700ce658",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-ju-wall-4.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-ju-wall-5.bmp",
+            "SourceHash": "aa228fafeab7b4723c41f7864b84737cd970bb8da357ccfd7422f1f1460c0b6d",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-ju-wall-5.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-ju-wall-6.bmp",
+            "SourceHash": "075c64bd06567dda101e8cd1bb67fa8ba1cf50e94446498180ed6da62a3189ce",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-ju-wall-6.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-ju-wall-7.bmp",
+            "SourceHash": "7089b11870269cd76404399a1cbf651b60bfd799f401b84e806dbbcfeedb8cdb",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-ju-wall-7.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-ju-wall-8.bmp",
+            "SourceHash": "680b513584019941f07037b972779677fb27db487bf73ef0eba4068221aa431b",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-ju-wall-8.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-ju-wall.bmp",
+            "SourceHash": "8eae72fd63a064ab658cfa01c82f5bac4a2124c57de43cbbac80a446f20e8e5e",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-ju-wall.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-lamp1.bmp",
+            "SourceHash": "20e9503c4b06b6fd514a536bd0b3f22b25204b6c0a6fead83fca929e5daf9975",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-lamp1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-lamp2.bmp",
+            "SourceHash": "1f2c800801f8dee006c001ac3831906c4b21f1517168fb784f0077bbbcf84e82",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-lamp2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-lamp3.bmp",
+            "SourceHash": "427ae87a0ea280619e1ecae94a43d53cb4a2f5a54f58c839c320ae76c9264e09",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-lamp3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-lib-r.bmp",
+            "SourceHash": "42f4aa12a04a9e4524c82c481aef8ec8d2e65c66c71229f10a575e0f1edd852d",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-lib-r.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-lib-w1.bmp",
+            "SourceHash": "880ae10dda6c3a5178411316811b8ea2bf68f95e5989401bb8ddf5279c19f739",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-lib-w1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-lib-w2.bmp",
+            "SourceHash": "4a1edc6ec067f4e89bfca7f5936de4ba3834d9107145f08f814b9001dc35b771",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-lib-w2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-lib-w3.bmp",
+            "SourceHash": "66588bc87cbee8da0f474c7dcbadcfc61fd4d2fa41d8d98297289fd5e62cc630",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-lib-w3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-meatm1.bmp",
+            "SourceHash": "acf219db4bafcd3e20dee47c86db4c0c3408304ffce758d4213f826f73faa080",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-meatm1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-meatm2.bmp",
+            "SourceHash": "f99fc837a8d6d2968da42dd87ac8f05f4a2b273592979d8e151fb2b7331adbc6",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-meatm2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-nai-1.bmp",
+            "SourceHash": "39920f71489eab040b4142f2e0d154828c11905b0077728e589f732c99349af4",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-nai-1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-nai-roof-1.bmp",
+            "SourceHash": "781df8cc9e339e5324cf9d112b0200467d899385de2f54765badf83b078a27d5",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-nai-roof-1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-nai-roof-2.bmp",
+            "SourceHash": "f549aa86aca20fb236b83d482fc70376b37de6664ca126efb1baff23ec028680",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-nai-roof-2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-nai-roof.bmp",
+            "SourceHash": "8756405f1fcdd3a0c0823b7d345270d5048f9ccecb075e1d5e7b253cc569e5a6",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-nai-roof.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-nai-wall-1.bmp",
+            "SourceHash": "7184a3b7feb86df65e72f58e2b58c162d34c72545bcd49516e4a2f254da6b620",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-nai-wall-1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-nai-wall-2.bmp",
+            "SourceHash": "83c3c3c3ddcf3dae679812a518783c752e2965dfb3b0be15b2e2c216b0e66778",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-nai-wall-2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-nai-wall-3.bmp",
+            "SourceHash": "89a3495454fb4cb7ed774ff1b4118dfe634f60b9cea9a53fc714bbc7f752fd1e",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-nai-wall-3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-nai-wall-4.bmp",
+            "SourceHash": "37f458c3a67fcfdbd5293136b5391c5e21a9085a63d424146d3083c5297fddd6",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-nai-wall-4.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-nai-wall-5.bmp",
+            "SourceHash": "f1db1f4f522c813f6ff9bee7d8c862b9a74a180f821e0fba7558d62e46ff1107",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-nai-wall-5.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-nai-wall.bmp",
+            "SourceHash": "2b6550ed36adced469e47154f081118cbe976a96e3e2543a04d49f15ce16f53a",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-nai-wall.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-nai.bmp",
+            "SourceHash": "f6a8dd87908f447dfe66461f6beaf179a531ed0b61b3bfc71832c9e11d80ca0a",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-nai.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-newcastle-1.bmp",
+            "SourceHash": "df8fba33f472936b99427e67be4f49afe13fa8a6034ebb29c80b6f11d21d298b",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-newcastle-1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-newcastle-2.bmp",
+            "SourceHash": "ec9970130c6e5b72ded912c948e57d61153e6d1bf55383b0d8c3b1514a709612",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-newcastle-2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-newcastle-4.bmp",
+            "SourceHash": "edb1f13c584d97e3bf8cd857f567d5fc0fe57525e68dc40a4c0eb335d2165cce",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-newcastle-4.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-newcastle-5.bmp",
+            "SourceHash": "e32c6849bae9f626db96604105773690e55fea5936077f61748132c86f87cfe8",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-newcastle-5.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-newcastle-6.bmp",
+            "SourceHash": "fb23f25642ea5b03b96fe942eba5e94767be5969c3e9c997ec523b9024eceef6",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-newcastle-6.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-newcastle-7.bmp",
+            "SourceHash": "5147dfbf6a076bb0e59a5907273b6503f7f016fafb5a889a4e7780446034954e",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-newcastle-7.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-newcastle-8.bmp",
+            "SourceHash": "0f5f6bbd583ae8bd71556655e2d038b1f9218df0aacc901cd6e1b11fb3ddb2e3",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-newcastle-8.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-newcastle-9.bmp",
+            "SourceHash": "b077fb549a5d60c6c1cf0ca962c31700287fbde385ab9b90aa6afe06d164c018",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-newcastle-9.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-newcastle-roof.bmp",
+            "SourceHash": "f231c257d95043e34a3374b42b04cb4cdace367ddde0c4e5773d821c1a263fbf",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-newcastle-roof.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-newcastle.bmp",
+            "SourceHash": "129a387202a0068cea99f03c6c7ccbe9f8615ef2f0cb75f0be1a3f3b5a6e9fa2",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-newcastle.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-tl1.bmp",
+            "SourceHash": "85f246cd1d26b25f586d5149b0843d4110b6055ae0e6c8ee146bea39e460fd38",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-tl1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-tl2.bmp",
+            "SourceHash": "ec8d3bd1d7dc656b02386913ac64da6350df8542a71c24394a19c64574bb04e3",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-tl2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-tl3.bmp",
+            "SourceHash": "cd8567ead758bfff48c45e2cce4c7ffc612488140c5faa51e7ddd7252d77d969",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-tl3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-tl4.bmp",
+            "SourceHash": "9757f7071beab9f26e45d99565049c18d3cf225f97d1ec0d4a918600e52a79e1",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-tl4.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-trader1.bmp",
+            "SourceHash": "8dfb6b9346eba1e9e422ec35f3fb4ad4687eac8f70f8c92a7ec60afc9d504986",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-trader1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-tradew1.bmp",
+            "SourceHash": "ccebffc5639563ba8014dfa87a477db636e8913bcb140f9b186af6b85cf4b646",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-tradew1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-tradew2.bmp",
+            "SourceHash": "3022709361134b248811eb2cf09a4510e38d077d48c9ee84ad677b1d6db5bf9a",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-tradew2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-tradew3.bmp",
+            "SourceHash": "0fc10e8321fa95cafc0f689dd2642da1a15ad676fb56f5d7955151e98a361183",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-tradew3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron-zang.bmp",
+            "SourceHash": "c4828e02f648b7ce64ad260970972063b3e6e2c2c349ee01419b5d5d408dc3e2",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron-zang.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron_min02_01.bmp",
+            "SourceHash": "153fe8c2907b972d13e9b4ace723a8ce05e6afba308b76ba3609e49571b85473",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron_min02_01.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron_min02_02.bmp",
+            "SourceHash": "bcf9c6c4712cfb8af5056584ae023642846d95205ccb48462a2055d859843fac",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron_min02_02.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron_min02_03.bmp",
+            "SourceHash": "dc12325b1d63ed57cdb3b67d934508db8657f7a9253bf744a70a56f6c15f8a27",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron_min02_03.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron_min02_04.bmp",
+            "SourceHash": "457ea2d43f2d4a936547f464d1a0b5740697a48e032990cd9d7306cf7b9156e4",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron_min02_04.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron_min03_01.bmp",
+            "SourceHash": "3db5cf35c4316810e6c1035731e9855c1fadfddc4b928fa5bf5cf757f96ec0ab",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron_min03_01.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron_min03_02.bmp",
+            "SourceHash": "1d2fbcb57e16ce668a97bd0a15d1e4c80c89c5862215808dfab203ef52a7f640",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron_min03_02.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron_min03_03.bmp",
+            "SourceHash": "550d1907fec9636b1a238d7853e2bb65d2f9711b6d05f998b8ba39299fb7e32f",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron_min03_03.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron_min04_01.bmp",
+            "SourceHash": "7dc6b36a3a0b3615d51180246b6801a69e553da09d71cdd7257f83ef8272ddac",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron_min04_01.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron_min04_02.bmp",
+            "SourceHash": "bafdb80011d5a0fef5c7ba13dd7011ecda0dd5585017f10473c69f35e5626473",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron_min04_02.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron_min04_03.bmp",
+            "SourceHash": "437e37debb6645f55367f730104b531dea811a41c85fe742ba2a83b7503e8cab",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron_min04_03.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron_min04_04.bmp",
+            "SourceHash": "f5c0438ac9a2b57a9727e0d8f9f872c23ad5b6a13421746e55a42507b563ca17",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron_min04_04.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron_min04_05.bmp",
+            "SourceHash": "e20a312247abbb647382794f8a0e2c7a0bf3a93a17b3dae10918ab46c3a0cf81",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron_min04_05.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pron_min04_06.bmp",
+            "SourceHash": "b70bcf23b57228ab67372ff66d6c4bdcdb82c5ea8ad5e5aa52602535350fe943",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pron_min04_06.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/pronmok_01.bmp",
+            "SourceHash": "7f096fd5782ed869e80c6915d2452884de8106304d71857a7122e038198d949b",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/pronmok_01.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/prontomb01_01.bmp",
+            "SourceHash": "3e68ad2064cdafaff1085742b882d7e28a7b2bcd6ec1169c631c406ffbf56409",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/prontomb01_01.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/prontrade_01.bmp",
+            "SourceHash": "ba0770e46359df7a71c0990612dcd4e00870a376035db4fabe626a718ff7e146",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/prontrade_01.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/prontrade_02.bmp",
+            "SourceHash": "7865d793fe8b0e06aceccc2b3c07f3ea9d79862dd732d71adc38beb2bd2ee293",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/prontrade_02.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/prontrade_03.bmp",
+            "SourceHash": "ce7038e8764347377a1f1836ad35ef3a8a124390f364866d5352ba0c69e451ac",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/prontrade_03.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/prontrade_04.bmp",
+            "SourceHash": "1833eafe323d6e1743e27f1a982279ad2e99414b2964c3db7e8670b05b102208",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/prontrade_04.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/prontrade_05.bmp",
+            "SourceHash": "952360ee0a61b3760fd72267eedfec4eebd5585a761f2e1f5beae63b4db3ebf2",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/prontrade_05.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/rponsramp_08.bmp",
+            "SourceHash": "02131736df64cf8daddbe6e3ee6e299f3d94896605daf21f39c33559f79d6fa9",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/rponsramp_08.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/stone-down.bmp",
+            "SourceHash": "9a0be658ea18ac773ca1f0c3fed2f2533eafb5c07854509f0dc827da564f972c",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/stone-down.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/stone-up.bmp",
+            "SourceHash": "aaa7c560d891ded8878f9c3e6b4dd166a9a2d1a692c962574870903e882b837e",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/stone-up.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/tomb(side1).bmp",
+            "SourceHash": "40a5dab45c50d143266b9cc9c0b8758e60bc23edd5f40b2fa896babfe4d7eabf",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/tomb(side1).png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/tomb(side2).bmp",
+            "SourceHash": "8ef9ed06069de224060d1a61403542e5edcc7ad27bc2ae82e595f57eb07c0159",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/tomb(side2).png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/tomb(stone)up.bmp",
+            "SourceHash": "2142083ee0545b5cf389e4d2802f8d0ca53906345a17abce41a72d2c981419b1",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/tomb(stone)up.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/up.bmp",
+            "SourceHash": "a845e0785928ed8ee2fb2d3bba9ca4d558efa29b67f042a8089da5e75698829b",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/up.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/weed.bmp",
+            "SourceHash": "8034a525f56da02f74ef50bf3ae6d7cdfd85c6b27cdf2f448dff24cef08d19d9",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/weed.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/wepon-roof.bmp",
+            "SourceHash": "f4d42f2da246cc3b2ceade658416a0db275359047609e14c36e0e82554987307",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/wepon-roof.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/wepon-wall-1.bmp",
+            "SourceHash": "d67994718043cca99f7c863f1fecd5948f83542abb760318b598f6c0e5f5e2d7",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/wepon-wall-1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/wepon-wall-2.bmp",
+            "SourceHash": "a4bd1835b5c83bbd56388a937ebb92a5b6235f3369a1fca646f385c0e0a7b821",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/wepon-wall-2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/wepon-wall-3.bmp",
+            "SourceHash": "b15db43b5868b7bc930fe7f69575a1e21bd3f28a0c5d31dfcf89eb0482bbc7a1",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/wepon-wall-3.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/wepon-wall-4.bmp",
+            "SourceHash": "6c3971fcd5fe04cb397de706135a36a1dc65554ae62fc1d3abccaaeee7a7082e",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/wepon-wall-4.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/wepon-wall-5.bmp",
+            "SourceHash": "3e83a72f002228a01c0f6e9fe37295453f45f1a5b5a9bc3b60d6b2185cbd072e",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/wepon-wall-5.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/wepon-wall-6.bmp",
+            "SourceHash": "4a1cf5f1d7d4c44a74d1654d412115d2a75ee2442036c05e2b668d524d6f778a",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/wepon-wall-6.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/wepon-wall-7.bmp",
+            "SourceHash": "12e514d560503456de101462f1191414d723ce7b2784c56fc35badcb264ee863",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/wepon-wall-7.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라/wepon-wall.bmp",
+            "SourceHash": "8f9d9fcd30bf207777c73e8c9832bd7dd666770a9cc85cca686137ea5894ac48",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라/wepon-wall.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라내부/h1-door.bmp",
+            "SourceHash": "d1219f8d6b48207f52142e4035091fb27e954452dd2a50a032dda982fc4554b4",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라내부/h1-door.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라내부/h2-door.bmp",
+            "SourceHash": "d73e77357891ab1a35137085ff97cc2399a764414f236df690e967cb3a97a288",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라내부/h2-door.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라내부/h3-door.bmp",
+            "SourceHash": "250c6528e31d3729aa40224a8b50beb9d14b0ab8d8a713c9ab1e4a921c531dd1",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라내부/h3-door.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/프론테라내부/wa-line-1.bmp",
+            "SourceHash": "cd43609f36e78ab5e219f64018a88c0f72f4dc6d2b62f6c7e0e47f4a8e8e227a",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/프론테라내부/wa-line-1.png"
+            ],
+            "Dependencies": []
+        }
+    ]
+}

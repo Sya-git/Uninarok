@@ -505,6 +505,7 @@ MonoBehaviour:
   loginPort: 6900
   maxPacketsPerFrame: 256
   tracePackets: 1
+  keepRunningInBackground: 1
   settings:
     ConnectSeconds: 15
     ReplySeconds: 15
