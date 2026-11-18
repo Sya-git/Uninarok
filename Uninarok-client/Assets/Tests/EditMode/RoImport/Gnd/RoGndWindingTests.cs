@@ -9,7 +9,6 @@ namespace Uninarok.RoImport.Tests.Gnd
     // TASKS-0004 T4.1 (FR-1, FR-2, FR-3): after the Y flip and the one winding reversal (PLAN-0004 4.4), every top faces
     // up and every wall faces its lower side (T0.3), so nothing is inside out. Unity's front face is the one the
     // winding's cross product points toward.
-    [Ignore("pending T4.3")]
     public class RoGndWindingTests
     {
         static bool IsWall(GndMeshTestUtil.WorldTriangle t) => Mathf.Abs(t.Normal.y) <= 1e-6f;

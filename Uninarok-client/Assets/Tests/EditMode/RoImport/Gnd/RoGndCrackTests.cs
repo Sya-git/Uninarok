@@ -9,7 +9,6 @@ using static Uninarok.RoImport.Tests.Gnd.GndMeshTestUtil;
 namespace Uninarok.RoImport.Tests.Gnd
 {
     // TASKS-0004 T4.1 (FR-1, FR-2, FR-3): no cracks and no duplicate faces in the built meshes, across chunk borders.
-    [Ignore("pending T4.3")]
     public class RoGndCrackTests
     {
         static RoGnd[] Maps() => new[] { Terrain(), GndTestMaps.Step(), GndTestMaps.CliffWithGap(), GndTestMaps.Wide(), GndTestMaps.Tall() };

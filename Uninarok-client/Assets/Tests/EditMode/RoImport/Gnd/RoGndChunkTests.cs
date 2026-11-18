@@ -8,7 +8,6 @@ using static Uninarok.RoImport.Tests.Gnd.GndMeshTestUtil;
 namespace Uninarok.RoImport.Tests.Gnd
 {
     // TASKS-0004 T4.2 (FR-3, FR-6): the map cut into 16 x 16 cube chunks (PLAN-0004 4.4).
-    [Ignore("pending T4.3")]
     public class RoGndChunkTests
     {
         const int N = RoGndMeshBuilder.ChunkSize;

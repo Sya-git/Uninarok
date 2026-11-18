@@ -60,7 +60,7 @@
   *Done when:* the tests compile and are ignored with `pending T4.3`.
 - [x] **T4.2** Add `RoGndNormalsTests` and `RoGndChunkTests` (failing, ignored; `RoGndUv2Tests` dropped with the second UV set, plan D6): flat ground gives `up` at every vertex, including across chunk borders; a ramp gives a continuous normal field with no jump at cube borders; tops with different textures share the normal at a common corner; a cliff top corner is not smoothed into the lower ground; wall normals are flat and coplanar walls share their common corners; the vertex count equals the distinct (position, uv) pairs plus the hard-edge vertices (plan D12); a 40 × 33 map gives 3 × 3 chunks with the right cube ranges, a quad belongs to the chunk of its cube, a wall at a chunk border is in its owner's chunk and meets the neighbour's top exactly, indices are 16-bit, submeshes are one per texture in ascending order; a second build gives the same arrays. (FR-3, FR-6, FR-7)
   *Done when:* the tests compile and are ignored with `pending T4.3`.
-- [ ] **T4.3** Implement `Core/Gnd/Mesh/RoGndChunker`, `RoGndMeshData` and `RoGndMeshBuilder` (plan §4.4): welding with the PLAN-0003 vertex key, map-wide angle-weighted normals, walls flat by face normal, reversed winding once, chunk origin. (FR-1, FR-2, FR-3, FR-6, FR-7)
+- [x] **T4.3** Implement `Core/Gnd/Mesh/RoGndChunker`, `RoGndMeshData` and `RoGndMeshBuilder` (plan §4.4): welding with the PLAN-0003 vertex key, map-wide angle-weighted normals, walls flat by face normal, reversed winding once, chunk origin. (FR-1, FR-2, FR-3, FR-6, FR-7)
   *Done when:* `[Ignore]` removed and the tests of T4.1 and T4.2 pass.
 
 ## Phase 5: Editor side

@@ -10,7 +10,6 @@ namespace Uninarok.RoImport.Tests.Gnd
 {
     // TASKS-0004 T4.2 (FR-3, FR-7): normals and vertex merging of PLAN-0004 4.4 (D12). Tops are one smoothing group
     // merged by position across texture seams and chunk borders; walls are flat, grouped by their face normal.
-    [Ignore("pending T4.3")]
     public class RoGndNormalsTests
     {
         const float Eps = 1e-5f;
