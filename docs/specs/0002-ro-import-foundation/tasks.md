@@ -121,7 +121,7 @@
 
 The whole-game texture run, the visual checks and the build checks (formerly T9.1 to T9.3) were removed from this list on 2026-11-18. The owner runs them (plan §6, manual checks).
 
-- [ ] **T9.1** Add JPG to the reader tests and the converter tests (failing, ignored): a JPG built in the test with Unity's encoder decodes through `IRoPngCodec` with `SourceHadAlpha` false; its magenta (within tolerance, despite compression noise) is keyed; `IsSupportedExtension` accepts `.jpg` and `.jpeg`; a JPG source converts to a PNG at the mirrored path with World settings; a half-length JPG fails with a reason. (FR-8)
+- [x] **T9.1** Add JPG to the reader tests and the converter tests (failing, ignored): a JPG built in the test with Unity's encoder decodes through `IRoPngCodec` with `SourceHadAlpha` false; its magenta (within tolerance, despite compression noise) is keyed; `IsSupportedExtension` accepts `.jpg` and `.jpeg`; a JPG source converts to a PNG at the mirrored path with World settings; a half-length JPG fails with a reason. (FR-8)
   *Done when:* the tests compile and are ignored with `pending T9.2`.
 - [ ] **T9.2** Implement JPG support in `RoImageReader` per plan §4.4 (decode through `IRoPngCodec`, no alpha, keyed like BMP). (FR-8)
   *Done when:* `[Ignore]` removed and the tests pass, with the rest of the importer tests.

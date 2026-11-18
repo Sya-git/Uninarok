@@ -161,8 +161,10 @@ namespace Uninarok.RoImport.Tests
         [TestCase(".png", true)]
         [TestCase(".tga", true)]
         [TestCase(".BMP", true)]
+        [TestCase(".jpg", true, Ignore = "pending T9.2")]
+        [TestCase(".jpeg", true, Ignore = "pending T9.2")]
+        [TestCase(".JPG", true, Ignore = "pending T9.2")]
         [TestCase(".dds", false)]
-        [TestCase(".jpg", false)]
         [TestCase(".gif", false)]
         [TestCase("bmp", false)]
         [TestCase("", false)]
@@ -170,6 +172,64 @@ namespace Uninarok.RoImport.Tests
         public void IsSupportedExtension_IsBmpPngTgaOnly(string extension, bool expected)
         {
             Assert.AreEqual(expected, RoImageReader.IsSupportedExtension(extension));
+        }
+
+        // ---- JPG (spec FR-8 since 2026-11-18, plan 4.4): decoded by IRoPngCodec, no alpha, keyed like a BMP ----
+
+        /// <summary>16 x 16: left half magenta, right half green, as a quality-100 JPG from Unity's encoder.</summary>
+        internal static byte[] MagentaGreenJpg()
+        {
+            var texture = new Texture2D(16, 16, TextureFormat.RGB24, false);
+            try
+            {
+                var pixels = new Color32[16 * 16];
+                for (int i = 0; i < pixels.Length; i++) pixels[i] = i % 16 < 8 ? Magenta : Green;
+                texture.SetPixels32(pixels);
+                return texture.EncodeToJPG(100);
+            }
+            finally
+            {
+                Object.DestroyImmediate(texture);
+            }
+        }
+
+        [Test, Ignore("pending T9.2")]
+        public void Jpg_DecodesThroughTheCodec_WithoutSourceAlpha()
+        {
+            var codec = new TestPngCodec();
+
+            Assert.IsTrue(RoImageReader.TryRead(RoPath.Parse("texture/basepic/a.jpg"), MagentaGreenJpg(), codec, out var image, out var reason), reason);
+
+            Assert.AreEqual(16, image.Width);
+            Assert.AreEqual(16, image.Height);
+            Assert.IsFalse(image.SourceHadAlpha, "a JPG has no alpha channel");
+            Assert.AreEqual(1, codec.Decodes, "JPG goes through IRoPngCodec, not GRF");
+            var green = image.GetPixel(13, 8);
+            Assert.That(green.g, Is.GreaterThan(240));
+            Assert.That(green.r, Is.LessThan(15));
+        }
+
+        [Test, Ignore("pending T9.2")]
+        public void Jpg_MagentaIsKeyedDespiteCompressionNoise()
+        {
+            Assert.IsTrue(RoImageReader.TryRead(RoPath.Parse("texture/a.jpeg"), MagentaGreenJpg(), new TestPngCodec(), out var image, out _));
+
+            Assert.AreEqual(RoTextureAlpha.Keyed, RoColorKey.Apply(image));
+            Assert.AreEqual(0, image.GetPixel(2, 8).a, "magenta, a little off after compression, is still within the tolerance");
+            Assert.AreEqual(255, image.GetPixel(13, 8).a);
+        }
+
+        [Test, Ignore("pending T9.2")]
+        public void HalfLengthJpg_ReturnsFalseWithAReason()
+        {
+            byte[] jpg = MagentaGreenJpg();
+            bool ok = true;
+            string reason = null;
+
+            Assert.DoesNotThrow(() => ok = RoImageReader.TryRead(RoPath.Parse("texture/a.jpg"), jpg.Take(jpg.Length / 2).ToArray(), new TestPngCodec(), out _, out reason));
+
+            Assert.IsFalse(ok);
+            Assert.That(reason, Is.Not.Null.And.Not.Empty);
         }
 
         [Test]

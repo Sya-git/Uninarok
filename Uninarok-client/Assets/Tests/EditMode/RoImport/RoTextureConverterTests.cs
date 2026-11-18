@@ -129,6 +129,23 @@ namespace Uninarok.RoImport.Tests
             Assert.AreEqual(64, OutputPixels("texture/rgba.png").GetPixel(1, 0).a);
         }
 
+        [Test, Ignore("pending T9.2")]
+        public void Jpg_ConvertsToAKeyedPng_WithWorldSettings()
+        {
+            string root = Path.Combine(_temp, "data");
+            Directory.CreateDirectory(Path.Combine(root, "texture", "basepic"));
+            File.WriteAllBytes(Path.Combine(root, "texture", "basepic", "loading.jpg"), RoImageReaderTests.MagentaGreenJpg());
+            var ctx = Context(new RoFolderSource(root));
+
+            var result = Convert(ctx, "texture/basepic/loading.jpg");
+
+            Assert.AreEqual(RoStatus.Created, result.Status);
+            Assert.AreEqual("Assets/__RoImportTests/Art/texture/basepic/loading.png", AssetDatabase.GetAssetPath(result.Value));
+            AssertWorld(Importer("texture/basepic/loading.jpg"), preserveCoverage: true);
+            Assert.AreEqual(0, OutputPixels("texture/basepic/loading.jpg").GetPixel(2, 8).a, "the magenta half is transparent");
+            Assert.AreEqual(255, OutputPixels("texture/basepic/loading.jpg").GetPixel(13, 8).a);
+        }
+
         [Test]
         public void UiTexture_GetsUiSettings()
         {
