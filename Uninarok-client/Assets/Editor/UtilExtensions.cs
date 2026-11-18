@@ -1,4 +1,6 @@
-﻿using GRF.Graphics;
+﻿// Old import pipeline, compiled out by SPEC-0002 T0.2 (plan D15). Deleted by the plan that replaces it.
+#if RO_LEGACY_IMPORTERS
+using GRF.Graphics;
 using UnityEngine;
 
 namespace Uninarok.Editor
@@ -16,3 +18,4 @@ namespace Uninarok.Editor
         }
     }
 }
+#endif

@@ -2,11 +2,11 @@
 
 | | |
 |---|---|
-| **Status** | Approved |
+| **Status** | Implemented |
 | **Created** | 2026-11-16 |
 | **Owner** | _(fill in)_ |
-| **Plan** | plan.md _(written after approval)_ |
-| **Tasks** | tasks.md _(written after plan approval)_ |
+| **Plan** | [plan.md](plan.md) |
+| **Tasks** | [tasks.md](tasks.md) |
 
 Part of the importer family: 0002 foundation (this), 0003 models (RSM), 0004 ground (GND), 0005 map data (GAT), 0006 map scene (RSW), 0007 sprites (SPR/ACT/PAL). Requirements shared by all of them live here.
 
@@ -42,7 +42,7 @@ Priority: **M** = must, **S** = should.
 | FR-5 | M | Converting the same input twice is idempotent: no duplicates, and objects that reference an output (scenes, prefabs, data) keep their references. Unchanged inputs are skipped. | Converting a map twice leaves the same asset set, identities and references unchanged. The second run reports "skipped". |
 | FR-6 | M | Dependencies are converted on demand. Asking for a map converts its models, textures and materials that are missing. | Converting a map in an empty output folder yields a complete, working map. |
 | FR-7 | M | One shared coordinate and unit convention is used everywhere: Ragnarok content appears with correct handedness (not mirrored, not inside-out), correct up direction, and at a fixed scale where one ground cube is exactly one Unity unit wide. | A reference model and a reference map match the reference viewer side by side, including text on signs reading correctly. A ground cube measures 1 unit. |
-| FR-8 | M | Textures: the Ragnarok transparency color becomes real transparency, with no colored fringe at edges when filtered or at distance. Texture settings depend on usage (model, ground, sprite/UI), not on file extension. Supported source formats are BMP, PNG and TGA; a texture in any other format gives one warning naming the file and its referrer, and the conversion continues with a visible placeholder. | A leaf texture shows no pink edge at close and far range. A sprite texture is not treated as a model texture and vice versa. A BMP, a PNG and a TGA texture each convert. A texture with an unsupported extension produces one warning and a placeholder. |
+| FR-8 | M | Textures: the Ragnarok transparency color becomes real transparency, with no colored fringe at edges when filtered or at distance. Texture settings depend on usage (model, ground, sprite/UI), not on file extension. Supported source formats are BMP, PNG, JPG and TGA; a texture in any other format gives one warning naming the file and its referrer, and the conversion continues with a visible placeholder. | A leaf texture shows no pink edge at close and far range. A sprite texture is not treated as a model texture and vice versa. A BMP, a PNG, a JPG and a TGA texture each convert. A texture with an unsupported extension produces one warning and a placeholder. |
 | FR-9 | M | Materials are lit, shared and de-duplicated: the same texture and the same surface mode (opaque, cutout, two-sided) always resolve to one material. | 1000 models using one texture reference one material. A two-sided face renders from both sides. |
 | FR-10 | M | A batch continues past failures, shows progress, and ends with a list of failed items and reasons. A missing source file or texture produces one warning naming the item and its referrer, and the conversion continues with a visible placeholder. | A batch with one corrupt file finishes the rest and lists the corrupt one once. A missing texture shows a placeholder, not a crash. |
 | FR-11 | M | Informational and expected conditions are not logged as errors. | A clean batch produces no error log entries. |
@@ -74,4 +74,4 @@ Priority: **M** = must, **S** = should.
 
 | # | Question | Blocks |
 |---|---|---|
-| OQ-1 | None open. Texture formats are BMP, PNG and TGA (decided); others warn. |  |
+| OQ-1 | None open. Texture formats are BMP, PNG, JPG and TGA (decided; JPG added by the owner on 2026-11-18, after the game data turned out to contain JPG textures); others warn. |  |
