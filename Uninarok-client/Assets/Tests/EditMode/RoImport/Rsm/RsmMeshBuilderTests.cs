@@ -9,7 +9,6 @@ using Uninarok.RoImport.Core.Space;
 namespace Uninarok.RoImport.Tests.Rsm
 {
     // TASKS-0003 T4.1 (FR-4): vertices that share position and texture coordinate are stored once (PLAN-0003 4.6).
-    [Ignore("pending T4.3")]
     public class RsmMeshBuilderTests
     {
         static RsmMeshData Build(RoRsmNode node, RsmShadeType shade = RsmShadeType.Smooth, RoReport report = null) =>

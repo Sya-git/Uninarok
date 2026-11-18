@@ -8,7 +8,6 @@ using Uninarok.RoImport.Core.Space;
 namespace Uninarok.RoImport.Tests.Rsm
 {
     // TASKS-0003 T4.2 (FR-5): normals by shade type and smoothing group (PLAN-0003 4.6).
-    [Ignore("pending T4.3")]
     public class RsmShadingTests
     {
         const float Eps = 1e-4f;

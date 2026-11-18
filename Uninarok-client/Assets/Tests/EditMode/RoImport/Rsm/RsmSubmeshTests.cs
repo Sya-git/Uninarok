@@ -9,7 +9,6 @@ using Uninarok.RoImport.Core.Rsm;
 namespace Uninarok.RoImport.Tests.Rsm
 {
     // TASKS-0003 T4.2 (FR-6, FR-7): faces grouped by (texture, two-sided), PLAN-0003 4.3 and 4.6.
-    [Ignore("pending T4.3")]
     public class RsmSubmeshTests
     {
         /// <summary>A cube whose 12 faces use node slots and sidedness given per face.</summary>

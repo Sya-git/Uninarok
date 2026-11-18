@@ -46,16 +46,18 @@ namespace Uninarok.RoImport.Tests.Rsm
             if (!perFaceUv)
                 for (int i = 0; i < 8; i++) tex.Add(new RoRsmTexCoord(i / 8f, (i % 2) * 0.5f));
 
-            foreach (var s in sides)
+            for (int side = 0; side < sides.Length; side++)
             {
+                var s = sides[side];
+                float u0 = side / 6f, u1 = (side + 1) / 6f;   // each side its own part of the texture
                 int t0, t1, t2, t3;
                 if (perFaceUv)
                 {
                     t0 = tex.Count;
-                    tex.Add(new RoRsmTexCoord(0, 0));
-                    tex.Add(new RoRsmTexCoord(0, 1));
-                    tex.Add(new RoRsmTexCoord(1, 1));
-                    tex.Add(new RoRsmTexCoord(1, 0));
+                    tex.Add(new RoRsmTexCoord(u0, 0));
+                    tex.Add(new RoRsmTexCoord(u0, 1));
+                    tex.Add(new RoRsmTexCoord(u1, 1));
+                    tex.Add(new RoRsmTexCoord(u1, 0));
                     t1 = t0 + 1; t2 = t0 + 2; t3 = t0 + 3;
                 }
                 else
@@ -79,7 +81,7 @@ namespace Uninarok.RoImport.Tests.Rsm
         /// <summary>
         /// An open cylinder strip of <paramref name="segments"/> quads around the Y axis. The texture wraps once, so the
         /// seam has two coordinates (u = 0 and u = 1) at the same positions: segments + 1 coordinates per ring.
-        /// Positions are shared: 2 * segments vertices, 2 * segments faces.
+        /// Positions are shared: 2 * segments vertices, 2 * segments faces, wound outward.
         /// </summary>
         public static RoRsmNode CylinderStrip(int segments = 8, string name = "cylinder")
         {
@@ -102,8 +104,9 @@ namespace Uninarok.RoImport.Tests.Rsm
             {
                 int b0 = 2 * i, t0 = b0 + 1, b1 = 2 * ((i + 1) % segments), t1 = b1 + 1;
                 int ub0 = 2 * i, ut0 = ub0 + 1, ub1 = 2 * (i + 1), ut1 = ub1 + 1;
-                faces.Add(new RoRsmFace(b0, t0, t1, ub0, ut0, ut1));
-                faces.Add(new RoRsmFace(b0, t1, b1, ub0, ut1, ub1));
+                // Outward facing in Ragnarok space (counter-clockwise seen from outside, right-handed).
+                faces.Add(new RoRsmFace(b0, t1, t0, ub0, ut1, ut0));
+                faces.Add(new RoRsmFace(b0, b1, t1, ub0, ub1, ut1));
             }
 
             return new RoRsmNode
