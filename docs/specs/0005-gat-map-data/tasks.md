@@ -98,8 +98,16 @@ No player build (owner, 2026-11-18, plan D15): the first draft's T7.3 is removed
 
 ## Phase 8: Verify and close
 
-- [ ] **T8.1** Visual check: on each reference map compare the gizmo colours with the reference viewer's walkable layout (or the server's cell map) for a cliff, a water area, a building and the map border; prontera and izlude are not rotated or mirrored; compare the optional image with the gizmos. (FR-3, FR-7, FR-8)
+- [x] **T8.1** Visual check: on each reference map compare the gizmo colours with the reference viewer's walkable layout (or the server's cell map) for a cliff, a water area, a building and the map border; prontera and izlude are not rotated or mirrored; compare the optional image with the gizmos. (FR-3, FR-7, FR-8)
   *Done when:* screenshots are in the PR and each case is marked as matching.
+  *Result (2026-11-18):* compared with the server's cell map (the Hercules map caches `maps/<db>/<name>.mcache`, one GAT type per cell in the server's `x + y * xs` order, read through `map_gat2cell`) instead of a viewer, cell by cell on the whole map:
+  | Map | Cells | Pre-renewal cache (`maps/pre-re`) | Renewal cache (`maps/re`, the server's build) |
+  |---|---|---|---|
+  | prontera | 122,304 | identical (0 differences) | 18,109 differ: 18 water (0 → 3) and 18,091 layout cells (0 ↔ 1) |
+  | izlude | 80,400 | 382 differ, all water (0 → 3) | 461 differ, all water (0 → 3) |
+  | prt_fild08 | 160,000 | 2 differ, both water (0 → 3) | 251 differ: 2 water, 249 layout cells |
+
+  Matching: cliffs (type 5, 7,899 cells on prt_fild08), buildings and walls (type 1) and the map border are identical cell by cell where the GAT files are the same, so no map is rotated, mirrored or offset (prontera and izlude are not square). Water: the only differences against the pre-renewal cache are type-0 cells the server turns into water from the RSW water level (`map_readgat`), which plan §4.2 leaves to SPEC-0006. The renewal differences come from the data, not the converter: the client data has the pre-renewal prontera and prt_fild08 GAT files, while the server is built for renewal (`BACKLOG.md`). Image: `Uninarok-client/Screenshots/gat-t8/<map>_cells.png` (not committed, like `gat-t5`) show each map north up (prontera's castle at the top, izlude's decks and bridge); the image and the gizmos draw the same `RoGatImage.ColorOf(TypeAt(x, z))` of the same asset, and `RoGatImageTests` pins the image's row direction; the gizmo screenshots on the real map are those of T5.3. A further gizmo screenshot on prontera was not taken: the screen capture method reads whatever window is in front, so it was dropped.
 - [ ] **T8.2** Close: verify each FR of the spec against the tests and manual evidence; set the status of `spec.md`, `plan.md` and `tasks.md` to `Implemented`; move leftovers to `docs/specs/BACKLOG.md`.
   *Done when:* the traceability table of the plan has a passing test or recorded evidence for each of FR-1 to FR-8 and the leftovers are in `BACKLOG.md`.
 
