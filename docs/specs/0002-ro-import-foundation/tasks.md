@@ -125,7 +125,11 @@ The whole-game texture run, the visual checks and the build checks (formerly T9.
   *Done when:* the tests compile and are ignored with `pending T9.2`.
 - [x] **T9.2** Implement JPG support in `RoImageReader` per plan §4.4 (decode through `IRoPngCodec`, no alpha, keyed like BMP). (FR-8)
   *Done when:* `[Ignore]` removed and the tests pass, with the rest of the importer tests.
-- [ ] **T9.3** Close: verify every FR of the spec against the test list and manual evidence; set the status of `spec.md`, `plan.md` and `tasks.md` to `Implemented` (the owner sets `Approved` states; `Implemented` follows the lifecycle in CLAUDE.md §1.3); move leftovers to `docs/specs/BACKLOG.md`.
+- [ ] **T9.3** Keep the original size of non-power-of-two World textures (plan §4.4 table, D20): `npotScale` none in the World settings, texture converter rules version 2; a test converts a 6 x 4 texture and checks the imported size and the importer setting, and an existing output converted under rules 1 is reconverted. (FR-8)
+  *Done when:* the test passes with the rest of the importer tests.
+- [ ] **T9.4** Folder lines expand only to files the converter handles (plan §4.11, D21): `IRoConverter.Handles(RoPath)`, used by `RoImportJobs.Expand` for folder lines only. (FR-2, FR-8)
+  *Done when:* a test shows `texture/` over the fixtures expands to the 7 images without `unsupported.dds`, while a single `.dds` line still becomes a job.
+- [ ] **T9.5** Close: verify every FR of the spec against the test list and manual evidence; set the status of `spec.md`, `plan.md` and `tasks.md` to `Implemented` (the owner sets `Approved` states; `Implemented` follows the lifecycle in CLAUDE.md §1.3); move leftovers to `docs/specs/BACKLOG.md`.
   *Done when:* the traceability table of the plan has a passing test or recorded evidence for each of FR-1 to FR-16, or names the owner's manual check that covers it, and the leftovers are in `BACKLOG.md`.
 
 ---
@@ -135,13 +139,13 @@ The whole-game texture run, the visual checks and the build checks (formerly T9.
 | FR | Tasks |
 |---|---|
 | FR-1 | T1.2, T1.3, T2.1, T2.2, T2.3, T0.3 |
-| FR-2 | T5.2, T6.2, T6.4, T7.1 |
+| FR-2 | T5.2, T6.2, T6.4, T7.1, T9.4 |
 | FR-3 | T0.2, T7.2, T8.1, T8.3 |
 | FR-4 | T4.1, T4.3, T4.4, T6.1, T8.2 |
 | FR-5 | T4.3, T4.4, T4.5, T4.6, T6.2, T6.3, T6.4, T6.5 |
 | FR-6 | T5.2, T5.3, T6.2, T6.3 |
 | FR-7 | T1.4, T1.5 |
-| FR-8 | T0.3, T0.4, T3.1–T3.4, T4.2, T5.4, T6.1, T6.2, T8.1, T9.1, T9.2 |
+| FR-8 | T0.3, T0.4, T3.1–T3.4, T4.2, T5.4, T6.1, T6.2, T8.1, T9.1, T9.2, T9.3, T9.4 |
 | FR-9 | T5.1, T5.3 |
 | FR-10 | T1.1, T5.4, T6.1, T6.2, T6.4, T6.5 |
 | FR-11 | T1.1, T6.4, T6.5 |

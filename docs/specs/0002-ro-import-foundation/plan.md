@@ -248,6 +248,9 @@ public static class RoTextureUsageRules { public static RoTextureUsage For(RoPat
 | Filter | Bilinear | Point |
 | Compression | normal quality | none |
 | Read/write | off | off |
+| Non-power-of-two scale | none (keep the original size) | n/a (sprites are never rescaled) |
+
+The non-power-of-two row was added on 2026-11-18 (owner decision, D20). Unity's default rescales a non-power-of-two Default texture to the nearest power of two, which distorted UI-like images kept under `texture/`, such as `basepic/loading00.jpg` (640 x 480 imported as 512 x 512). The texture converter's rules version goes to 2 with it, so a rerun applies the setting to textures converted before.
 
 ### 4.5 Output paths: `RoOutputRoots`, `RoOutputPaths`
 
@@ -490,6 +493,7 @@ Satisfies FR-2.
   - `Tools/Ragnarok/Convert All Textures` runs a batch over `Enumerate("texture/")`.
 - `RoImportWindow` shows the source root (with Browse), a kind popup (one entry per registered `RoJobKind`), a text area with one Ragnarok path or folder prefix per line (a folder prefix ends with `/` and expands through `Enumerate`), a **Scan** button that lists what the lines expand to, a **Force** toggle, and **Convert**. The result summary is shown in the window and logged once.
 - The window and the menu call only `RoImport.Run`, so UI and code paths cannot differ.
+- **Folder lines expand only to files the kind's converter handles** (owner decision 2026-11-18, D21). `IRoConverter` gains `bool Handles(RoPath path)`; for textures that means BMP, PNG, JPG and TGA. Other files under `texture/` are skipped silently: about 3,200 in the game data, for example `.str` effects, `.ezv`, `.db`, and `.spr`/`.act` sprites, which PLAN-0007 imports. A single path line, or a texture a model or map asks for, still goes to the converter, so an unsupported format there still gives its one warning and the placeholder (FR-8).
 
 ### 4.12 Placeholders: `RoPlaceholders`
 
@@ -599,6 +603,8 @@ Satisfies FR-13 and every acceptance row of spec §4. Tests are EditMode NUnit t
 | D13 | Window and menu open a path list, not "convert the selected assets" | Project-window selection (source files are not Unity assets, so there is nothing to select) |
 | D14 | Ledger-owned outputs are the only files the tool deletes. It overwrites those, plus any file at a reserved generated path (mirrored path, `_materials`, `_placeholders`), in place (owner decision 2026-11-17, after T6.2) | Clean the whole output folder before a run (destroys additive and hand-made assets); strict ledger ownership for overwrites too (after a lost ledger every existing output would fail until deleted, which would change its GUID) |
 | D15 | Old importers are compiled out at once with `#if RO_LEGACY_IMPORTERS` (owner decision, 2026-11-17) and deleted later by the plan that replaces each; the source folder is still hidden with `~` (D2) | Rely on the `~` folder alone (the old importers would still fire on any source file placed elsewhere in `Assets/`); comment the code out (a large, unreadable diff); delete everything now (the format plans read the old code as reference); keep the folder visible and only disable the old importers (Unity would still import every image and create a `.meta` per file, violating FR-15) |
+| D21 | Folder expansion in the window and menu keeps only files the converter handles (owner decision 2026-11-18) | Send every file under the folder to the converter (thousands of warnings for effects and sprites that are not textures); filter inside the converter (an explicitly requested unsupported texture must still warn, FR-8) |
+| D20 | World textures keep their original size: non-power-of-two scale none (owner decision 2026-11-18) | Unity's default nearest power of two (distorts UI-like images under `texture/`, e.g. `basepic/loading00.jpg`); reclassify such folders as Ui now (left for later, owner's call) |
 | D19 | Same-name `.bmp` wins over `.tga`/`.png`, and requests for the others resolve to it (owner decision after T7.1) | First owner wins for every extension, as first planned (a model naming the `.tga` would show the placeholder); the source with real alpha wins; keep the extension in the output name (renames only the clashing files, but references must know about it) |
 | D18 | The batch imports each asset synchronously as it is written, without a batch-wide `StartAssetEditing` (found while writing T6.4) | One asset-editing block per chunk, as first planned: new files cannot be loaded until the block ends, so a material in the same chunk as its texture would get none; resolving references after each chunk: a second pass in every converter, more complex for a speed-up that is not measured yet (D12) |
 | D17 | A real-alpha image whose alpha is only 0 and 255 is classified `Keyed` (cutout), found while writing T3.3 | `None`, as first written: an opaque material would draw its transparent pixels solid, against FR-8; `Partial`: a blended material for a hard-edged texture costs sorting and depth writes for nothing |
