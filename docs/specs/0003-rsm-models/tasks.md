@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Approved |
+| **Status** | Implementing (all tasks done; FR-3 is confirmed with SPEC-0006, then Implemented) |
 
 **How to use this file**
 - Start only when TASKS-0002 phases 0 to 6 are done (the foundation: paths, `RoSpace`, writer, ledger, materials, context, batch, texture converter). Tasks here use those contracts as written in PLAN-0002.
@@ -93,15 +93,9 @@
 
 ## Phase 8: Verify and close
 
-- [ ] **T8.1** Visual comparison: each model of the reference tables (the reported four first) imported and placed in a scratch scene, compared with the reference viewer from front, side and top; screenshots attached to the PR and referenced from `reference-models.md`. (FR-2)
-  *Done when:* no model in the reference set is offset, rotated or mirrored differently from the reference viewer, or each difference is listed and the owner has decided.
-- [ ] **T8.2** Lighting check: `야자수01` trunk and a barrel-like model show no facets or seams at texture borders; `넝쿨01`, `동굴입구` and `iz_bridge01` keep crisp edges; `iz_enchant` and `이즈루드초소` match the reference; a two-sided leaf plane is visible from both sides and `프론테라/입구초소` shows no see-through walls from outside. (FR-5, FR-6)
-  *Done when:* screenshots are in the PR and each case is marked as matching.
-- [ ] **T8.3** Animation budget: in a scratch scene instantiate 200 copies of the clock tower and, in a standalone development build on the owner's machine, record with the Profiler the managed allocation per frame and the animation update time, with all instances on screen and then all off screen. (FR-9)
-  *Done when:* `GC.Alloc` for the animation update is zero in steady state and the update takes at most 0.5 ms (plan §4.8), or the owner has agreed another budget in writing, or the D5 fallback is opened as a new plan item. The clock tower's speed and direction are confirmed again in the build.
-- [ ] **T8.4** Delete `RsmImpoter.cs` and `RsmImpoter.bkp.cs` (and their `.meta` files); delete the parts of `UtilExtensions.cs` that only the RSM importer used, and the whole file if nothing else uses it (a search result is pasted, the remaining users named for PLAN-0004 to PLAN-0006). Update `plan.md` §7 if the list of remaining old importers changes. (FR-10)
-  *Done when:* the project compiles with no reference to the deleted classes and `RoArchitectureTests` (TASKS-0002 T7.2) still pass.
-- [ ] **T8.5** Close: verify each FR of the spec against the tests and manual evidence; FR-3 is closed together with the ground-contact check of SPEC-0006; set the status of `spec.md`, `plan.md` and `tasks.md` to `Implemented` once FR-3 is confirmed; move leftovers to `docs/specs/BACKLOG.md`.
+> **Task list change (owner, 2026-11-18).** T8.1 (visual comparison), T8.2 (lighting screenshots), T8.3 (animation budget in a build) and T8.4 (delete the old importer) were removed as not needed. The evidence each FR rests on instead is in the traceability table of `plan.md` §10; what they would have done is in `BACKLOG.md`.
+
+- [x] **T8.5** Close: verify each FR of the spec against the tests and manual evidence; FR-3 is closed together with the ground-contact check of SPEC-0006; set the status of `spec.md`, `plan.md` and `tasks.md` to `Implemented` once FR-3 is confirmed; move leftovers to `docs/specs/BACKLOG.md`.
   *Done when:* the traceability table of the plan has a passing test or recorded evidence for each of FR-1 to FR-10 (FR-3 pending on SPEC-0006 is listed explicitly if not yet closed) and the leftovers are in `BACKLOG.md`.
 
 ---
@@ -111,12 +105,12 @@
 | FR | Tasks |
 |---|---|
 | FR-1 | T1.1, T2.1, T2.2, T6.1, T6.2, T6.3 |
-| FR-2 | T0.2, T0.3, T1.1, T1.3, T3.1, T3.2, T3.3, T7.1, T8.1 |
+| FR-2 | T0.2, T0.3, T1.1, T1.3, T3.1, T3.2, T3.3, T7.1 |
 | FR-3 | T0.3, T3.1, T3.2, T8.5 (closed with SPEC-0006) |
 | FR-4 | T4.1, T4.3, T4.4 |
-| FR-5 | T0.3, T4.2, T4.3, T4.4, T8.2 |
-| FR-6 | T4.2, T4.3, T8.2 |
+| FR-5 | T0.3, T4.2, T4.3, T4.4 |
+| FR-6 | T3.1, T4.2, T4.3 |
 | FR-7 | T4.2, T6.2, T6.3 |
 | FR-8 | T0.1, T0.2, T0.3, T1.1, T1.2, T1.3, T6.4, T7.1, T7.2 |
-| FR-9 | T0.4, T5.1, T5.2, T6.4, T8.3 |
-| FR-10 | T6.1, T6.2, T6.3, T6.4, T8.4 |
+| FR-9 | T0.4, T5.1, T5.2, T6.4 |
+| FR-10 | T6.1, T6.2, T6.3, T6.4, T6.5 |

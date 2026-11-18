@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [spec.md](spec.md) (SPEC-0003) |
-| **Status** | Approved |
+| **Status** | Implementing (all tasks done; FR-3 is confirmed with SPEC-0006, then Implemented) |
 | **Audience** | Architects, senior developers, AI agents |
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. Shared rules (paths, units and axes, textures, materials, ledger, results, batch) come from [PLAN-0002](../0002-ro-import-foundation/plan.md) and are used here, not restated. The reference models are in [`reference-models.md`](reference-models.md), which is normative for the checks in §6.
@@ -405,15 +405,15 @@ Items for the owner's approval: D3's spec wording, and the animation budget of �
 
 ## 10. Traceability
 
-| FR | Plan sections |
-|---|---|
-| FR-1 | 3, 4.2, 4.7, 6 |
-| FR-2 | 2, 4.1, 4.4, 4.5, 6 |
-| FR-3 | 4.4, 6 (closed with PLAN-0006) |
-| FR-4 | 4.6, 6 |
-| FR-5 | 4.6, 6 |
-| FR-6 | 4.3, 4.5, 4.6, 6 |
-| FR-7 | 4.3, 4.7, 6 |
-| FR-8 | 4.1, 4.9, 6 |
-| FR-9 | 4.8, 5, 6 |
-| FR-10 | 3, 4.7, 4.9, 6 |
+| FR | Plan sections | Evidence (TASKS-0003 T8.5, 2026-11-18) |
+|---|---|---|
+| FR-1 | 3, 4.2, 4.7, 6 | `RsmHierarchyTests` (child before parent, names, duplicates, missing parent, cycle, several roots); `RsmWriterTests.PrefabHierarchy_EqualsTheTree_WithUniqueNames`; `RsmOutputPathsTests` |
+| FR-2 | 2, 4.1, 4.4, 4.5, 6 | `RsmPoseTests`, `RsmSpaceConversionTests` (incl. mirrored scale and offset matrix, old-formula guard); `RsmReferenceTests` part 1 and `RsmReferenceConversionTests` (recorded root transforms and bounds of the reported and control models); T0.3: R1 equals roBrowser and BrowEdit3 on all 140 models, and the owner compared the 18 captures with the reference viewer |
+| FR-3 | 4.4, 6 | Rule: bottom center of the rest-pose bounds at the origin, `RsmPoseTests.Recenter_*`, reference bounds max y = 0. **Pending:** the ground-contact check of SPEC-0006 on prontera, izlude, prt_fild08 |
+| FR-4 | 4.6, 6 | `RsmMeshBuilderTests` (24/8 cube, seam, weld by value, 16/32-bit); `RsmReferenceTests` part 2 (every reference model below 3 vertices per face, counts = distinct (position, uv[, normal group])); D11 |
+| FR-5 | 4.6, 6 | `RsmShadingTests` (seam, angle weighting, flat, groups, none, no shade type); `RsmReferenceTests` part 2 (none, flat and smooth samples); T0.3 captures of the shade samples seen by the owner |
+| FR-6 | 4.3, 4.5, 4.6, 6 | `RsmSubmeshTests` (grouping, two-sided not duplicated, material key); `RsmSpaceConversionTests` (outward facing); `RsmWriterTests.TwoSidedFaces_UseTheTwoSidedMaterial` |
+| FR-7 | 4.3, 4.7, 6 | `RsmWriterTests` (shared materials from the pipeline, 1000 nodes one material, tga/png/bmp resolution D12) |
+| FR-8 | 4.1, 4.9, 6 | `RoRsmReaderTests` (34 reference models against a raw read, truncated and empty input); `RsmWriterTests.FailingModel_*`; T7.1/T7.2: 140 of 140 models convert, rerun all Skipped with no file changed (`reference-models.md` §8). 1.5 and 2.x: `UnsupportedRsmVersion` (D9), none in the working data |
+| FR-9 | 4.8, 5, 6 | `RsmAnimationTests`; `RsmWriterTests.AnimatedModel_*`, `TwoLoopLengths_*`; T0.4: clock tower and fountain timing, direction and loop confirmed by the owner. The 200-instance budget was not measured (T8.3 removed by the owner) |
+| FR-10 | 3, 4.7, 4.9, 6 | `RsmWriterTests.MeshAndMaterial_AreEditableWithoutTouchingTheSource`, separate mesh/material assets; `RsmIdempotencyTests` (skip, byte-identical forced rerun, GUIDs kept) |
