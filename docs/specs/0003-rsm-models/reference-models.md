@@ -67,3 +67,44 @@ Source folder: `Uninarok-client/Assets/Editor/GRF Resources~/data/`.
 - Every model of §1 to §3 exists under `model/` (34 of 34). The three reference maps exist with `.rsw`, `.gnd` and `.gat`.
 - After the owner trimmed the source folder (2026-11-17), `model/` holds **140 `.rsm` files, all version 1.4, and no `.rsm2`**. All 140 load through GRF and every texture they reference exists under `texture/`.
 - Before the trim the folder held the full data: 7,044 `.rsm` (6,554 of 1.4, 490 of 1.5) and 1,893 `.rsm2` (258 of 2.2, 1,635 of 2.3). Versions 1.5, 2.2 and 2.3 therefore exist in the full game data but are not in the working data set; §5 still applies to it.
+
+## 7. Expected values (TASKS-0003 T1.2)
+
+Counted by a raw read of the files that does not use GRF (a scratch script of T1.2), so the reader tests check the GRF adapter against an independent source. Per node values (names, parents, vertices, texture coordinates, faces, keys) are in `Uninarok-client/Assets/Tests/EditMode/RoImport/Rsm/Fixtures~/reference-nodes.csv`; this table sums them per model. Shade type: 0 none, 1 flat, 2 smooth.
+
+| Model | Version | Shade | Nodes | Vertices | Faces | Rotation keys |
+|---|---|---|---|---|---|---|
+| 나무잡초꽃/버섯02 | 1.4 | 2 | 1 | 21 | 26 | 0 |
+| 나무잡초꽃/버섯01 | 1.4 | 2 | 1 | 21 | 26 | 0 |
+| 나무잡초꽃/넝쿨01 | 1.4 | 1 | 1 | 4 | 2 | 0 |
+| 나무잡초꽃/덤불02 | 1.4 | 2 | 1 | 72 | 64 | 0 |
+| 나무잡초꽃/덤불01 | 1.4 | 2 | 1 | 54 | 48 | 0 |
+| 나무잡초꽃/야자수01 | 1.4 | 2 | 1 | 144 | 114 | 0 |
+| 프론테라/성_기둥 | 1.4 | 2 | 1 | 128 | 182 | 0 |
+| 프론테라/휘장 | 1.4 | 2 | 1 | 4 | 2 | 0 |
+| 외부소품/이정표01 | 1.4 | 2 | 1 | 20 | 16 | 0 |
+| 나무잡초꽃/나무01 | 1.4 | 2 | 1 | 70 | 64 | 0 |
+| 나무잡초꽃/선인장01 | 1.4 | 2 | 1 | 161 | 232 | 0 |
+| 프론테라/성_다리 | 1.4 | 2 | 1 | 104 | 114 | 0 |
+| 나무잡초꽃/나무기둥01 | 1.4 | 2 | 1 | 84 | 127 | 0 |
+| 프론테라/프론테라성기둥 | 1.4 | 2 | 1 | 80 | 102 | 0 |
+| 나무잡초꽃/나뭇잎01 | 1.4 | 2 | 1 | 9 | 10 | 0 |
+| 외부소품/벤치01 | 1.4 | 2 | 1 | 20 | 14 | 0 |
+| 외부소품/동굴입구 | 1.4 | 1 | 1 | 130 | 170 | 0 |
+| 프론테라/성_앞문 | 1.4 | 2 | 1 | 45 | 64 | 0 |
+| 프론테라/입구초소 | 1.4 | 2 | 1 | 130 | 147 | 0 |
+| 라헬/분수 | 1.4 | 0 | 23 | 799 | 1071 | 1078 |
+| 외부소품/게시판 | 1.4 | 2 | 2 | 53 | 80 | 5 |
+| 외부소품/프론아레나 | 1.4 | 2 | 2 | 440 | 552 | 5 |
+| izlude/iz_bridge01 | 1.4 | 1 | 9 | 158 | 144 | 0 |
+| dewata/다약화로01 | 1.4 | 2 | 2 | 76 | 105 | 0 |
+| izlude/iz_fruitshop | 1.4 | 2 | 2 | 108 | 158 | 0 |
+| 프론테라/시계탑 | 1.4 | 2 | 5 | 131 | 142 | 108 |
+| izlude/iz_smelter | 1.4 | 2 | 16 | 339 | 395 | 246 |
+| izlude/iz_enchant | 1.4 | 0 | 4 | 810 | 1536 | 101 |
+| 아인브로크/비공정 | 1.4 | 2 | 7 | 781 | 932 | 126 |
+| 외부소품/퀴즈경기장 | 1.4 | 2 | 6 | 387 | 484 | 29 |
+| 프론테라/교역소 | 1.4 | 2 | 2 | 201 | 219 | 5 |
+| 프론테라/도구점 | 1.4 | 2 | 2 | 234 | 293 | 5 |
+| 외부소품/이즈루드초소 | 1.4 | 0 | 1 | 120 | 114 | 0 |
+| 프론테라/프론테라성입구 | 1.4 | 2 | 1 | 452 | 548 | 0 |
