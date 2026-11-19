@@ -95,6 +95,16 @@ namespace Uninarok.RoImport.Core.Formats
             return true;
         }
 
+        /// <summary>The version in the header (<c>SP</c>, minor, major), without reading the file; false when it is not an SPR.</summary>
+        public static bool TryReadVersion(byte[] bytes, out int major, out int minor)
+        {
+            major = minor = 0;
+            if (bytes == null || bytes.Length < 4 || bytes[0] != 'S' || bytes[1] != 'P') return false;
+            minor = bytes[2];
+            major = bytes[3];
+            return true;
+        }
+
         static byte[] BgraToRgba(byte[] bgra)
         {
             var rgba = new byte[bgra.Length];

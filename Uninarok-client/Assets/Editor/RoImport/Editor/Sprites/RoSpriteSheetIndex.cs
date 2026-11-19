@@ -21,6 +21,8 @@ namespace Uninarok.RoImport.Editor.Sprites
         public bool HasIndex;
         /// <summary>The sheet rules version it was written with; a different version writes the sheet again.</summary>
         public int Rules;
+        /// <summary>Indexed frames of the SPR: true-colour slots start here (plan 4.2).</summary>
+        public int IndexedCount;
     }
 
     /// <summary>
@@ -77,7 +79,8 @@ namespace Uninarok.RoImport.Editor.Sprites
                 Sheet = entry.Sheet.Replace('\\', '/'),
                 Source = entry.Source ?? string.Empty,
                 HasIndex = entry.HasIndex,
-                Rules = entry.Rules
+                Rules = entry.Rules,
+                IndexedCount = entry.IndexedCount
             };
         }
 

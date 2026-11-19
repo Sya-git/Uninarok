@@ -40,6 +40,12 @@ namespace Uninarok.RoImport.Editor.Sprites
     {
         public const string IndexTextureName = "_IndexTex";
 
+        /// <summary>Version of the sheet rules (packer, pixels, settings); a sheet written with another version is written again.</summary>
+        public const int Rules = 1;
+
+        /// <summary>The name of a static sprite moved by its layer offset (plan 4.4): <c>f&lt;slot&gt;@&lt;x&gt;_&lt;y&gt;</c>.</summary>
+        public static string OffsetSpriteName(int slot, int offsetX, int offsetY) => SpriteName(slot) + "@" + offsetX + "_" + offsetY;
+
         public static string SpriteName(int slot) => "f" + slot;
 
         /// <summary>A stable sprite id from its name (T0.3): the MD5 of <c>uninarok-sprite:&lt;name&gt;</c>.</summary>
@@ -77,9 +83,37 @@ namespace Uninarok.RoImport.Editor.Sprites
             var image = new RoImage { Width = layout.Width, Height = layout.Height, Rgba32 = RoSpriteSheetPixels.Color(spr, layout), SourceHadAlpha = true };
             status = Combine(status, writer.WriteBytes(sheetPath, png.Encode(image), importer => ConfigureMain(importer, pixelsPerUnit)));
 
-            var rects = Rects(spr, layout, extra);
+            // Offset sprites other ACTs added to this shared sheet stay (D14).
+            var wanted = new List<RoSheetSprite>(extra ?? Array.Empty<RoSheetSprite>());
+            foreach (var kept in ExistingExtras(sheetPath))
+                if (kept.Slot < spr.SlotCount && wanted.All(w => w.Name != kept.Name)) wanted.Add(kept);
+
+            var rects = Rects(spr, layout, wanted);
             if (Slice(sheetPath, rects, index) && status == RoStatus.Skipped) status = RoStatus.Updated;
             return status;
+        }
+
+        /// <summary>Adds one offset sprite to an existing sheet if it has none of that name; true when the sheet changed.</summary>
+        public static bool EnsureSprite(string sheetPath, RoSheetLayout layout, RoSheetSprite extra)
+        {
+            var provider = Provider(sheetPath);
+            var rects = provider.GetSpriteRects();
+            if (rects.Any(r => r.name == extra.Name)) return false;
+            var secondary = provider.GetDataProvider<ISecondaryTextureDataProvider>().textures;
+            var index = secondary != null && secondary.Length > 0 ? secondary[0].texture : null;
+            return Slice(sheetPath, rects.Concat(new[] { Rect(extra.Name, layout.Rects[extra.Slot], layout, extra.Pivot) }).ToArray(), index);
+        }
+
+        /// <summary>The offset sprites (<c>f&lt;slot&gt;@…</c>) a sheet already has.</summary>
+        static IEnumerable<RoSheetSprite> ExistingExtras(string sheetPath)
+        {
+            if (!(AssetImporter.GetAtPath(sheetPath) is TextureImporter)) yield break;
+            foreach (var r in Provider(sheetPath).GetSpriteRects())
+            {
+                int at = r.name.IndexOf('@');
+                if (at > 1 && r.name[0] == 'f' && int.TryParse(r.name.Substring(1, at - 1), out int slot))
+                    yield return new RoSheetSprite(r.name, slot, r.pivot);
+            }
         }
 
         /// <summary>Attaches an index texture to a sheet that has none yet (plan 4.2: palettes requested later).</summary>

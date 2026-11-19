@@ -18,7 +18,6 @@ namespace Uninarok.RoImport.Tests.Sprites
 {
     // TASKS-0007 T5.1 / T5.2 (FR-2, FR-3, FR-8, FR-9, FR-11, plan 4.4): synthetic files written to a temporary data folder
     // and converted into Assets/__RoImportTests; the ledger and the sheet index go to a temporary folder.
-    [Ignore("pending T5.2")]
     public class RoSpriteConverterTests
     {
         RoOutputRoots _roots;
@@ -123,7 +122,8 @@ namespace Uninarok.RoImport.Tests.Sprites
             Assert.AreEqual(8, anim.Sprites.Length);
             Assert.IsTrue(anim.Sprites.All(s => s != null && AssetDatabase.GetAssetPath(s) == SheetPath(Monster)));
             Assert.AreEqual("f3", anim.Sprites[3].name);
-            Assert.AreEqual(1, RoSpriteSheetIndex.Load(LedgerFolder).Count);
+            ctx.SaveLedgers();
+            Assert.AreEqual(1, RoSpriteSheetIndex.Load(LedgerFolder).Count, "the sheet index is saved with the ledgers");
         }
 
         // ---- FR-2: shared images ----
@@ -138,6 +138,7 @@ namespace Uninarok.RoImport.Tests.Sprites
             Assert.AreEqual(Hash(Monster + ".spr"), Hash(Copy + ".spr"));
             Assert.AreSame(a.Sprites[0], b.Sprites[0], "one image set");
             Assert.IsFalse(Exists(RoSpriteOutputPaths.Sheet(_roots, P(Copy + ".spr"), Hash(Copy + ".spr"))), "no second sheet");
+            ctx.SaveLedgers();
             Assert.AreEqual(1, RoSpriteSheetIndex.Load(LedgerFolder).Count);
         }
 
@@ -161,6 +162,7 @@ namespace Uninarok.RoImport.Tests.Sprites
 
             Assert.IsTrue(Exists(RoSpriteOutputPaths.IndexOf(SheetPath(Monster))));
             Assert.AreEqual(1, anim.Sprites[0].GetSecondaryTextureCount());
+            ctx.SaveLedgers();
             Assert.IsTrue(RoSpriteSheetIndex.Load(LedgerFolder).Find(Hash(Monster + ".spr")).HasIndex);
         }
 
@@ -224,8 +226,9 @@ namespace Uninarok.RoImport.Tests.Sprites
         [Test]
         public void ASecondRun_IsSkipped()
         {
-            Assert.AreEqual(RoStatus.Created, Convert(Context(), Monster).Status);
-            Context().SaveLedgers();
+            var first = Context();
+            Assert.AreEqual(RoStatus.Created, Convert(first, Monster).Status);
+            first.SaveLedgers();
 
             var ctx = Context();
             Convert(ctx, Item);
