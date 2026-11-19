@@ -141,3 +141,4 @@ Uninarok-client/[Aa]ssets/[Ss]ceneDependencyCache*
 # Networking generator tool projects (SPEC-0001)
 Tools/**/[Bb]in/
 Tools/**/[Oo]bj/
+Uninarok-client/Assets/Editor/GRF Resources~
