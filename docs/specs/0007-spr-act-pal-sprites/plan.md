@@ -59,7 +59,7 @@ Satisfies FR-1, FR-3, FR-9, FR-10, FR-11.
 |---|---|---|
 | `Assets/Scripts/Sprites/Uninarok.Sprites.asmdef` | runtime assembly, all platforms, references nothing of ours | `Uninarok.Sprites` |
 | `Assets/Scripts/Sprites/SpriteAnimation.cs` | the data asset (§4.5) | `Uninarok.Sprites` |
-| `Assets/Scripts/Sprites/SpriteActor.cs`, `SpriteSystem.cs`, `SpriteMissingAction.cs` | the player and its single update loop (§4.6) | `Uninarok.Sprites` |
+| `Assets/Scripts/Sprites/SpriteActor.cs`, `SpriteSystem.cs`, `SpriteSystemDriver.cs`, `SpriteMissingAction.cs` | the player, its single update loop and the hidden play-mode driver (§4.6) | `Uninarok.Sprites` |
 | `Assets/Scripts/Sprites/SpritePalette.cs` | palette swap through a property block (§4.7) | `Uninarok.Sprites` |
 | `Assets/Shaders/Sprites/RoSprite.shader` | `Uninarok/RoSprite`, URP sprite shader with palette lookup (§4.7) | runtime asset |
 | `Assets/Editor/RoImport/Core/Formats/` | `RoSprReader`, `RoActReader`, `RoPalReader` | `Uninarok.RoImport.Core` |
@@ -311,7 +311,7 @@ Satisfies FR-10.
 Satisfies FR-8, FR-9.
 
 - Import: main thread, synchronous, inside the batch of PLAN-0002 §4.10 (`AssetDatabase` editing batched by `RoAssetWriter`). Pixel buffers of one SPR are released after its sheet is written; memory is bounded by the largest sheet (4096² × 5 bytes ≈ 84 MB). The 200-job checkpoint unloads unused assets.
-- Run time: `SpriteSystem` runs on the main thread in `LateUpdate`; actors and data are read-only during the loop. Domain reload safe: the registry is rebuilt from enabled actors (`RuntimeInitializeOnLoadMethod` reset).
+- Run time: `SpriteSystem` runs on the main thread in `LateUpdate`; actors and data are read-only during the loop. Domain reload safe: the registry is rebuilt from enabled actors (statics reset by `[AutoStaticsCleanup]`, D12).
 
 ## 6. Test plan
 
@@ -356,6 +356,7 @@ Satisfies every FR. EditMode NUnit. Data-dependent tests are `[Category("NeedsDa
 | D9 | Static ACT → sprite only (FR-11), with an offset sprite only when the offset is not zero | An animation asset for one frame |
 | D10 | Unused sheets are kept; cleanup is a later tool | Deleting by reference counting during import (slow, risky with partial runs) |
 | D11 (T0.1) | The SPR adapter reads the header's two declared frame counts and rejects a file where GRF loaded fewer (GRF accepts a truncated SPR silently) | Trusting GRF (a cut file would convert with frames missing, FR-8); re-saving through GRF and comparing (slow, RLE output may differ) |
+| D12 (T2.3) | `SpriteSystem` resets its statics with Unity 6.7's `[AutoStaticsCleanup]` (the analyzer requires it for static state; the class is `partial` for its generator); `SpriteActor` is `[ExecuteAlways]` so it registers and shows its first frame in edit mode (no tick runs outside play mode except the tests and the preview); the driver is its own `SpriteSystemDriver.cs` (one MonoBehaviour per file) | `RuntimeInitializeOnLoadMethod` reset (raises UAL0010/UAL0013); edit-mode actors that draw nothing |
 
 D6 approved by the owner (2026-11-19): RGBA32 now; the full-data run measures the real total and the owner decides on R1's options from that number. D3–D5 approved by the owner with the plan (2026-11-19).
 

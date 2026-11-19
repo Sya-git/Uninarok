@@ -46,7 +46,7 @@ Reference set (spec §5), used by every check below: a multi-layer monster `몬�
   *Done when:* the project compiles with no new warning and the lookup tests pass.
 - [x] **T2.2** Add `SpriteActorTests` and `SpriteSystemTests` (ignored): frame advance with `Speed`; renderers touched only on frame change; empty frames and −1 layers hide their slots; unused slots inactive; layer transform, flip, tint from the data with plan §4.3 rules; anchors in local space; `FrameEvent` once per frame entry; `Play(…, restart: false)` keeps the frame; 1,000 actors cost zero GC allocation per frame; disabling unregisters. (FR-3, FR-5, FR-6)
   *Done when:* the tests compile and are ignored with `pending T2.3`.
-- [ ] **T2.3** Implement `SpriteActor.cs` and `SpriteSystem.cs` (plan §4.6), including the billboard facing in the same loop. (FR-3, FR-5, FR-6)
+- [x] **T2.3** Implement `SpriteActor.cs` and `SpriteSystem.cs` (plan §4.6), including the billboard facing in the same loop. (FR-3, FR-5, FR-6)
   *Done when:* `[Ignore]` removed and the tests of T2.2 pass.
 - [ ] **T2.4** Implement the shader `Shaders/Sprites/RoSprite.shader` and `SpritePalette.cs` (plan §4.7) with `SpritePaletteTests`: one sprite rendered with two palettes differs per pixel, creates no texture, and leaves true-colour pixels unchanged; without a palette it renders like the main texture. (FR-7, FR-1)
   *Done when:* the tests pass and the shader compiles for URP 17.7 with no warning.

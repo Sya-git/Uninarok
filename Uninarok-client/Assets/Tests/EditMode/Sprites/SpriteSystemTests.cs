@@ -5,7 +5,6 @@ using UnityEngine;
 namespace Uninarok.Sprites.Tests
 {
     // TASKS-0007 T2.2 / T2.3 (FR-3, plan 4.6, D4): one loop for every actor, no allocation per frame.
-    [Ignore("pending T2.3")]
     public class SpriteSystemTests
     {
         SpriteActorTestData _data;
@@ -33,6 +32,7 @@ namespace Uninarok.Sprites.Tests
 
             a.Play(0, 0);
             b.Play(0, 0);
+            SpriteSystem.Tick(0f);
             a.enabled = false;
             Assert.AreEqual(1, SpriteSystem.Count);
 

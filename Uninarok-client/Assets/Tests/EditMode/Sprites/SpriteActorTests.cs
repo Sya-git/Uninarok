@@ -6,7 +6,6 @@ namespace Uninarok.Sprites.Tests
 {
     // TASKS-0007 T2.2 / T2.3 (FR-3, FR-5, FR-6, plan 4.3, 4.6). Time is advanced with SpriteSystem.Tick, never by the
     // editor loop, so the results do not depend on frame rate.
-    [Ignore("pending T2.3")]
     public class SpriteActorTests
     {
         const float Eps = 1e-4f;
