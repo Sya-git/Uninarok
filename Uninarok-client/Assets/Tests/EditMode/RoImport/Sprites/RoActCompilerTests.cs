@@ -8,7 +8,6 @@ namespace Uninarok.RoImport.Tests.Sprites
 {
     // TASKS-0007 T4.1 / T4.2 (FR-3, FR-4, FR-5, FR-6, plan 4.5): an ACT flattened into the arrays of a SpriteAnimation,
     // identical actions stored once.
-    [Ignore("pending T4.2")]
     public class RoActCompilerTests
     {
         static RoCompiledAct Compile((RoSpr spr, RoAct act) sample)

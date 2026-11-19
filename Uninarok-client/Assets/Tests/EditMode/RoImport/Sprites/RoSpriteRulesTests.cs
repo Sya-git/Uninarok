@@ -7,7 +7,6 @@ namespace Uninarok.RoImport.Tests.Sprites
 {
     // TASKS-0007 T4.1 / T4.2 (FR-3, FR-5, FR-6, plan 4.3): the rules table pinned with the values of the rules check (T0.2).
     // A rules change edits this table and these tests only, and raises RoSpriteConverter.RulesVersion.
-    [Ignore("pending T4.2")]
     public class RoSpriteRulesTests
     {
         [TestCase(4f, 100f)]
