@@ -34,6 +34,16 @@ namespace Uninarok.RoImport.Core.Results
         GatUnknownType,
         /// <summary>A GAT file whose header GRF or the adapter rejects (magic, size, length) (PLAN-0005 4.1).</summary>
         GatBadHeader,
+        /// <summary>An RSW version GRF reads but the rules table has no row for; the map is not converted (PLAN-0006 4.1).</summary>
+        UnsupportedRswVersion,
+        /// <summary>The ground or walkability file named in the RSW differs from the map's and does not exist (PLAN-0006 4.1).</summary>
+        RswFileMismatch,
+        /// <summary>RSW model instances whose node name is a child node of the model; reported once per map with a count (PLAN-0006 4.3).</summary>
+        RswNodeNameIgnored,
+        /// <summary>RSW model instances with an animation type other than 0 or 2; reported once per map, treated as 2 (PLAN-0006 4.3).</summary>
+        RswUnknownAnimType,
+        /// <summary>A model a map places cannot be converted; reported once per model and map, a placeholder keeps the instance (PLAN-0006 4.2).</summary>
+        ModelMissing,
         Unexpected
     }
 }
