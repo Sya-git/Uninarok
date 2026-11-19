@@ -53,7 +53,7 @@ Reference set (spec §5), used by every check below: a multi-layer monster `몬�
 
 ## Phase 3: Sheets
 
-- [ ] **T3.1** Add `RoSpriteSheetPackerTests` and `RoSpriteSheetPixelsTests` (ignored): deterministic layout; no overlap; inside bounds; power-of-two size ≤ 4096; padding filled by edge bleed; 100 frames → one layout; slot order indexed then true colour; palette applied; index 0 transparent whatever its alpha; true colour keeps alpha; index texture holds indices only for indexed pixels. (FR-1, FR-7, FR-9)
+- [x] **T3.1** Add `RoSpriteSheetPackerTests` and `RoSpriteSheetPixelsTests` (ignored): deterministic layout; no overlap; inside bounds; power-of-two size ≤ 4096; padding filled by edge bleed; 100 frames → one layout; slot order indexed then true colour; palette applied; index 0 transparent whatever its alpha; true colour keeps alpha; index texture holds indices only for indexed pixels. (FR-1, FR-7, FR-9)
   *Done when:* the tests compile and are ignored with `pending T3.2`.
 - [ ] **T3.2** Implement `Editor/RoImport/Core/Sprites/RoSpriteSheetPacker.cs` and `RoSpriteSheetPixels.cs`. (FR-1, FR-7)
   *Done when:* `[Ignore]` removed and the tests of T3.1 pass.
