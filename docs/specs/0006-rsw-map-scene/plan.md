@@ -139,7 +139,7 @@ The notable contents of `reference-models.md` §4 match exactly (prt_fild08: 덤
 Satisfies FR-1, FR-2, FR-10 (uses SPEC-0002 FR-6).
 
 - `RoJobKind.Map` is added to the enum and registry, with `RoImport.Map(string mapName)`; `RoImportContext` gains `Model(RoPath)` (PLAN-0003 adds the converter, this plan the context method if not present yet), `Ground(RoPath)` (PLAN-0004) and `MapData(RoPath)` (PLAN-0005).
-- Models are requested **once per distinct file** (a map has hundreds of instances of a few dozen models: prontera has 1367 references to 67 distinct models), in file order, so the work and the log are small and deterministic.
+- Models are requested **once per distinct file** (a map has hundreds of instances of a few dozen models: prontera has 1303 references to 62 distinct models), in file order, so the work and the log are small and deterministic.
 - A model that is missing or fails to convert gives one `ModelMissing` warning naming the model and the map; every object that uses it becomes an empty named object with a `MapMissingModelMarker` (data in §4.6), so counts and positions are preserved (FR-10).
 - Textures and materials are the models' own business (PLAN-0003); this plan never asks for them.
 
