@@ -48,11 +48,13 @@ Same shape of data as section 1 (single node, rotation angle and position non-ze
 
 | Map | Ground size (cubes) | Model references | Notable contents | Use |
 |---|---|---|---|---|
-| prontera | 156 x 196 (non-square) | 1367 (67 distinct models) | 시계탑 (2, animated), 교역소, 도구점, 분수대, 게시판 (3) | non-square ground, large city, animated hierarchy |
-| izlude | 134 x 150 (non-square) | 579 (93 distinct models) | 덤불02 (13), 넝쿨01 (2), iz_smelter, iz_enchant, iz_bridge01 (6), 비공정, 퀴즈경기장, 프론아레나 | non-square ground, many hierarchies and animated models |
-| prt_fild08 | 200 x 200 | 616 (26 distinct models) | 버섯01 (5), 버섯02 (3), 넝쿨01 (1), 덤불02 (32) | first map to check placement; contains every reported-wrong model |
+| prontera | 156 x 196 (non-square) | 1303 (62 distinct models) | 시계탑 (2, animated), 교역소, 도구점, 분수대, 게시판 (3) | non-square ground, large city, animated hierarchy |
+| izlude | 134 x 150 (non-square) | 552 (90 distinct models) | 덤불02 (13), 넝쿨01 (2), iz_smelter, iz_enchant, iz_bridge01 (6), 비공정, 퀴즈경기장, 프론아레나 | non-square ground, many hierarchies and animated models |
+| prt_fild08 | 200 x 200 | 570 (23 distinct models) | 버섯01 (5), 버섯02 (3), 넝쿨01 (1), 덤불02 (32) | first map to check placement; contains every reported-wrong model |
 
 prt_fild08 is the confirmed reference map (the earlier mention of prt_fild09 is superseded).
+
+Model references and distinct model files are GRF's counts (TASKS-0006 T0.2, 2026-11-18; the earlier totals 1367/67, 579/93 and 616/26 were wrong, the notable contents were right). The maps also hold 0/0/5 lights, 25/110/51 sounds and 152/12/0 effects (prontera/izlude/prt_fild08).
 
 ## 5. Gaps (not covered by the current data)
 

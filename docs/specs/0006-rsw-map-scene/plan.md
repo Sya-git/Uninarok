@@ -132,7 +132,7 @@ Observed counts (GRF):
 | prontera | 2.1 | 1303 (62) | 0 | 25 | 152 | 1303 | 289 (X 120, Z 90, XZ 79) |
 | izlude | 2.1 | 552 (90) | 5 | 110 | 12 | 552 | 97 (X 26, Z 45, XZ 21, Y 3, XY 2) |
 
-The notable contents of `reference-models.md` §4 match exactly (prt_fild08: 덤불02 32, 버섯01 5, 버섯02 3, 넝쿨01 1; prontera: 시계탑 2, 교역소 1, 도구점 1, 분수대 1, 게시판 3; izlude: 덤불02 13, 넝쿨01 2, iz_bridge01 6, iz_smelter, iz_enchant, 비공정, 퀴즈경기장, 프론아레나 1 each). The totals of §4 (1367/67, 579/93, 616/26) are higher than GRF's. Every model file referenced exists under `model/`.
+The notable contents of `reference-models.md` §4 match exactly (prt_fild08: 덤불02 32, 버섯01 5, 버섯02 3, 넝쿨01 1; prontera: 시계탑 2, 교역소 1, 도구점 1, 분수대 1, 게시판 3; izlude: 덤불02 13, 넝쿨01 2, iz_bridge01 6, iz_smelter, iz_enchant, 비공정, 퀴즈경기장, 프론아레나 1 each). The totals of §4 were higher than GRF's and were corrected to GRF's counts by the owner's decision (2026-11-18). Every model file referenced exists under `model/`.
 
 ### 4.2 Dependencies: ground, map data and models on demand
 
@@ -263,7 +263,7 @@ Satisfies every FR of the spec. EditMode NUnit tests in `Uninarok.RoImport.Tests
 | `RoMapIdempotencyTests` | 11, (0002 FR-5) | second conversion is `Skipped`; a forced second conversion yields an identical scene by structure and unchanged GUIDs for scene, map data, ground and models; the build settings entry survives |
 | `RoMapAdditiveTests` | 11 | an additive scene with a custom object is byte-identical after re-conversion and its object still resolves under the stable names |
 | `RoMapBatchTests` | 12 | a batch of three synthetic maps with a shared model converts the model once, ends with a complete result list, one failing map does not stop the others, a second batch changes nothing |
-| `RoRswReaderTests` (`NeedsData`) | 1, 3 | the three reference maps read through GRF with the counts of `reference-models.md` §4 (1367, 579 and 616 model references, 67, 93 and 26 distinct models); a truncated copy returns false with a reason and never throws |
+| `RoRswReaderTests` (`NeedsData`) | 1, 3 | the three reference maps read through GRF with the counts of `reference-models.md` §4 (1303, 552 and 570 model references, 62, 90 and 23 distinct models); a truncated copy returns false with a reason and never throws |
 | `RoMapGroundContactTests` (`NeedsData`) | 4 | the 20 or more sample models of `ground-contact.json` sit at the recorded vertical distance from the ground within the recorded tolerance |
 | `RoMapReferenceTests` (`NeedsData`) | 1 to 12 | each reference map converts with no failure; the number of instances per group equals the file's counts; every distinct model converted; a second batch skips everything |
 
