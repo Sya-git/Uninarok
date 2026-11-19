@@ -8,7 +8,6 @@ namespace Uninarok.RoImport.Tests.Sprites
 {
     // TASKS-0007 T3.1 / T3.2 (FR-1, FR-9, plan 4.2): our own deterministic shelf packer, power-of-two sheets of at most
     // 4096, 2 pixels of padding around every frame.
-    [Ignore("pending T3.2")]
     public class RoSpriteSheetPackerTests
     {
         const int P = RoSpriteSheetPacker.Padding;

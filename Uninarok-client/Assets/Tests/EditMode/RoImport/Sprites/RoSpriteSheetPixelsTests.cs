@@ -6,7 +6,6 @@ using Uninarok.RoImport.Core.Sprites;
 namespace Uninarok.RoImport.Tests.Sprites
 {
     // TASKS-0007 T3.1 / T3.2 (FR-1, FR-7, plan 4.2, 4.3): the sheet's colour and index pixels, top row first.
-    [Ignore("pending T3.2")]
     public class RoSpriteSheetPixelsTests
     {
         static RoSheetLayout Layout(RoSpr spr)
