@@ -64,7 +64,7 @@ Reference set (spec §5), used by every check below: a multi-layer monster `몬�
 
 ## Phase 4: Rules and compiler
 
-- [ ] **T4.1** Add `RoSpriteRulesTests` and `RoActCompilerTests` (ignored): the plan §4.3 table pinned with T0.2's values; flattening keeps every layer field; slots computed from type and index; identical actions stored once and mapped; empty actions and partly empty frames kept; frame ms = speed × 25; directional flag; events and anchors kept. (FR-3, FR-4, FR-5, FR-6)
+- [x] **T4.1** Add `RoSpriteRulesTests` and `RoActCompilerTests` (ignored): the plan §4.3 table pinned with T0.2's values; flattening keeps every layer field; slots computed from type and index; identical actions stored once and mapped; empty actions and partly empty frames kept; frame ms = speed × 25; directional flag; events and anchors kept. (FR-3, FR-4, FR-5, FR-6)
   *Done when:* the tests compile and are ignored with `pending T4.2`.
 - [ ] **T4.2** Implement `Editor/RoImport/Core/Sprites/RoSpriteRules.cs` and `RoActCompiler.cs` (produces the arrays of `SpriteAnimation`). (FR-3, FR-4, FR-5, FR-6)
   *Done when:* `[Ignore]` removed and the tests of T4.1 pass.

@@ -337,7 +337,7 @@ Satisfies every FR. EditMode NUnit. Data-dependent tests are `[Category("NeedsDa
 ## 7. Migration and compatibility
 
 - No importer for these formats exists today; nothing is deleted. The source folder stays hidden from Unity (`~`).
-- `RoJobKind` gains `Sprite` and `Palette`; `RoIssueCode` gains `UnsupportedSprVersion`, `UnsupportedActVersion`, `SpriteIndexOutOfRange`, `SpriteSheetTooLarge`. `Uninarok.RoImport.Editor` gains a reference to `Uninarok.Sprites`; `RoArchitectureTests` gets the new asmdefs added to its checks.
+- `RoJobKind` gains `Sprite` and `Palette`; `RoIssueCode` gains `UnsupportedSprVersion`, `UnsupportedActVersion`, `SpriteIndexOutOfRange`, `SpriteSheetTooLarge`. `Uninarok.RoImport.Editor` and `Uninarok.RoImport.Core` gain a reference to `Uninarok.Sprites` (D13), the editor one also to `Unity.2D.Sprite.Editor`; `RoArchitectureTests` gets the new asmdefs added to its checks.
 - PNG sheets fall under the existing LFS rule for PNG; `.asset` animations under the `Art/Imported/**/*.asset` LFS rule.
 - A later spec (grouping by game object, import by category, composition) calls `RoImportContext.Sprite(act, spr, options)` with its own pairs and reads the actors' shared timing state; nothing here needs to change for it.
 
@@ -357,6 +357,7 @@ Satisfies every FR. EditMode NUnit. Data-dependent tests are `[Category("NeedsDa
 | D10 | Unused sheets are kept; cleanup is a later tool | Deleting by reference counting during import (slow, risky with partial runs) |
 | D11 (T0.1) | The SPR adapter reads the header's two declared frame counts and rejects a file where GRF loaded fewer (GRF accepts a truncated SPR silently) | Trusting GRF (a cut file would convert with frames missing, FR-8); re-saving through GRF and comparing (slow, RLE output may differ) |
 | D12 (T2.3) | `SpriteSystem` resets its statics with Unity 6.7's `[AutoStaticsCleanup]` (the analyzer requires it for static state; the class is `partial` for its generator); `SpriteActor` is `[ExecuteAlways]` so it registers and shows its first frame in edit mode (no tick runs outside play mode except the tests and the preview); the driver is its own `SpriteSystemDriver.cs` (one MonoBehaviour per file) | `RuntimeInitializeOnLoadMethod` reset (raises UAL0010/UAL0013); edit-mode actors that draw nothing |
+| D13 (T4.1) | `Uninarok.RoImport.Core` references the runtime `Uninarok.Sprites` (no editor code) so that `RoActCompiler` produces `SpriteAnimation`'s own `ActionData`/`FrameData`/`LayerData` arrays (`RoCompiledAct`), which the converter copies into the asset | A parallel set of Core-only structs converted field by field in the editor layer (two copies of one layout to keep in step) |
 
 D6 approved by the owner (2026-11-19): RGBA32 now; the full-data run measures the real total and the owner decides on R1's options from that number. D3–D5 approved by the owner with the plan (2026-11-19).
 
