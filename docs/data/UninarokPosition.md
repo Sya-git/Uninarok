@@ -20,6 +20,8 @@
 
 `UninarokDirection`: `0` North, `1` NorthWest, `2` West, `3` SouthWest, `4` South, `5` SouthEast, `6` East, `7` NorthEast. Values 8–15 are legal on the wire; they are kept as-is, not rejected.
 
+The same enum is the **sprite direction**: an ACT action index is `animation × 8 + direction` with these values (owner decision, SPEC-0007, 2026-11-19; there is no separate sprite direction enum). Camera rotation, if any, is applied to the value before the lookup by the display spec.
+
 ## Wire layout (bit-packed, 3 bytes)
 
 ```
