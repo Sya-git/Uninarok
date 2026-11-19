@@ -75,8 +75,9 @@
 
 ## Phase 6: Gizmos
 
-- [ ] **T6.1** Implement `RoMapGizmos` (`[DrawGizmo(GizmoType.Selected | GizmoType.InSelectionHierarchy, typeof(MapRoot))]`: map rectangle from the settings, origin, labelled axes) and the label of groups if the hierarchy needs more than the name. (FR-13)
+- [x] **T6.1** Implement `RoMapGizmos` (`[DrawGizmo(GizmoType.Selected | GizmoType.InSelectionHierarchy, typeof(MapRoot))]`: map rectangle from the settings, origin, labelled axes) and the label of groups if the hierarchy needs more than the name. (FR-13)
   *Done when:* on a converted reference map selecting the map object shows the rectangle, the origin and the axes, and with nothing selected the Profiler shows no gizmo time.
+  *Result (2026-11-18):* prt_fild08 converted in the editor (Unity MCP); with `Map_prt_fild08` selected the Scene view shows the yellow map rectangle labelled `prt_fild08 200 x 200 cubes`, the origin with the X (columns), up and Z (rows, north) axes, and the centre `centre (RSW 0, 0)`. The draw carries the profiler marker `RoMapGizmos.Draw`: over 5 Scene view repaints it took 0.0 µs with nothing selected and about 1.2 ms with the map selected. The group names already show the counts, so no group label gizmo was needed.
 
 ## Phase 7: Whole data set
 
