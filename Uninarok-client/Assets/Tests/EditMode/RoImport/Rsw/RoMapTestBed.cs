@@ -78,12 +78,17 @@ namespace Uninarok.RoImport.Tests.Rsw
             return rsw;
         }
 
-        public void WriteSources(RoRsw rsw)
+        public void WriteSources(RoRsw rsw) => WriteMap(MapName, rsw);
+
+        /// <summary>Writes the ground, walkability and RSW of a map called <paramref name="name"/> into the data folder.</summary>
+        public void WriteMap(string name, RoRsw rsw)
         {
             Directory.CreateDirectory(Data);
-            File.WriteAllBytes(Path.Combine(Data, MapName + ".gnd"), RswTestFiles.Gnd(Width, Height));
-            File.WriteAllBytes(Path.Combine(Data, MapName + ".gat"), GatTestFiles.Gat(GatTestMaps.Asymmetric(2 * Width, 2 * Height)));
-            RswTestFiles.Write(Data, MapName, rsw);
+            File.WriteAllBytes(Path.Combine(Data, name + ".gnd"), RswTestFiles.Gnd(Width, Height));
+            File.WriteAllBytes(Path.Combine(Data, name + ".gat"), GatTestFiles.Gat(GatTestMaps.Asymmetric(2 * Width, 2 * Height)));
+            rsw.GndFile = name + ".gnd";
+            rsw.GatFile = name + ".gat";
+            RswTestFiles.Write(Data, name, rsw);
         }
 
         public RoImportOptions Options(bool force = false) => new RoImportOptions

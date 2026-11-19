@@ -75,6 +75,27 @@ namespace Uninarok.RoImport.Editor.Ui
             RoImportApi.Run(jobs, new RoImportOptions { GatImage = choice == 2 });
         }
 
+        [MenuItem("Tools/Ragnarok/Convert All Maps", priority = 24)]
+        static void ConvertAllMaps()
+        {
+            var source = new RoFolderSource(RoSourceLocation.Resolve());
+            var jobs = MapJobs(source);
+            if (jobs.Count == 0)
+            {
+                EditorUtility.DisplayDialog("Ragnarok import", $"No maps (.rsw) in {source.Root}.", "OK");
+                return;
+            }
+            if (!EditorUtility.DisplayDialog("Ragnarok import",
+                    $"Convert {jobs.Count} maps from {source.Root}? Their grounds, map data and models are converted as needed.", "Convert", "Cancel"))
+                return;
+            if (!UnityEditor.SceneManagement.EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            RoImportApi.Run(jobs);
+        }
+
+        /// <summary>Every <c>.rsw</c> in the data root, where the map files sit (PLAN-0006 4.8, D16).</summary>
+        internal static System.Collections.Generic.List<RoJob> MapJobs(IRoSource source) =>
+            RoImportJobs.Expand("/", RoJobKind.Map, source).Jobs;
+
         /// <summary>Every <c>.gat</c> in the data root, where the map files sit (PLAN-0005 4.5, D9).</summary>
         internal static System.Collections.Generic.List<RoJob> MapDataJobs(IRoSource source) =>
             RoImportJobs.Expand("/", RoJobKind.MapData, source).Jobs;
