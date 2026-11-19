@@ -82,7 +82,7 @@ Reference set (spec §5), used by every check below: a multi-layer monster `몬�
 
 ## Phase 6: Real data
 
-- [ ] **T6.1** Add `RoSpriteReferenceTests` (`NeedsData`): the reference set converts with no failure; sheets = distinct SPR hashes; stored actions ≤ file actions; the weapon's walk actions are empty and its attack actions are not; the skill icon and ground item are sprites. (FR-1 to FR-9, FR-11)
+- [x] **T6.1** Add `RoSpriteReferenceTests` (`NeedsData`): the reference set converts with no failure; sheets = distinct SPR hashes; stored actions ≤ file actions; the weapon's walk actions are empty and its attack actions are not; the skill icon and ground item are sprites. (FR-1 to FR-9, FR-11)
   *Done when:* the tests pass on the owner's data.
 - [ ] **T6.2** Full-data run: convert every ACT under `sprite/` with its same-name SPR and every PAL under `palette/`. Record counts converted, issues by code, time, number of sheets, total sheet pixels and texture memory (RGBA32 and index), size on disk, and a second run's time (all skipped). Report the memory against R1 for the owner's decision. (FR-2, FR-8, FR-9)
   *Done when:* every file converts or its failure is one listed issue, the second run skips all, and the numbers are in the PR and in `plan.md` §9.
