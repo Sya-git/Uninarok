@@ -118,6 +118,38 @@ public static class RoPalReader { public static bool TryRead(RoPath path, byte[]
 ```
 
 - GRF members used: `Spr.Images` split by `GrfImage` type, `Spr.Palette`; `Act.Actions`, `Action.AnimationSpeed`, `Action.Frames`, `Frame.Layers`, `Frame.SoundId`, `Frame.Anchors` (`OffsetX`, `OffsetY`), `Act.SoundFiles`; `Layer.SpriteType`, `SpriteIndex`, `OffsetX`, `OffsetY`, `Mirror`, `ScaleX`, `ScaleY`, `Rotation`, `Color`. **Not used:** `Action.Interval` (derived), `Layer.Width`/`Height` (derived), `Act.Sprite` (in-memory link), `Layer.Angle`/`RotationRadian` (other views of `Rotation`). The GRF mapping check (phase 0) confirms each pairing and the pixel row order.
+**GRF mapping (TASKS T0.1, checked on the reference set, 2026-11-19).** GRF 1 build in `Assets/Editor/Library/GRF.dll`.
+
+| Our field | GRF member | Notes |
+|---|---|---|
+| `RoSpr.VersionMajor/Minor` | `Spr.Header.MajorVersion` / `MinorVersion` (bytes) | every reference SPR is 2.1 |
+| `RoSpr.Indexed` | `Spr.Images` where `GrfImageType == Indexed8`, in list order | `Spr.Images` holds all indexed frames first, then all true-colour frames (file order) |
+| `RoSpr.TrueColor` | `Spr.Images` where `GrfImageType == Bgra32`, in list order | |
+| `RoSprFrame.Width/Height` | `GrfImage.Width` / `Height` | |
+| `RoSprFrame.Indices` | `GrfImage.Pixels` (Indexed8: 1 byte per pixel) | **top row first** (RLE already decoded) |
+| `RoSprFrame.Rgba` | `GrfImage.Pixels` (Bgra32: 4 bytes **B, G, R, A** per pixel), reordered to R, G, B, A | **top row first** (GRF flips the file's bottom-up storage on load) |
+| `RoSpr.Palette` | `Spr.Palette.BytePalette` (1,024 bytes, **R, G, B, A** per entry) | the SPR's stored alpha bytes are 0; GRF sets 255 on entries 1–255 and keeps entry 0 as stored; our rule (§4.3) makes index 0 transparent anyway. `GrfImage.Palette` of an indexed frame is the same table (not used) |
+| `RoPal.Colors` | `new Pal(bytes, Pal.FormatMode.PreserveOriginal).BytePalette` (R, G, B, A) | PAL files store alpha 0 on every entry: the adapter sets alpha 255 on all entries (index 0 is transparent by rule) |
+| `RoAct.VersionMajor/Minor` | `Act.Header.MajorVersion` / `MinorVersion` | reference set: 2.1, 2.3, 2.4, 2.5 |
+| `RoAct.Actions` | `Act.Actions` (list order) | |
+| `RoActAction.AnimationSpeed` | `Action.AnimationSpeed` (float) | |
+| `RoActAction.Frames` | `Action.Frames` | |
+| `RoActFrame.Layers` | `Frame.Layers` (list order) | |
+| `RoActFrame.EventId` | `Frame.SoundId` | −1 = none, otherwise an index into `Act.SoundFiles` |
+| `RoActFrame.Anchors` | `Frame.Anchors[i].OffsetX` / `OffsetY` | `Anchor.Other` and `Anchor.Unknown` not used |
+| `RoAct.Events` | `Act.SoundFiles` | holds `atk` and sound names in one table |
+| `RoActLayer.SpriteType` | `Layer.SpriteType` (`SpriteTypes.Indexed8` = 0, `Bgra32` = 1) | |
+| `RoActLayer.SpriteIndex` | `Layer.SpriteIndex` | −1 = empty; an empty layer carries zero scale and zero tint (not used) |
+| `RoActLayer.OffsetX/Y` | `Layer.OffsetX` / `OffsetY` | |
+| `RoActLayer.Mirror` | `Layer.Mirror` | |
+| `RoActLayer.ScaleX/Y` | `Layer.ScaleX` / `ScaleY` (float) | |
+| `RoActLayer.Rotation` | `Layer.Rotation` (int degrees, 0–359 seen) | |
+| `RoActLayer.Tint` | `Layer.Color` (`GrfColor`: `R`, `G`, `B`, `A`) | |
+
+**Not used:** `Action.Interval` (= `AnimationSpeed × 25`), `Layer.Width`/`Height` (0 when the ACT is loaded without its SPR, otherwise the image size), `Layer.Angle`/`RotationRadian`, `Act.Sprite`, `Act.Version` (double; the header bytes are used instead), `Anchor.Other`/`Unknown`.
+
+**Bad input as GRF reports it.** Junk bytes: `GrfException` ("Unrecognized file format") for SPR and ACT. Empty or very short input: `IndexOutOfRangeException`. A truncated ACT throws. **A truncated SPR does not throw:** GRF keeps the frames that fit and reads the palette from whatever the last 1,024 bytes are. The SPR adapter therefore reads the two frame counts the header declares (bytes 4–7, after the `SP` magic and version, the same kind of header check the RSW adapter does with its magic) and rejects the file when GRF loaded fewer frames (D11). A PAL shorter than 1,024 bytes does not throw either; the adapter requires exactly 1,024 bytes.
+
 - Adapters never throw: a rejected read is `false` with GRF's message. The ACT adapter is given the ACT bytes only (`new Act(bytes)`); pairing with an SPR is done by the converter.
 - Values are raw; no rule of §4.3 is applied here.
 
@@ -314,6 +346,7 @@ Satisfies every FR. EditMode NUnit. Data-dependent tests are `[Category("NeedsDa
 | D8 | The job unit is the ACT; the SPR is a dependency | SPR as the unit (an ACT without its own SPR could not be requested) |
 | D9 | Static ACT → sprite only (FR-11), with an offset sprite only when the offset is not zero | An animation asset for one frame |
 | D10 | Unused sheets are kept; cleanup is a later tool | Deleting by reference counting during import (slow, risky with partial runs) |
+| D11 (T0.1) | The SPR adapter reads the header's two declared frame counts and rejects a file where GRF loaded fewer (GRF accepts a truncated SPR silently) | Trusting GRF (a cut file would convert with frames missing, FR-8); re-saving through GRF and comparing (slow, RLE output may differ) |
 
 D6 approved by the owner (2026-11-19): RGBA32 now; the full-data run measures the real total and the owner decides on R1's options from that number. D3–D5 approved by the owner with the plan (2026-11-19).
 
