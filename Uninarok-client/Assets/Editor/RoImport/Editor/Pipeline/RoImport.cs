@@ -136,6 +136,15 @@ namespace Uninarok.RoImport.Editor.Pipeline
                 return RoConverterRegistry.For(RoJobKind.Sprite).Convert(session.Context, path);
         }
 
+        /// <summary>Converts one PAL (or skips it when current) and returns its 256 × 1 palette texture (PLAN-0007 4.4, FR-7).</summary>
+        public static RoResult<Texture2D> Palette(string palPath, RoImportOptions options = null)
+        {
+            if (!RoPath.TryParse(palPath, out var path))
+                return RoResult<Texture2D>.Failed(new RoIssue(RoIssueCode.SourceMissing, palPath, null, "not a valid Ragnarok path"));
+            using (var session = new Session(options))
+                return Sprites.RoPaletteConverter.ConvertPalette(session.Context, path);
+        }
+
         /// <summary>Runs a batch (plan 4.10): continues past failures and returns the report, whose summary lists them.</summary>
         public static RoReport Run(IEnumerable<RoJob> jobs, RoImportOptions options = null) => RoBatch.Run(jobs, options);
 

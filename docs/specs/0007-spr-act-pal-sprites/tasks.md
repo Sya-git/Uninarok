@@ -75,7 +75,7 @@ Reference set (spec §5), used by every check below: a multi-layer monster `몬�
   *Done when:* the tests compile and are ignored with `pending T5.2`.
 - [x] **T5.2** Implement `Editor/RoImport/Editor/Sprites/RoSpriteConverter.cs`, `RoSpriteOptions`, `RoImportContext.Sprite(act, spr, options)`, `RoImport.Sprite(string)`, `RoJobKind.Sprite` and the registry entry; the shared material `Art/_materials/sprite_default.mat`. (FR-2, FR-3, FR-8, FR-9, FR-11)
   *Done when:* `[Ignore]` removed and the tests of T5.1 pass.
-- [ ] **T5.3** Implement `RoPaletteConverter.cs`, `RoJobKind.Palette`, `RoImport.Palette(string)`, with `RoPaletteConverterTests` (256 × 1, index 0 transparent, settings); add both kinds to the window and the menu items `Tools/Ragnarok/Convert Sprite Folder…` and `Convert All Palettes`. (FR-7)
+- [x] **T5.3** Implement `RoPaletteConverter.cs`, `RoJobKind.Palette`, `RoImport.Palette(string)`, with `RoPaletteConverterTests` (256 × 1, index 0 transparent, settings); add both kinds to the window and the menu items `Tools/Ragnarok/Convert Sprite Folder…` and `Convert All Palettes`. (FR-7)
   *Done when:* the palette tests pass and a synthetic sprite and palette convert from the window and the menu with progress and cancel working.
 - [ ] **T5.4** Implement `SpriteAnimationEditor.cs` and `RoSpritePreviewWindow.cs` (plan §4.8). (FR-10)
   *Done when:* on a converted reference sprite the inspector shows its counts, the preview plays it, the direction picker, step, speed, missing-action policy and palette slot work, and anchors are drawn; screenshots in the PR.
