@@ -8,7 +8,7 @@
 | **Owner** | _(fill in)_ |
 | **Reference** | [act-reference.md](act-reference.md) (format facts read through GRF), [SpriteAction](../../data/SpriteAction.md), [UninarokPosition](../../data/UninarokPosition.md) (direction) |
 | **Plan** | [plan.md](plan.md) (Approved, 2026-11-19) |
-| **Tasks** | [tasks.md](tasks.md) (Draft, 2026-11-19) |
+| **Tasks** | [tasks.md](tasks.md) (Approved, 2026-11-19) |
 
 ## 1. Why
 

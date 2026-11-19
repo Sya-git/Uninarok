@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Draft |
+| **Status** | Approved (by the owner, 2026-11-19) |
 
 **How to use this file**
 - Start only when TASKS-0002 phases 0 to 6 are done (paths, source, writer, ledger, context, batch, menu, window). This spec does not depend on 0003 to 0006.
