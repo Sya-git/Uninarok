@@ -51,7 +51,7 @@
 
 ## Phase 3: Placement and lighting
 
-- [ ] **T3.1** Add `RoRswPlacementTests` and `RoRswLightingTests` (failing, ignored): a model at the map centre, at a corner and at a non-square map's corner; a rotation about each axis (order and signs pinned); mirrored scale on one and three axes (the instance is not inside-out); positions relative to the centre equal `RoMapSpace.FromRswRo`; ambient and sun colours, shadow strength and sun rotation for a table of longitude and latitude values. (FR-3, FR-8)
+- [x] **T3.1** Add `RoRswPlacementTests` and `RoRswLightingTests` (failing, ignored): a model at the map centre, at a corner and at a non-square map's corner; a rotation about each axis (order and signs pinned); mirrored scale on one and three axes (the instance is not inside-out); positions relative to the centre equal `RoMapSpace.FromRswRo`; ambient and sun colours, shadow strength and sun rotation for a table of longitude and latitude values. (FR-3, FR-8)
   *Done when:* the tests compile and are ignored with `pending T3.2`.
 - [ ] **T3.2** Implement `Core/Rsw/RoRswRules` (values of T0.3), `RoRswPlacement` (one matrix chain in Ragnarok space, one conversion) and `RoRswLighting` (plan §4.3, §4.4). (FR-3, FR-8)
   *Done when:* `[Ignore]` removed and the tests of T3.1 pass.
