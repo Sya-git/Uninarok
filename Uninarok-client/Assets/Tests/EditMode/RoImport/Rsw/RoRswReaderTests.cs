@@ -11,7 +11,6 @@ namespace Uninarok.RoImport.Tests.Rsw
 {
     // TASKS-0006 T1.2 / T1.3 (FR-1). Counts and values are GRF's, recorded by T0.2 (plan 4.1, reference-models.md §4).
     [Category(GndTestData.Category)]
-    [Ignore("pending T1.3")]
     public class RoRswReaderTests
     {
         const float Eps = 1e-3f;
