@@ -5,7 +5,6 @@ using Uninarok.RoImport.Core.Rsw;
 namespace Uninarok.RoImport.Tests.Rsw
 {
     // TASKS-0006 T3.1 / T3.2 (FR-8): the scene light from the RSW's global light (PLAN-0006 4.4, verified by T0.3).
-    [Ignore("pending T3.2")]
     public class RoRswLightingTests
     {
         const float Eps = 1e-4f;

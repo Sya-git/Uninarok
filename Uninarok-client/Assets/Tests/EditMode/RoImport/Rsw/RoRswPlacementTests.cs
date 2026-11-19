@@ -9,7 +9,6 @@ namespace Uninarok.RoImport.Tests.Rsw
 {
     // TASKS-0006 T3.1 / T3.2 (FR-3): one matrix chain in Ragnarok space, converted once (PLAN-0006 4.3, D1, D13).
     // Rules verified by T0.3: position relative to the map centre, rotation Rz·Rx·Ry with all signs +1, scale as stored.
-    [Ignore("pending T3.2")]
     public class RoRswPlacementTests
     {
         const float Eps = 1e-4f;
