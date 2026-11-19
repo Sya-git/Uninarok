@@ -84,8 +84,10 @@ Reference set (spec §5), used by every check below: a multi-layer monster `몬�
 
 - [x] **T6.1** Add `RoSpriteReferenceTests` (`NeedsData`): the reference set converts with no failure; sheets = distinct SPR hashes; stored actions ≤ file actions; the weapon's walk actions are empty and its attack actions are not; the skill icon and ground item are sprites. (FR-1 to FR-9, FR-11)
   *Done when:* the tests pass on the owner's data.
-- [ ] **T6.2** Full-data run: convert every ACT under `sprite/` with its same-name SPR and every PAL under `palette/`. Record counts converted, issues by code, time, number of sheets, total sheet pixels and texture memory (RGBA32 and index), size on disk, and a second run's time (all skipped). Report the memory against R1 for the owner's decision. (FR-2, FR-8, FR-9)
-  *Done when:* every file converts or its failure is one listed issue, the second run skips all, and the numbers are in the PR and in `plan.md` §9.
+- [x] **T6.2** Sample run (changed by the owner on 2026-11-19 from the full-data run: "all classes, poring, fabre, lunatic and some basic weapons like knife, main gauche, sword, club"): convert every body ACT under `sprite/인간족/몸통/` with palettes, the weapon ACTs of every class for dagger `_단검`, main gauche `_1207`, sword `_검` and club `_클럽` (with their trails `_검광`), and `몬스터/poring`, `fabre`, `lunatic`, into the project. Record counts, issues, time, sheets, pixels, memory, disk and a second run, and extrapolate to the whole set for R1. (FR-2, FR-8, FR-9)
+  *Done when:* every file of the sample converts or its failure is one listed issue, the second run skips all, and the numbers are in `plan.md` §9.
+- [ ] **T6.3** Full-data run (deferred by the owner, 2026-11-19): every ACT under `sprite/` and every PAL under `palette/`, after the owner's R1 decision. (FR-2, FR-8, FR-9)
+  *Done when:* every file converts or its failure is one listed issue, the second run skips all, and the numbers are in `plan.md` §9.
 
 ## Phase 7: Verify and close
 
@@ -103,13 +105,13 @@ Reference set (spec §5), used by every check below: a multi-layer monster `몬�
 | FR | Tasks |
 |---|---|
 | FR-1 | T0.1, T0.2, T0.3, T1.1, T1.2, T1.3, T2.4, T3.1, T3.2, T3.3, T6.1, T7.1 |
-| FR-2 | T3.4, T5.1, T5.2, T6.1, T6.2 |
+| FR-2 | T3.4, T5.1, T5.2, T6.1, T6.2, T6.3 |
 | FR-3 | T0.1, T0.2, T0.4, T1.1–T1.3, T2.1–T2.3, T4.1, T4.2, T5.2, T6.1, T7.1, T7.2 |
 | FR-4 | T4.1, T4.2, T6.1 |
 | FR-5 | T0.2, T2.1–T2.3, T4.1, T4.2, T6.1, T7.1 |
 | FR-6 | T0.2, T2.2, T2.3, T4.1, T4.2, T7.1 |
 | FR-7 | T0.1, T0.3, T2.4, T3.1–T3.3, T5.3, T7.1 |
-| FR-8 | T1.1–T1.3, T5.1, T5.2, T6.2 |
-| FR-9 | T0.3, T3.1, T3.3, T3.4, T5.1, T5.2, T6.2 |
+| FR-8 | T1.1–T1.3, T5.1, T5.2, T6.2, T6.3 |
+| FR-9 | T0.3, T3.1, T3.3, T3.4, T5.1, T5.2, T6.2, T6.3 |
 | FR-10 | T5.4 |
 | FR-11 | T0.4, T5.1, T5.2, T6.1 |
