@@ -81,8 +81,9 @@
 
 ## Phase 7: Whole data set
 
-- [ ] **T7.1** Add `RoMapGroundContactTests` and `RoMapReferenceTests` (`NeedsData`): the samples of `ground-contact.json` sit at the recorded distance within the recorded tolerance; each reference map converts with no failure; the instance count per group equals the file's counts; every distinct model converted; a second batch skips everything. (FR-1 to FR-12)
+- [x] **T7.1** Add `RoMapGroundContactTests` and `RoMapReferenceTests` (`NeedsData`): the samples of `ground-contact.json` sit at the recorded distance within the recorded tolerance; each reference map converts with no failure; the instance count per group equals the file's counts; every distinct model converted; a second batch skips everything. (FR-1 to FR-12)
   *Done when:* the tests pass on the owner's data.
+  *Result (2026-11-18):* on the owner's data `RoMapGroundContactTests` 4/4 (the 29 samples within 0.05 of the recorded distance) and `RoMapReferenceTests` 1/1 in 1 min 43 s: the batch of izlude, prontera and prt_fild08 into a throwaway root gave `Created 3, Updated 0, Skipped 0, Failed 0, Warnings 0`, every group count equals the file's, no placeholder, and the second batch `Skipped 3` with nothing else. The ground-contact test places the instances with `RoRswPlacement` (as the scene builder) on the project's converted prefabs.
 - [ ] **T7.2** Run **Convert All Maps** on the full data set. Record the number of maps, the models and ground chunks converted on demand, warnings by code (especially `ModelMissing`, `RswNodeNameIgnored`, `RswUnknownAnimType`), failures, total time, the time and scene size of the largest map and its instance count, and whether scenes need a `.gitattributes` rule. (FR-12)
   *Done when:* every map converts or its failure is one listed issue, a second run skips all, and the numbers are in the PR.
 
