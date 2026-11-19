@@ -150,11 +150,11 @@ Satisfies FR-2, FR-3, FR-4.
 ```csharp
 public readonly struct RoRswRules                       // the choices the data must confirm (T0.3), each a named constant
 {
-    public float PositionScale;                         // RSW position unit → Ragnarok unit (candidate 1; the client's own unit factor may be 1/5)
-    public RoAxisOrder RotationOrder;                   // candidate: Z, then X, then Y
-    public float RotationSignX, RotationSignY, RotationSignZ;
-    public float ScaleYSign;                            // candidate -1 (Ragnarok's Y points down)
-    public bool NodeNameSelectsRoot;                    // candidate false
+    public float PositionScale;                         // 1 (T0.3; PLAN-0004 T0.3 verified the offset)
+    public RoAxisOrder RotationOrder;                   // Z·X·Y as a matrix product (Y applied first), T0.3
+    public float RotationSignX, RotationSignY, RotationSignZ;   // +1, +1, +1 (T0.3)
+    public float ScaleYSign;                            // +1 (T0.3: -1 floats izlude's mirrored tools above their bench)
+    public bool NodeNameSelectsRoot;                    // false (T0.3: the node is always the root, or a node that does not exist)
     public static readonly RoRswRules V1;
 }
 public static class RoRswPlacement
@@ -165,10 +165,10 @@ public static class RoRswPlacement
 ```
 
 - **One matrix chain in Ragnarok space, like PLAN-0003.** The placement of a model is `M = T(centreOffset + position·PositionScale) · R(rotation) · S(scale)` with `centreOffset = RoMapSpace.CentreOffsetRo` (RSW positions are relative to the map centre; the offset is defined once, in PLAN-0004 §4.2, so ground, walkability and objects can never disagree), `R` built with the order and signs of the rules table and `S` with the Y sign. The matrix is converted to Unity with the one conjugation of PLAN-0002 §4.3 (`F·M·F`, scale 0.1) and decomposed once; nothing in this plan converts a component on its own.
-- **Mirrored (negative) scale.** A negative scale on one or three axes flips winding. The decomposition keeps the negative sign on the scale component and the model's materials are one-sided, so a mirrored instance is inside-out unless the renderer flips winding: Unity does this itself for a negative `lossyScale` determinant (the renderer reverses the culling), so no extra work is needed; a test and T0.3 confirm it on a synthetic mirrored model (the data has none, `reference-models.md` §5).
+- **Mirrored (negative) scale.** A negative scale on one or three axes flips winding. The decomposition keeps the negative sign on the scale component and the model's materials are one-sided, so a mirrored instance is inside-out unless the renderer flips winding: Unity does this itself for a negative `lossyScale` determinant (the renderer reverses the culling), so no extra work is needed; a test confirms it on a synthetic mirrored model. The data has 395 mirrored instances (T0.2), on X and Z and, in izlude, on Y; the owner compared them (T0.3).
 - **The instance transform is the placement alone.** The model prefab's own transforms already contain the recentering of PLAN-0003 (the prefab root has none of its own and its origin is the bottom centre of the bounds), so the instance gets exactly `M` and nothing is added.
-- **`NodeName`.** The RSW can name a root node to render. The candidate rule is that it is ignored (the whole model is drawn); T0.3 counts non-empty values in the three reference maps and, if there are any whose node is not the main node, decides with the owner; until then a non-empty value gives one `RswNodeNameIgnored` warning per map with a count.
-- **Animation.** `AnimType` 0 means a static prop: the instance's `Animator` (present only on animated model prefabs) is disabled; `AnimType` 2 keeps it enabled and `AnimSpeed` (a percentage) sets `Animator.speed = AnimSpeed / 100`; any other value is reported once as `RswUnknownAnimType` and treated as 2. T0.3 checks this on the two clock towers of prontera. `Collision` is not used in this delivery (no colliders are generated) and is not kept: on 2.1 it holds uninitialized memory (T0.2).
+- **`NodeName`.** Ignored (the whole model is drawn), owner's decision (T0.3). It is non-empty on every instance: on 2,416 of 2,425 it names the model's root node, on the other 9 a node that does not exist, never a child node. `RswNodeNameIgnored` is reported once per map, with a count, only for instances whose `NodeName` names a **child** node (none in the reference data).
+- **Animation.** `AnimType` 0 means a static prop: the instance's `Animator` (present only on animated model prefabs) is disabled; `AnimType` 2 keeps it enabled; any other value is reported once as `RswUnknownAnimType` and treated as 2. Seen (T0.3): type 0 on all of prt_fild08, type 2 on all of prontera and izlude. The model's own timing (1000 ticks = 1 s, PLAN-0003 D4) is the animation's speed. `AnimSpeed` is 1 everywhere except 0.01 on prontera's two clock towers; whether it multiplies `Animator.speed` is **open (owner)** and must be settled before T5.3; until then `Animator.speed` stays 1. `Collision` is not used in this delivery (no colliders are generated) and is not kept: on 2.1 it holds uninitialized memory (T0.2).
 - **Ground contact (FR-4).** `RoGroundSampler` (PLAN-0005 §4.4) gives the ground height under an instance's origin. The test compares, for at least 20 models of the reference maps, the vertical distance between the model's lowest point and the ground with the expected distance recorded in `Assets/Tests/EditMode/RoImport/Rsw/ground-contact.json`. That file is made by T0.4 from the reference viewer: for each sample model it records the distance the original shows (zero for a barrel on the street, the sunk depth of a fountain base, and so on), so models that float or sink in the original are checked against what the original shows, not against an assumption.
 - All of this is pure: structs in, structs out; it takes `RoMapSpace` as a parameter.
 
@@ -186,8 +186,8 @@ public static class RoRswLighting
 }
 ```
 
-- The scene gets ambient lighting in flat colour mode (`RenderSettings.ambientMode = Flat`, `ambientLight`) and **one** real-time directional light named `Sun` with soft shadows, because lighting is real time (owner decision on SPEC-0004 OQ-2). The two colours are the RSW's, taken as stored (0 to 1 floats); T0.3 checks whether the client multiplies them (a known factor between ambient and diffuse) and writes the final rule here.
-- The direction of the sun is built from longitude and latitude (degrees) in Ragnarok space and converted with `RoSpace`; the formula is a rule of the table (T0.3), with a candidate from the angles' definition, and is compared with the shadow direction of the reference viewer on a tall model.
+- The scene gets ambient lighting in flat colour mode (`RenderSettings.ambientMode = Flat`, `ambientLight`) and **one** real-time directional light named `Sun` with soft shadows, because lighting is real time (owner decision on SPEC-0004 OQ-2). The two colours are the RSW's, taken as stored (0 to 1 floats, no factor): `ambientLight = (AmbientR, G, B)`, `Sun.color = (DiffuseR, G, B)`, `Sun.intensity = 1`, `Sun.shadowStrength = 1 - opacity` (opacity is GRF's `Light.Intensity`). The owner compared prontera with this rule (T0.3).
+- The direction of the sun is built from longitude and latitude (degrees) in Ragnarok space and converted with `RoSpace`; latitude is measured from the zenith. The vector toward the light in Ragnarok space is `(-cos lon · sin lat, -cos lat, sin lon · sin lat)`; `Sun.forward` is minus its `RoSpace.Direction`. On prontera (45, 45) the sun comes from the north-west, 45° up. Verified with the owner (T0.3).
 - FR-8 is a Should; if T0.3 cannot establish the rule, the lighting step is left out and the scene gets Unity's default lighting with a recorded note, without blocking the other requirements.
 
 ### 4.5 Map-wide values: filling `MapData.settings`
@@ -212,7 +212,7 @@ public sealed class RoMapConverter : IRoConverter       // registers RoJobKind.M
 
 - **Hierarchy (FR-1, FR-5).** The scene has one root object `Map_<name>` carrying `MapRoot` (map name and the `MapData` reference, FR-1), with these children in this order, whose names are a **stable contract** with the additive scene:
   - `Ground`: an instance of the ground prefab (PLAN-0004 §4.6) at the origin;
-  - `Models`, `Lights`, `Sounds`, `Effects`: groups. The hierarchy must show the count of each group (FR-5), so the object name is `Models (1367)`; the base name is the stable part and the count follows after a space and an opening bracket, so a lookup by prefix (`Models`) always works. `RoMapNames.Group(kind)` and `RoMapNames.FindGroup(root, kind)` are the only code that builds or looks up these names, and the additive scene's lookups are documented to use them.
+  - `Models`, `Lights`, `Sounds`, `Effects`: groups. The hierarchy must show the count of each group (FR-5), so the object name is `Models (1303)`; the base name is the stable part and the count follows after a space and an opening bracket, so a lookup by prefix (`Models`) always works. `RoMapNames.Group(kind)` and `RoMapNames.FindGroup(root, kind)` are the only code that builds or looks up these names, and the additive scene's lookups are documented to use them.
   - `Sun` (the directional light) directly under the map root.
 - **Instances (FR-2).** Each model object is `PrefabUtility.InstantiatePrefab(modelPrefab)` (a prefab instance, not a copy, so editing the model or its material changes every instance); its name is the object's name in the RSW (names need not be unique; the order is the file order, which is the sibling order), its transform is the placement of §4.3, and it is parented under `Models`. Instances are created without per-instance overrides other than name, transform, static flags and, for animated models, the `Animator` speed or enabled state.
 - **Placeholders (FR-9).** Lights, sounds and effects become empty objects with the object's name and position under their group, each with its data marker: `MapLightMarker` (colour, range), `MapSoundMarker` (file, volume, range, interval, width, height), `MapEffectMarker` (preset id, delay, four parameters). They hold parameters and do nothing at runtime (non-goal). A model that could not be converted becomes an empty object with the instance's name and transform and a `MapMissingModelMarker` (model file) so the map keeps its structure (FR-10).
@@ -300,6 +300,7 @@ Satisfies every FR of the spec. EditMode NUnit tests in `Uninarok.RoImport.Tests
 | D10 | Static flags on scene instances, not on prefabs; animated instances are not batched | Making prefabs static (affects every use of the model, including the animated ones) |
 | D11 | Owner's decision (2026-11-18): the RSW values are taken from the GRF library as it supplies them; T0.2 only maps fields to GRF members | Comparing GRF's values with a hand reading of the file bytes |
 | D12 | Owner's decision (2026-11-18): no music name; the music table is not read and `MusicNameMissing` does not exist | Reading `data/mp3nametable.txt` (no music is available yet and music is not part of the spec) |
+| D13 | T0.3 (2026-11-18): rotation `Rz·Rx·Ry`, all signs +1, scale used as stored (Y sign +1) in Ragnarok space. Checked by the tilt of the 36 tilted bushes of prt_fild08 against the ground normal (mean 20.9°, against 35.6° unrotated and ≥ 21.1° for all 47 other order and sign choices), the diagonal clock-tower walls of prontera (Y sign), izlude's mirrored axe and hammer on their bench (Y scale sign; diagonal on the bench, as in the reference viewer) and the owner's comparison of prt_fild08, izlude and prontera with the reference viewer | Scale Y sign -1 (BrowEdit3's, which belongs to its own Y flip; it floats the tools above the bench); the other orders (they stand the tools up) |
 
 Items for the owner: approve D4 (no per-model shadow flags) and D8, and the new runtime marker components.
 
@@ -307,7 +308,7 @@ Items for the owner: approve D4 (no per-model shadow flags) and D8, and the new 
 
 | Risk | Mitigation |
 |---|---|
-| The rules table (position scale, rotation order and signs, scale sign) differs from the candidates | T0.3 compares every rule with the reference viewer on the three maps and the four reported models; each rule is one constant with a pinning test |
+| The rules table (position scale, rotation order and signs, scale sign) differs from the candidates (resolved by T0.3: the scale Y sign differed) | T0.3 compares every rule with the reference viewer on the three maps and the four reported models; each rule is one constant with a pinning test |
 | The ground-contact tolerance is wrong or the recorded distances are wrong | T0.4 records them from the reference viewer with the owner; the file is committed test data |
 | Scene files are not byte-identical on a forced re-save | The ledger skips unchanged maps; the determinism test compares by structure; recorded as a known limit of FR-16 for scenes |
 | A map with 1400 instances makes `InstantiatePrefab` and save slow | Measured in T7.2; instances are created in file order in one pass; chunking by 200 jobs bounds memory; if too slow the fallback is creating the scene through `PrefabUtility.LoadPrefabContents` batching (decision recorded then) |
