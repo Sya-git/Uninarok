@@ -37,7 +37,7 @@
 
 - [x] **T1.1** Add `Core/Rsw/` types exactly as in plan §4.1 (`RoRsw`, `RoRswWater`, `RoRswLight`, `RoRswModel`, `RoRswPointLight`, `RoRswSound`, `RoRswEffect`) and a test-only builder `RswTestMaps` in `Assets/Tests/EditMode/RoImport/Rsw/` (a map with one model at the centre, one at each corner, rotated and mirrored models, a light, a sound, an effect, a missing-model reference, a non-square map). Add the issue codes `UnsupportedRswVersion`, `RswFileMismatch`, `RswNodeNameIgnored`, `RswUnknownAnimType`, `ModelMissing` to `RoIssueCode`. (FR-1, FR-3)
   *Done when:* the project compiles and a test builds each sample map and checks its counts.
-- [ ] **T1.2** Add `RoRswReaderTests` (`NeedsData`, failing, ignored): the three reference maps read through GRF with the object counts of `reference-models.md` §4; the versions are as recorded in T0.2; a truncated copy and an empty array return false with a reason and never throw. (FR-1)
+- [x] **T1.2** Add `RoRswReaderTests` (`NeedsData`, failing, ignored): the three reference maps read through GRF with the object counts of `reference-models.md` §4; the versions are as recorded in T0.2; a truncated copy and an empty array return false with a reason and never throw. (FR-1)
   *Done when:* the tests compile and are ignored with `pending T1.3`.
 - [ ] **T1.3** Implement `Core/Formats/RoRswReader` using the GRF members recorded by T0.2. No parsing code of our own. (FR-1)
   *Done when:* `[Ignore]` removed and `RoRswReaderTests` pass; a text search shows no `BinaryReader` or `BitConverter` use added.
