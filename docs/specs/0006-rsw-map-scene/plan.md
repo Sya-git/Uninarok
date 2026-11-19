@@ -280,6 +280,7 @@ Satisfies every FR of the spec. EditMode NUnit tests in `Uninarok.RoImport.Tests
 
 - `RswImporter.cs` (a `ScriptedImporter` on `.rsw` that looks up model prefabs) is deleted by the last task of this plan; once the source folder is hidden from Unity (PLAN-0002 §7) it is inert. Its logic is not carried over: the root-only global transform, the use of GRF's derived positions and the fixed rotation order are replaced by §4.3.
 - Scenes made by the old importer (if committed) are replaced by the regenerated scenes; the list of such scenes and their users is recorded by T0.1.
+- T8.5 (2026-11-18): `RswImporter.cs` is deleted; it had no users and made no committed scene (T0.1), and `UtilExtensions.cs` was already gone (TASKS-0004 T8.4). The only old importers left, compiled out, are `RsmImpoter.cs` and `RsmImpoter.bkp.cs` (listed in BACKLOG).
 - PLAN-0003 FR-3 (model recentering / ground contact) is closed by the ground-contact task here.
 - The `.gitattributes` rules of PLAN-0002 §7 do not cover `*.unity` generated scenes under `Assets/Scenes/Maps/`; scenes stay text and are not put under LFS unless T7.2 shows a size problem (a scene with 1400 prefab instances is a few hundred KB).
 - Contract with PLAN-0007: none (sprites are not map objects here). A later spec places NPCs and monsters at map cells using `MapData`.

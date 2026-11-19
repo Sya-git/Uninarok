@@ -98,8 +98,9 @@
   *Done when:* screenshots and the batching statistics are in the PR.
 - [ ] **T8.4** Additive layer and gizmos by hand: add a custom object in an additive scene, re-convert, open with `Tools/Ragnarok/Open Map`, and see the object still in place; select the map object and see the gizmos. (FR-11, FR-13)
   *Done when:* screenshots are in the PR.
-- [ ] **T8.5** Delete `RswImporter.cs` (and its `.meta`), the old scenes and prefabs listed by T0.1 that the new scenes replace, and the parts of `UtilExtensions.cs` that only it used (and the whole file if nothing else uses it; a search result is pasted). Update `plan.md` §7 if the list of remaining old importers changes. (FR-1)
+- [x] **T8.5** Delete `RswImporter.cs` (and its `.meta`), the old scenes and prefabs listed by T0.1 that the new scenes replace, and the parts of `UtilExtensions.cs` that only it used (and the whole file if nothing else uses it; a search result is pasted). Update `plan.md` §7 if the list of remaining old importers changes. (FR-1)
   *Done when:* the project compiles with no reference to the deleted classes and `RoArchitectureTests` (TASKS-0002 T7.2) still pass.
+  *Result (2026-11-18, done before T8.1 to T8.4, which need the owner):* `RswImporter.cs` and its `.meta` deleted. A search of `Assets` (`*.cs`, `*.asmdef`, `*.unity`, `*.prefab`) for `RswImporter` finds nothing else; no old scene or prefab existed (T0.1); `UtilExtensions.cs` was already deleted (TASKS-0004 T8.4). The project compiles and `RoArchitectureTests` pass (11/11). Plan §7 records the old importers left.
 - [ ] **T8.6** Close: verify each FR of the spec against the tests and manual evidence; also close FR-3 of SPEC-0003 with the ground-contact result and set TASKS-0003/PLAN-0003/SPEC-0003 to `Implemented` if everything else there is done; set the status of this spec, plan and tasks to `Implemented`; move leftovers to `docs/specs/BACKLOG.md`.
   *Done when:* the traceability table of the plan has a passing test or recorded evidence for each of FR-1 to FR-13 and the leftovers are in `BACKLOG.md`.
 
