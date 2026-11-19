@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Draft |
+| **Status** | Approved |
 
 **How to use this file**
 - Start only when TASKS-0002 phases 0 to 6, TASKS-0003 phases 0 to 6, TASKS-0004 phases 0 to 5 and TASKS-0005 phases 0 to 4 are done (foundation, model prefabs, ground and `RoMapSpace`, map data and `MapRoot`). Tasks here use those contracts as written in their plans.
@@ -20,9 +20,9 @@
 
 ## Phase 0: Verify before building
 
-- [ ] **T0.1** Check the data and the old code: list the three reference maps (`map/<name>.rsw`, `.gnd`, `.gat`) and count every `.rsw` under `map/`; locate `data/mp3nametable.txt`; list scenes and prefabs in the project that were made by `RswImporter.cs` and what refers to them. Record the counts, the table's location and the list in the PR. (FR-1, FR-7, FR-12)
+- [ ] **T0.1** Check the data and the old code: list the three reference maps (`map/<name>.rsw`, `.gnd`, `.gat`) and count every `.rsw` under `map/`; list scenes and prefabs in the project that were made by `RswImporter.cs` and what refers to them. Record the counts and the list in the PR. (FR-1, FR-12)
   *Done when:* every reference file exists or its absence is agreed with the owner, and the list of old scenes and users is in the PR.
-- [ ] **T0.2** Map GRF to the file fields (plan §4.1). In a scratch editor script load each reference `.rsw` through the GRF `Rsw` class and print the version, the file references, the water, the lighting values and the first and last object of each type; compare with the raw values of the same files (a model, a light, a sound, an effect). Check the counts against `reference-models.md` §4. Write into `plan.md` §4.1 a table: one row per `RoRsw` field with the GRF member that supplies it, and one note for every derived member that must not be used. Record the versions of the three maps, where the water plane is read from, and the shape of `mp3nametable.txt` lines and its encoding. (FR-1, FR-7)
+- [ ] **T0.2** Map GRF to the file fields (plan §4.1). In a scratch editor script load each reference `.rsw` through the GRF `Rsw` class and print the version, the file references, the water, the lighting values and the first and last object of each type, taking GRF's values as they are (no comparison with the file bytes, plan D11). Check the counts against `reference-models.md` §4. Write into `plan.md` §4.1 a table: one row per `RoRsw` field with the GRF member that supplies it, and one note for every derived member that must not be used. Record the versions of the three maps and where the water plane is read from. (FR-1, FR-7)
   *Done when:* every `RoRsw` field has a GRF member (or is declared absent for the version), the versions are recorded, and the table is in `plan.md`.
 - [ ] **T0.3** Verify the rules table (plan §4.3, §4.4). In a scratch editor script place the models of prt_fild08 using the GRF values of T0.2 and the candidate rules (centre offset from `RoMapSpace`, position scale, rotation order and signs, scale Y sign), on the throwaway ground of TASKS-0004, and compare with the reference viewer from top, front and oblique. Do the four models earlier reported as misplaced first, then the control group of `reference-models.md`, then prontera's two clock towers and izlude. For any model that differs change the rule (not the model) and repeat; check the earlier models after every change. Also record: non-empty `NodeName` values (count and whether the node is the main node), animation types and speeds seen, collision values seen, a check of the ambient and sun colours against the reference viewer, and the sun direction against the shadow of a tall model. Record the final rules and "result by model" in `plan.md` §4.3 and §4.4, and decide with the owner on `NodeName`. (FR-3, FR-8)
   *Done when:* all four reported models, the control group and both clock towers match in the three views, the rules table and lighting rule are in `plan.md`, the owner has seen the comparison images, and the scratch script is deleted.
@@ -31,7 +31,7 @@
 
 ## Phase 1: Data and reader
 
-- [ ] **T1.1** Add `Core/Rsw/` types exactly as in plan §4.1 (`RoRsw`, `RoRswWater`, `RoRswLight`, `RoRswModel`, `RoRswPointLight`, `RoRswSound`, `RoRswEffect`) and a test-only builder `RswTestMaps` in `Assets/Tests/EditMode/RoImport/Rsw/` (a map with one model at the centre, one at each corner, rotated and mirrored models, a light, a sound, an effect, a missing-model reference, a non-square map). Add the issue codes `UnsupportedRswVersion`, `RswFileMismatch`, `RswNodeNameIgnored`, `RswUnknownAnimType`, `ModelMissing`, `MusicNameMissing` to `RoIssueCode`. (FR-1, FR-3)
+- [ ] **T1.1** Add `Core/Rsw/` types exactly as in plan §4.1 (`RoRsw`, `RoRswWater`, `RoRswLight`, `RoRswModel`, `RoRswPointLight`, `RoRswSound`, `RoRswEffect`) and a test-only builder `RswTestMaps` in `Assets/Tests/EditMode/RoImport/Rsw/` (a map with one model at the centre, one at each corner, rotated and mirrored models, a light, a sound, an effect, a missing-model reference, a non-square map). Add the issue codes `UnsupportedRswVersion`, `RswFileMismatch`, `RswNodeNameIgnored`, `RswUnknownAnimType`, `ModelMissing` to `RoIssueCode`. (FR-1, FR-3)
   *Done when:* the project compiles and a test builds each sample map and checks its counts.
 - [ ] **T1.2** Add `RoRswReaderTests` (`NeedsData`, failing, ignored): the three reference maps read through GRF with the object counts of `reference-models.md` §4; the versions are as recorded in T0.2; a truncated copy and an empty array return false with a reason and never throw. (FR-1)
   *Done when:* the tests compile and are ignored with `pending T1.3`.
@@ -40,9 +40,9 @@
 
 ## Phase 2: Map-wide values and settings
 
-- [ ] **T2.1** Add `RoMapNameTableTests` and `RoMapSettingsTests` (failing, ignored): a table with Korean names, a missing entry, a missing table, spaces and mixed case; settings equal the RSW (water level converted to Unity units, lighting values, size) and the music name equals the table's; an absent RSW converts without settings. (FR-7)
+- [ ] **T2.1** Add `RoMapSettingsTests` (failing, ignored): settings equal the RSW (water level converted to Unity units, lighting values, size); an absent RSW converts without settings. (FR-7)
   *Done when:* the tests compile and are ignored with `pending T2.2`.
-- [ ] **T2.2** Implement `Core/Rsw/RoMapNameTable` (decoding through the GRF text encoding service) and extend `RoMapDataConverter` (PLAN-0005) to read the RSW, fill `MapData.settings`, set `hasSettings` and record the RSW and table hashes as dependencies. (FR-7)
+- [ ] **T2.2** Extend `RoMapDataConverter` (PLAN-0005) to read the RSW, fill `MapData.settings`, set `hasSettings` and record the RSW hash as a dependency. (FR-7)
   *Done when:* `[Ignore]` removed, the tests of T2.1 pass, and the PLAN-0005 tests still pass.
 
 ## Phase 3: Placement and lighting
@@ -77,7 +77,7 @@
 
 - [ ] **T7.1** Add `RoMapGroundContactTests` and `RoMapReferenceTests` (`NeedsData`): the samples of `ground-contact.json` sit at the recorded distance within the recorded tolerance; each reference map converts with no failure; the instance count per group equals the file's counts; every distinct model converted; a second batch skips everything. (FR-1 to FR-12)
   *Done when:* the tests pass on the owner's data.
-- [ ] **T7.2** Run **Convert All Maps** on the full data set. Record the number of maps, the models and ground chunks converted on demand, warnings by code (especially `ModelMissing`, `RswNodeNameIgnored`, `RswUnknownAnimType`, `MusicNameMissing`), failures, total time, the time and scene size of the largest map and its instance count, and whether scenes need a `.gitattributes` rule. (FR-12)
+- [ ] **T7.2** Run **Convert All Maps** on the full data set. Record the number of maps, the models and ground chunks converted on demand, warnings by code (especially `ModelMissing`, `RswNodeNameIgnored`, `RswUnknownAnimType`), failures, total time, the time and scene size of the largest map and its instance count, and whether scenes need a `.gitattributes` rule. (FR-12)
   *Done when:* every map converts or its failure is one listed issue, a second run skips all, and the numbers are in the PR.
 
 ## Phase 8: Verify and close

@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [spec.md](spec.md) (SPEC-0006) |
-| **Status** | Draft |
+| **Status** | Approved |
 | **Audience** | Architects, senior developers, AI agents |
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. Shared rules (paths, units and axes, textures, materials, writer, ledger, results, batch, the additive layer) come from [PLAN-0002](../0002-ro-import-foundation/plan.md). The model prefabs come from [PLAN-0003](../0003-rsm-models/plan.md), the ground and `RoMapSpace` from [PLAN-0004](../0004-gnd-ground/plan.md), the map data asset, `MapRoot` and the runtime assembly `Uninarok.Map` from [PLAN-0005](../0005-gat-map-data/plan.md). Reference maps and models: [`../0003-rsm-models/reference-models.md`](../0003-rsm-models/reference-models.md).
@@ -13,7 +13,7 @@
 - Code lives in the editor assemblies of PLAN-0002 under `Core/Rsw/`, `Core/Formats/` (adapter) and `Editor/Map/`; the small data components that the scene holds (markers for lights, sounds and effects) are **runtime code** in `Uninarok.Map` (PLAN-0005 §3), because a component of an editor-only assembly cannot be saved in a scene that ships (PLAN-0002 §4.14).
 - **RSW files are read by the GRF library** (the `Rsw` class of `GRF.dll`) through one adapter, `RoRswReader` (PLAN-0002 §1). After the adapter everything works on our own type `RoRsw`.
 - Format facts used here, from the community RSW document: the file starts with `GRSW` and a version (1.9 to 2.6, with a build number from 2.2); it holds a water plane (moved to the GND file from 2.6), global lighting (directional light by longitude and latitude in degrees, diffuse and ambient colours, shadow opacity), a ground bounding box that appears unused, a list of scene objects, and a quad tree (absent in 1.9) used by the client for culling. A scene object is one of four types: **model** (name, animation type and speed, collision flags, model file, node name, position, rotation, scale), **light** (name, position, colour, range), **sound** (name, file, position, volume, width, height, range, cycle interval) and **effect** (name, position, preset id, emission delay, four launch parameters). The document gives **no** unit, axis or rotation convention (no map-centre offset, no Y sign, no rotation order or units). Those are the rules table of §4.3, verified by T0.3. The quad tree is not read.
-- The map-wide values of FR-7 (size, water level, lighting values, music name) go into the `settings` field of the `MapData` asset of PLAN-0005, which this plan fills (§4.5); there is one converter owner for that asset.
+- The map-wide values of FR-7 (size, water level, lighting values) go into the `settings` field of the `MapData` asset of PLAN-0005, which this plan fills (§4.5); there is one converter owner for that asset.
 - OQ-1 (per-model shadow flags) and OQ-2 (scene location) of the spec are **decided in this plan** (§8, D4 and D5) and listed for the owner at approval.
 - Re-conversion never touches the additive scene (PLAN-0002 §4.13).
 
@@ -59,7 +59,7 @@ Satisfies FR-1, FR-5, FR-11.
 | `Assets/Scripts/Map/MapMarkers.cs` | `MapLightMarker`, `MapSoundMarker`, `MapEffectMarker` (data only: parameters, no logic) | `Uninarok.Map` |
 | `Assets/Scripts/Map/MapRoot.cs` | (PLAN-0005) gains `MapSettings` access through its `MapData` | `Uninarok.Map` |
 | `Assets/Editor/RoImport/Core/Formats/RoRswReader.cs` | adapter GRF `Rsw` → `RoRsw` | `Uninarok.RoImport.Core` |
-| `Assets/Editor/RoImport/Core/Rsw/` | `RoRsw`, `RoRswObject` types, `RoRswRules`, `RoRswPlacement`, `RoRswLighting`, `RoMapNameTable` (text table reader for the music name) | Core |
+| `Assets/Editor/RoImport/Core/Rsw/` | `RoRsw`, `RoRswObject` types, `RoRswRules`, `RoRswPlacement`, `RoRswLighting` | Core |
 | `Assets/Editor/RoImport/Editor/Map/` | `RoMapConverter`, `RoMapSceneBuilder`, `RoMapOutputPaths`, `RoMapOpener`, `RoMapGizmos` | `Uninarok.RoImport.Editor` |
 | `Assets/Tests/EditMode/RoImport/Rsw/` | tests; synthetic maps built in code | `Uninarok.RoImport.Tests` |
 
@@ -100,7 +100,7 @@ public static class RoRswReader { public static bool TryRead(RoPath path, byte[]
 - The adapter never throws; a rejected read returns `false` with GRF's reason.
 - A version GRF reads but this plan has no rules row for gives one `UnsupportedRswVersion` issue and no output; the three reference maps fix the first row of the table.
 - The ground and walkability files named in the RSW are checked against the map name: if they differ from `map/<name>.gnd` and `.gat` the converter uses the names from the RSW if the files exist, otherwise reports `RswFileMismatch` once.
-- **Mapping check (T0.2).** The task prints the header and the first and last objects of each type through GRF and compares them with the raw values of the same files, then writes into this section one row per `RoRsw` field with the GRF member that supplies it, noting any member GRF derives and that must not be used.
+- **Mapping check (T0.2).** The task prints the header and the first and last objects of each type through GRF, then writes into this section one row per `RoRsw` field with the GRF member that supplies it, noting any member GRF derives and that must not be used. GRF's values are taken as they are; they are not checked against the file bytes (D11).
 
 ### 4.2 Dependencies: ground, map data and models on demand
 
@@ -162,8 +162,8 @@ public static class RoRswLighting
 
 Satisfies FR-7.
 
-- PLAN-0005's `MapData` already has the field `settings` (`MapSettings`: width and height in cubes, zoom, water level in Unity units, water type and wave values, ambient colour, sun colour, longitude, latitude, shadow opacity, music name, source versions of the GND, GAT and RSW). This plan extends `RoMapDataConverter` so that, when the RSW exists, it also reads it (through `RoRswReader`) and fills `settings`, sets `hasSettings`, and records the RSW hash among its dependencies. If the RSW is absent the asset is converted without settings (SPEC-0005 stands alone).
-- **Music name.** The RSW does not hold it. The client's table `data/mp3nametable.txt` maps a map file to a music file; `RoMapNameTable` (pure, in Core) parses the text lines (`<map>.rsw#<file>#`) after the bytes are decoded with the GRF library's text encoding service (the table is Korean text). A missing table or entry gives an empty music name and one informational `MusicNameMissing` issue (not an error). T0.2 confirms the file's location and shape.
+- PLAN-0005's `MapData` already has the field `settings` (`MapSettings`: width and height in cubes, zoom, water level in Unity units, water type and wave values, ambient colour, sun colour, longitude, latitude, shadow opacity, source versions of the GND, GAT and RSW). This plan extends `RoMapDataConverter` so that, when the RSW exists, it also reads it (through `RoRswReader`) and fills `settings`, sets `hasSettings`, and records the RSW hash among its dependencies. If the RSW is absent the asset is converted without settings (SPEC-0005 stands alone).
+- **Music name.** Not read and not stored: background music is out of scope (spec §6, D12). The RSW does not hold it, and the client's music table is not used.
 - Water: the plane level and the wave values are stored in Unity units, **no water is rendered** (non-goal); the water level is also stored so a later spec can draw it. The source (RSW up to 2.5, GND from 2.6) is chosen by the reader.
 
 ### 4.6 The scene: `RoMapConverter`, `RoMapSceneBuilder`
@@ -225,10 +225,9 @@ Satisfies every FR of the spec. EditMode NUnit tests in `Uninarok.RoImport.Tests
 |---|---|---|
 | `RoRswPlacementTests` | 3 | a model at the map centre, at a corner and at a non-square map's corner; a rotation about each axis (order and signs of the rules table pinned); mirrored scale on one and three axes (determinant sign, instance is not inside-out); positions relative to the centre equal `RoMapSpace.FromRswRo`; non-square maps are not swapped |
 | `RoRswLightingTests` | 8 | ambient and sun colours, shadow strength, sun rotation for a table of longitude and latitude values |
-| `RoMapNameTableTests` | 7 | a table with Korean names, a missing entry, a missing table, spaces and mixed case |
 | `RoMapSceneTests` | 1, 2, 5, 6, 9 | a synthetic map converts to a scene with `Map_<name>`, `Ground`, the four groups with counts and `Sun`; each model object is a prefab instance of the model prefab (changing the prefab's material changes it for every instance); instance names and order are the file order; lights, sounds and effects are markers with their parameters; static flags are set on ground and instances and not on animated instances, markers and groups |
 | `RoMapMissingModelTests` | 10 | a missing model gives one warning naming model and map, the object is a placeholder with the instance's name and transform, the map converts and its other instances are unaffected |
-| `RoMapSettingsTests` | 7 | settings equal the RSW (water level, lighting values, size) and the music name equals the table's; absent RSW converts without settings |
+| `RoMapSettingsTests` | 7 | settings equal the RSW (water level, lighting values, size); absent RSW converts without settings |
 | `RoMapIdempotencyTests` | 11, (0002 FR-5) | second conversion is `Skipped`; a forced second conversion yields an identical scene by structure and unchanged GUIDs for scene, map data, ground and models; the build settings entry survives |
 | `RoMapAdditiveTests` | 11 | an additive scene with a custom object is byte-identical after re-conversion and its object still resolves under the stable names |
 | `RoMapBatchTests` | 12 | a batch of three synthetic maps with a shared model converts the model once, ends with a complete result list, one failing map does not stop the others, a second batch changes nothing |
@@ -267,8 +266,10 @@ Satisfies every FR of the spec. EditMode NUnit tests in `Uninarok.RoImport.Tests
 | D8 | Lighting is real time: ambient colour plus one real-time directional light | Baked lightmaps from the file (owner decision on SPEC-0004 OQ-2) |
 | D9 | Ground-contact check compares with distances recorded from the reference viewer, not with an assumption of "touching" | Asserting every model touches the ground (many props float or sink in the original) |
 | D10 | Static flags on scene instances, not on prefabs; animated instances are not batched | Making prefabs static (affects every use of the model, including the animated ones) |
+| D11 | Owner's decision (2026-11-18): the RSW values are taken from the GRF library as it supplies them; T0.2 only maps fields to GRF members | Comparing GRF's values with a hand reading of the file bytes |
+| D12 | Owner's decision (2026-11-18): no music name; the music table is not read and `MusicNameMissing` does not exist | Reading `data/mp3nametable.txt` (no music is available yet and music is not part of the spec) |
 
-Items for the owner: approve D4 (no per-model shadow flags) and D8, the new runtime marker components, and the music-name source (`mp3nametable.txt`).
+Items for the owner: approve D4 (no per-model shadow flags) and D8, and the new runtime marker components.
 
 ## 9. Risks
 
@@ -279,8 +280,7 @@ Items for the owner: approve D4 (no per-model shadow flags) and D8, the new runt
 | Scene files are not byte-identical on a forced re-save | The ledger skips unchanged maps; the determinism test compares by structure; recorded as a known limit of FR-16 for scenes |
 | A map with 1400 instances makes `InstantiatePrefab` and save slow | Measured in T7.2; instances are created in file order in one pass; chunking by 200 jobs bounds memory; if too slow the fallback is creating the scene through `PrefabUtility.LoadPrefabContents` batching (decision recorded then) |
 | `SaveScene` to an existing path while that scene is open in the editor | The converter closes or reloads an open copy first (and says so once); batch runs lock the editor (PLAN-0002 §4.10) |
-| The music name table is missing in some data sets | Informational issue, empty name, no failure |
-| The RSW version of a map has a layout GRF reads wrongly | T0.2 compares raw values; the version is checked in the rules table and an unknown one is reported once |
+| The RSW version of a map has a layout GRF reads wrongly | Wrong values show up as misplaced models in T0.3 and the reference tests; the version is checked in the rules table and an unknown one is reported once |
 | Many models are missing or fail | One warning per model, placeholders keep the structure, the batch lists them once |
 
 ## 10. Traceability
