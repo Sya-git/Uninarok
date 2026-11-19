@@ -68,6 +68,7 @@ namespace Uninarok.RoImport.Tests
         [TestCase("Editor/RoImport/Core/Uninarok.RoImport.Core.asmdef")]
         [TestCase("Editor/RoImport/Editor/Uninarok.RoImport.Editor.asmdef")]
         [TestCase("Tests/EditMode/RoImport/Uninarok.RoImport.Tests.asmdef")]
+        [TestCase("Tests/EditMode/Sprites/Uninarok.Sprites.Tests.asmdef")]
         public void AssemblyDefinition_IsEditorOnly(string relative)
         {
             string json = File.ReadAllText(Path.Combine(Application.dataPath, relative));
@@ -83,6 +84,34 @@ namespace Uninarok.RoImport.Tests
         {
             public string[] includePlatforms;
             public string[] excludePlatforms;
+            public string[] references;
+        }
+
+        // ---- PLAN-0007 §1, §3: the sprite runtime ships in players and knows nothing of the importer ----
+
+        [Test]
+        public void SpritesRuntimeAssembly_IsForAllPlatforms_WithNoReferenceOfOurs()
+        {
+            string json = File.ReadAllText(Path.Combine(Application.dataPath, "Scripts/Sprites/Uninarok.Sprites.asmdef"));
+
+            var asmdef = JsonUtility.FromJson<AsmdefPlatforms>(json);
+
+            CollectionAssert.IsEmpty(asmdef.includePlatforms ?? new string[0]);
+            CollectionAssert.IsEmpty(asmdef.excludePlatforms ?? new string[0]);
+            CollectionAssert.IsEmpty(asmdef.references ?? new string[0]);
+        }
+
+        [Test]
+        public void SpritesRuntimeAssembly_ReferencesNoEditorNoImporterAndNoGrf()
+        {
+            var sprites = typeof(Uninarok.Sprites.SpriteAnimation).Assembly;
+            Assert.AreEqual("Uninarok.Sprites", sprites.GetName().Name);
+
+            var offenders = sprites.GetReferencedAssemblies().Select(r => r.Name)
+                .Where(n => n.StartsWith("UnityEditor", StringComparison.Ordinal) || n.StartsWith("Uninarok.RoImport", StringComparison.Ordinal) || n == "GRF")
+                .ToArray();
+
+            CollectionAssert.IsEmpty(offenders);
         }
 
         // ---- D7 / plan 4.4: no file format parsed outside GRF and its adapters ----
