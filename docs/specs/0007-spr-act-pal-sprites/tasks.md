@@ -28,7 +28,7 @@ Reference set (spec §5), used by every check below: a multi-layer monster `몬�
   *Done when:* the owner has confirmed every rule from the images, the table in `plan.md` holds the final values, and the scratch script is deleted.
 - [x] **T0.3** Unity API spike (plan §4.2, R3). In a scratch editor script: write a small RGBA32 PNG and an R8 PNG; slice the first into named sprites with `ISpriteEditorDataProvider` (pivot centre, chosen PPU, full-rect mesh); attach the second as secondary texture `_IndexTex`; re-import twice and confirm sprite ids, names, rects and the secondary texture are unchanged; render one sprite with a throwaway shader that reads `_IndexTex` and a palette texture through a `SpriteRenderer`. Record the API calls and any caveat of Unity 6000.7 in `plan.md` §4.2. (FR-1, FR-7, FR-9)
   *Done when:* the palette render works from one sheet, ids are stable across re-imports, the caveats are in `plan.md`, and the scratch script is deleted.
-- [ ] **T0.4** Data check (plan §4.4 static sprites). With a scratch script count, over all of `sprite/`: ACTs that are static (1 action, 1 frame, at most one non-empty layer) and how many of those have a non-zero layer offset; ACTs whose action count is not a multiple of 8. Record the counts in `plan.md` §4.4. (FR-11, FR-3)
+- [x] **T0.4** Data check (plan §4.4 static sprites). With a scratch script count, over all of `sprite/`: ACTs that are static (1 action, 1 frame, at most one non-empty layer) and how many of those have a non-zero layer offset; ACTs whose action count is not a multiple of 8. Record the counts in `plan.md` §4.4. (FR-11, FR-3)
   *Done when:* the counts are in `plan.md` and the scratch script is deleted.
 
 ## Phase 1: Data types and readers
