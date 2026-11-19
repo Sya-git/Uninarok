@@ -41,6 +41,9 @@ namespace Uninarok.Sprites
 
         internal int SystemIndex = -1;
         internal bool BillboardDirty = true;
+        /// <summary>The palette set by <see cref="SpritePalette"/>, or null for the sprite's own colours (FR-7).</summary>
+        internal Texture2D Palette;
+        internal MaterialPropertyBlock PaletteBlock;
 
         public int Animation => _animation;
         public int Direction => _direction;
@@ -229,6 +232,7 @@ namespace Uninarok.Sprites
                 renderers[i] = r;
             }
             _renderers = renderers;
+            if (Palette != null) SpritePalette.Write(this);
         }
     }
 }
