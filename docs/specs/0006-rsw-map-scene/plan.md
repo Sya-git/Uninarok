@@ -102,6 +102,38 @@ public static class RoRswReader { public static bool TryRead(RoPath path, byte[]
 - The ground and walkability files named in the RSW are checked against the map name: if they differ from `map/<name>.gnd` and `.gat` the converter uses the names from the RSW if the files exist, otherwise reports `RswFileMismatch` once.
 - **Mapping check (T0.2).** The task prints the header and the first and last objects of each type through GRF, then writes into this section one row per `RoRsw` field with the GRF member that supplies it, noting any member GRF derives and that must not be used. GRF's values are taken as they are; they are not checked against the file bytes (D11).
 
+**Field map (T0.2, 2026-11-18).** GRF `GRF.FileFormats.RswFormat.Rsw`, built with `new Rsw((MultiType)bytes)` while `EncodingService.DisplayEncoding` is `Korean` (names are CP949, as for GND and RSM), then restored.
+
+| `RoRsw` field | GRF member | Note |
+|---|---|---|
+| `VersionMajor`, `VersionMinor` | `Header.MajorVersion`, `Header.MinorVersion` | all three reference maps are **2.1** |
+| `Build` | `Header.BuildNumber` | 0 below 2.2 (absent in the file) |
+| `GndFile`, `GatFile` | `Header.GroundFile`, `Header.AltitudeFile` | `<name>.gnd`, `<name>.gat` on all three maps |
+| `Water` (level, type, wave height, speed, pitch) | `Water.Level`, `.Type`, `.WaveHeight`, `.WaveSpeed`, `.WavePitch` | read from the RSW for 2.1; `.TextureCycling` is the animation period (kept for a later spec, not used) |
+| `Light` longitude, latitude | `Light.Longitude`, `Light.Latitude` | int degrees (45/45, 45/45, 70/20) |
+| `Light` diffuse, ambient | `Light.DiffuseRed/Green/Blue`, `Light.AmbientRed/Green/Blue` | floats 0 to 1 |
+| `Light` shadow opacity | `Light.Intensity` | GRF names it `Intensity` (0.5, 0.5, 0.6) |
+| object lists | `Objects` (`List<RswObject>`), split by `RswObject.Type` (`Model`=1, `Light`=2, `Sound`=3, `Effect`=4), file order kept | |
+| `RoRswModel.Name`, `File`, `Node` | `Model.Name`, `Model.ModelName`, `Model.NodeName` | `ModelName` is the path under `model/` with `\` separators |
+| `RoRswModel.AnimType`, `AnimSpeed` | `Model.AnimationType`, `Model.AnimationSpeed` | seen: type 0 (prt_fild08, all) and 2 (prontera, izlude, all); speed 1, and 0.01 on prontera's two clock towers |
+| `RoRswModel.Collision` | `Model.BlockType` | read but **not used**: on 2.1 the values are uninitialized memory (hundreds of distinct large and negative numbers) |
+| `Position`, `Rotation`, `Scale` (all types) | `RswObject.Position`, `Model.Rotation`, `Model.Scale` (`TkVector3` `.X .Y .Z`) | rotation in degrees (0 to 360) |
+| `RoRswPointLight.Name`, `Color`, `Range` | `Light.Name`, `Light.ColorVector`, `Light.Range` | `ColorVector` holds the file's floats (0.2, 0.05, 0) |
+| `RoRswSound.*` | `Sound.Name`, `.WaveName`, `.Volume`, `.Width`, `.Height`, `.Range`, `.Cycle` | |
+| `RoRswEffect.*` | `Effect.Name`, `.EffectNumber` (preset), `.EmitSpeed` (delay), `.Param[0..3]` (A to D) | |
+
+Members that must not be used: `Light.Color` (bytes derived from `ColorVector`), `Light.RealRange()`, `Light.Custom_Range`, `Custom_Intensity`, `Custom_CutOff`, `Gives_Shadow` (editor extensions, not file fields of 2.1), `Rsw.WaterLevel(byte[])`, `Rsw.Ground` (the unused bounding box, garbage on izlude), `QuadTree`, `ModelResources`, `LubEffects`, `WindEffects`, `StrEffects`, `EvilsPawEffects` (empty on all three), `Effect.LubEffectAttached`, `Header.IniFile`, `SourceFile`, `UnknownData`.
+
+Observed counts (GRF):
+
+| Map | Version | Models (distinct files) | Lights | Sounds | Effects | `NodeName` non-empty | Mirrored instances (axes) |
+|---|---|---|---|---|---|---|---|
+| prt_fild08 | 2.1 | 570 (23) | 0 | 51 | 0 | 570 | 9 (X 1, Z 2, XZ 6) |
+| prontera | 2.1 | 1303 (62) | 0 | 25 | 152 | 1303 | 289 (X 120, Z 90, XZ 79) |
+| izlude | 2.1 | 552 (90) | 5 | 110 | 12 | 552 | 97 (X 26, Z 45, XZ 21, Y 3, XY 2) |
+
+The notable contents of `reference-models.md` §4 match exactly (prt_fild08: 덤불02 32, 버섯01 5, 버섯02 3, 넝쿨01 1; prontera: 시계탑 2, 교역소 1, 도구점 1, 분수대 1, 게시판 3; izlude: 덤불02 13, 넝쿨01 2, iz_bridge01 6, iz_smelter, iz_enchant, 비공정, 퀴즈경기장, 프론아레나 1 each). The totals of §4 (1367/67, 579/93, 616/26) are higher than GRF's. Every model file referenced exists under `model/`.
+
 ### 4.2 Dependencies: ground, map data and models on demand
 
 Satisfies FR-1, FR-2, FR-10 (uses SPEC-0002 FR-6).
@@ -136,7 +168,7 @@ public static class RoRswPlacement
 - **Mirrored (negative) scale.** A negative scale on one or three axes flips winding. The decomposition keeps the negative sign on the scale component and the model's materials are one-sided, so a mirrored instance is inside-out unless the renderer flips winding: Unity does this itself for a negative `lossyScale` determinant (the renderer reverses the culling), so no extra work is needed; a test and T0.3 confirm it on a synthetic mirrored model (the data has none, `reference-models.md` §5).
 - **The instance transform is the placement alone.** The model prefab's own transforms already contain the recentering of PLAN-0003 (the prefab root has none of its own and its origin is the bottom centre of the bounds), so the instance gets exactly `M` and nothing is added.
 - **`NodeName`.** The RSW can name a root node to render. The candidate rule is that it is ignored (the whole model is drawn); T0.3 counts non-empty values in the three reference maps and, if there are any whose node is not the main node, decides with the owner; until then a non-empty value gives one `RswNodeNameIgnored` warning per map with a count.
-- **Animation.** `AnimType` 0 means a static prop: the instance's `Animator` (present only on animated model prefabs) is disabled; `AnimType` 2 keeps it enabled and `AnimSpeed` (a percentage) sets `Animator.speed = AnimSpeed / 100`; any other value is reported once as `RswUnknownAnimType` and treated as 2. T0.3 checks this on the two clock towers of prontera. `Collision` is not used in this delivery (no colliders are generated); the raw value is kept on the instance's marker (§4.6) only if non-zero.
+- **Animation.** `AnimType` 0 means a static prop: the instance's `Animator` (present only on animated model prefabs) is disabled; `AnimType` 2 keeps it enabled and `AnimSpeed` (a percentage) sets `Animator.speed = AnimSpeed / 100`; any other value is reported once as `RswUnknownAnimType` and treated as 2. T0.3 checks this on the two clock towers of prontera. `Collision` is not used in this delivery (no colliders are generated) and is not kept: on 2.1 it holds uninitialized memory (T0.2).
 - **Ground contact (FR-4).** `RoGroundSampler` (PLAN-0005 §4.4) gives the ground height under an instance's origin. The test compares, for at least 20 models of the reference maps, the vertical distance between the model's lowest point and the ground with the expected distance recorded in `Assets/Tests/EditMode/RoImport/Rsw/ground-contact.json`. That file is made by T0.4 from the reference viewer: for each sample model it records the distance the original shows (zero for a barrel on the street, the sunk depth of a fountain base, and so on), so models that float or sink in the original are checked against what the original shows, not against an assumption.
 - All of this is pure: structs in, structs out; it takes `RoMapSpace` as a parameter.
 
