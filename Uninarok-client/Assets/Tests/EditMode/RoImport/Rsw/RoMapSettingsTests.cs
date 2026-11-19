@@ -18,7 +18,6 @@ namespace Uninarok.RoImport.Tests.Rsw
 {
     // TASKS-0006 T2.1 / T2.2 (FR-7): the map data asset holds the RSW's map-wide values, converted to Unity units; a map
     // without an RSW converts without settings (SPEC-0005 stands alone).
-    [Ignore("pending T2.2")]
     public class RoMapSettingsTests
     {
         const string Map = "sample";

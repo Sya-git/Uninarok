@@ -46,7 +46,7 @@
 
 - [x] **T2.1** Add `RoMapSettingsTests` (failing, ignored): settings equal the RSW (water level converted to Unity units, lighting values, size); an absent RSW converts without settings. (FR-7)
   *Done when:* the tests compile and are ignored with `pending T2.2`.
-- [ ] **T2.2** Extend `RoMapDataConverter` (PLAN-0005) to read the RSW, fill `MapData.settings`, set `hasSettings` and record the RSW hash as a dependency. (FR-7)
+- [x] **T2.2** Extend `RoMapDataConverter` (PLAN-0005) to read the RSW, fill `MapData.settings`, set `hasSettings` and record the RSW hash as a dependency. (FR-7)
   *Done when:* `[Ignore]` removed, the tests of T2.1 pass, and the PLAN-0005 tests still pass.
 
 ## Phase 3: Placement and lighting
