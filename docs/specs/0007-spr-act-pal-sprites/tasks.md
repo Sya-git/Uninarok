@@ -77,7 +77,7 @@ Reference set (spec §5), used by every check below: a multi-layer monster `몬�
   *Done when:* `[Ignore]` removed and the tests of T5.1 pass.
 - [x] **T5.3** Implement `RoPaletteConverter.cs`, `RoJobKind.Palette`, `RoImport.Palette(string)`, with `RoPaletteConverterTests` (256 × 1, index 0 transparent, settings); add both kinds to the window and the menu items `Tools/Ragnarok/Convert Sprite Folder…` and `Convert All Palettes`. (FR-7)
   *Done when:* the palette tests pass and a synthetic sprite and palette convert from the window and the menu with progress and cancel working.
-- [ ] **T5.4** Implement `SpriteAnimationEditor.cs` and `RoSpritePreviewWindow.cs` (plan §4.8). (FR-10)
+- [x] **T5.4** Implement `SpriteAnimationEditor.cs` and `RoSpritePreviewWindow.cs` (plan §4.8). (FR-10)
   *Done when:* on a converted reference sprite the inspector shows its counts, the preview plays it, the direction picker, step, speed, missing-action policy and palette slot work, and anchors are drawn; screenshots in the PR.
 
 ## Phase 6: Real data

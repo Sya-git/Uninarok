@@ -99,6 +99,12 @@ namespace Uninarok.Sprites
             _dirty = true;
         }
 
+        /// <summary>
+        /// Advances this actor alone by <paramref name="deltaSeconds"/> (tools and the editor preview, PLAN-0007 D15). In the
+        /// game every enabled actor is advanced by <see cref="SpriteSystem"/>; do not call both for one actor.
+        /// </summary>
+        public void Step(float deltaSeconds) => Advance(deltaSeconds * 1000f);
+
         /// <summary>The anchor <paramref name="index"/> of the frame shown, in the actor's local space (FR-6).</summary>
         public bool TryGetAnchor(int index, out Vector3 localPosition)
         {
