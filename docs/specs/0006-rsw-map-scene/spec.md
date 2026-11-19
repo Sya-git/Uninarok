@@ -35,7 +35,7 @@ Priority: **M** = must, **S** = should.
 | FR-3 | M | Position, rotation and scale of every instance match the original client, including positions relative to the map centre, any rotation, and mirrored (negative) scale. | On the reference map, screenshots from fixed cameras match the reference viewer. Models of the reference set show no offset, tilt or mirroring. |
 | FR-4 | M | Instances stand on the ground as in the original: a sample of at least 20 models on the reference map touches the ground within a small tolerance, and none is buried or floating beyond what the original shows. | The check passes on the sample. |
 | FR-5 | M | Instances are organised under category groups (models, lights, sounds, effects) so the scene is easy to read. | The hierarchy shows groups with counts. |
-| FR-6 | M | Instances and ground are set up for baking and batching (static). | Baking lightmaps and static batching work on the map with no change by the user. |
+| FR-6 | M | Instances and ground are set up for static batching, and the map is lit in real time (no baked lighting; owner decision, 2026-11-19). | Static batching works on the map with no change by the user, and the real-time light and shadows work. |
 | FR-7 | M | Map-wide values (size, water level, lighting values) are stored in the map data asset. | The values for a reference map equal the source's. |
 | FR-8 | S | Map lighting values create matching scene lights (ambient and main directional). | A reference map's lighting resembles the reference client. |
 | FR-9 | S | Lights, sound sources and effect emitters from the map become named placeholder objects holding their parameters. | A map with torches lists a light object per torch with its colour and range. |
@@ -54,6 +54,7 @@ Priority: **M** = must, **S** = should.
 - Shared rules (units and axes, textures, materials, idempotency, batches) are in SPEC-0002 and apply here.
 - Models are converted first or on demand (SPEC-0002 FR-6).
 - Map objects other than models are placeholders in this spec; their behaviour is a later spec.
+- Lighting is real time: no lightmap is baked, by Ragnarok or by Unity (owner decision, 2026-11-19; a baked lightmap would need a second UV set that splits mesh vertices).
 - Background music is out of scope: no music data is available yet, so the map's music name is neither looked up nor stored (owner decision, 2026-11-18).
 
 ## 7. Open questions

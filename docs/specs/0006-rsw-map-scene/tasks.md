@@ -90,8 +90,9 @@
 
 ## Phase 8: Verify and close
 
-- [ ] **T8.1** Placement check: fixed-camera screenshots (top, front and one oblique) of prt_fild08, prontera and izlude against the reference viewer, including the four models earlier reported as misplaced, the two clock towers and the control group; no offset, tilt or mirroring. (FR-3)
+- [x] **T8.1** Placement check: fixed-camera screenshots (top, front and one oblique) of prt_fild08, prontera and izlude against the reference viewer, including the four models earlier reported as misplaced, the two clock towers and the control group; no offset, tilt or mirroring. (FR-3)
   *Done when:* screenshots are in the PR and each case is marked as matching.
+  *Result (2026-11-19):* 13 fixed-camera renders of the generated scenes (prt_fild08: top, front, oblique, the mushrooms, the bushes on the cliffs; prontera: top, front, oblique, both clock towers; izlude: top, front, oblique) with each scene's own sun and ambient. The owner compared them with the reference viewer: no offset, tilt or mirroring; all match. The T0.3 comparisons (the four reported models, the control group, izlude's mirrored tools) were made with the same rules.
 - [x] **T8.2** Ground contact: report the numbers of the 20 or more samples of T0.4 with the tolerance, and mark each as matching the reference viewer. (FR-4)
   *Done when:* the table is in the PR.
   *Result (2026-11-18):* distances (Unity units, lowest vertex to the ground under it, tolerance 0.05) measured with `RoRswPlacement` on the converted prefabs; every sample differs by 0.000 from the distance the owner checked against the reference viewer at T0.4.
@@ -127,10 +128,11 @@
   | izlude | 290 | `나무잡초꽃\넝쿨01` | -0.378 | -0.378 | yes |
   | izlude | 1 | `외부소품\프론아레나` | -0.100 | -0.100 | yes |
   | izlude | 0 | `프론테라\검사길드` | 0.020 | 0.020 | yes |
-- [ ] **T8.3** Baking and batching: bake lightmaps and use static batching on prt_fild08 with no change by hand; check that animated instances still animate and that the real-time lighting and shadows of the scene work; check the lighting of each reference map beside the reference client. (FR-6, FR-8)
+- [ ] **T8.3** Batching and lighting: use static batching on prt_fild08 with no change by hand (no bake, plan D19); check that animated instances still animate and that the real-time lighting and shadows of the scene work; check the lighting of each reference map beside the reference client. (FR-6, FR-8)
   *Done when:* screenshots and the batching statistics are in the PR.
-- [ ] **T8.4** Additive layer and gizmos by hand: add a custom object in an additive scene, re-convert, open with `Tools/Ragnarok/Open Map`, and see the object still in place; select the map object and see the gizmos. (FR-11, FR-13)
+- [x] **T8.4** Additive layer and gizmos by hand: add a custom object in an additive scene, re-convert, open with `Tools/Ragnarok/Open Map`, and see the object still in place; select the map object and see the gizmos. (FR-11, FR-13)
   *Done when:* screenshots are in the PR.
+  *Result (2026-11-19):* the owner checked it by hand. An object added to the generated scene `izlude.unity` disappears on a forced re-conversion, as designed (the importer owns that scene); custom work goes in `izlude.additive.unity`, which re-conversion never touches and `Tools/Ragnarok/Open Map` opens on top. The owner keeps this pipeline. Gizmos: seen with the map selected (T6.1).
 - [x] **T8.5** Delete `RswImporter.cs` (and its `.meta`), the old scenes and prefabs listed by T0.1 that the new scenes replace, and the parts of `UtilExtensions.cs` that only it used (and the whole file if nothing else uses it; a search result is pasted). Update `plan.md` §7 if the list of remaining old importers changes. (FR-1)
   *Done when:* the project compiles with no reference to the deleted classes and `RoArchitectureTests` (TASKS-0002 T7.2) still pass.
   *Result (2026-11-18, done before T8.1 to T8.4, which need the owner):* `RswImporter.cs` and its `.meta` deleted. A search of `Assets` (`*.cs`, `*.asmdef`, `*.unity`, `*.prefab`) for `RswImporter` finds nothing else; no old scene or prefab existed (T0.1); `UtilExtensions.cs` was already deleted (TASKS-0004 T8.4). The project compiles and `RoArchitectureTests` pass (11/11). Plan §7 records the old importers left.
