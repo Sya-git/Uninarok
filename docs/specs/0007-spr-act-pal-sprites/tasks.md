@@ -71,7 +71,7 @@ Reference set (spec §5), used by every check below: a multi-layer monster `몬�
 
 ## Phase 5: Converters, menu and preview
 
-- [ ] **T5.1** Add `RoSpriteConverterTests` (ignored): a synthetic pair converts to a sheet and an animation at plan §3 paths; a second byte-identical SPR reuses the sheet; an ACT converts against another file's SPR; an out-of-range index, a corrupt file, a missing SPR and an unsupported version each give one issue and no output; a static ACT gives a sprite and no animation asset (an offset one gets its offset sprite); second run `Skipped`; forced run keeps GUIDs, sprite ids and bytes; a changed SPR re-converts the ACTs that use it. (FR-2, FR-8, FR-9, FR-11)
+- [x] **T5.1** Add `RoSpriteConverterTests` (ignored): a synthetic pair converts to a sheet and an animation at plan §3 paths; a second byte-identical SPR reuses the sheet; an ACT converts against another file's SPR; an out-of-range index, a corrupt file, a missing SPR and an unsupported version each give one issue and no output; a static ACT gives a sprite and no animation asset (an offset one gets its offset sprite); second run `Skipped`; forced run keeps GUIDs, sprite ids and bytes; a changed SPR re-converts the ACTs that use it. (FR-2, FR-8, FR-9, FR-11)
   *Done when:* the tests compile and are ignored with `pending T5.2`.
 - [ ] **T5.2** Implement `Editor/RoImport/Editor/Sprites/RoSpriteConverter.cs`, `RoSpriteOptions`, `RoImportContext.Sprite(act, spr, options)`, `RoImport.Sprite(string)`, `RoJobKind.Sprite` and the registry entry; the shared material `Art/_materials/sprite_default.mat`. (FR-2, FR-3, FR-8, FR-9, FR-11)
   *Done when:* `[Ignore]` removed and the tests of T5.1 pass.
