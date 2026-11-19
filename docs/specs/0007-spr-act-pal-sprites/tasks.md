@@ -37,7 +37,7 @@ Reference set (spec §5), used by every check below: a multi-layer monster `몬�
   *Done when:* the project compiles with no new warning and a test builds each sample and checks its counts.
 - [x] **T1.2** Add `RoSprReaderTests`, `RoActReaderTests`, `RoPalReaderTests` (`NeedsData`, ignored): the reference set reads with the values recorded by T0.1; `SpriteType`/`SpriteIndex` per type; truncated and empty input return false with a reason and never throw. (FR-1, FR-3, FR-8)
   *Done when:* the tests compile and are ignored with `pending T1.3`.
-- [ ] **T1.3** Implement `Editor/RoImport/Core/Formats/RoSprReader.cs`, `RoActReader.cs`, `RoPalReader.cs` with the GRF members of T0.1. (FR-1, FR-3, FR-8)
+- [x] **T1.3** Implement `Editor/RoImport/Core/Formats/RoSprReader.cs`, `RoActReader.cs`, `RoPalReader.cs` with the GRF members of T0.1. (FR-1, FR-3, FR-8)
   *Done when:* `[Ignore]` removed, the tests pass, and `RoArchitectureTests` still passes (no byte parsing added).
 
 ## Phase 2: Runtime assembly

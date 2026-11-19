@@ -9,7 +9,6 @@ namespace Uninarok.RoImport.Tests.Sprites
 {
     // TASKS-0007 T1.2 / T1.3 (FR-3, FR-8). Values are GRF's, recorded by T0.1 (plan 4.1).
     [Category(SpriteTestFiles.Category)]
-    [Ignore("pending T1.3")]
     public class RoActReaderTests
     {
         static RoAct Read(string file)

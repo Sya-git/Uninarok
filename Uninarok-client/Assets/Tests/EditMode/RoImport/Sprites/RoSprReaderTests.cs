@@ -7,7 +7,6 @@ namespace Uninarok.RoImport.Tests.Sprites
 {
     // TASKS-0007 T1.2 / T1.3 (FR-1, FR-8). Values are GRF's, recorded by T0.1 (plan 4.1).
     [Category(SpriteTestFiles.Category)]
-    [Ignore("pending T1.3")]
     public class RoSprReaderTests
     {
         static RoSpr Read(string file)
@@ -50,7 +49,7 @@ namespace Uninarok.RoImport.Tests.Sprites
             for (int i = 0; i < 32; i++) Assert.AreEqual(0, f.Indices[i]);
             Assert.AreEqual(256, spr.Palette.Colors.Length);
             var c = spr.Palette.Colors[67];
-            Assert.AreEqual((232, 125, 125), (c.r, c.g, c.b));
+            Assert.AreEqual((232, 125, 125), ((int)c.r, (int)c.g, (int)c.b));
         }
 
         [Test]
@@ -61,7 +60,7 @@ namespace Uninarok.RoImport.Tests.Sprites
             Assert.IsNull(spr.Palette, "no indexed frame, no palette");
             var f = spr.TrueColor[0];
             int i = (28 * f.Width + 87) * 4;   // first opaque pixel (87, 28); GRF gives B, G, R, A = 0, 162, 255, 255
-            Assert.AreEqual((255, 162, 0, 255), (f.Rgba[i], f.Rgba[i + 1], f.Rgba[i + 2], f.Rgba[i + 3]));
+            Assert.AreEqual((255, 162, 0, 255), ((int)f.Rgba[i], (int)f.Rgba[i + 1], (int)f.Rgba[i + 2], (int)f.Rgba[i + 3]));
         }
 
         [Test]

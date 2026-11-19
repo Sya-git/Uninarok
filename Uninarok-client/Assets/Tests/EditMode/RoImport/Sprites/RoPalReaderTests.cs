@@ -8,7 +8,6 @@ namespace Uninarok.RoImport.Tests.Sprites
 {
     // TASKS-0007 T1.2 / T1.3 (FR-7, FR-8). Values are GRF's, recorded by T0.1 (plan 4.1).
     [Category(SpriteTestFiles.Category)]
-    [Ignore("pending T1.3")]
     public class RoPalReaderTests
     {
         const string Body = "palette/몸/초보자_남_1.pal";
@@ -20,9 +19,9 @@ namespace Uninarok.RoImport.Tests.Sprites
 
             Assert.IsTrue(ok, reason);
             Assert.AreEqual(RoPal.Size, pal.Colors.Length);
-            Assert.AreEqual((192, 240, 188), (pal.Colors[0].r, pal.Colors[0].g, pal.Colors[0].b));
-            Assert.AreEqual((255, 255, 255), (pal.Colors[1].r, pal.Colors[1].g, pal.Colors[1].b));
-            Assert.AreEqual((255, 0, 255), (pal.Colors[255].r, pal.Colors[255].g, pal.Colors[255].b));
+            Assert.AreEqual((192, 240, 188), ((int)pal.Colors[0].r, (int)pal.Colors[0].g, (int)pal.Colors[0].b));
+            Assert.AreEqual((255, 255, 255), ((int)pal.Colors[1].r, (int)pal.Colors[1].g, (int)pal.Colors[1].b));
+            Assert.AreEqual((255, 0, 255), ((int)pal.Colors[255].r, (int)pal.Colors[255].g, (int)pal.Colors[255].b));
             Assert.IsTrue(pal.Colors.All(c => c.a == 255), "PAL files store alpha 0; the adapter sets 255 (index 0 is transparent by rule)");
         }
 
