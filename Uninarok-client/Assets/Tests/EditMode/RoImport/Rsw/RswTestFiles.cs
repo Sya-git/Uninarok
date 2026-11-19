@@ -102,6 +102,40 @@ namespace Uninarok.RoImport.Tests.Rsw
             return b.ToArray();
         }
 
+        /// <summary>
+        /// A flat GND 1.7 of <paramref name="width"/> x <paramref name="height"/> cubes at height 0, every top surface tile 0
+        /// textured with <c>a.bmp</c>, one empty lightmap: the smallest ground the ground converter turns into a prefab.
+        /// </summary>
+        public static byte[] Gnd(int width, int height, float zoom = 10f)
+        {
+            var b = new List<byte>();
+            void I(int v) => b.AddRange(BitConverter.GetBytes(v));
+            void F(float v) => b.AddRange(BitConverter.GetBytes(v));
+            b.AddRange(Encoding.ASCII.GetBytes("GRGN"));
+            b.Add(1);
+            b.Add(7);
+            I(width);
+            I(height);
+            F(zoom);
+            I(1);
+            I(80);
+            var texture = new byte[80];
+            Encoding.ASCII.GetBytes("a.bmp").CopyTo(texture, 0);
+            b.AddRange(texture);
+            I(1); I(8); I(8); I(1);              // one 8 x 8 lightmap, one cell per grid
+            b.AddRange(new byte[8 * 8 * 4]);
+            I(1);                                // one tile: u, v of the four corners, texture 0, lightmap 0, white
+            F(0); F(1); F(0); F(1);
+            F(0); F(0); F(1); F(1);
+            b.AddRange(new byte[] { 0, 0, 0, 0, 255, 255, 255, 255 });
+            for (int i = 0; i < width * height; i++)
+            {
+                F(0); F(0); F(0); F(0);
+                I(0); I(-1); I(-1);
+            }
+            return b.ToArray();
+        }
+
         /// <summary>Writes <c>&lt;name&gt;.rsw</c> into the data folder.</summary>
         public static void Write(string dataFolder, string name, RoRsw rsw)
         {
