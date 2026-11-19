@@ -57,7 +57,7 @@ Reference set (spec §5), used by every check below: a multi-layer monster `몬�
   *Done when:* the tests compile and are ignored with `pending T3.2`.
 - [x] **T3.2** Implement `Editor/RoImport/Core/Sprites/RoSpriteSheetPacker.cs` and `RoSpriteSheetPixels.cs`. (FR-1, FR-7)
   *Done when:* `[Ignore]` removed and the tests of T3.1 pass.
-- [ ] **T3.3** Implement `Editor/RoImport/Editor/Sprites/RoSpriteSheetWriter.cs` and `RoSpriteOutputPaths.cs` with the API of T0.3 (texture settings of plan §4.2, sprites `f<slot>`, pivot centre, PPU from `RoSpriteRules`, optional `_IndexTex`), and a test that writes a synthetic sheet and reads back settings, names, rects, pivots and the secondary texture. (FR-1, FR-7, FR-9)
+- [x] **T3.3** Implement `Editor/RoImport/Editor/Sprites/RoSpriteSheetWriter.cs` and `RoSpriteOutputPaths.cs` with the API of T0.3 (texture settings of plan §4.2, sprites `f<slot>`, pivot centre, PPU from `RoSpriteRules`, optional `_IndexTex`), and a test that writes a synthetic sheet and reads back settings, names, rects, pivots and the secondary texture. (FR-1, FR-7, FR-9)
   *Done when:* the test passes and a second write leaves the PNGs byte-identical and the sprite ids unchanged.
 - [ ] **T3.4** Implement `Editor/RoImport/Editor/Sprites/RoSpriteSheetIndex.cs` (content hash → sheet path and index flag, JSON next to the ledgers, sorted, written only when changed) with tests: lookup, add, upgrade to an index texture, deterministic file. (FR-2, FR-9)
   *Done when:* the tests pass.
