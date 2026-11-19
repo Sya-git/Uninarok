@@ -92,8 +92,41 @@
 
 - [ ] **T8.1** Placement check: fixed-camera screenshots (top, front and one oblique) of prt_fild08, prontera and izlude against the reference viewer, including the four models earlier reported as misplaced, the two clock towers and the control group; no offset, tilt or mirroring. (FR-3)
   *Done when:* screenshots are in the PR and each case is marked as matching.
-- [ ] **T8.2** Ground contact: report the numbers of the 20 or more samples of T0.4 with the tolerance, and mark each as matching the reference viewer. (FR-4)
+- [x] **T8.2** Ground contact: report the numbers of the 20 or more samples of T0.4 with the tolerance, and mark each as matching the reference viewer. (FR-4)
   *Done when:* the table is in the PR.
+  *Result (2026-11-18):* distances (Unity units, lowest vertex to the ground under it, tolerance 0.05) measured with `RoRswPlacement` on the converted prefabs; every sample differs by 0.000 from the distance the owner checked against the reference viewer at T0.4.
+
+  | Map | # | Model | Expected | Measured | Matches the reference viewer |
+  |---|---|---|---|---|---|
+  | prt_fild08 | 420 | `나무잡초꽃\버섯01` | 0.112 | 0.112 | yes |
+  | prt_fild08 | 419 | `나무잡초꽃\버섯02` | -0.023 | -0.023 | yes |
+  | prt_fild08 | 430 | `나무잡초꽃\넝쿨01` | -0.527 | -0.527 | yes |
+  | prt_fild08 | 239 | `나무잡초꽃\덤불02` | 0.535 | 0.535 | yes |
+  | prt_fild08 | 244 | `나무잡초꽃\덤불02` | -0.723 | -0.723 | yes |
+  | prt_fild08 | 44 | `나무잡초꽃\야자수01` | -0.383 | -0.383 | yes |
+  | prt_fild08 | 0 | `프론테라\성_성벽` | 0.000 | 0.000 | yes |
+  | prt_fild08 | 513 | `외부소품\이정표01` | -0.014 | -0.014 | yes |
+  | prt_fild08 | 238 | `나무잡초꽃\덤불01` | 0.364 | 0.364 | yes |
+  | prontera | 147 | `프론테라\시계탑` | 0.100 | 0.100 | yes |
+  | prontera | 218 | `프론테라\시계탑` | 0.100 | 0.100 | yes |
+  | prontera | 912 | `프론테라\분수대` | 0.100 | 0.100 | yes |
+  | prontera | 1288 | `외부소품\게시판` | 0.000 | 0.000 | yes |
+  | prontera | 162 | `프론테라\교역소` | 0.030 | 0.030 | yes |
+  | prontera | 341 | `프론테라\도구점` | 0.030 | 0.030 | yes |
+  | prontera | 0 | `프론테라\성_기둥` | 0.000 | 0.000 | yes |
+  | prontera | 1046 | `프론테라\프론테라성입구` | 0.000 | 0.000 | yes |
+  | prontera | 433 | `프론테라\휘장가로등` | 0.000 | 0.000 | yes |
+  | prontera | 175 | `나무잡초꽃\나무01` | 0.000 | 0.000 | yes |
+  | izlude | 340 | `izlude\iz_bridge01` | -1.649 | -1.649 | yes |
+  | izlude | 345 | `izlude\iz_bridge01` | -1.261 | -1.261 | yes |
+  | izlude | 404 | `izlude\iz_smelter` | -0.200 | -0.200 | yes |
+  | izlude | 398 | `izlude\iz_enchant` | 0.000 | 0.000 | yes |
+  | izlude | 278 | `아인브로크\비공정` | 2.200 | 2.200 | yes |
+  | izlude | 469 | `아인브로크\벤치` | 0.000 | 0.000 | yes |
+  | izlude | 3 | `나무잡초꽃\덤불02` | -0.202 | -0.202 | yes |
+  | izlude | 290 | `나무잡초꽃\넝쿨01` | -0.378 | -0.378 | yes |
+  | izlude | 1 | `외부소품\프론아레나` | -0.100 | -0.100 | yes |
+  | izlude | 0 | `프론테라\검사길드` | 0.020 | 0.020 | yes |
 - [ ] **T8.3** Baking and batching: bake lightmaps and use static batching on prt_fild08 with no change by hand; check that animated instances still animate and that the real-time lighting and shadows of the scene work; check the lighting of each reference map beside the reference client. (FR-6, FR-8)
   *Done when:* screenshots and the batching statistics are in the PR.
 - [ ] **T8.4** Additive layer and gizmos by hand: add a custom object in an additive scene, re-convert, open with `Tools/Ragnarok/Open Map`, and see the object still in place; select the map object and see the gizmos. (FR-11, FR-13)
