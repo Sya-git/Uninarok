@@ -35,7 +35,7 @@ Reference set (spec §5), used by every check below: a multi-layer monster `몬�
 
 - [x] **T1.1** Add `Editor/RoImport/Core/Sprites/RoSpr.cs`, `RoAct.cs`, `RoPal.cs` exactly as plan §4.1, the issue codes `UnsupportedSprVersion`, `UnsupportedActVersion`, `SpriteIndexOutOfRange`, `SpriteSheetTooLarge` in `RoIssueCode`, and a test-only builder `Tests/EditMode/RoImport/Sprites/SpriteTestData.cs` (an indexed sprite with two animations of 8 directions and repeated directions, a true-colour sprite, a mixed sprite, a weapon-like ACT with empty actions and partly empty frames, a static ACT, one with anchors, one with events, one with an out-of-range index, a 100-frame SPR). (FR-1, FR-3, FR-8)
   *Done when:* the project compiles with no new warning and a test builds each sample and checks its counts.
-- [ ] **T1.2** Add `RoSprReaderTests`, `RoActReaderTests`, `RoPalReaderTests` (`NeedsData`, ignored): the reference set reads with the values recorded by T0.1; `SpriteType`/`SpriteIndex` per type; truncated and empty input return false with a reason and never throw. (FR-1, FR-3, FR-8)
+- [x] **T1.2** Add `RoSprReaderTests`, `RoActReaderTests`, `RoPalReaderTests` (`NeedsData`, ignored): the reference set reads with the values recorded by T0.1; `SpriteType`/`SpriteIndex` per type; truncated and empty input return false with a reason and never throw. (FR-1, FR-3, FR-8)
   *Done when:* the tests compile and are ignored with `pending T1.3`.
 - [ ] **T1.3** Implement `Editor/RoImport/Core/Formats/RoSprReader.cs`, `RoActReader.cs`, `RoPalReader.cs` with the GRF members of T0.1. (FR-1, FR-3, FR-8)
   *Done when:* `[Ignore]` removed, the tests pass, and `RoArchitectureTests` still passes (no byte parsing added).
