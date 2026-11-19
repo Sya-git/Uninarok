@@ -58,7 +58,7 @@
 
 ## Phase 4: Runtime markers
 
-- [ ] **T4.1** Add `Assets/Scripts/Map/MapMarkers.cs` to `Uninarok.Map`: `MapLightMarker`, `MapSoundMarker`, `MapEffectMarker`, `MapMissingModelMarker` (data only, public fields, no logic, no editor or importer references) and extend `MapDataAssemblyTests` to cover them. (FR-9, FR-10)
+- [x] **T4.1** Add the marker components to `Uninarok.Map` (one file each, plan D15): `MapLightMarker`, `MapSoundMarker`, `MapEffectMarker`, `MapMissingModelMarker` (data only, public fields, no logic, no editor or importer references) and extend `MapDataAssemblyTests` to cover them. (FR-9, FR-10)
   *Done when:* the project compiles, the assembly test still passes, and a test creates each marker and checks its fields.
 
 ## Phase 5: The scene

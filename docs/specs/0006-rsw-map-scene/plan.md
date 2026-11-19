@@ -56,7 +56,7 @@ Satisfies FR-1, FR-5, FR-11.
 
 | Path | Contents | Assembly |
 |---|---|---|
-| `Assets/Scripts/Map/MapMarkers.cs` | `MapLightMarker`, `MapSoundMarker`, `MapEffectMarker` (data only: parameters, no logic) | `Uninarok.Map` |
+| `Assets/Scripts/Map/MapLightMarker.cs`, `MapSoundMarker.cs`, `MapEffectMarker.cs`, `MapMissingModelMarker.cs` | one marker per file (Unity resolves a component saved in a scene by its file name, D15); data only: parameters, no logic; ranges in Unity units | `Uninarok.Map` |
 | `Assets/Scripts/Map/MapRoot.cs` | (PLAN-0005) gains `MapSettings` access through its `MapData` | `Uninarok.Map` |
 | `Assets/Editor/RoImport/Core/Formats/RoRswReader.cs` | adapter GRF `Rsw` → `RoRsw` | `Uninarok.RoImport.Core` |
 | `Assets/Editor/RoImport/Core/Rsw/` | `RoRsw`, `RoRswObject` types, `RoRswRules`, `RoRswPlacement`, `RoRswLighting` | Core |
@@ -300,8 +300,9 @@ Satisfies every FR of the spec. EditMode NUnit tests in `Uninarok.RoImport.Tests
 | D10 | Static flags on scene instances, not on prefabs; animated instances are not batched | Making prefabs static (affects every use of the model, including the animated ones) |
 | D11 | Owner's decision (2026-11-18): the RSW values are taken from the GRF library as it supplies them; T0.2 only maps fields to GRF members | Comparing GRF's values with a hand reading of the file bytes |
 | D12 | Owner's decision (2026-11-18): no music name; the music table is not read and `MusicNameMissing` does not exist | Reading `data/mp3nametable.txt` (no music is available yet and music is not part of the spec) |
-| D14 | Owner's decision (2026-11-18): the RSW `AnimSpeed` is applied as `Animator.speed` | Ignoring it (every instance at the model's own speed) |
 | D13 | T0.3 (2026-11-18): rotation `Rz·Rx·Ry`, all signs +1, scale used as stored (Y sign +1) in Ragnarok space. Checked by the tilt of the 36 tilted bushes of prt_fild08 against the ground normal (mean 20.9°, against 35.6° unrotated and ≥ 21.1° for all 47 other order and sign choices), the diagonal clock-tower walls of prontera (Y sign), izlude's mirrored axe and hammer on their bench (Y scale sign; diagonal on the bench, as in the reference viewer) and the owner's comparison of prt_fild08, izlude and prontera with the reference viewer | Scale Y sign -1 (BrowEdit3's, which belongs to its own Y flip; it floats the tools above the bench); the other orders (they stand the tools up) |
+| D14 | Owner's decision (2026-11-18): the RSW `AnimSpeed` is applied as `Animator.speed` | Ignoring it (every instance at the model's own speed) |
+| D15 | T4.1 (2026-11-18): one file per marker component instead of one `MapMarkers.cs` | One file for the four markers (Unity cannot resolve the script of a component saved in a scene unless the file is named after the class) |
 
 Items for the owner: approve D4 (no per-model shadow flags) and D8, and the new runtime marker components.
 
