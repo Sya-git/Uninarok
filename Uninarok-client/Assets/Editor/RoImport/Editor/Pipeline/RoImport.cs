@@ -104,6 +104,22 @@ namespace Uninarok.RoImport.Editor.Pipeline
                 return session.Context.MapData(path);
         }
 
+        /// <summary>
+        /// Converts a map (or skips it when current) and returns its scene (PLAN-0006 4.6): the source is
+        /// <c>&lt;mapName&gt;.rsw</c> at the data root, with its ground and map data beside it (D16). Pass a report to
+        /// keep the run's warnings.
+        /// </summary>
+        public static RoResult<SceneAsset> Map(string mapName, RoImportOptions options = null, RoReport report = null)
+        {
+            if (!RoPath.TryParse((mapName ?? string.Empty) + ".rsw", out var path))
+                return RoResult<SceneAsset>.Failed(new RoIssue(RoIssueCode.SourceMissing, mapName, null, "not a valid map name"));
+            using (var session = new Session(options, report))
+            {
+                var result = RoConverterRegistry.For(RoJobKind.Map).Convert(session.Context, path);
+                return new RoResult<SceneAsset>(result.Status, result.Value as SceneAsset, result.Failure);
+            }
+        }
+
         /// <summary>Runs a batch (plan 4.10): continues past failures and returns the report, whose summary lists them.</summary>
         public static RoReport Run(IEnumerable<RoJob> jobs, RoImportOptions options = null) => RoBatch.Run(jobs, options);
 
@@ -114,10 +130,10 @@ namespace Uninarok.RoImport.Editor.Pipeline
         {
             readonly RoHashCache _hashes;
 
-            public Session(RoImportOptions options)
+            public Session(RoImportOptions options, RoReport report = null)
             {
                 options = options ?? new RoImportOptions();
-                var report = new RoReport();
+                report = report ?? new RoReport();
                 IRoSource source = options.Source;
                 if (source == null)
                 {

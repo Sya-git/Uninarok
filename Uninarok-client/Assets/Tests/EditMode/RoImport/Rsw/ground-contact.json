@@ -1,0 +1,208 @@
+{
+  "_comment": "TASKS-0006 T0.4 (SPEC-0006 FR-4): vertical distance in Unity units (1 = 10 Ragnarok units) between the instance's lowest vertex and the ground under that vertex; positive = above the ground. Instance = index among the map's RSW models, file order.",
+  "samples": [
+    {
+      "map": "prt_fild08",
+      "instance": 420,
+      "model": "나무잡초꽃\\버섯01.rsm",
+      "expectedDistance": 0.112,
+      "tolerance": 0.05
+    },
+    {
+      "map": "prt_fild08",
+      "instance": 419,
+      "model": "나무잡초꽃\\버섯02.rsm",
+      "expectedDistance": -0.023,
+      "tolerance": 0.05
+    },
+    {
+      "map": "prt_fild08",
+      "instance": 430,
+      "model": "나무잡초꽃\\넝쿨01.rsm",
+      "expectedDistance": -0.527,
+      "tolerance": 0.05
+    },
+    {
+      "map": "prt_fild08",
+      "instance": 239,
+      "model": "나무잡초꽃\\덤불02.rsm",
+      "expectedDistance": 0.535,
+      "tolerance": 0.05
+    },
+    {
+      "map": "prt_fild08",
+      "instance": 244,
+      "model": "나무잡초꽃\\덤불02.rsm",
+      "expectedDistance": -0.723,
+      "tolerance": 0.05
+    },
+    {
+      "map": "prt_fild08",
+      "instance": 44,
+      "model": "나무잡초꽃\\야자수01.rsm",
+      "expectedDistance": -0.383,
+      "tolerance": 0.05
+    },
+    {
+      "map": "prt_fild08",
+      "instance": 0,
+      "model": "프론테라\\성_성벽.rsm",
+      "expectedDistance": 0.0,
+      "tolerance": 0.05
+    },
+    {
+      "map": "prt_fild08",
+      "instance": 513,
+      "model": "외부소품\\이정표01.rsm",
+      "expectedDistance": -0.014,
+      "tolerance": 0.05
+    },
+    {
+      "map": "prt_fild08",
+      "instance": 238,
+      "model": "나무잡초꽃\\덤불01.rsm",
+      "expectedDistance": 0.364,
+      "tolerance": 0.05
+    },
+    {
+      "map": "prontera",
+      "instance": 147,
+      "model": "프론테라\\시계탑.rsm",
+      "expectedDistance": 0.1,
+      "tolerance": 0.05
+    },
+    {
+      "map": "prontera",
+      "instance": 218,
+      "model": "프론테라\\시계탑.rsm",
+      "expectedDistance": 0.1,
+      "tolerance": 0.05
+    },
+    {
+      "map": "prontera",
+      "instance": 912,
+      "model": "프론테라\\분수대.rsm",
+      "expectedDistance": 0.1,
+      "tolerance": 0.05
+    },
+    {
+      "map": "prontera",
+      "instance": 1288,
+      "model": "외부소품\\게시판.rsm",
+      "expectedDistance": 0.0,
+      "tolerance": 0.05
+    },
+    {
+      "map": "prontera",
+      "instance": 162,
+      "model": "프론테라\\교역소.rsm",
+      "expectedDistance": 0.03,
+      "tolerance": 0.05
+    },
+    {
+      "map": "prontera",
+      "instance": 341,
+      "model": "프론테라\\도구점.rsm",
+      "expectedDistance": 0.03,
+      "tolerance": 0.05
+    },
+    {
+      "map": "prontera",
+      "instance": 0,
+      "model": "프론테라\\성_기둥.rsm",
+      "expectedDistance": 0.0,
+      "tolerance": 0.05
+    },
+    {
+      "map": "prontera",
+      "instance": 1046,
+      "model": "프론테라\\프론테라성입구.rsm",
+      "expectedDistance": 0.0,
+      "tolerance": 0.05
+    },
+    {
+      "map": "prontera",
+      "instance": 433,
+      "model": "프론테라\\휘장가로등.rsm",
+      "expectedDistance": 0.0,
+      "tolerance": 0.05
+    },
+    {
+      "map": "prontera",
+      "instance": 175,
+      "model": "나무잡초꽃\\나무01.rsm",
+      "expectedDistance": 0.0,
+      "tolerance": 0.05
+    },
+    {
+      "map": "izlude",
+      "instance": 340,
+      "model": "izlude\\iz_bridge01.rsm",
+      "expectedDistance": -1.649,
+      "tolerance": 0.05
+    },
+    {
+      "map": "izlude",
+      "instance": 345,
+      "model": "izlude\\iz_bridge01.rsm",
+      "expectedDistance": -1.261,
+      "tolerance": 0.05
+    },
+    {
+      "map": "izlude",
+      "instance": 404,
+      "model": "izlude\\iz_smelter.rsm",
+      "expectedDistance": -0.2,
+      "tolerance": 0.05
+    },
+    {
+      "map": "izlude",
+      "instance": 398,
+      "model": "izlude\\iz_enchant.rsm",
+      "expectedDistance": 0.0,
+      "tolerance": 0.05
+    },
+    {
+      "map": "izlude",
+      "instance": 278,
+      "model": "아인브로크\\비공정.rsm",
+      "expectedDistance": 2.2,
+      "tolerance": 0.05
+    },
+    {
+      "map": "izlude",
+      "instance": 469,
+      "model": "아인브로크\\벤치.rsm",
+      "expectedDistance": 0.0,
+      "tolerance": 0.05
+    },
+    {
+      "map": "izlude",
+      "instance": 3,
+      "model": "나무잡초꽃\\덤불02.rsm",
+      "expectedDistance": -0.202,
+      "tolerance": 0.05
+    },
+    {
+      "map": "izlude",
+      "instance": 290,
+      "model": "나무잡초꽃\\넝쿨01.rsm",
+      "expectedDistance": -0.378,
+      "tolerance": 0.05
+    },
+    {
+      "map": "izlude",
+      "instance": 1,
+      "model": "외부소품\\프론아레나.rsm",
+      "expectedDistance": -0.1,
+      "tolerance": 0.05
+    },
+    {
+      "map": "izlude",
+      "instance": 0,
+      "model": "프론테라\\검사길드.rsm",
+      "expectedDistance": 0.02,
+      "tolerance": 0.05
+    }
+  ]
+}

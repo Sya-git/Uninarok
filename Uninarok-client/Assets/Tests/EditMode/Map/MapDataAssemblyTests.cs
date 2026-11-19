@@ -21,6 +21,17 @@ namespace Uninarok.Map.Tests
         }
 
         [Test]
+        public void TheMapMarkers_AreInTheRuntimeAssembly_EachInAFileNamedAfterIt()
+        {
+            // TASKS-0006 T4.1 (FR-9, FR-10, PLAN-0006 D2, D15): saved in scenes that ship, so runtime code, one file each.
+            foreach (var type in new[] { typeof(MapLightMarker), typeof(MapSoundMarker), typeof(MapEffectMarker), typeof(MapMissingModelMarker) })
+            {
+                Assert.AreEqual(AssemblyName, type.Assembly.GetName().Name, type.Name);
+                Assert.IsTrue(File.Exists(Path.Combine(Application.dataPath, "Scripts/Map", type.Name + ".cs")), type.Name + ".cs");
+            }
+        }
+
+        [Test]
         public void TheRuntimeAssembly_ReferencesNoEditorAndNoImporterAssembly()
         {
             var references = typeof(MapData).Assembly.GetReferencedAssemblies().Select(r => r.Name).ToArray();

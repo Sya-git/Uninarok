@@ -8,6 +8,7 @@ using Uninarok.RoImport.Core.Gat;
 using Uninarok.RoImport.Core.Gnd;
 using Uninarok.RoImport.Core.Paths;
 using Uninarok.RoImport.Core.Results;
+using Uninarok.RoImport.Core.Rsw;
 using Uninarok.RoImport.Editor.Ledger;
 using Uninarok.RoImport.Editor.Pipeline;
 using Object = UnityEngine.Object;
@@ -16,16 +17,20 @@ namespace Uninarok.RoImport.Editor.Gat
 {
     /// <summary>
     /// GAT to the map data asset (PLAN-0005 4.5; SPEC-0005 FR-1, FR-3, FR-6, FR-8). The GAT is read through GRF, the GND
-    /// beside it only for its size, zoom and version (the map space and the diagonal). Everything is built in memory first;
-    /// the asset is written in place (one per map, its GUID kept), then the optional cell image, then the ledger (category
-    /// <see cref="Category"/>: outputs the asset and the image, dependency the GND).
+    /// beside it only for its size, zoom and version (the map space and the diagonal), and the RSW beside it, when there is
+    /// one, for the map-wide settings (PLAN-0006 4.5, SPEC-0006 FR-7). Everything is built in memory first; the asset is
+    /// written in place (one per map, its GUID kept), then the optional cell image, then the ledger (category
+    /// <see cref="Category"/>: outputs the asset and the image, dependencies the GND and the RSW).
     /// </summary>
     public sealed class RoMapDataConverter : IRoConverter
     {
         public const string Category = "mapdata";
 
-        /// <summary>Converter rules; the cell table has its own <see cref="RoGatRules.RulesVersion"/>, folded in below.</summary>
-        public const int RulesVersion = 1;
+        /// <summary>
+        /// Converter rules; the cell table has its own <see cref="RoGatRules.RulesVersion"/>, folded in below. 2: the
+        /// settings from the RSW (PLAN-0006 4.5).
+        /// </summary>
+        public const int RulesVersion = 2;
 
         /// <summary>The version recorded in the ledger: a change of the converter or of the cell table converts again.</summary>
         static int LedgerRules => RulesVersion * 1000 + RoGatRules.RulesVersion;
@@ -76,6 +81,22 @@ namespace Uninarok.RoImport.Editor.Gat
                     $"the GAT has {gat.Width} x {gat.Height} cells, the GND {gnd.Width} x {gnd.Height} cubes"));
             var image = ctx.GatImage ? RoGatImage.Build(arrays.CellsX, arrays.CellsZ, arrays.Types) : null;
 
+            // The map-wide settings from the RSW beside the GAT, when there is one (PLAN-0006 4.5). An unreadable RSW is
+            // reported and the map data is converted without settings; the RSW stays a dependency either way.
+            var rswPath = path.WithExtension(".rsw");
+            MapSettings settings = null;
+            string rswHash = null;
+            if (ctx.Source.TryGetFile(rswPath, out var rswFile))
+            {
+                rswHash = rswFile.ContentHash();
+                if (RoRswReader.TryRead(rswPath, rswFile.ReadAllBytes(), out var rsw, out reason))
+                    settings = RoMapSettingsBuilder.Build(rsw, gnd.Width, gnd.Height, gnd.Zoom,
+                        $"{gnd.VersionMajor}.{gnd.VersionMinor}", $"{gat.VersionMajor}.{gat.VersionMinor}");
+                else
+                    ctx.Report.Warn(RoIssueCode.CorruptFile, rswPath.Canonical, path.Canonical,
+                        $"the map file cannot be read, the map data has no settings: {reason}");
+            }
+
             // 3. Write: the asset in place, then the image, then the ledger (4.5).
             try
             {
@@ -84,6 +105,7 @@ namespace Uninarok.RoImport.Editor.Gat
                 fresh.name = name;
                 fresh.Assign(name, arrays.CellsX, arrays.CellsZ, arrays.CellSize, arrays.Origin, arrays.RowSign, arrays.DiagonalFlip,
                     arrays.Heights, arrays.Types, arrays.Flags, arrays.RawTypes);
+                fresh.AssignSettings(settings);
                 var status = ctx.Writer.UpsertObject(paths.Asset, fresh);
                 var asset = ctx.Writer.Load<MapData>(paths.Asset);
                 var outputs = new List<string> { paths.Asset };
@@ -105,7 +127,13 @@ namespace Uninarok.RoImport.Editor.Gat
                     SourceHash = hash,
                     Rules = LedgerRules,
                     Outputs = outputs.ToArray(),
-                    Dependencies = new[] { new RoLedgerDependency(gndPath.Canonical, gndFile.ContentHash()) }
+                    Dependencies = rswHash == null
+                        ? new[] { new RoLedgerDependency(gndPath.Canonical, gndFile.ContentHash()) }
+                        : new[]
+                        {
+                            new RoLedgerDependency(gndPath.Canonical, gndFile.ContentHash()),
+                            new RoLedgerDependency(rswPath.Canonical, rswHash)
+                        }
                 }, ctx.Report);
                 return new RoResult<MapData>(status, asset);
             }

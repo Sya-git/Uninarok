@@ -76,6 +76,15 @@ namespace Uninarok.Map
             rawTypes = cellRawTypes;
         }
 
+        /// <summary>
+        /// Sets the map-wide settings (SPEC-0006 FR-7); null clears them, for a map without an RSW. Importer and tests only.
+        /// </summary>
+        internal void AssignSettings(MapSettings mapSettings)
+        {
+            hasSettings = mapSettings != null;
+            settings = mapSettings ?? new MapSettings();
+        }
+
         // ---- queries (FR-2): no allocation, no exception ----
 
         /// <summary>The cell under a Unity position (y ignored); false outside the map.</summary>

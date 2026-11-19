@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [spec.md](spec.md) (SPEC-0006) |
-| **Status** | Draft |
+| **Status** | Implemented |
 | **Audience** | Architects, senior developers, AI agents |
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. Shared rules (paths, units and axes, textures, materials, writer, ledger, results, batch, the additive layer) come from [PLAN-0002](../0002-ro-import-foundation/plan.md). The model prefabs come from [PLAN-0003](../0003-rsm-models/plan.md), the ground and `RoMapSpace` from [PLAN-0004](../0004-gnd-ground/plan.md), the map data asset, `MapRoot` and the runtime assembly `Uninarok.Map` from [PLAN-0005](../0005-gat-map-data/plan.md). Reference maps and models: [`../0003-rsm-models/reference-models.md`](../0003-rsm-models/reference-models.md).
@@ -13,7 +13,7 @@
 - Code lives in the editor assemblies of PLAN-0002 under `Core/Rsw/`, `Core/Formats/` (adapter) and `Editor/Map/`; the small data components that the scene holds (markers for lights, sounds and effects) are **runtime code** in `Uninarok.Map` (PLAN-0005 §3), because a component of an editor-only assembly cannot be saved in a scene that ships (PLAN-0002 §4.14).
 - **RSW files are read by the GRF library** (the `Rsw` class of `GRF.dll`) through one adapter, `RoRswReader` (PLAN-0002 §1). After the adapter everything works on our own type `RoRsw`.
 - Format facts used here, from the community RSW document: the file starts with `GRSW` and a version (1.9 to 2.6, with a build number from 2.2); it holds a water plane (moved to the GND file from 2.6), global lighting (directional light by longitude and latitude in degrees, diffuse and ambient colours, shadow opacity), a ground bounding box that appears unused, a list of scene objects, and a quad tree (absent in 1.9) used by the client for culling. A scene object is one of four types: **model** (name, animation type and speed, collision flags, model file, node name, position, rotation, scale), **light** (name, position, colour, range), **sound** (name, file, position, volume, width, height, range, cycle interval) and **effect** (name, position, preset id, emission delay, four launch parameters). The document gives **no** unit, axis or rotation convention (no map-centre offset, no Y sign, no rotation order or units). Those are the rules table of §4.3, verified by T0.3. The quad tree is not read.
-- The map-wide values of FR-7 (size, water level, lighting values, music name) go into the `settings` field of the `MapData` asset of PLAN-0005, which this plan fills (§4.5); there is one converter owner for that asset.
+- The map-wide values of FR-7 (size, water level, lighting values) go into the `settings` field of the `MapData` asset of PLAN-0005, which this plan fills (§4.5); there is one converter owner for that asset.
 - OQ-1 (per-model shadow flags) and OQ-2 (scene location) of the spec are **decided in this plan** (§8, D4 and D5) and listed for the owner at approval.
 - Re-conversion never touches the additive scene (PLAN-0002 §4.13).
 
@@ -56,14 +56,14 @@ Satisfies FR-1, FR-5, FR-11.
 
 | Path | Contents | Assembly |
 |---|---|---|
-| `Assets/Scripts/Map/MapMarkers.cs` | `MapLightMarker`, `MapSoundMarker`, `MapEffectMarker` (data only: parameters, no logic) | `Uninarok.Map` |
+| `Assets/Scripts/Map/MapLightMarker.cs`, `MapSoundMarker.cs`, `MapEffectMarker.cs`, `MapMissingModelMarker.cs`, `MapModelAnimation.cs` (D17) | one marker per file (Unity resolves a component saved in a scene by its file name, D15); data only: parameters, no logic; ranges in Unity units | `Uninarok.Map` |
 | `Assets/Scripts/Map/MapRoot.cs` | (PLAN-0005) gains `MapSettings` access through its `MapData` | `Uninarok.Map` |
 | `Assets/Editor/RoImport/Core/Formats/RoRswReader.cs` | adapter GRF `Rsw` → `RoRsw` | `Uninarok.RoImport.Core` |
-| `Assets/Editor/RoImport/Core/Rsw/` | `RoRsw`, `RoRswObject` types, `RoRswRules`, `RoRswPlacement`, `RoRswLighting`, `RoMapNameTable` (text table reader for the music name) | Core |
+| `Assets/Editor/RoImport/Core/Rsw/` | `RoRsw`, `RoRswObject` types, `RoRswRules`, `RoRswPlacement`, `RoRswLighting` | Core |
 | `Assets/Editor/RoImport/Editor/Map/` | `RoMapConverter`, `RoMapSceneBuilder`, `RoMapOutputPaths`, `RoMapOpener`, `RoMapGizmos` | `Uninarok.RoImport.Editor` |
 | `Assets/Tests/EditMode/RoImport/Rsw/` | tests; synthetic maps built in code | `Uninarok.RoImport.Tests` |
 
-Outputs (through `RoOutputPaths.Mirror`, PLAN-0002 §4.5), for a source `map/<name>.rsw`:
+Outputs (through `RoOutputPaths.Scene`, PLAN-0002 §4.5), for a source `<name>.rsw` at the data root (T0.1, D16):
 
 | Output | Path |
 |---|---|
@@ -99,15 +99,47 @@ public static class RoRswReader { public static bool TryRead(RoPath path, byte[]
 - Values are **raw**, unconverted; no rule of §4.3 is applied here. Order is the file order of each list (it makes the scene deterministic).
 - The adapter never throws; a rejected read returns `false` with GRF's reason.
 - A version GRF reads but this plan has no rules row for gives one `UnsupportedRswVersion` issue and no output; the three reference maps fix the first row of the table.
-- The ground and walkability files named in the RSW are checked against the map name: if they differ from `map/<name>.gnd` and `.gat` the converter uses the names from the RSW if the files exist, otherwise reports `RswFileMismatch` once.
-- **Mapping check (T0.2).** The task prints the header and the first and last objects of each type through GRF and compares them with the raw values of the same files, then writes into this section one row per `RoRsw` field with the GRF member that supplies it, noting any member GRF derives and that must not be used.
+- The ground and walkability files named in the RSW are checked against the map name: if they differ from `<name>.gnd` and `<name>.gat` at the data root the converter uses the names from the RSW if the files exist, otherwise reports `RswFileMismatch` once.
+- **Mapping check (T0.2).** The task prints the header and the first and last objects of each type through GRF, then writes into this section one row per `RoRsw` field with the GRF member that supplies it, noting any member GRF derives and that must not be used. GRF's values are taken as they are; they are not checked against the file bytes (D11).
+
+**Field map (T0.2, 2026-11-18).** GRF `GRF.FileFormats.RswFormat.Rsw`, built with `new Rsw((MultiType)bytes)` while `EncodingService.DisplayEncoding` is `Korean` (names are CP949, as for GND and RSM), then restored.
+
+| `RoRsw` field | GRF member | Note |
+|---|---|---|
+| `VersionMajor`, `VersionMinor` | `Header.MajorVersion`, `Header.MinorVersion` | all three reference maps are **2.1** |
+| `Build` | `Header.BuildNumber` | 0 below 2.2 (absent in the file) |
+| `GndFile`, `GatFile` | `Header.GroundFile`, `Header.AltitudeFile` | `<name>.gnd`, `<name>.gat` on all three maps |
+| `Water` (level, type, wave height, speed, pitch) | `Water.Level`, `.Type`, `.WaveHeight`, `.WaveSpeed`, `.WavePitch` | read from the RSW for 2.1; `.TextureCycling` is the animation period (kept for a later spec, not used) |
+| `Light` longitude, latitude | `Light.Longitude`, `Light.Latitude` | int degrees (45/45, 45/45, 70/20) |
+| `Light` diffuse, ambient | `Light.DiffuseRed/Green/Blue`, `Light.AmbientRed/Green/Blue` | floats 0 to 1 |
+| `Light` shadow opacity | `Light.Intensity` | GRF names it `Intensity` (0.5, 0.5, 0.6) |
+| object lists | `Objects` (`List<RswObject>`), split by `RswObject.Type` (`Model`=1, `Light`=2, `Sound`=3, `Effect`=4), file order kept | |
+| `RoRswModel.Name`, `File`, `Node` | `Model.Name`, `Model.ModelName`, `Model.NodeName` | `ModelName` is the path under `model/` with `\` separators |
+| `RoRswModel.AnimType`, `AnimSpeed` | `Model.AnimationType`, `Model.AnimationSpeed` | seen: type 0 (prt_fild08, all) and 2 (prontera, izlude, all); speed 1, and 0.01 on prontera's two clock towers |
+| `RoRswModel.Collision` | `Model.BlockType` | read but **not used**: on 2.1 the values are uninitialized memory (hundreds of distinct large and negative numbers) |
+| `Position`, `Rotation`, `Scale` (all types) | `RswObject.Position`, `Model.Rotation`, `Model.Scale` (`TkVector3` `.X .Y .Z`) | rotation in degrees (0 to 360) |
+| `RoRswPointLight.Name`, `Color`, `Range` | `Light.Name`, `Light.ColorVector`, `Light.Range` | `ColorVector` holds the file's floats (0.2, 0.05, 0) |
+| `RoRswSound.*` | `Sound.Name`, `.WaveName`, `.Volume`, `.Width`, `.Height`, `.Range`, `.Cycle` | |
+| `RoRswEffect.*` | `Effect.Name`, `.EffectNumber` (preset), `.EmitSpeed` (delay), `.Param[0..3]` (A to D) | |
+
+Members that must not be used: `Light.Color` (bytes derived from `ColorVector`), `Light.RealRange()`, `Light.Custom_Range`, `Custom_Intensity`, `Custom_CutOff`, `Gives_Shadow` (editor extensions, not file fields of 2.1), `Rsw.WaterLevel(byte[])`, `Rsw.Ground` (the unused bounding box, garbage on izlude), `QuadTree`, `ModelResources`, `LubEffects`, `WindEffects`, `StrEffects`, `EvilsPawEffects` (empty on all three), `Effect.LubEffectAttached`, `Header.IniFile`, `SourceFile`, `UnknownData`.
+
+Observed counts (GRF):
+
+| Map | Version | Models (distinct files) | Lights | Sounds | Effects | `NodeName` non-empty | Mirrored instances (axes) |
+|---|---|---|---|---|---|---|---|
+| prt_fild08 | 2.1 | 570 (23) | 0 | 51 | 0 | 570 | 9 (X 1, Z 2, XZ 6) |
+| prontera | 2.1 | 1303 (62) | 0 | 25 | 152 | 1303 | 289 (X 120, Z 90, XZ 79) |
+| izlude | 2.1 | 552 (90) | 5 | 110 | 12 | 552 | 97 (X 26, Z 45, XZ 21, Y 3, XY 2) |
+
+The notable contents of `reference-models.md` §4 match exactly (prt_fild08: 덤불02 32, 버섯01 5, 버섯02 3, 넝쿨01 1; prontera: 시계탑 2, 교역소 1, 도구점 1, 분수대 1, 게시판 3; izlude: 덤불02 13, 넝쿨01 2, iz_bridge01 6, iz_smelter, iz_enchant, 비공정, 퀴즈경기장, 프론아레나 1 each). The totals of §4 were higher than GRF's and were corrected to GRF's counts by the owner's decision (2026-11-18). Every model file referenced exists under `model/`.
 
 ### 4.2 Dependencies: ground, map data and models on demand
 
 Satisfies FR-1, FR-2, FR-10 (uses SPEC-0002 FR-6).
 
 - `RoJobKind.Map` is added to the enum and registry, with `RoImport.Map(string mapName)`; `RoImportContext` gains `Model(RoPath)` (PLAN-0003 adds the converter, this plan the context method if not present yet), `Ground(RoPath)` (PLAN-0004) and `MapData(RoPath)` (PLAN-0005).
-- Models are requested **once per distinct file** (a map has hundreds of instances of a few dozen models: prontera has 1367 references to 67 distinct models), in file order, so the work and the log are small and deterministic.
+- Models are requested **once per distinct file** (a map has hundreds of instances of a few dozen models: prontera has 1303 references to 62 distinct models), in file order, so the work and the log are small and deterministic.
 - A model that is missing or fails to convert gives one `ModelMissing` warning naming the model and the map; every object that uses it becomes an empty named object with a `MapMissingModelMarker` (data in §4.6), so counts and positions are preserved (FR-10).
 - Textures and materials are the models' own business (PLAN-0003); this plan never asks for them.
 
@@ -118,11 +150,11 @@ Satisfies FR-2, FR-3, FR-4.
 ```csharp
 public readonly struct RoRswRules                       // the choices the data must confirm (T0.3), each a named constant
 {
-    public float PositionScale;                         // RSW position unit → Ragnarok unit (candidate 1; the client's own unit factor may be 1/5)
-    public RoAxisOrder RotationOrder;                   // candidate: Z, then X, then Y
-    public float RotationSignX, RotationSignY, RotationSignZ;
-    public float ScaleYSign;                            // candidate -1 (Ragnarok's Y points down)
-    public bool NodeNameSelectsRoot;                    // candidate false
+    public float PositionScale;                         // 1 (T0.3; PLAN-0004 T0.3 verified the offset)
+    public RoAxisOrder RotationOrder;                   // Z·X·Y as a matrix product (Y applied first), T0.3
+    public float RotationSignX, RotationSignY, RotationSignZ;   // +1, +1, +1 (T0.3)
+    public float ScaleYSign;                            // +1 (T0.3: -1 floats izlude's mirrored tools above their bench)
+    public bool NodeNameSelectsRoot;                    // false (T0.3: the node is always the root, or a node that does not exist)
     public static readonly RoRswRules V1;
 }
 public static class RoRswPlacement
@@ -133,10 +165,10 @@ public static class RoRswPlacement
 ```
 
 - **One matrix chain in Ragnarok space, like PLAN-0003.** The placement of a model is `M = T(centreOffset + position·PositionScale) · R(rotation) · S(scale)` with `centreOffset = RoMapSpace.CentreOffsetRo` (RSW positions are relative to the map centre; the offset is defined once, in PLAN-0004 §4.2, so ground, walkability and objects can never disagree), `R` built with the order and signs of the rules table and `S` with the Y sign. The matrix is converted to Unity with the one conjugation of PLAN-0002 §4.3 (`F·M·F`, scale 0.1) and decomposed once; nothing in this plan converts a component on its own.
-- **Mirrored (negative) scale.** A negative scale on one or three axes flips winding. The decomposition keeps the negative sign on the scale component and the model's materials are one-sided, so a mirrored instance is inside-out unless the renderer flips winding: Unity does this itself for a negative `lossyScale` determinant (the renderer reverses the culling), so no extra work is needed; a test and T0.3 confirm it on a synthetic mirrored model (the data has none, `reference-models.md` §5).
+- **Mirrored (negative) scale.** A negative scale on one or three axes flips winding. The decomposition keeps the negative sign on the scale component and the model's materials are one-sided, so a mirrored instance is inside-out unless the renderer flips winding: Unity does this itself for a negative `lossyScale` determinant (the renderer reverses the culling), so no extra work is needed; a test confirms it on a synthetic mirrored model. The data has 395 mirrored instances (T0.2), on X and Z and, in izlude, on Y; the owner compared them (T0.3).
 - **The instance transform is the placement alone.** The model prefab's own transforms already contain the recentering of PLAN-0003 (the prefab root has none of its own and its origin is the bottom centre of the bounds), so the instance gets exactly `M` and nothing is added.
-- **`NodeName`.** The RSW can name a root node to render. The candidate rule is that it is ignored (the whole model is drawn); T0.3 counts non-empty values in the three reference maps and, if there are any whose node is not the main node, decides with the owner; until then a non-empty value gives one `RswNodeNameIgnored` warning per map with a count.
-- **Animation.** `AnimType` 0 means a static prop: the instance's `Animator` (present only on animated model prefabs) is disabled; `AnimType` 2 keeps it enabled and `AnimSpeed` (a percentage) sets `Animator.speed = AnimSpeed / 100`; any other value is reported once as `RswUnknownAnimType` and treated as 2. T0.3 checks this on the two clock towers of prontera. `Collision` is not used in this delivery (no colliders are generated); the raw value is kept on the instance's marker (§4.6) only if non-zero.
+- **`NodeName`.** Ignored (the whole model is drawn), owner's decision (T0.3). It is non-empty on every instance: on 2,416 of 2,425 it names the model's root node, on the other 9 a node that does not exist, never a child node. `RswNodeNameIgnored` is reported once per map, with a count, only for instances whose `NodeName` names a **child** node (none in the reference data).
+- **Animation.** `AnimType` 0 means a static prop: the instance's `Animator` (present only on animated model prefabs) is disabled; `AnimType` 2 keeps it enabled; any other value is reported once as `RswUnknownAnimType` and treated as 2. Seen (T0.3): type 0 on all of prt_fild08, type 2 on all of prontera and izlude. The model's own timing (1000 ticks = 1 s, PLAN-0003 D4) is the animation's speed. `AnimSpeed` is 1 everywhere except 0.01 on prontera's two clock towers; it multiplies the model's speed: `Animator.speed = AnimSpeed`, kept by a `MapModelAnimation` component (runtime, `Uninarok.Map`) that applies it when enabled, because Unity does not save `Animator.speed` in a scene (D17) (owner's decision, 2026-11-18; the clock towers' 768 s animation then runs 100 times slower). `Collision` is not used in this delivery (no colliders are generated) and is not kept: on 2.1 it holds uninitialized memory (T0.2).
 - **Ground contact (FR-4).** `RoGroundSampler` (PLAN-0005 §4.4) gives the ground height under an instance's origin. The test compares, for at least 20 models of the reference maps, the vertical distance between the model's lowest point and the ground with the expected distance recorded in `Assets/Tests/EditMode/RoImport/Rsw/ground-contact.json`. That file is made by T0.4 from the reference viewer: for each sample model it records the distance the original shows (zero for a barrel on the street, the sunk depth of a fountain base, and so on), so models that float or sink in the original are checked against what the original shows, not against an assumption.
 - All of this is pure: structs in, structs out; it takes `RoMapSpace` as a parameter.
 
@@ -154,16 +186,16 @@ public static class RoRswLighting
 }
 ```
 
-- The scene gets ambient lighting in flat colour mode (`RenderSettings.ambientMode = Flat`, `ambientLight`) and **one** real-time directional light named `Sun` with soft shadows, because lighting is real time (owner decision on SPEC-0004 OQ-2). The two colours are the RSW's, taken as stored (0 to 1 floats); T0.3 checks whether the client multiplies them (a known factor between ambient and diffuse) and writes the final rule here.
-- The direction of the sun is built from longitude and latitude (degrees) in Ragnarok space and converted with `RoSpace`; the formula is a rule of the table (T0.3), with a candidate from the angles' definition, and is compared with the shadow direction of the reference viewer on a tall model.
+- The scene gets ambient lighting in flat colour mode (`RenderSettings.ambientMode = Flat`, `ambientLight`) and **one** real-time directional light named `Sun` with soft shadows, because lighting is real time (owner decision on SPEC-0004 OQ-2). The two colours are the RSW's, taken as stored (0 to 1 floats, no factor): `ambientLight = (AmbientR, G, B)`, `Sun.color = (DiffuseR, G, B)`, `Sun.intensity = 1`, `Sun.shadowStrength = 1 - opacity` (opacity is GRF's `Light.Intensity`). The owner compared prontera with this rule (T0.3).
+- The direction of the sun is built from longitude and latitude (degrees) in Ragnarok space and converted with `RoSpace`; latitude is measured from the zenith. The vector toward the light in Ragnarok space is `(-cos lon · sin lat, -cos lat, sin lon · sin lat)`; `Sun.forward` is minus its `RoSpace.Direction`. On prontera (45, 45) the sun comes from the north-west, 45° up. Verified with the owner (T0.3).
 - FR-8 is a Should; if T0.3 cannot establish the rule, the lighting step is left out and the scene gets Unity's default lighting with a recorded note, without blocking the other requirements.
 
 ### 4.5 Map-wide values: filling `MapData.settings`
 
 Satisfies FR-7.
 
-- PLAN-0005's `MapData` already has the field `settings` (`MapSettings`: width and height in cubes, zoom, water level in Unity units, water type and wave values, ambient colour, sun colour, longitude, latitude, shadow opacity, music name, source versions of the GND, GAT and RSW). This plan extends `RoMapDataConverter` so that, when the RSW exists, it also reads it (through `RoRswReader`) and fills `settings`, sets `hasSettings`, and records the RSW hash among its dependencies. If the RSW is absent the asset is converted without settings (SPEC-0005 stands alone).
-- **Music name.** The RSW does not hold it. The client's table `data/mp3nametable.txt` maps a map file to a music file; `RoMapNameTable` (pure, in Core) parses the text lines (`<map>.rsw#<file>#`) after the bytes are decoded with the GRF library's text encoding service (the table is Korean text). A missing table or entry gives an empty music name and one informational `MusicNameMissing` issue (not an error). T0.2 confirms the file's location and shape.
+- PLAN-0005's `MapData` already has the field `settings` (`MapSettings`: width and height in cubes, zoom, water level in Unity units, water type and wave values, ambient colour, sun colour, longitude, latitude, shadow opacity, source versions of the GND, GAT and RSW). This plan extends `RoMapDataConverter` so that, when the RSW exists, it also reads it (through `RoRswReader`) and fills `settings`, sets `hasSettings`, and records the RSW hash among its dependencies. If the RSW is absent the asset is converted without settings (SPEC-0005 stands alone).
+- **Music name.** Not read and not stored: background music is out of scope (spec §6, D12). The RSW does not hold it, and the client's music table is not used.
 - Water: the plane level and the wave values are stored in Unity units, **no water is rendered** (non-goal); the water level is also stored so a later spec can draw it. The source (RSW up to 2.5, GND from 2.6) is chosen by the reader.
 
 ### 4.6 The scene: `RoMapConverter`, `RoMapSceneBuilder`
@@ -171,7 +203,7 @@ Satisfies FR-7.
 Satisfies FR-1, FR-2, FR-5, FR-6, FR-9, FR-10, FR-11, FR-12.
 
 ```csharp
-public sealed class RoMapConverter : IRoConverter       // registers RoJobKind.Map; source path map/<name>.rsw
+public sealed class RoMapConverter : IRoConverter       // registers RoJobKind.Map; source path <name>.rsw at the data root (D16)
 {
     public const int RulesVersion = 1;
     public RoResult<UnityEngine.Object> Convert(RoImportContext ctx, RoPath path);   // returns the SceneAsset
@@ -180,13 +212,13 @@ public sealed class RoMapConverter : IRoConverter       // registers RoJobKind.M
 
 - **Hierarchy (FR-1, FR-5).** The scene has one root object `Map_<name>` carrying `MapRoot` (map name and the `MapData` reference, FR-1), with these children in this order, whose names are a **stable contract** with the additive scene:
   - `Ground`: an instance of the ground prefab (PLAN-0004 §4.6) at the origin;
-  - `Models`, `Lights`, `Sounds`, `Effects`: groups. The hierarchy must show the count of each group (FR-5), so the object name is `Models (1367)`; the base name is the stable part and the count follows after a space and an opening bracket, so a lookup by prefix (`Models`) always works. `RoMapNames.Group(kind)` and `RoMapNames.FindGroup(root, kind)` are the only code that builds or looks up these names, and the additive scene's lookups are documented to use them.
+  - `Models`, `Lights`, `Sounds`, `Effects`: groups. The hierarchy must show the count of each group (FR-5), so the object name is `Models (1303)`; the base name is the stable part and the count follows after a space and an opening bracket, so a lookup by prefix (`Models`) always works. `RoMapNames.Group(kind)` and `RoMapNames.FindGroup(root, kind)` are the only code that builds or looks up these names, and the additive scene's lookups are documented to use them.
   - `Sun` (the directional light) directly under the map root.
 - **Instances (FR-2).** Each model object is `PrefabUtility.InstantiatePrefab(modelPrefab)` (a prefab instance, not a copy, so editing the model or its material changes every instance); its name is the object's name in the RSW (names need not be unique; the order is the file order, which is the sibling order), its transform is the placement of §4.3, and it is parented under `Models`. Instances are created without per-instance overrides other than name, transform, static flags and, for animated models, the `Animator` speed or enabled state.
 - **Placeholders (FR-9).** Lights, sounds and effects become empty objects with the object's name and position under their group, each with its data marker: `MapLightMarker` (colour, range), `MapSoundMarker` (file, volume, range, interval, width, height), `MapEffectMarker` (preset id, delay, four parameters). They hold parameters and do nothing at runtime (non-goal). A model that could not be converted becomes an empty object with the instance's name and transform and a `MapMissingModelMarker` (model file) so the map keeps its structure (FR-10).
-- **Static setup (FR-6).** Ground chunks and all model instances get the static editor flags for lightmap contribution, batching, occlusion (occludee) and reflection probes, so baking and static batching work with no user work. **Exceptions:** instances of animated models (animation type not 0 and the prefab has an `Animator`) get no batching or occluder flag, because a moving object cannot be statically batched. Markers and groups are not static. This is a flag on each scene object, not on the prefab.
+- **Static setup (FR-6).** Ground chunks and all model instances get the static editor flags for lightmap contribution, batching and reflection probes, so static batching works with no user work (no occlusion flags, D18). The lightmap flag (`ContributeGI`) only marks the objects for Unity's own global illumination should it ever be used; nothing is baked (spec FR-6, D19). **Exceptions:** instances of animated models (animation type not 0 and the prefab has an `Animator`) get no batching flag, because a moving object cannot be statically batched. Markers and groups are not static. This is a flag on each scene object, not on the prefab.
 - **Per-model shadow flags (OQ-1, D4).** No per-model overrides in the first delivery: every renderer casts and receives shadows as its prefab says (PLAN-0003: both on). A person who wants an override makes it in the additive scene (§4.7) or on the model prefab.
-- **Saving (FR-11).** The converter creates a new scene in memory (`EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive)`), builds the hierarchy, applies the lighting settings (§4.4), and saves it with `EditorSceneManager.SaveScene(scene, path)` to the **same path**, which replaces the file's content and keeps the `.meta` and the GUID, so the build settings entry and any link to the scene survive. The temporary scene is closed in a `finally`. The ledger entry (category `map`) lists as outputs the scene (and, through its own entries, the ground, map data and models) and as dependencies the hash of the RSW, the ground, the map data, every model prefab and the name table. All outputs are written after the scene is built in memory (no partial output on failure).
+- **Saving (FR-11).** The converter creates a new scene in memory (`EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive)`), builds the hierarchy, applies the lighting settings (§4.4), and saves it with `EditorSceneManager.SaveScene(scene, path)` to the **same path**, which replaces the file's content and keeps the `.meta` and the GUID, so the build settings entry and any link to the scene survive. The temporary scene is closed in a `finally`. The ledger entry (category `map`) lists as outputs the scene (and, through its own entries, the ground, map data and models) and as dependencies the hash of the RSW, the GND and GAT (through the ground and map data), and every model source. All outputs are written after the scene is built in memory (no partial output on failure).
 - **Determinism (PLAN-0002 FR-16).** The scene's instance and group order is the file order and no timestamps are written; the scene file's internal object ids are Unity's and may differ between runs, so the idempotency test compares the scene **by structure** (hierarchy, names, transforms, references, components, flags) and not by bytes; an unchanged map is skipped by the ledger, which is what keeps version control quiet (risk R3).
 
 ### 4.7 The additive layer: `RoMapOpener`
@@ -201,7 +233,7 @@ Satisfies FR-11 (uses PLAN-0002 §4.13).
 
 Satisfies FR-12.
 
-- The menu and window gain the kind `Map` and `Tools/Ragnarok/Convert All Maps` (`Enumerate("map/")`, extension `.rsw`). One `RoBatch` run over every `.rsw` converts the maps in sorted order; each map is one job (PLAN-0002 §4.10), shared dependencies are converted once by the memo, and the batch ends with the list of results (FR-12). Because a map pulls in its models, the batch of maps is also a batch of models; its time is dominated by the first maps.
+- The menu and window gain the kind `Map` and `Tools/Ragnarok/Convert All Maps` (every `.rsw` at the data root, as the map data menu of PLAN-0005; D16). One `RoBatch` run over every `.rsw` converts the maps in sorted order; each map is one job (PLAN-0002 §4.10), shared dependencies are converted once by the memo, and the batch ends with the list of results (FR-12). Because a map pulls in its models, the batch of maps is also a batch of models; its time is dominated by the first maps.
 - Chunks of 200 jobs are measured in maps and in nested dependencies; the batch saves ledgers every 200 jobs of any kind (PLAN-0002 §4.10).
 
 ### 4.9 Gizmos: `RoMapGizmos`
@@ -225,14 +257,13 @@ Satisfies every FR of the spec. EditMode NUnit tests in `Uninarok.RoImport.Tests
 |---|---|---|
 | `RoRswPlacementTests` | 3 | a model at the map centre, at a corner and at a non-square map's corner; a rotation about each axis (order and signs of the rules table pinned); mirrored scale on one and three axes (determinant sign, instance is not inside-out); positions relative to the centre equal `RoMapSpace.FromRswRo`; non-square maps are not swapped |
 | `RoRswLightingTests` | 8 | ambient and sun colours, shadow strength, sun rotation for a table of longitude and latitude values |
-| `RoMapNameTableTests` | 7 | a table with Korean names, a missing entry, a missing table, spaces and mixed case |
 | `RoMapSceneTests` | 1, 2, 5, 6, 9 | a synthetic map converts to a scene with `Map_<name>`, `Ground`, the four groups with counts and `Sun`; each model object is a prefab instance of the model prefab (changing the prefab's material changes it for every instance); instance names and order are the file order; lights, sounds and effects are markers with their parameters; static flags are set on ground and instances and not on animated instances, markers and groups |
 | `RoMapMissingModelTests` | 10 | a missing model gives one warning naming model and map, the object is a placeholder with the instance's name and transform, the map converts and its other instances are unaffected |
-| `RoMapSettingsTests` | 7 | settings equal the RSW (water level, lighting values, size) and the music name equals the table's; absent RSW converts without settings |
+| `RoMapSettingsTests` | 7 | settings equal the RSW (water level, lighting values, size); absent RSW converts without settings |
 | `RoMapIdempotencyTests` | 11, (0002 FR-5) | second conversion is `Skipped`; a forced second conversion yields an identical scene by structure and unchanged GUIDs for scene, map data, ground and models; the build settings entry survives |
 | `RoMapAdditiveTests` | 11 | an additive scene with a custom object is byte-identical after re-conversion and its object still resolves under the stable names |
 | `RoMapBatchTests` | 12 | a batch of three synthetic maps with a shared model converts the model once, ends with a complete result list, one failing map does not stop the others, a second batch changes nothing |
-| `RoRswReaderTests` (`NeedsData`) | 1, 3 | the three reference maps read through GRF with the counts of `reference-models.md` §4 (1367, 579 and 616 model references, 67, 93 and 26 distinct models); a truncated copy returns false with a reason and never throws |
+| `RoRswReaderTests` (`NeedsData`) | 1, 3 | the three reference maps read through GRF with the counts of `reference-models.md` §4 (1303, 552 and 570 model references, 62, 90 and 23 distinct models); a truncated copy returns false with a reason and never throws |
 | `RoMapGroundContactTests` (`NeedsData`) | 4 | the 20 or more sample models of `ground-contact.json` sit at the recorded vertical distance from the ground within the recorded tolerance |
 | `RoMapReferenceTests` (`NeedsData`) | 1 to 12 | each reference map converts with no failure; the number of instances per group equals the file's counts; every distinct model converted; a second batch skips everything |
 
@@ -240,7 +271,7 @@ Satisfies every FR of the spec. EditMode NUnit tests in `Uninarok.RoImport.Tests
 
 - FR-3: fixed-camera screenshots (top, front and one oblique) of prt_fild08, prontera and izlude against the reference viewer, including the four models earlier reported as wrongly placed, the two animated clock towers and the control group of `reference-models.md`.
 - FR-4: the 20 or more ground-contact samples, with the numbers.
-- FR-6: bake lightmaps and static batching on prt_fild08 without changing anything by hand.
+- FR-6: static batching on prt_fild08 and the real-time light and shadows, without changing anything by hand (no bake, D19).
 - FR-8: lighting of each reference map beside the reference client's.
 - FR-11: add a custom object in the additive scene, re-convert, open with `Tools/Ragnarok/Open Map`.
 - FR-13: select the map object and see the rectangle, origin and axes.
@@ -249,6 +280,7 @@ Satisfies every FR of the spec. EditMode NUnit tests in `Uninarok.RoImport.Tests
 
 - `RswImporter.cs` (a `ScriptedImporter` on `.rsw` that looks up model prefabs) is deleted by the last task of this plan; once the source folder is hidden from Unity (PLAN-0002 §7) it is inert. Its logic is not carried over: the root-only global transform, the use of GRF's derived positions and the fixed rotation order are replaced by §4.3.
 - Scenes made by the old importer (if committed) are replaced by the regenerated scenes; the list of such scenes and their users is recorded by T0.1.
+- T8.5 (2026-11-18): `RswImporter.cs` is deleted; it had no users and made no committed scene (T0.1), and `UtilExtensions.cs` was already gone (TASKS-0004 T8.4). The only old importers left, compiled out, are `RsmImpoter.cs` and `RsmImpoter.bkp.cs` (listed in BACKLOG).
 - PLAN-0003 FR-3 (model recentering / ground contact) is closed by the ground-contact task here.
 - The `.gitattributes` rules of PLAN-0002 §7 do not cover `*.unity` generated scenes under `Assets/Scenes/Maps/`; scenes stay text and are not put under LFS unless T7.2 shows a size problem (a scene with 1400 prefab instances is a few hundred KB).
 - Contract with PLAN-0007: none (sprites are not map objects here). A later spec places NPCs and monsters at map cells using `MapData`.
@@ -267,36 +299,44 @@ Satisfies every FR of the spec. EditMode NUnit tests in `Uninarok.RoImport.Tests
 | D8 | Lighting is real time: ambient colour plus one real-time directional light | Baked lightmaps from the file (owner decision on SPEC-0004 OQ-2) |
 | D9 | Ground-contact check compares with distances recorded from the reference viewer, not with an assumption of "touching" | Asserting every model touches the ground (many props float or sink in the original) |
 | D10 | Static flags on scene instances, not on prefabs; animated instances are not batched | Making prefabs static (affects every use of the model, including the animated ones) |
+| D11 | Owner's decision (2026-11-18): the RSW values are taken from the GRF library as it supplies them; T0.2 only maps fields to GRF members | Comparing GRF's values with a hand reading of the file bytes |
+| D12 | Owner's decision (2026-11-18): no music name; the music table is not read and `MusicNameMissing` does not exist | Reading `data/mp3nametable.txt` (no music is available yet and music is not part of the spec) |
+| D13 | T0.3 (2026-11-18): rotation `Rz·Rx·Ry`, all signs +1, scale used as stored (Y sign +1) in Ragnarok space. Checked by the tilt of the 36 tilted bushes of prt_fild08 against the ground normal (mean 20.9°, against 35.6° unrotated and ≥ 21.1° for all 47 other order and sign choices), the diagonal clock-tower walls of prontera (Y sign), izlude's mirrored axe and hammer on their bench (Y scale sign; diagonal on the bench, as in the reference viewer) and the owner's comparison of prt_fild08, izlude and prontera with the reference viewer | Scale Y sign -1 (BrowEdit3's, which belongs to its own Y flip; it floats the tools above the bench); the other orders (they stand the tools up) |
+| D14 | Owner's decision (2026-11-18): the RSW `AnimSpeed` is applied as `Animator.speed` | Ignoring it (every instance at the model's own speed) |
+| D15 | T4.1 (2026-11-18): one file per marker component instead of one `MapMarkers.cs` | One file for the four markers (Unity cannot resolve the script of a component saved in a scene unless the file is named after the class) |
+| D16 | T0.1 (2026-11-18): the map source is `<name>.rsw` at the data root, like the GND and GAT (PLAN-0004 D11, PLAN-0005 D9); the menu takes every `.rsw` there | `map/<name>.rsw` (the data set has no `map/` folder) |
+| D17 | T5.3 (2026-11-18): the animation speed of an instance is a field of a small runtime component, `MapModelAnimation`, applied in `OnEnable` | Setting `Animator.speed` on the instance (not serialized: lost when the scene is saved); a per-speed animator controller (one per speed value, more assets) |
+| D18 | T5.3 (2026-11-18): no occluder or occludee static flags | Setting them (deprecated in Unity 6.7, which warns at compile time and points to GPU occlusion culling, which needs no per-object flag) |
+| D19 | Owner's decision (2026-11-19): no baked lighting; FR-6 is static batching plus the real-time sun and shadows | Unity's lightmap baking (needs a second, non-overlapping UV set; generating it splits vertices at seams and gives the hard lighting edges the owner rejects) |
 
-Items for the owner: approve D4 (no per-model shadow flags) and D8, the new runtime marker components, and the music-name source (`mp3nametable.txt`).
+Items for the owner: approve D4 (no per-model shadow flags) and D8, and the new runtime marker components.
 
 ## 9. Risks
 
 | Risk | Mitigation |
 |---|---|
-| The rules table (position scale, rotation order and signs, scale sign) differs from the candidates | T0.3 compares every rule with the reference viewer on the three maps and the four reported models; each rule is one constant with a pinning test |
+| The rules table (position scale, rotation order and signs, scale sign) differs from the candidates (resolved by T0.3: the scale Y sign differed) | T0.3 compares every rule with the reference viewer on the three maps and the four reported models; each rule is one constant with a pinning test |
 | The ground-contact tolerance is wrong or the recorded distances are wrong | T0.4 records them from the reference viewer with the owner; the file is committed test data |
 | Scene files are not byte-identical on a forced re-save | The ledger skips unchanged maps; the determinism test compares by structure; recorded as a known limit of FR-16 for scenes |
 | A map with 1400 instances makes `InstantiatePrefab` and save slow | Measured in T7.2; instances are created in file order in one pass; chunking by 200 jobs bounds memory; if too slow the fallback is creating the scene through `PrefabUtility.LoadPrefabContents` batching (decision recorded then) |
 | `SaveScene` to an existing path while that scene is open in the editor | The converter closes or reloads an open copy first (and says so once); batch runs lock the editor (PLAN-0002 §4.10) |
-| The music name table is missing in some data sets | Informational issue, empty name, no failure |
-| The RSW version of a map has a layout GRF reads wrongly | T0.2 compares raw values; the version is checked in the rules table and an unknown one is reported once |
+| The RSW version of a map has a layout GRF reads wrongly | Wrong values show up as misplaced models in T0.3 and the reference tests; the version is checked in the rules table and an unknown one is reported once |
 | Many models are missing or fail | One warning per model, placeholders keep the structure, the batch lists them once |
 
 ## 10. Traceability
 
-| FR | Plan sections |
-|---|---|
-| FR-1 | 2, 3, 4.1, 4.2, 4.6, 6 |
-| FR-2 | 4.2, 4.6, 6 |
-| FR-3 | 4.3, 6 |
-| FR-4 | 4.3, 6 |
-| FR-5 | 4.6, 6 |
-| FR-6 | 4.6, 6 |
-| FR-7 | 4.5, 6 |
-| FR-8 | 4.4, 6 |
-| FR-9 | 4.6, 6 |
-| FR-10 | 4.2, 4.6, 6 |
-| FR-11 | 4.6, 4.7, 6 |
-| FR-12 | 4.8, 6 |
-| FR-13 | 4.9, 6 |
+| FR | Plan sections | Evidence (TASKS-0006) |
+|---|---|---|
+| FR-1 | 2, 3, 4.1, 4.2, 4.6, 6 | `RoRswReaderTests`, `RoMapSceneTests` (root, `MapRoot` → `MapData`, ground, groups, sun), `RoMapReferenceTests` (three maps, no failure); T7.2 |
+| FR-2 | 4.2, 4.6, 6 | `RoMapSceneTests.Models_ArePrefabInstances…`, `…Instances_ShareThePrefabMaterial_WithNoRendererOverride`; `RoMapReferenceTests` |
+| FR-3 | 4.3, 6 | `RoRswPlacementTests` (rules of T0.3, D13), `RoMapSceneTests.Instances_ArePlacedByTheRules`; owner comparisons T0.3 and T8.1 |
+| FR-4 | 4.3, 6 | `RoMapGroundContactTests` (29 samples of T0.4); T8.2 table |
+| FR-5 | 4.6, 6 | `RoMapNamesTests`, `RoMapSceneTests.TheScene_HasTheMapRoot_WithItsChildrenInOrder` |
+| FR-6 | 4.6, 6 | `RoMapSceneTests.StaticFlags_…`; T8.3 (739/739 renderers statically batched in Play Mode; real-time sun and shadows; no bake, D19) |
+| FR-7 | 4.5, 6 | `RoMapSettingsTests`; T7.2 (three map data assets with settings) |
+| FR-8 | 4.4, 6 | `RoRswLightingTests`, `RoMapSceneTests.TheSunAndAmbient_FollowTheRswLight`; owner comparison T0.3, T8.1 |
+| FR-9 | 4.6, 6 | `MapMarkerTests`, `RoMapSceneTests.LightsSoundsAndEffects_AreMarkersWithTheirParameters` |
+| FR-10 | 4.2, 4.6, 6 | `RoMapMissingModelTests`, `RoMapBatchTests` (one warning per run) |
+| FR-11 | 4.6, 4.7, 6 | `RoMapIdempotencyTests`, `RoMapAdditiveTests`, `RoMapBatchTests.OpenMap_…`; owner's check T8.4 |
+| FR-12 | 4.8, 6 | `RoMapBatchTests`, `RoMapReferenceTests`; T7.2 (all maps, second run skips all) |
+| FR-13 | 4.9, 6 | T6.1 (gizmos on prt_fild08, 0 µs with nothing selected); owner T8.4 |

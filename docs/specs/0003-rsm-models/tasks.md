@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Implementing (all tasks done; FR-3 is confirmed with SPEC-0006, then Implemented) |
+| **Status** | Implemented |
 
 **How to use this file**
 - Start only when TASKS-0002 phases 0 to 6 are done (the foundation: paths, `RoSpace`, writer, ledger, materials, context, batch, texture converter). Tasks here use those contracts as written in PLAN-0002.
