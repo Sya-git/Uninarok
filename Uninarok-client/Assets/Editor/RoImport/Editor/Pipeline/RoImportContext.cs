@@ -170,6 +170,29 @@ namespace Uninarok.RoImport.Editor.Pipeline
             return typed;
         }
 
+        /// <summary>
+        /// The prefab of a model (<c>model/…/x.rsm</c>), converted on demand when missing or stale (PLAN-0006 4.2, SPEC-0002
+        /// FR-6). Repeat requests in a run are free. The model's source is recorded in the open dependency frame, with an
+        /// empty hash when it is missing, so a model that appears later converts its maps again.
+        /// </summary>
+        public RoResult<GameObject> Model(RoPath path)
+        {
+            string key = "model:" + path.Canonical;
+            if (!TryGetMemo(key, out RoResult<GameObject> known))
+            {
+                var result = RoConverterRegistry.For(RoJobKind.Model).Convert(this, path);
+                known = new RoResult<GameObject>(result.Status, result.Value as GameObject, result.Failure);
+                Memo(key, known);
+            }
+            else if (known.Status != RoStatus.Failed)
+            {
+                known = RoResult<GameObject>.Skipped(known.Value);
+            }
+
+            AddDependency(path, Source.TryGetFile(path, out var file) ? file.ContentHash() : string.Empty);
+            return known;
+        }
+
         /// <summary>A result already produced in this run, by key (e.g. <c>texture:texture/a.bmp</c>).</summary>
         internal bool TryGetMemo<T>(string key, out T value)
         {

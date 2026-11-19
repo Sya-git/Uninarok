@@ -13,7 +13,6 @@ namespace Uninarok.RoImport.Tests.Rsw
     // TASKS-0006 T5.1 / T5.3 (FR-1, FR-2, FR-5, FR-6, FR-8, FR-9): a synthetic map converts to one scene with the map root,
     // the ground, the four groups and the sun; models are prefab instances placed by the rules of T3.2; the other objects are
     // markers; static flags are set where baking and batching can use them.
-    [Ignore("pending T5.3")]
     public class RoMapSceneTests
     {
         const float Eps = 1e-4f;
@@ -138,7 +137,7 @@ namespace Uninarok.RoImport.Tests.Rsw
 
             var moving = models.GetChild(2).GetComponentInChildren<Animator>();
             Assert.IsTrue(moving.enabled, "type 2 keeps the animator");
-            Assert.AreEqual(0.5f, moving.speed, Eps, "the RSW speed (D14)");
+            Assert.AreEqual(0.5f, moving.GetComponent<MapModelAnimation>().speed, Eps, "the RSW speed (D14), kept for runtime (D17)");
             Assert.IsFalse(models.GetChild(3).GetComponentInChildren<Animator>().enabled, "type 0 is a static prop");
         }
 
@@ -169,8 +168,7 @@ namespace Uninarok.RoImport.Tests.Rsw
         public void StaticFlags_AreOnTheGroundAndStillInstances_NotOnMovingOnesMarkersOrGroups()
         {
             var root = ConvertAndOpen();
-            const StaticEditorFlags full = StaticEditorFlags.ContributeGI | StaticEditorFlags.BatchingStatic | StaticEditorFlags.OccluderStatic
-                                           | StaticEditorFlags.OccludeeStatic | StaticEditorFlags.ReflectionProbeStatic;
+            const StaticEditorFlags full = StaticEditorFlags.ContributeGI | StaticEditorFlags.BatchingStatic | StaticEditorFlags.ReflectionProbeStatic;
             var models = Group(root, RoMapGroup.Models);
 
             foreach (var chunk in root.transform.Find(RoMapNames.Ground).GetComponentsInChildren<MeshRenderer>())
@@ -180,7 +178,8 @@ namespace Uninarok.RoImport.Tests.Rsw
                     Assert.AreEqual(full, GameObjectUtility.GetStaticEditorFlags(r.gameObject) & full, models.GetChild(i).name);
 
             var moving = GameObjectUtility.GetStaticEditorFlags(models.GetChild(2).GetComponentInChildren<Renderer>().gameObject);
-            Assert.AreEqual((StaticEditorFlags)0, moving & (StaticEditorFlags.BatchingStatic | StaticEditorFlags.OccluderStatic), "an animated instance");
+            Assert.AreEqual((StaticEditorFlags)0, moving & StaticEditorFlags.BatchingStatic, "an animated instance");
+            Assert.AreEqual(RoMapSceneBuilder.MovingFlags, moving);
 
             foreach (var group in new[] { RoMapGroup.Models, RoMapGroup.Lights, RoMapGroup.Sounds, RoMapGroup.Effects })
                 Assert.AreEqual((StaticEditorFlags)0, GameObjectUtility.GetStaticEditorFlags(Group(root, group).gameObject), group.ToString());

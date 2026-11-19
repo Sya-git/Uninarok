@@ -108,6 +108,20 @@ namespace Uninarok.RoImport.Editor.Writing
 
         public bool Exists(string projectPath) => File.Exists(Disk(Normalize(projectPath)));
 
+        /// <summary>
+        /// Saves a scene built in memory to its path (PLAN-0006 4.6, FR-11). An existing scene file is replaced in place, so
+        /// its <c>.meta</c> and GUID, the build settings entry and every link to it survive. Never an additive scene.
+        /// </summary>
+        public RoStatus SaveScene(string projectPath, UnityEngine.SceneManagement.Scene scene)
+        {
+            string path = Checked(projectPath);
+            bool existed = File.Exists(Disk(path));
+            EnsureFolder(Parent(path));
+            if (!UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene, path))
+                throw new InvalidOperationException($"the scene could not be saved to '{path}'");
+            return existed ? RoStatus.Updated : RoStatus.Created;
+        }
+
         public T Load<T>(string projectPath) where T : Object => AssetDatabase.LoadAssetAtPath<T>(Normalize(projectPath));
 
         /// <summary>Starts (or nests) a block of writes: <c>AssetDatabase.StartAssetEditing</c> on the outermost call.</summary>

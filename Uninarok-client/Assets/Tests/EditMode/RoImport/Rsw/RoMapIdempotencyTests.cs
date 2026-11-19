@@ -8,7 +8,6 @@ namespace Uninarok.RoImport.Tests.Rsw
     // TASKS-0006 T5.1 / T5.3 (FR-11; SPEC-0002 FR-5, FR-16): an unchanged map is skipped; a forced conversion rewrites the
     // scene in place, identical by structure, with the GUIDs of the scene and its dependencies unchanged, so links and the
     // build settings entry survive.
-    [Ignore("pending T5.3")]
     public class RoMapIdempotencyTests
     {
         RoMapTestBed _bed;

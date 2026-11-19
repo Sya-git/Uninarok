@@ -11,7 +11,6 @@ namespace Uninarok.RoImport.Tests.Rsw
 {
     // TASKS-0006 T5.1 / T5.3 (FR-10): a missing model gives one warning naming the model and the map; each of its instances
     // becomes a named placeholder in its place, and the map converts.
-    [Ignore("pending T5.3")]
     public class RoMapMissingModelTests
     {
         RoMapTestBed _bed;

@@ -9,7 +9,6 @@ namespace Uninarok.RoImport.Tests.Rsw
 {
     // TASKS-0006 T5.1 / T5.3 (FR-11, PLAN-0006 4.7): custom work lives in a hand-made additive scene beside the generated
     // one; re-conversion never touches it, and its objects still find the map objects under the stable names.
-    [Ignore("pending T5.3")]
     public class RoMapAdditiveTests
     {
         RoMapTestBed _bed;
