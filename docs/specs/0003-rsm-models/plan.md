@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [spec.md](spec.md) (SPEC-0003) |
-| **Status** | Implementing (all tasks done; FR-3 is confirmed with SPEC-0006, then Implemented) |
+| **Status** | Implemented |
 | **Audience** | Architects, senior developers, AI agents |
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. Shared rules (paths, units and axes, textures, materials, ledger, results, batch) come from [PLAN-0002](../0002-ro-import-foundation/plan.md) and are used here, not restated. The reference models are in [`reference-models.md`](reference-models.md), which is normative for the checks in §6.
@@ -361,7 +361,7 @@ Satisfies every FR of the spec. EditMode NUnit tests in `Uninarok.RoImport.Tests
 - FR-2: every model in the reference tables, front, side and top, against the reference viewer, side by side (`reference-models.md` §1 first).
 - FR-5: a curved model (`야자수01` trunk, a barrel) has no facets or seams at texture borders; `넝쿨01`, `동굴입구` and `iz_bridge01` (flat) keep crisp edges; `iz_enchant` and `이즈루드초소` (none) match the reference.
 - FR-9: the clock tower hands move at the original speed and direction; the 200-instance budget measurement of §4.8 with the Profiler.
-- FR-3 is closed together with SPEC-0006's ground-contact check on prontera, izlude and prt_fild08.
+- FR-3 is closed together with SPEC-0006's ground-contact check on prontera, izlude and prt_fild08 (closed 2026-11-19, TASKS-0006 T8.2).
 
 ## 7. Migration and compatibility
 
@@ -409,7 +409,7 @@ Items for the owner's approval: D3's spec wording, and the animation budget of �
 |---|---|---|
 | FR-1 | 3, 4.2, 4.7, 6 | `RsmHierarchyTests` (child before parent, names, duplicates, missing parent, cycle, several roots); `RsmWriterTests.PrefabHierarchy_EqualsTheTree_WithUniqueNames`; `RsmOutputPathsTests` |
 | FR-2 | 2, 4.1, 4.4, 4.5, 6 | `RsmPoseTests`, `RsmSpaceConversionTests` (incl. mirrored scale and offset matrix, old-formula guard); `RsmReferenceTests` part 1 and `RsmReferenceConversionTests` (recorded root transforms and bounds of the reported and control models); T0.3: R1 equals roBrowser and BrowEdit3 on all 140 models, and the owner compared the 18 captures with the reference viewer |
-| FR-3 | 4.4, 6 | Rule: bottom center of the rest-pose bounds at the origin, `RsmPoseTests.Recenter_*`, reference bounds max y = 0. **Pending:** the ground-contact check of SPEC-0006 on prontera, izlude, prt_fild08 |
+| FR-3 | 4.4, 6 | Rule: bottom center of the rest-pose bounds at the origin, `RsmPoseTests.Recenter_*`, reference bounds max y = 0. **Closed (2026-11-19):** SPEC-0006's ground-contact check (TASKS-0006 T0.4, T7.1, T8.2): 29 instances of the reference maps placed on the ground sit at the distance the reference viewer shows (difference 0.000, tolerance 0.05). |
 | FR-4 | 4.6, 6 | `RsmMeshBuilderTests` (24/8 cube, seam, weld by value, 16/32-bit); `RsmReferenceTests` part 2 (every reference model below 3 vertices per face, counts = distinct (position, uv[, normal group])); D11 |
 | FR-5 | 4.6, 6 | `RsmShadingTests` (seam, angle weighting, flat, groups, none, no shade type); `RsmReferenceTests` part 2 (none, flat and smooth samples); T0.3 captures of the shade samples seen by the owner |
 | FR-6 | 4.3, 4.5, 4.6, 6 | `RsmSubmeshTests` (grouping, two-sided not duplicated, material key); `RsmSpaceConversionTests` (outward facing); `RsmWriterTests.TwoSidedFaces_UseTheTwoSidedMaterial` |

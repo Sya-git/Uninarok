@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Implementing (all tasks done; FR-3 is confirmed with SPEC-0006, then Implemented) |
+| **Status** | Implemented |
 | **Created** | 2026-11-16 |
 | **Owner** | _(fill in)_ |
 | **Plan** | plan.md _(written after approval)_ |

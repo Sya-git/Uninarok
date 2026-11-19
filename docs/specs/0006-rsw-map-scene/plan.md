@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [spec.md](spec.md) (SPEC-0006) |
-| **Status** | Approved |
+| **Status** | Implemented |
 | **Audience** | Architects, senior developers, AI agents |
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. Shared rules (paths, units and axes, textures, materials, writer, ledger, results, batch, the additive layer) come from [PLAN-0002](../0002-ro-import-foundation/plan.md). The model prefabs come from [PLAN-0003](../0003-rsm-models/plan.md), the ground and `RoMapSpace` from [PLAN-0004](../0004-gnd-ground/plan.md), the map data asset, `MapRoot` and the runtime assembly `Uninarok.Map` from [PLAN-0005](../0005-gat-map-data/plan.md). Reference maps and models: [`../0003-rsm-models/reference-models.md`](../0003-rsm-models/reference-models.md).
@@ -325,18 +325,18 @@ Items for the owner: approve D4 (no per-model shadow flags) and D8, and the new 
 
 ## 10. Traceability
 
-| FR | Plan sections |
-|---|---|
-| FR-1 | 2, 3, 4.1, 4.2, 4.6, 6 |
-| FR-2 | 4.2, 4.6, 6 |
-| FR-3 | 4.3, 6 |
-| FR-4 | 4.3, 6 |
-| FR-5 | 4.6, 6 |
-| FR-6 | 4.6, 6 |
-| FR-7 | 4.5, 6 |
-| FR-8 | 4.4, 6 |
-| FR-9 | 4.6, 6 |
-| FR-10 | 4.2, 4.6, 6 |
-| FR-11 | 4.6, 4.7, 6 |
-| FR-12 | 4.8, 6 |
-| FR-13 | 4.9, 6 |
+| FR | Plan sections | Evidence (TASKS-0006) |
+|---|---|---|
+| FR-1 | 2, 3, 4.1, 4.2, 4.6, 6 | `RoRswReaderTests`, `RoMapSceneTests` (root, `MapRoot` → `MapData`, ground, groups, sun), `RoMapReferenceTests` (three maps, no failure); T7.2 |
+| FR-2 | 4.2, 4.6, 6 | `RoMapSceneTests.Models_ArePrefabInstances…`, `…Instances_ShareThePrefabMaterial_WithNoRendererOverride`; `RoMapReferenceTests` |
+| FR-3 | 4.3, 6 | `RoRswPlacementTests` (rules of T0.3, D13), `RoMapSceneTests.Instances_ArePlacedByTheRules`; owner comparisons T0.3 and T8.1 |
+| FR-4 | 4.3, 6 | `RoMapGroundContactTests` (29 samples of T0.4); T8.2 table |
+| FR-5 | 4.6, 6 | `RoMapNamesTests`, `RoMapSceneTests.TheScene_HasTheMapRoot_WithItsChildrenInOrder` |
+| FR-6 | 4.6, 6 | `RoMapSceneTests.StaticFlags_…`; T8.3 (739/739 renderers statically batched in Play Mode; real-time sun and shadows; no bake, D19) |
+| FR-7 | 4.5, 6 | `RoMapSettingsTests`; T7.2 (three map data assets with settings) |
+| FR-8 | 4.4, 6 | `RoRswLightingTests`, `RoMapSceneTests.TheSunAndAmbient_FollowTheRswLight`; owner comparison T0.3, T8.1 |
+| FR-9 | 4.6, 6 | `MapMarkerTests`, `RoMapSceneTests.LightsSoundsAndEffects_AreMarkersWithTheirParameters` |
+| FR-10 | 4.2, 4.6, 6 | `RoMapMissingModelTests`, `RoMapBatchTests` (one warning per run) |
+| FR-11 | 4.6, 4.7, 6 | `RoMapIdempotencyTests`, `RoMapAdditiveTests`, `RoMapBatchTests.OpenMap_…`; owner's check T8.4 |
+| FR-12 | 4.8, 6 | `RoMapBatchTests`, `RoMapReferenceTests`; T7.2 (all maps, second run skips all) |
+| FR-13 | 4.9, 6 | T6.1 (gizmos on prt_fild08, 0 µs with nothing selected); owner T8.4 |
