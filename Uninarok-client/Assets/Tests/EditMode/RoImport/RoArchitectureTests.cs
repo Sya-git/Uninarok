@@ -114,6 +114,36 @@ namespace Uninarok.RoImport.Tests
             CollectionAssert.IsEmpty(offenders);
         }
 
+        // ---- PLAN-0008 §3, D19 (TASKS-0008 T3.1, FR-8): the catalog runtime ships in players, on the sprite runtime ----
+
+        static readonly string[] CatalogRuntimeReferences = { "Uninarok.Sprites", "Uninarok.Networking", "Unity.Addressables", "Unity.ResourceManager" };
+
+        [Test]
+        public void CatalogRuntimeAssembly_IsForAllPlatforms_WithOnlyItsPlannedReferences()
+        {
+            string json = File.ReadAllText(Path.Combine(Application.dataPath, "Scripts/SpriteCatalog/Uninarok.SpriteCatalog.asmdef"));
+
+            var asmdef = JsonUtility.FromJson<AsmdefPlatforms>(json);
+
+            CollectionAssert.IsEmpty(asmdef.includePlatforms ?? new string[0]);
+            CollectionAssert.IsEmpty(asmdef.excludePlatforms ?? new string[0]);
+            CollectionAssert.AreEquivalent(CatalogRuntimeReferences, asmdef.references ?? new string[0]);
+        }
+
+        [Test]
+        public void CatalogRuntimeAssembly_ReferencesNoEditorNoImporterAndNoGrf()
+        {
+            var catalog = Type.GetType("Uninarok.Catalog.SpriteRef, Uninarok.SpriteCatalog")?.Assembly;
+            Assert.IsNotNull(catalog, "the catalog runtime assembly is loaded");
+
+            var offenders = catalog.GetReferencedAssemblies().Select(r => r.Name)
+                .Where(n => n.StartsWith("UnityEditor", StringComparison.Ordinal) || n.StartsWith("Uninarok.RoImport", StringComparison.Ordinal)
+                            || n == "GRF" || n.StartsWith("Unity.Addressables.Editor", StringComparison.Ordinal))
+                .ToArray();
+
+            CollectionAssert.IsEmpty(offenders);
+        }
+
         // ---- D7 / plan 4.4: no file format parsed outside GRF and its adapters ----
 
         static readonly Regex Forbidden = new Regex(@"\bBinaryReader\b|\bBitConverter\b|\bMemoryStream\b|\busing\s+GRF\b|\bGRF\s*\.");
