@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [spec.md](spec.md) (SPEC-0008, approved 2026-11-20) |
-| **Status** | Draft |
+| **Status** | Approved (owner, 2026-11-20) |
 | **Audience** | Architects, senior developers, AI agents |
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. Where each table, folder and file pattern lives comes from [sprite-catalog.md](sprite-catalog.md) (normative for its topic; updated in the same commit as the code that uses it). Converting one sprite (sheets, animations, palettes, the player) is [PLAN-0007](../0007-spr-act-pal-sprites/plan.md); shared import rules (paths, source, ledger, results, batch, menu) are [PLAN-0002](../0002-ro-import-foundation/plan.md). This plan adds the layer above them: **ids and names → game objects → the sprites SPEC-0007 already converts**.

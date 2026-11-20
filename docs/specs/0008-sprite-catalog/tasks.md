@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Draft |
+| **Status** | Approved (owner, 2026-11-20) |
 
 **How to use this file**
 - Start only when SPEC-0007 is implemented (it is) and its converter entry points are available (`RoImportContext.Sprite(act, spr, options)`, `RoPaletteConverter`). Work on branch `feature/0008-sprite-catalog`.
