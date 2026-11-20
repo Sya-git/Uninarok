@@ -119,6 +119,30 @@ public abstract class RoLuaValue { /* RoLuaNumber, RoLuaString, RoLuaTable (arra
 - **Import order.** Some tables name constants of another (`jobname.lub` uses `jobtbl` from `npcidentity.lub`, `accname.lub` uses `ACCESSORY_IDs`). `RoCatalogTables` reads the defining file first and passes its globals as `imports` (§4.2).
 - Adapters never throw (PLAN-0007 §4.1 rule); a rejected read is `false` with a reason, reported once as `CorruptFile` naming the file.
 
+**GRF mapping check (TASKS T0.3, 2026-11-20).** GRF members used: `GRF.FileFormats.LubFormat.Lub.IsCompiled(byte[])`, `new Lub((GRF.MultiType)bytes)` and `Lub.Decompile()` (returns the Lua text). String constants are decoded with **`Utilities.Services.EncodingService.DisplayEncoding`**, so the adapter sets it for the call and restores the previous value in `finally`, as `RoActReader` does. `Encoding.RegisterProvider(CodePagesEncodingProvider.Instance)` succeeds and code page 949 is available; `EncodingService.Korean` is 949 and the default display encoding is 1252, which would mis-decode every Korean string.
+
+| File | Bytes | Kind | Encoding | Text (chars) | Known string decoded | Global names (top-level constructs) |
+|---|---|---|---|---|---|---|
+| `datainfo/npcidentity.lub` | 290,337 | bytecode | CP949 (ASCII only) | 139,674 | `JT_PORING = 1002` | `jobtbl = { NAME = n, … }` |
+| `datainfo/jobidentity.lub` | 228,752 | bytecode | CP949 (ASCII only) | 108,166 | `JT_KNIGHT = 7` | `JTtbl = { … }` |
+| `datainfo/jobname.lub` | 377,295 | bytecode | CP949 | 225,809 | `PORING` (167 Hangul; UTF-8 gives 30, wrong) | `JobNameTable = { [jobtbl.JT_X] = "NAME", … }` |
+| `datainfo/accessoryid.lub` | 178,836 | bytecode | CP949 (ASCII only) | 99,525 | `ACCESSORY_GOGGLES = 1` | `ACCESSORY_IDs = { … }` |
+| `datainfo/accname.lub` | 256,623 | bytecode | CP949 | 172,864 | `_고글` (UTF-8: not found) | `AccNameTable = { [ACCESSORY_IDs.X] = "_stem", … }` |
+| `datainfo/spriterobeid.lub` | 17,897 | bytecode | CP949 (ASCII only) | 10,059 | `ROBE_WINGS = 1` | `SPRITE_ROBE_IDs = { … }` |
+| `datainfo/spriterobename.lub` | 44,152 | bytecode | CP949 | 50,996 | `천사날개` (UTF-8: not found) | `RobeNameTable`, `RobeNameTable_Eng`, `RobeTopLayer` (positional list of references) |
+| `datainfo/weapontable.lub` | 13,007 | bytecode | CP949 | 14,638 | `_검` (UTF-8: not found) | `Weapon_IDs`, `WeaponNameTable`, `Expansion_Weapon_IDs = { [Weapon_IDs.A] = Weapon_IDs.B }`, `WeaponHitWaveNameTable`, `BowTypeList` |
+| `emotion/emotionlist.lub` | 18,050 | bytecode | CP949 | 17,346 | `ET_SURPRISE = 0` | top-level `ET_X = n`, `MSI_EMOTION_X = n`, `EMOTION_ORDERLIST = {…}`, `EmotionList = {}`, then calls `InsertEmotionListTable(…)`, `InsertEmotionMsgListTable(…)` (skipped) |
+| `skillinfoz/skillid.lub` | 96,570 | bytecode | CP949 (ASCII only) | 44,511 | `SM_BASH = 5` | `SKID = { … }` |
+| `System/monster_size_effect_new.lub` | 126,556 | bytecode | CP949 (ASCII only) | 75,523 | `MonsterSize = 1.2` (408 entries of 1.x) | `EFFECT = {}`, dotted `EFFECT.EF_X = n`, `tbl = { [id] = { MonsterSize = f, MonsterEff = { EFFECT.EF_X } } }`, `main = function() … end` |
+| `System/iteminfo_new.lub` (Portuguese) | 7,308,863 | bytecode | **UTF-8** | 14,179,615 | `빨간포션` (CP949: not found) | `tbl = { [id] = { …DisplayName, …ResourceName, …DescriptionName = {…}, slotCount, ClassNum, costume } }` |
+| `System/english/iteminfo_new.lub` | 7,667,154 | bytecode | **UTF-8** | 14,314,903 | `빨간포션` | as above |
+| `System/spanish/iteminfo_new.lub` | 7,851,144 | bytecode | **UTF-8** | 14,697,567 | `빨간포션` | as above |
+| `quest/localquest/local_dewataquest_list.lub` (one of the 12 plain-text files) | 3,879 | plain text (`IsCompiled` false; `Decompile` throws `GrfException: Unrecognized file format`) | CP949 bytes (strict UTF-8 rejects them) | — | `데와타` | uses long strings `[[…]]`; no plain-text file is a table of §4.2 |
+
+- **Decompile time:** under 0.1 s for each `data/` table; about 1.6–1.8 s for each item table (GRF only, before our reader).
+- **Bad input:** empty → `IndexOutOfRangeException`; 256 bytes of garbage → `GrfException: Unrecognized file format`; a bytecode file cut to 100 bytes → `IndexOutOfRangeException`. All are caught by the adapter and become `false` with the exception text as reason; `IsCompiled` is false for garbage and is checked first so plain-text files take the text path.
+- **Consequences for the reader:** the item table global is **`tbl`** (not `itemInfo`); top-level dotted assignments (`EFFECT.EF_X = n`), function assignments (`main = function() … end`) and bare calls (`InsertEmotionListTable(…)`) occur and are skipped or applied as §4.1 says; `[[…]]` long strings occur only in plain-text files outside §4.2, so the reader rejects them with a line number rather than supporting them.
+
 ### 4.2 Tables: `RoCatalogTables`
 
 Satisfies FR-1 to FR-7, FR-12.
@@ -149,7 +173,7 @@ public sealed class RoCatalogTables
 | `ET_*`, `EMOTION_ORDERLIST` | `…/emotion/emotionlist.lub` | CP949 | effects (emotes) |
 | `SKID` | `…/skillinfoz/skillid.lub` | CP949 | skill icons |
 | `monster_size_effect_new` | `System/monster_size_effect_new.lub` | CP949 | monsters |
-| `itemInfo` | `System/iteminfo_new.lub`, `System/english/iteminfo_new.lub`, `System/spanish/iteminfo_new.lub` | UTF-8 | ground items, headgears, garments, weapons, shields |
+| `itemInfo` (global `tbl`, T0.3) | `System/iteminfo_new.lub`, `System/english/iteminfo_new.lub`, `System/spanish/iteminfo_new.lub` | UTF-8 | ground items, headgears, garments, weapons, shields |
 
 - Each category declares the `RoCatalogNeeds` it uses; a run loads the union, so "import only monsters" reads no item table (FR-9).
 - **Item table (FR-12).** The file is chosen by `RoItemTableLanguage` (Portuguese `iteminfo_new.lub`, English `english/…`, Spanish `spanish/…`), taken from `RoImportSettings` unless `RoImportOptions.ItemTableLanguage` overrides it (tests, scripts). `RoItemTable` exposes `TryGet(itemId, out RoItemInfo)` with `{ IdentifiedResource, UnidentifiedResource, ClassNum }` and the sorted item ids. Only these three fields are kept.
