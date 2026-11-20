@@ -93,7 +93,7 @@ Reference set (spec §5), used by every check below: a multi-layer monster `몬�
 
 - [ ] **T7.1** Visual check against the reference viewer for the whole reference set: layout, timing, direction, mirror, rotation, no background or fringe on bright and dark ground at 1× and 4×, a sprite standing on a GAT cell, a body's head anchor following the body, a weapon hidden while walking and shown while attacking, a body with two cloth palettes from one sheet. (FR-1, FR-3, FR-5, FR-6, FR-7)
   *Done when:* recordings or screenshots are in the PR and the owner marks each case as matching.
-- [ ] **T7.2** Budget: in a development build place 300 actors (a mix of the reference set) and record the `SpriteSystem` loop time, the render cost and managed allocation per frame, on screen and off screen. If over budget, open the D5 fallback as a plan item. (FR-3)
+- [x] **T7.2** Budget: in a development build place 300 actors (a mix of the reference set) and record the `SpriteSystem` loop time, the render cost and managed allocation per frame, on screen and off screen. If over budget, open the D5 fallback as a plan item. (FR-3)
   *Done when:* the numbers are in the PR, steady-state `GC.Alloc` is zero, and the owner accepts the budget or the fallback is opened.
 - [ ] **T7.3** Close: verify each FR against tests and evidence; set `spec.md`, `plan.md` and `tasks.md` to `Implemented`; move leftovers (unused-sheet cleanup, clip export for Timeline, texture compression if pending) to `docs/specs/BACKLOG.md`.
   *Done when:* the traceability table of the plan has a passing test or recorded evidence for each FR and the leftovers are in `BACKLOG.md`.

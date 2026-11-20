@@ -374,7 +374,7 @@ D6 approved by the owner (2026-11-19): RGBA32 now; the full-data run measures th
 | R3 Sprite-editor data API or secondary textures behave differently in Unity 6000.7 beta | The Unity API spike (phase 0) tries it first (create, slice, attach `_IndexTex`, re-import, ids stable); isolated in `RoSpriteSheetWriter` |
 | R4 Import time with ~108,000 ACT and ~17,000 distinct SPR | Content dedupe, ledger skip, batched asset editing; the full-data run records time; a full run is resumable |
 | R5 Orphan sheets accumulate after source changes | Index lists users; a later cleanup tool; sheets are small next to the total |
-| R6 Many layer renderers (monsters up to 10) cost draw calls | Same material and sheet per actor batch well; the budget check measures 300 actors; D5 fallback |
+| R6 Many layer renderers (monsters up to 10) cost draw calls | Same material and sheet per actor batch well; the budget check measures 300 actors; D5 fallback **Budget check (TASKS T7.2, accepted by the owner 2026-11-19, measured in the editor, not a development build):** 300 actors of the sample (775 layer renderers), URP, 1280 × 720: `SpriteSystem` 0.30 ms/frame (worst 1.09 ms), camera render 0.98 ms on screen / 0.83 ms off screen, **0 bytes** managed allocation over 600 frames. D5 fallback not needed. |
 | R7 8-action files that are not directional (effects) | Rule in §4.3 with rules check check; the flag is per file and can be overridden by the caller |
 
 ## 10. Traceability
