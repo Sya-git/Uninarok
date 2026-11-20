@@ -13,7 +13,7 @@
 - **One new package, no third-party library.** `com.unity.addressables` is added to the project (version fixed in phase 0 to the one that supports Unity 6000.7; D13). Lub files are read through GRF (`Lub.Decompile()`, already in `GRF.dll`), which returns Lua source text. The data in these files is plain Lua table constructors, so a small reader of that subset (§4.1) is part of this plan.
 - **Nothing here converts pixels or ACT bytes.** Every sheet, animation and palette comes from SPEC-0007's `RoSpriteConverter.Convert(ctx, act, spr, options)` and `RoPaletteConverter`. This plan decides *which ACT is paired with which SPR* and *which game object owns the result*.
 - **Pure planning, editor writing.** A planner turns tables and the list of source files into a **plan** (plain data, no Unity types). The editor layer executes a plan. So the lookup rules (the hard part) are tested on synthetic tables and file lists, and the import is tested on a few real files.
-- **Run time needs only assets and Addressables.** The lookups the game uses (job id, view id, item id, skill id, emote id, name) resolve from assets the import writes, with no lub, GRF or editor code (§4.5). Every reference inside catalog data is an Addressables address (the asset's project path), so loading an index or an entry never loads the sprites it names. Bundle layout, packing and remote hosting are the later loading-strategy spec; this plan only makes the data addressable (§4.6).
+- **Run time needs only assets and Addressables.** The lookups the game uses (job id, view id, item id, skill id, emote id, name) resolve from assets the import writes, with no lub, GRF or editor code (§4.5). Every reference inside catalog data is a typed Addressables reference (`AssetReferenceT<SpriteAnimation>`, `AssetReferenceSprite`, `AssetReferenceTexture2D`, §4.4), so loading an index or an entry never loads the sprites it names. Bundle layout, packing and remote hosting are the later loading-strategy spec; this plan only makes the data addressable (§4.6).
 - **Decided by the owner (spec §7):** own small tables for class → body and shield view id → name (OQ-1); `Extra5`, `Extra6`, … for unnamed animations (OQ-2; SPEC-0007 stores animation numbers, not names, so this only fixes the wording of the doc, §4.4); weapon and shield lookup order **view id → item id → base type** (OQ-3); item table language from a project setting, Portuguese by default (OQ-4, FR-12); the whole effect folder by name (OQ-5); stray files ignored with one warning (OQ-6).
 - Facts used (sprite-catalog.md): id ranges for the unit folders (§3.1), file patterns per category (§3.1–§3.10), `ClassNum` meanings (§2.1), the 29 distinct shield sheets and 294 garment sheets (the content index of SPEC-0007 shares them, so nothing here deduplicates pixels).
 - Direction is `UninarokDirection` (SPEC-0007 plan §1); actions are addressed as `(animation, direction)` by `SpriteAnimation.TryGetAction`.
@@ -63,8 +63,9 @@ Satisfies FR-1 to FR-12.
 
 | Path | Contents | Assembly |
 |---|---|---|
-| `Assets/Scripts/SpriteCatalog/Uninarok.SpriteCatalog.asmdef` | runtime assembly, references `Uninarok.Sprites`, `Unity.Addressables` and `Unity.ResourceManager` | `Uninarok.SpriteCatalog` |
-| `Assets/Scripts/SpriteCatalog/` `SpriteRef.cs`, `SpriteSex.cs`, `SpriteRace.cs`, `UnitRecord.cs`, `UnitIndex.cs`, `BodyEntry.cs`, `HeadEntry.cs`, `EquipmentEntry.cs`, `EquipmentIndex.cs`, `ItemSpriteTable.cs`, `GroundItemIndex.cs`, `SkillIconIndex.cs`, `EffectIndex.cs`, `ClassTable.cs`, `PaletteSet.cs`, `SpriteCatalogCategory.cs`, `SpriteCatalogKeys.cs`, `SpriteCatalog.cs` | data types, indices and the lookup facade (§4.5) | `Uninarok.SpriteCatalog` |
+| `Assets/Scripts/SpriteCatalog/Uninarok.SpriteCatalog.asmdef` | runtime assembly, references `Uninarok.Sprites`, `Uninarok.Networking` (for `AccountSex` and `PlayerJob`), `Unity.Addressables` and `Unity.ResourceManager` | `Uninarok.SpriteCatalog` |
+| `Assets/Scripts/SpriteCatalog/` `SpriteRef.cs`, `SpriteAnimationReference.cs`, `PaletteReference.cs`, `BodyEntryReference.cs`, `HeadEntryReference.cs`, `EquipmentEntryReference.cs`, `SpriteRace.cs`, `UnitRecord.cs`, `UnitIndex.cs`, `BodyEntry.cs`, `BodyIndex.cs`, `HeadEntry.cs`, `HeadIndex.cs`, `EquipmentEntry.cs`, `EquipmentIndex.cs`, `ItemSpriteTable.cs`, `GroundItemIndex.cs`, `SkillIconIndex.cs`, `EffectIndex.cs`, `ClassTable.cs`, `PaletteSet.cs`, `SpriteCatalogCategory.cs`, `SpriteCatalogKeys.cs`, `SpriteCatalog.cs` | data types, indices and the lookup facade (§4.4, §4.5) | `Uninarok.SpriteCatalog` |
+| `Assets/Scripts/Networking/Runtime/Data/PlayerJob.cs` and `docs/data/PlayerJob.md` | the shared enum of player classes, hand-written (§4.4.1), beside `AccountSex` | `Uninarok.Networking` |
 | `Assets/Editor/RoImport/Core/Formats/RoLubReader.cs` | GRF adapter for `.lub` | `Uninarok.RoImport.Core` |
 | `Assets/Editor/RoImport/Core/Catalog/Lua/` | `RoLuaLexer`, `RoLuaReader`, `RoLuaValue` | `Uninarok.RoImport.Core` |
 | `Assets/Editor/RoImport/Core/Catalog/Tables/` | `RoCatalogTables`, `RoJobTables`, `RoViewIdTables`, `RoItemTable`, `RoEmoteTable`, `RoSkillTable`, `RoMonsterScaleTable`, `RoOwnTables` | `Uninarok.RoImport.Core` |
@@ -152,7 +153,7 @@ public sealed class RoCatalogTables
 
 - Each category declares the `RoCatalogNeeds` it uses; a run loads the union, so "import only monsters" reads no item table (FR-9).
 - **Item table (FR-12).** The file is chosen by `RoItemTableLanguage` (Portuguese `iteminfo_new.lub`, English `english/…`, Spanish `spanish/…`), taken from `RoImportSettings` unless `RoImportOptions.ItemTableLanguage` overrides it (tests, scripts). `RoItemTable` exposes `TryGet(itemId, out RoItemInfo)` with `{ IdentifiedResource, UnidentifiedResource, ClassNum }` and the sorted item ids. Only these three fields are kept.
-- **Own tables (OQ-1).** `class-bodies.csv`: one row per player body file name (`BodyName, JobConstant, Race, Kind, BaseJobConstant`), where `Kind` is `Base`, `Mount`, `Outfit` or `Costume<n>`, `Race` is `Human` or `Doram`. `shield-names.csv`: `ViewId, Name` (1 `가드`, 2 `버클러`, 3 `쉴드`, 4 `미러쉴드`). They are plain CSV beside the code, reviewed by the owner, and documented in sprite-catalog.md §5 (added by this plan's first task). A first draft is generated once from the folder names and `JTtbl`; after review the CSV is the source and nothing regenerates it (it is data, not generated code).
+- **Own tables (OQ-1).** `class-bodies.csv`: one row per player body file name (`BodyName, Job, Race, Kind, BaseJob`, where `Job` and `BaseJob` are `PlayerJob` member names), where `Kind` is `Base`, `Mount`, `Outfit` or `Costume<n>`, `Race` is `Human` or `Doram`. `shield-names.csv`: `ViewId, Name` (1 `가드`, 2 `버클러`, 3 `쉴드`, 4 `미러쉴드`). They are plain CSV beside the code, reviewed by the owner, and documented in sprite-catalog.md §5 (added by this plan's first task). A first draft is generated once from the folder names and `JTtbl`; after review the CSV is the source and nothing regenerates it (it is data, not generated code).
 - A missing or unreadable table is reported once (`SourceMissing` or `CorruptFile`, item = file) and every category that needs it is skipped with one warning each; the other categories run.
 
 ### 4.3 Plan: `RoCatalogPlan` and the planners
@@ -192,7 +193,7 @@ public sealed class RoCatalogContext { public IRoSource Data; public RoCatalogTa
 
 **4.3.1 Units: monsters, NPCs, homunculi (FR-1).** Records per job id from `JobNameTable`. The folder is chosen by **id range** (`RoUnitFolders`: 45–999 and 10001–19999 → `npc/`; 1001–3999 and 20000+ → `몬스터/`; 6001–6099 → `homun/`), never by which file exists; an id outside every range is a `CatalogStrayFile` warning. File = `<folder>/<JobNameTable[id]>.spr/.act`. Display scale from `RoMonsterScaleTable` (`MonsterSize`; default 1). Names with no file (3D `.gr2`, other regions) → `CatalogNameWithoutFile`. ACT without SPR in `몬스터/` (pet accessories) → `CatalogOrphanAct`. Fallback policy of the record: `SpriteMissingAction.Fallback` (idle, SPEC-0007 §4.5).
 
-**4.3.2 Bodies (FR-2).** One record per base class (key = base job id). Rows of `class-bodies.csv` give each body file name its job id, race and kind. Files are `인간족/몸통/<sex>/<name>_<sex>.spr` and `도람족/몸통/<sex>/…`; `costume_1…4` subfolders give `Costume<n>` variants. Palettes are `palette/몸/<name>_<sex>_<colour>.pal` (and `costume_n`, `도람족/body`), listed by colour number and attached per (variant, sex). Files that break the pattern (weapons in the body folder, stray quotes, `_여` folder) → `CatalogStrayFile`.
+**4.3.2 Bodies (FR-2).** One record per base class (key = the base `PlayerJob`). Rows of `class-bodies.csv` give each body file name its job id, race and kind. Files are `인간족/몸통/<sex>/<name>_<sex>.spr` and `도람족/몸통/<sex>/…`; `costume_1…4` subfolders give `Costume<n>` variants. Palettes are `palette/몸/<name>_<sex>_<colour>.pal` (and `costume_n`, `도람족/body`), listed by colour number and attached per (variant, sex). Files that break the pattern (weapons in the body folder, stray quotes, `_여` folder) → `CatalogStrayFile`.
 
 **4.3.3 Heads (FR-3).** One record per hair style number: `인간족/머리통/<sex>/<n>_<sex>.spr`, `도람족/머리통/<sex>/…`; palettes `palette/머리/머리<n>_<sex>_<colour>.pal` and the doram folders.
 
@@ -216,27 +217,35 @@ Satisfies FR-1 to FR-7, FR-8.
 
 ```csharp
 public enum SpriteCatalogCategory { Monsters, Npcs, Homunculi, Bodies, Heads, Headgears, Garments, Weapons, Shields, GroundItems, SkillIcons, Effects, Palettes }
-public enum SpriteSex { Male, Female }
-public enum SpriteRace { Human, Doram }
+public enum SpriteRace { Human, Doram }          // sex is AccountSex (SEX_FEMALE, SEX_MALE; Uninarok.Networking.Data); player class is PlayerJob (section 4.4.1)
 
-// One reference to what SPEC-0007 produced: an Addressables address (the asset's project path). Nothing is loaded by holding it.
+// Typed Addressables references. Concrete subclasses, because Unity cannot serialize a generic field. A reference holds a GUID
+// (and for a sprite the sub-asset name); holding it loads nothing and makes no hard dependency.
+[Serializable] public sealed class SpriteAnimationReference : AssetReferenceT<SpriteAnimation> { public SpriteAnimationReference(string guid) : base(guid) { } }
+[Serializable] public sealed class PaletteReference         : AssetReferenceTexture2D          { public PaletteReference(string guid) : base(guid) { } }
+[Serializable] public sealed class BodyEntryReference       : AssetReferenceT<BodyEntry>       { public BodyEntryReference(string guid) : base(guid) { } }
+[Serializable] public sealed class HeadEntryReference       : AssetReferenceT<HeadEntry>       { public HeadEntryReference(string guid) : base(guid) { } }
+[Serializable] public sealed class EquipmentEntryReference  : AssetReferenceT<EquipmentEntry>  { public EquipmentEntryReference(string guid) : base(guid) { } }
+// static sprites use the package's AssetReferenceSprite as is: the GUID of the sheet and the sub-asset name ("f12", SPEC-0007 section 4.2)
+
+// What SPEC-0007 produced for one sprite: an animation, or a static sprite (SPEC-0007 FR-11). One of the two is set.
 [Serializable] public struct SpriteRef
 {
-    public string AnimationKey;      // address of a SpriteAnimation asset, or null
-    public string StillKey;          // address of a static sprite: "<sheet path>[<sprite name>]", or null
-    public bool IsEmpty { get; }
-    public AsyncOperationHandle<SpriteAnimation> LoadAnimation();    // Addressables.LoadAssetAsync<SpriteAnimation>(AnimationKey)
-    public AsyncOperationHandle<Sprite> LoadStill();                  // Addressables.LoadAssetAsync<Sprite>(StillKey)
+    public SpriteAnimationReference Animation;
+    public AssetReferenceSprite Still;
+    public bool IsEmpty { get; }                                       // neither reference has a valid key
+    public AsyncOperationHandle<SpriteAnimation> LoadAnimation();      // Addressables.LoadAssetAsync<SpriteAnimation>(Animation.RuntimeKey); the caller owns the handle
+    public AsyncOperationHandle<Sprite> LoadStill();                    // Addressables.LoadAssetAsync<Sprite>(Still.RuntimeKey)
 }
 
-[Serializable] public struct UnitRecord { public int JobId; public string Name; public SpriteRef Sprite; public float Scale; }
+[Serializable] public struct UnitRecord { public int JobId; public string Name; public SpriteRef Sprite; public float Scale; }     // monster/NPC ids are plain ints: not PlayerJob
 
 public sealed class BodyEntry : ScriptableObject
 {
-    public int BaseJobId;
+    public PlayerJob BaseJob;
     public BodyVariant[] Variants;
-    public bool TryGetVariant(int jobId, SpriteSex sex, out BodyVariant variant);       // the variant of that job id (mount, outfit) or the base one
-    [Serializable] public struct BodyVariant { public string Name; public int JobId; public SpriteRace Race; public BodyVariantKind Kind; public SpriteSex Sex; public SpriteRef Sprite; public PaletteSet Palettes; }
+    public bool TryGetVariant(PlayerJob job, AccountSex sex, out BodyVariant variant);   // the variant of that job (mount, outfit) or the base one
+    [Serializable] public struct BodyVariant { public string Name; public PlayerJob Job; public SpriteRace Race; public BodyVariantKind Kind; public AccountSex Sex; public SpriteRef Sprite; public PaletteSet Palettes; }
 }
 public enum BodyVariantKind { Base, Mount, Outfit, Costume1, Costume2, Costume3, Costume4 }
 
@@ -244,28 +253,40 @@ public sealed class HeadEntry : ScriptableObject
 {
     public int Style;
     public HeadVariant[] Variants;      // (sex, race) -> sprite + hair palettes
-    public bool TryGetVariant(SpriteSex sex, SpriteRace race, out HeadVariant variant);
+    public bool TryGetVariant(AccountSex sex, SpriteRace race, out HeadVariant variant);
 }
 
-[Serializable] public struct PaletteRef { public int Colour; public string Key; }          // address of the palette texture
+[Serializable] public struct PaletteRef { public int Colour; public PaletteReference Palette; }
 [Serializable] public struct PaletteSet { public PaletteRef[] Colours; }                   // sorted by Colour
 
 public sealed class EquipmentEntry : ScriptableObject
 {
     public EquipmentKind Kind;          // Headgear, Garment, Weapon, Shield
-    public int ViewId;                  // 0 when keyed by item id only
+    public int ViewId;                  // -1 when keyed by item id only
     public int ItemId;                  // 0 when keyed by view id
     public string Name;
     public EquipmentSlot[] Slots;
     public SpriteRef[] Trails;          // weapons; parallel to Slots (empty ref where none)
-    public bool TryResolve(int classId, SpriteSex sex, ClassTable classes, out SpriteRef sprite, out SpriteRef trail);
-    [Serializable] public struct EquipmentSlot { public int ClassId; public SpriteSex Sex; public SpriteRace Race; public int FallbackOf; public SpriteRef Sprite; }
+    public bool TryResolve(PlayerJob job, AccountSex sex, ClassTable classes, out SpriteRef sprite, out SpriteRef trail);
+    [Serializable] public struct EquipmentSlot { public bool AnyClass; public PlayerJob Job; public AccountSex Sex; public SpriteRace Race; public int FallbackOf; public SpriteRef Sprite; }   // FallbackOf: the view id this slot stands in for, -1 when none
 }
 ```
 
-- **Resolution (FR-4).** `EquipmentEntry.TryResolve(classId, sex, …)` returns, in order: the slot for exactly (class, sex); else the any-class slot (`ClassId == 0`) for (sex, the class's race); else the any-class human slot for the sex. The sprite found already holds that class's animation bound to the right sheet (the pairing was decided at import, §4.3.5). It never falls back to another *action*: an empty or missing action draws nothing, enforced by `SpriteMissingAction.DrawNothing`, which the facade's callers put on every equipment actor; units (`UnitRecord`) use `Fallback` (FR-4, SPEC-0007 §4.5).
-- **Keys, not object references (D3, D13).** Every reference in catalog data is an Addressables **address string**, and the address of every catalog, animation, sheet and palette asset is its **project path** (§4.6). A catalog asset therefore has no hard dependency on what it points to: loading an index or an entry loads that one asset and no sprite, animation or texture, and a slot is loaded only when a caller asks for it (§4.5). The catalog does not decide bundles, packing or remote hosting; that is the later loading-strategy spec (spec §3 does not cover it; PLAN-0007 sprites already work as plain assets).
+- **Resolution (FR-4).** `EquipmentEntry.TryResolve(job, sex, …)` returns, in order: the slot for exactly (job, sex); else the `AnyClass` slot for (sex, the job's race); else the `AnyClass` human slot for the sex. (`AnyClass` is a flag, not job 0, because `JOB_NOVICE` is 0.) The sprite found already holds that class's animation bound to the right sheet (the pairing was decided at import, §4.3.5). It never falls back to another *action*: an empty or missing action draws nothing, enforced by `SpriteMissingAction.DrawNothing`, which the callers put on every equipment actor; units (`UnitRecord`) use `Fallback` (FR-4, SPEC-0007 §4.5).
+- **Typed references, no strings (D3, D13).** Every reference in catalog data is a typed Addressables reference to an asset by GUID. A catalog asset therefore has no hard dependency on what it points to: loading an index or an entry loads that one asset and no sprite, animation or texture, and a slot is loaded only when a caller asks for it (§4.5). The catalog does not decide bundles, packing or remote hosting; that is the later loading-strategy spec.
 - **Names of extra animations (OQ-2).** SPEC-0007 stores animations by number; the doc (sprite-catalog.md §3.1) names the unit animations and gives `Extra5`, `Extra6`, … for the rest. Nothing is stored for the names here.
+
+#### 4.4.1 `PlayerJob` (shared enum)
+
+```csharp
+namespace Uninarok.Networking.Data { public enum PlayerJob : short { JOB_NOVICE = 0, JOB_SWORDMAN = 1, /* … */ JOB_KNIGHT = 7, JOB_KNIGHT2 = 13, /* … */ JOB_SUMMONER = 4218 /* … */ } }
+```
+
+- **Why an enum.** `BodyEntry`, the class table and the equipment slots are keyed by the player's class, which the server sends as a `short` (`CharInfo.Class`). A named type reads and tests better than a bare number and replaces `JobConstant` text in the own tables.
+- **Hand-written**, like `AccountSex` and the `SpriteAction` enums, in `Uninarok.Networking.Data`, documented in `docs/data/PlayerJob.md` in the same format as `docs/data/AccountSex.md` (kind, underlying type `short`, source of the values, one table row per member). The source of the values is Hercules `src/common/class.h` and `class_hidden.h` (`JOB_ENUM_VALUE(NAME, id, …)`, 154 ids of players including mounted and costume forms such as `KNIGHT2 = 13`); member names follow the wire names like `AccountSex` does (`JOB_<NAME>`).
+- **Players only.** Monster, NPC, homunculus and mercenary ids (`UnitRecord.JobId`, `JobNameTable`) stay `int`: they are a different id space.
+- **Not in the enum:** which class is the base of a mount or outfit (that is the `BaseJob` column of `class-bodies.csv`, §4.2).
+- A test (`PlayerJobTests`, `NeedsData`) compares the enum with the client's `JTtbl` (every member exists with the same id) and with `class-bodies.csv` (every job name parses).
 
 ### 4.5 Indices and the lookup facade: `SpriteCatalog`, `SpriteCatalogKeys`
 
@@ -273,13 +294,13 @@ Satisfies FR-1 to FR-7.
 
 ```csharp
 public sealed class UnitIndex : ScriptableObject { public int[] JobIds; public UnitRecord[] Records; public bool TryGet(int jobId, out UnitRecord r); }   // sorted, binary search
-public sealed class BodyIndex : ScriptableObject { public int[] JobIds; public int[] BaseJobIds; }                // every job id of every variant -> its class entry (key from the base job id)
-public sealed class HeadIndex : ScriptableObject { public int[] Styles; }                                          // entry key from the style
+public sealed class BodyIndex : ScriptableObject { public PlayerJob[] Jobs; public BodyEntryReference[] Entries; }       // sorted: every job of every variant -> its class entry
+public sealed class HeadIndex : ScriptableObject { public int[] Styles; public HeadEntryReference[] Entries; }          // sorted by style
 public sealed class EquipmentIndex : ScriptableObject
 {
     public EquipmentKind Kind;
-    public int[] ViewIds;                                                                                         // sorted: records keyed by view id
-    public int[] ItemIds;                                                                                         // sorted: records keyed by item id (weapon/shield files named by item id)
+    public int[] ViewIds; public EquipmentEntryReference[] ByView;       // sorted: records keyed by view id
+    public int[] ItemIds; public EquipmentEntryReference[] ByItem;       // sorted: records keyed by item id (weapon/shield files named by item id)
 }
 public sealed class ItemSpriteTable : ScriptableObject                              // from the item table of the chosen language
 {
@@ -293,16 +314,13 @@ public sealed class EffectIndex : ScriptableObject
     public string[] Names; public SpriteRef[] Effects;                                // by name (sorted)
     public SpriteRef EmoteSet; public int[] EmoteIds; public int[] EmoteActions;      // the emote sprite and the action of each emote id
 }
-public sealed class ClassTable : ScriptableObject { /* jobId -> race, base job id, body name; from class-bodies.csv */ }
+public sealed class ClassTable : ScriptableObject { /* PlayerJob -> race, base job, body name; from class-bodies.csv */ }
 
-public static class SpriteCatalogKeys      // the one place that builds addresses; the importer and the runtime share it
+public static class SpriteCatalogKeys      // the fixed addresses of the assets nothing else references; the importer and the runtime share them
 {
     public static string Index(SpriteCatalogCategory category);                       // "Assets/Art/Imported/catalog/<category>/_index.asset"
     public static string Items();                                                      // the ItemSpriteTable
     public static string Classes();                                                    // the ClassTable
-    public static string Body(int baseJobId);   public static string Head(int style);
-    public static string Equipment(EquipmentKind kind, int viewId);
-    public static string EquipmentByItem(EquipmentKind kind, int itemId);
 }
 
 public sealed class SpriteCatalog     // facade; lookups on loaded indices are synchronous, loading is Addressables
@@ -317,14 +335,14 @@ public sealed class SpriteCatalog     // facade; lookups on loaded indices are s
     public bool TryGetEmote(int emoteId, out SpriteRef emoteSet, out int action);
     public bool TryGetEffect(string name, out SpriteRef effect);
 
-    // entry categories: the index finds the key, the entry loads, then the entry resolves synchronously
-    public bool TryFindBody(int jobId, out string entryKey);
-    public bool TryFindHead(int style, out string entryKey);
-    public bool TryFindEquipment(EquipmentKind kind, int viewId, int itemId, out string entryKey);
-    public bool TryFindEquipmentByItem(int itemId, out EquipmentKind kind, out string entryKey);
-    public AsyncOperationHandle<BodyEntry> LoadBody(string entryKey);
-    public AsyncOperationHandle<HeadEntry> LoadHead(string entryKey);
-    public AsyncOperationHandle<EquipmentEntry> LoadEquipment(string entryKey);
+    // entry categories: the index finds the entry's reference, the entry loads, then the entry resolves synchronously
+    public bool TryFindBody(PlayerJob job, out BodyEntryReference entry);
+    public bool TryFindHead(int style, out HeadEntryReference entry);
+    public bool TryFindEquipment(EquipmentKind kind, int viewId, int itemId, out EquipmentEntryReference entry);
+    public bool TryFindEquipmentByItem(int itemId, out EquipmentKind kind, out EquipmentEntryReference entry);
+    public AsyncOperationHandle<BodyEntry> LoadBody(BodyEntryReference entry);
+    public AsyncOperationHandle<HeadEntry> LoadHead(HeadEntryReference entry);
+    public AsyncOperationHandle<EquipmentEntry> LoadEquipment(EquipmentEntryReference entry);
     public ClassTable Classes { get; }
 }
 ```
@@ -333,8 +351,8 @@ public sealed class SpriteCatalog     // facade; lookups on loaded indices are s
 - **By item id (FR-4).** `TryFindEquipmentByItem(itemId, …)` uses `ItemSpriteTable` (`Kinds`, `ViewIds`) then `TryFindEquipment`. Item 1201 (Faca, ClassNum 1) → weapon view id 1 → short sword for a swordman; 2220 → headgear view id 16.
 - **Ground items (FR-5).** `ItemSpriteTable.GroundSlot[i]` indexes `GroundItemIndex.Resources`; identified and unidentified names usually resolve to one resource. Item 501 → `빨간포션`.
 - **Emotes (FR-6).** `TryGetEmote` returns the emote sprite and `action = emoteId` (`ET_SURPRISE = 0`) through `EmoteIds`/`EmoteActions`; the caller plays `(action)` as a non-directional animation.
-- **Loading and release.** Handles come from Addressables; whoever calls `LoadAnimation`, `LoadStill`, `LoadBody`, `LoadHead` or `LoadEquipment` owns that handle and releases it (`Addressables.Release`). `SpriteCatalog.Release()` releases only the index and table assets that `LoadAsync` loaded. A miss in `TryFind…`/`TryGet…` is `false`, never an exception; a failed load is the handle's failed status (the facade adds no wrapper).
-- Entry addresses are derived from ids by `SpriteCatalogKeys` (`headgear-0016`, `body-0007`, `head-01`), so an index stores ids only and the facade builds the key (one string per `TryFind…` call; cached per entry after the first).
+- **Loading and release.** Handles come from Addressables, loaded with the reference's `RuntimeKey`; whoever calls `LoadAnimation`, `LoadStill`, `LoadBody`, `LoadHead` or `LoadEquipment` owns that handle and releases it (`Addressables.Release`), and no code relies on the handle a reference caches inside itself (several callers may load the same reference). `SpriteCatalog.Release()` releases only the index and table assets that `LoadAsync` loaded. A miss in `TryFind…`/`TryGet…` is `false`, never an exception; a failed load is the handle's failed status.
+- `SpriteCatalogKeys` exists only for the three kinds of asset that no other asset references (the indices, the item table, the class table); everything else is reached through a typed reference.
 
 ### 4.6 Output layout and writers: `RoCatalogOutputPaths`, `RoCatalogEntryWriter`, `RoCatalogIndexWriter`
 
@@ -354,8 +372,8 @@ Satisfies FR-8, FR-9.
   | `palettes` | `Assets/Art/Imported/palette` |
 
   Folder entries keep the group count small and mean no per-asset marking is ever written (about 100,000 assets would make the settings asset and every editor operation slow). **Sheets are in their own group on purpose**: an animation depends on the sheet it draws, and a sheet shared by animations in different groups must be an explicit entry, or each bundle would carry its own copy of it. `sprites-human` holds bodies, heads and weapons together because `인간족/` mixes them; a finer split is a packing decision for the loading-strategy spec. Groups use the package's default schemas; pack mode, compression and hosting are not set here.
-- **Addresses.** Always the project path: an animation `Assets/Art/Imported/sprite/몬스터/poring.asset`, a static sprite `Assets/Art/Imported/sprite/_sheets/ab/x_ab12cd34.png[f0]` (the sheet and the sprite's name, SPEC-0007 §4.2), a palette `Assets/Art/Imported/palette/.../x.png`. `SpriteCatalogKeys` and the importer build them from the same output paths SPEC-0007 reports, so no asset is loaded to learn its key.
-- **Check.** `RoCatalogAddressables.Verify(plan)` (run at the end of an import and by a test) confirms that every key written into an index or entry resolves to an existing asset inside one of the folder entries above; a key that does not is a `CatalogStrayFile` warning naming it.
+- **Addresses and references.** The address of every asset in a folder entry is its project path, and the typed references of §4.4 point at assets by **GUID** (`AssetDatabase.AssetPathToGUID` of the output path SPEC-0007 reports, no asset loaded); a static sprite's reference adds the sub-asset name of the sheet (`f0`). Only the indices and the two tables are reached by address (`SpriteCatalogKeys`, e.g. `Assets/Art/Imported/catalog/monsters/_index.asset`).
+- **Check.** `RoCatalogAddressables.Verify(plan)` (run at the end of an import and by a test) confirms that every reference written into an index or entry has a valid key, resolves to an existing asset inside one of the folder entries above (`FindAssetEntry` on its GUID), and, for a sprite, that the sub-asset name exists in the sheet; a reference that does not is a `CatalogStrayFile` warning naming it.
 - **Reserved paths.** `Art/Imported/catalog/` joins the reserved generated paths of PLAN-0002 §4.8, so hand-made assets elsewhere stay untouched.
 
 ### 4.7 Importer and ledger: `RoCatalogImporter`, `RoCatalogEntryConverter`, `RoCatalogIndexConverter`
@@ -387,7 +405,7 @@ public sealed class RoCatalogIndexConverter : IRoConverter { /* RoJobKind.Catalo
   3. a pair that fails becomes `Failed` for this record with SPEC-0007's issue (one issue, no partial entry; FR-10 continues the run);
   4. write the entry asset (entry categories) or nothing (inline categories), record the ledger entry.
 - **Fingerprint.** SHA-256 of the canonical text of the record (category, key, values, pairs with roles) plus `RulesVersion`. Anything derived from a lub table (scale, view id, names, the chosen item language) is inside the text, so a table or setting change re-imports exactly the records it touches without a ledger dependency on files outside the data root (the `System` folder is a second source, §4.2).
-- **Index job.** One per chosen category. The keys come from the output paths and sprite names that SPEC-0007 reported for the category's records (kept in a small per-run table of strings), so no asset is loaded to build an index. It writes the index, runs `RoCatalogAddressables.Ensure()`/`Verify`, and, after the last category, updates the item and class tables. Palettes have no index.
+- **Index job.** One per chosen category. The references come from the output paths and sprite names that SPEC-0007 reported for the category's records (kept in a small per-run table of strings; the GUID is read from the path, no asset is loaded), so no asset is loaded to build an index. It writes the index, runs `RoCatalogAddressables.Ensure()`/`Verify`, and, after the last category, updates the item and class tables. Palettes have no index.
 - **Per-category numbers (FR-9).** `Entries` = records; `Sheets` = distinct sheet textures among the animations/sprites referenced; `Actions` = sum of stored (deduplicated) actions of the referenced animations; `Warnings` = the category's gaps plus issues; `Time` = wall time of its jobs. A record skipped as current contributes the numbers saved in its entry asset (`StoredActions`, `SheetCount`; for inline categories, in the index asset), so a second run reports the same figures.
 - **Order and independence (FR-9).** Categories never depend on each other's outputs: bodies and heads request their own palettes themselves (§4.3.10), so importing monsters touches no equipment and importing equipment after monsters re-imports nothing current.
 - **Menu and window.** `Tools/Ragnarok/Import Catalog…` opens `RoCatalogWindow`: one checkbox per category, "All", "Force", **Import**, the per-category result table. `Tools/Ragnarok/Catalog/<category>` has one item per category and `…/All`. Both call `RoImport.Catalog` only (PLAN-0002 §4.11: UI and code paths cannot differ).
@@ -441,7 +459,8 @@ Satisfies every FR. EditMode NUnit. Data-dependent tests are `[Category("NeedsDa
 | `RoStaticPlannerTests` | 5, 6, 7, 10 | items sharing a resource share one record; identified vs unidentified; skill icon by lower-case `SKID`; effects by name; emote set |
 | `EquipmentEntryTests`, `SpriteCatalogTests` (`Uninarok.SpriteCatalog.Tests`; the facade is built from in-memory indices, no Addressables load) | 4, 5, 6, 7 | exact class slot beats any-class doram beats any-class human; missing action draws nothing; unit falls back; item id → kind and view id; ground slot; emote action = id; a miss returns false |
 | `RoCatalogImporterTests` | 8, 9, 10, 12 | synthetic source: one category imports only its own sheets; second run `Skipped`; a second category reuses a shared sheet; changed table or setting changes only the dependent fingerprints; a failing pair fails one record only; per-category report numbers (same on the second run); entries land in the §3 folders |
-| `RoCatalogAddressablesTests` | 8 | `Ensure` creates the groups and folder entries of 4.6 and is idempotent; every key in a synthetic index or entry resolves to an existing asset inside a folder entry; the static-sprite key form `path[name]`; a dangling key is one warning |
+| `RoCatalogAddressablesTests` | 8 | `Ensure` creates the groups and folder entries of 4.6 and is idempotent; every reference in a synthetic index or entry has a valid key and resolves inside a folder entry; the static-sprite reference carries the sheet GUID and the sub-asset name; a dangling reference is one warning |
+| `PlayerJobTests` (`NeedsData`) | 2 | every `PlayerJob` member exists in the client's `JTtbl` with the same id; every job name in `class-bodies.csv` parses; the doc table of `PlayerJob.md` lists every member |
 | `SpriteCatalogPlayTests` (`Uninarok.SpriteCatalog.PlayTests`, play mode, Addressables with the Asset Database play-mode script) | 1 | `LoadAsync(Monsters)` then Poring 1002 → `LoadAnimation` returns the animation; `Release()` leaves no open handles |
 | `RoImportSettingsTests` | 12 | default Portuguese; each language maps to its file; the override option beats the setting |
 | `RoCatalogReferenceTests` (`NeedsData`) | 1–7, 10 | the acceptance lookups of spec §4: Poring 1002 at scale 1; novice male, knight on peco female, summoner male bodies; hair style 1 male; garment with 178 classes: distinct sheet paths = distinct SPR hashes, right animation for a knight and a summoner; item 1201 → short sword for a swordman; item 501; emote 0; cart by name; skill 5 (Bash); item 2220 hat; a full run lists each gap once |
@@ -450,7 +469,7 @@ Satisfies every FR. EditMode NUnit. Data-dependent tests are `[Category("NeedsDa
 
 ## 7. Migration and compatibility
 
-- Nothing is deleted. `RoJobKind` gains `CatalogEntry` and `CatalogIndex`; `RoIssueCode` gains the five codes of §4.3; `RoImportOptions` gains `ItemTableLanguage`, `SystemSource` (default: the `System` folder next to the data root) and an internal `CatalogPlan`. `Uninarok.RoImport.Editor` references `Uninarok.SpriteCatalog` and `Unity.Addressables.Editor`; `com.unity.addressables` is added to `Packages/manifest.json` (D13); `RoArchitectureTests` gets the new asmdefs added to its checks (the runtime assembly must not reference the importer, and `Uninarok.RoImport.Core` must not reference `UnityEditor`).
+- Nothing is deleted. `PlayerJob` (code and `docs/data/PlayerJob.md`) is new, beside `AccountSex`; `AccountSex` is reused as is. `RoJobKind` gains `CatalogEntry` and `CatalogIndex`; `RoIssueCode` gains the five codes of §4.3; `RoImportOptions` gains `ItemTableLanguage`, `SystemSource` (default: the `System` folder next to the data root) and an internal `CatalogPlan`. `Uninarok.RoImport.Editor` references `Uninarok.SpriteCatalog` and `Unity.Addressables.Editor`; `com.unity.addressables` is added to `Packages/manifest.json` (D13); `RoArchitectureTests` gets the new asmdefs added to its checks (the runtime assembly must not reference the importer, and `Uninarok.RoImport.Core` must not reference `UnityEditor`).
 - SPEC-0007 is used as is: `RoSpriteConverter.Convert(ctx, act, spr, options)` and `RoPaletteConverter` are its documented entry points for "a later spec (grouping by game object, import by category)" (PLAN-0007 §7). No change to its outputs.
 - The ledger gains `catalog.json`. `Art/Imported/catalog/` outputs use the existing LFS rule for `.asset`. `ProjectSettings/UninarokRoImport.asset` and `Assets/AddressableAssetsData/` are committed.
 - Entry and index assets are generated: never hand-edited (CLAUDE.md §2). The two own tables are data (CSV) and are edited by hand and reviewed by the owner.
@@ -461,7 +480,7 @@ Satisfies every FR. EditMode NUnit. Data-dependent tests are `[Category("NeedsDa
 |---|---|---|
 | D1 | Plan first, write second: planners are pure and produce a `RoCatalogPlan`; the editor only executes it | Planners that call the converter directly (rules untestable without Unity and 18 GB of data) |
 | D2 | Sheets and animations come only from SPEC-0007 (content index, per-ACT assets); this plan chooses the pairs. A job SPR that equals the root is deduplicated by the content hash, with no special code | A catalog-owned sheet per equipment (duplicates 60,438 garment sheets); comparing SPR bytes in the planner |
-| D3 (owner, 2026-11-20) | References inside catalog data are Addressables **address strings** (the asset's project path); run-time data is arrays of ids and keys, and loading is `Addressables.LoadAssetAsync` | `LazyLoadReference` (withdrawn by the owner); `AssetReference` per slot (a GUID plus sub-object per reference, nothing gained for generated, path-stable assets); direct object references (loading one index would load every sprite) |
+| D3 (owner, 2026-11-20) | References inside catalog data are **typed Addressables references**: `AssetReferenceT<SpriteAnimation>`, `AssetReferenceSprite` (GUID plus sub-asset name) and `AssetReferenceTexture2D`, and `AssetReferenceT<Entry>` for entries, each as a concrete subclass (Unity cannot serialize a generic field); loading is `Addressables.LoadAssetAsync(reference.RuntimeKey)` and the caller owns the handle | Address strings (weak: tied to a path, no type check, no editor validation); `ComponentReference<T>` of the Addressables samples (accepts only a prefab with a component); `LazyLoadReference` (withdrawn by the owner); direct object references (loading one index would load every sprite) |
 | D4 | Animations keep SPEC-0007's mirrored paths (`sprite/<game folder>/…`); the catalog folders hold entries and indices | An output-folder override per category in `RoSpriteConverter` (changes SPEC-0007 and breaks ledger ownership when the same ACT is also converted by the folder command); the cost is that `인간족/` holds bodies, heads and weapons together |
 | D5 | Inline records for single-sprite categories (units, ground items, skill icons, effects); entry assets only for bodies, heads and equipment, whose entries hold many slots | One ScriptableObject per record everywhere (about 15,000 tiny assets for no benefit); everything inline (a garment index would hold 80,000 references) |
 | D6 | The job unit is one record; a second small batch builds the indices | One job per category (no checkpoint or resume inside a 1,500-monster category); building the index inside the last entry job (ordering by path is not reliable) |
@@ -472,6 +491,8 @@ Satisfies every FR. EditMode NUnit. Data-dependent tests are `[Category("NeedsDa
 | D11 | Entry identity is ids and names from the tables, not file names; an unresolvable file is a warning (FR-10) | Entries built by scanning folders (unit folders mix NPC and monster files; the id range must decide, FR-1) |
 | D12 | Per-category numbers saved in the entries and indices, so a second run reports the same figures | Recomputing by loading every animation on every run |
 | D13 (owner, 2026-11-20) | Addressables is the run-time loading mechanism; the package is added with this plan, groups hold **folder entries** (never one entry per asset), sheets live in their own group | Per-asset entries (about 100,000 entries: slow settings asset and editor); no explicit sheet group (each bundle would carry a copy of a shared sheet); deciding bundle layout here (later spec) |
+| D14 (owner, 2026-11-20) | `PlayerJob : short` is a shared enum in `Uninarok.Networking.Data`, **written by hand** (like `AccountSex` and the `SpriteAction` enums) and documented in `docs/data/PlayerJob.md`; values from Hercules `class.h`/`class_hidden.h`; guarded by a test against the client's `JTtbl` | A generated enum and generator (owner: no); plain `int` ids (no type, no names in the own tables); one enum for players and monsters (different id spaces) |
+| D15 (owner, 2026-11-20) | Sex is the existing `AccountSex`; the catalog assembly references `Uninarok.Networking`. `SpriteRace` (Human, Doram) is new and stays in the catalog | A parallel `SpriteSex` (a second enum for the same wire value); extracting the shared enums to a neutral assembly now (revisit if the coupling hurts) |
 
 ## 9. Risks
 
@@ -480,7 +501,7 @@ Satisfies every FR. EditMode NUnit. Data-dependent tests are `[Category("NeedsDa
 | R1 Garment volume: about 81,000 ACT → as many animation assets, the largest import by far | Category on its own (garments last, once); SPEC-0007's ledger makes it resumable; the run records time and sizes; deduplicating identical ACTs across files stays a later option (sprite-catalog.md §4) |
 | R2 The Lua subset reader misses a construct in a table not yet read | One test per table on the real files (`NeedsData`); a rejected file names the line; phase 0 reads every table of §4.2 before any planner is written |
 | R3 GRF `Decompile` fails or mis-decodes a file (367 of 379 decompile; encodings differ per file) | The GRF mapping check records each file's encoding; plain-text files read directly; a failing table skips only the categories that need it |
-| R4 Addressables on Unity 6000.7 beta: the package version, **sub-asset keys** (`sheet.png[f0]`) of assets inside a folder entry, and the asset-database play mode | A phase-0 spike before the data types are written: add the package, create a folder entry, load an animation (its sheet comes from the `sprite-sheets` group, one copy) and a sprite by `path[name]`, in the editor and in a play-mode test; fallback for a failing sub-asset key: an explicit entry for each static sprite's sheet, or storing static sprites as one-frame animations |
+| R4 Addressables on Unity 6000.7 beta: the package version; whether a typed reference by **GUID** works for an asset that is addressable only through a **folder entry**; **sub-asset** references (`AssetReferenceSprite` with `f0`) inside such an entry; the asset-database play mode | A phase-0 spike before the data types are written: add the package, create a folder entry, make a `SpriteAnimationReference` and an `AssetReferenceSprite` from GUIDs of assets inside it, load both in the editor and in a play-mode test (the animation's sheet comes from the `sprite-sheets` group, one copy); fallbacks: an explicit entry for each referenced asset (more entries, only for what is referenced), or storing a static sprite as a one-frame animation |
 | R9 Editor cost of Addressables with ~100,000 assets under folder entries (group build, analyze, content update) | Only folder entries exist (D13); the catalog never builds bundles; settings are touched once per import and saved once |
 | R5 The class and shield tables are hand-made and can be wrong for rare bodies | Owner review (OQ-1); unmatched files are warnings, not failures; the lookup window makes a wrong pairing visible |
 | R6 View id versus item id (OQ-3) may not match what the server sends | Recorded as Candidate; one place to change (§4.3.6, §4.5); revisit when the look packets are implemented |
