@@ -19,7 +19,9 @@ namespace Uninarok.RoImport.Core.Catalog.Tables
         Skills = 16,
         Scales = 32,
         Own = 64,
-        All = Jobs | ViewIds | Items | Emotes | Skills | Scales | Own,
+        /// <summary>The server's item database, for the equipment kind of each item (D21).</summary>
+        ItemKinds = 128,
+        All = Jobs | ViewIds | Items | Emotes | Skills | Scales | Own | ItemKinds,
     }
 
     /// <summary>
@@ -45,6 +47,7 @@ namespace Uninarok.RoImport.Core.Catalog.Tables
         public RoSkillTable Skills { get; private set; }
         public RoMonsterScaleTable Scales { get; private set; }
         public RoOwnTables Own { get; private set; }
+        public RoItemDb ItemKinds { get; private set; }
 
         /// <summary>The groups asked for whose tables could not be read.</summary>
         public RoCatalogNeeds Missing { get; private set; }
@@ -55,8 +58,9 @@ namespace Uninarok.RoImport.Core.Catalog.Tables
         RoCatalogNeeds Loaded { get; set; }
 
         /// <param name="ownTablesFolder">The folder of the own CSV tables on disk; null for <see cref="RoOwnTables.Folder"/> under the current directory (the project).</param>
+        /// <param name="itemDbPath">The server's item_db.conf on disk (D21); needed for <see cref="RoCatalogNeeds.ItemKinds"/>.</param>
         public static RoCatalogTables Load(IRoSource data, IRoSource system, RoCatalogNeeds needs, RoItemTableLanguage language,
-                                           RoReport report, string ownTablesFolder = null)
+                                           RoReport report, string ownTablesFolder = null, string itemDbPath = null)
         {
             if (data == null) throw new ArgumentNullException(nameof(data));
             if (report == null) throw new ArgumentNullException(nameof(report));
@@ -129,15 +133,25 @@ namespace Uninarok.RoImport.Core.Catalog.Tables
                 t.Mark(RoCatalogNeeds.Own, t.Own != null);
             }
 
+            if ((needs & RoCatalogNeeds.ItemKinds) != 0)
+            {
+                const string name = "item_db.conf";
+                string text = string.IsNullOrEmpty(itemDbPath) ? null : loader.Disk(itemDbPath, name);
+                if (string.IsNullOrEmpty(itemDbPath)) report.Warn(RoIssueCode.SourceMissing, name, Referrer, $"{name}: no path is set (RoImportSettings.ItemDbPath)");
+                if (text != null && RoItemDb.TryRead(text, out var db, out reason)) t.ItemKinds = db;
+                else if (text != null) report.Warn(RoIssueCode.CorruptFile, name, Referrer, $"{name}: {reason}");
+                t.Mark(RoCatalogNeeds.ItemKinds, t.ItemKinds != null);
+            }
+
             return t;
         }
 
         /// <summary>Tables already read, for the planner tests (PLAN-0008 §6); a null group is missing.</summary>
         internal static RoCatalogTables Create(RoJobTables jobs = null, RoViewIdTables viewIds = null, RoItemTable items = null,
                                                RoEmoteTable emotes = null, RoSkillTable skills = null, RoMonsterScaleTable scales = null,
-                                               RoOwnTables own = null)
+                                               RoOwnTables own = null, RoItemDb itemKinds = null)
         {
-            var t = new RoCatalogTables { Jobs = jobs, ViewIds = viewIds, Items = items, Emotes = emotes, Skills = skills, Scales = scales, Own = own };
+            var t = new RoCatalogTables { Jobs = jobs, ViewIds = viewIds, Items = items, Emotes = emotes, Skills = skills, Scales = scales, Own = own, ItemKinds = itemKinds };
             t.Mark(RoCatalogNeeds.Jobs, jobs != null);
             t.Mark(RoCatalogNeeds.ViewIds, viewIds != null);
             t.Mark(RoCatalogNeeds.Items, items != null);
@@ -145,6 +159,7 @@ namespace Uninarok.RoImport.Core.Catalog.Tables
             t.Mark(RoCatalogNeeds.Skills, skills != null);
             t.Mark(RoCatalogNeeds.Scales, scales != null);
             t.Mark(RoCatalogNeeds.Own, own != null);
+            t.Mark(RoCatalogNeeds.ItemKinds, itemKinds != null);
             return t;
         }
 

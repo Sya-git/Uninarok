@@ -19,6 +19,30 @@ namespace Uninarok.RoImport.Editor.Catalog
 
         [SerializeField] RoItemTableLanguage itemTableLanguage = DefaultLanguage;
 
+        /// <summary>The server's item database, relative to the Unity project folder (D21).</summary>
+        public const string DefaultItemDbPath = "../Hercules-2026.09/db/re/item_db.conf";
+
+        [SerializeField] string itemDbPath = DefaultItemDbPath;
+
+        /// <summary>The server's item_db.conf for the equipment kind of each item (PLAN-0008 D21), relative to the project folder or absolute.</summary>
+        public string ItemDbPath
+        {
+            get => string.IsNullOrWhiteSpace(itemDbPath) ? DefaultItemDbPath : itemDbPath;
+            set
+            {
+                if (itemDbPath == value) return;
+                itemDbPath = value;
+                Save(true);
+            }
+        }
+
+        /// <summary>The item database of one run as a full path: the override when given, else the setting.</summary>
+        public static string ItemDbPathFor(RoImportOptions options)
+        {
+            string path = !string.IsNullOrWhiteSpace(options?.ItemDbPath) ? options.ItemDbPath : instance.ItemDbPath;
+            return System.IO.Path.GetFullPath(System.IO.Path.IsPathRooted(path) ? path : System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), path));
+        }
+
         public RoItemTableLanguage ItemTableLanguage
         {
             get => itemTableLanguage;
@@ -48,6 +72,9 @@ namespace Uninarok.RoImport.Editor.Catalog
         static readonly GUIContent LanguageLabel = new GUIContent("Item table language",
             "Which System/…/iteminfo_new.lub the sprite catalog reads (ground items and equipment). Changing it re-imports the records that depend on it.");
 
+        static readonly GUIContent ItemDbLabel = new GUIContent("Server item_db.conf",
+            "Hercules db/re/item_db.conf, relative to the Unity project or absolute: the equipment kind of each item (PLAN-0008 D21).");
+
         RoImportSettingsProvider() : base(PagePath, SettingsScope.Project, new[] { "Ragnarok", "item table", "language", "catalog" }) { }
 
         [SettingsProvider]
@@ -60,6 +87,11 @@ namespace Uninarok.RoImport.Editor.Catalog
             var language = (RoItemTableLanguage)EditorGUILayout.EnumPopup(LanguageLabel, settings.ItemTableLanguage);
             if (language != settings.ItemTableLanguage) settings.ItemTableLanguage = language;
             EditorGUILayout.LabelField("File", "System/" + RoImportSettings.ItemTableFile(language), EditorStyles.miniLabel);
+            EditorGUILayout.Space();
+            string db = EditorGUILayout.DelayedTextField(ItemDbLabel, settings.ItemDbPath);
+            if (db != settings.ItemDbPath) settings.ItemDbPath = db;
+            if (!System.IO.File.Exists(RoImportSettings.ItemDbPathFor(null)))
+                EditorGUILayout.HelpBox("The item database was not found: every item's equipment kind will be none.", MessageType.Warning);
         }
     }
 }

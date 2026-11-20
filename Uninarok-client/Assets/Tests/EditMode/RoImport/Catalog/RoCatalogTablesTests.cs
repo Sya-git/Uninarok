@@ -65,6 +65,7 @@ namespace Uninarok.RoImport.Tests.Catalog
             Write(system, "english/iteminfo_new.lub", "tbl = { [501] = { identifiedResourceName = \"red\", ClassNum = 0 } }", Encoding.UTF8);
             Write(_own, RoOwnTables.ClassBodiesFile, "BodyName,Job,Race,Kind,BaseJob\n기사,JOB_KNIGHT,Human,Base,JOB_KNIGHT\n", Encoding.UTF8);
             Write(_own, RoOwnTables.ShieldNamesFile, "ViewId,Name\n1,가드\n", Encoding.UTF8);
+            Write(_own, "item_db.conf", "item_db: (\n{\n\tId: 1201\n\tType: \"IT_WEAPON\"\n\tLoc: \"EQP_WEAPON\"\n},\n)", Encoding.UTF8);
             _data = new Recording(new RoFolderSource(data));
             _system = new Recording(new RoFolderSource(system));
         }
@@ -76,7 +77,7 @@ namespace Uninarok.RoImport.Tests.Catalog
         }
 
         RoCatalogTables Load(RoCatalogNeeds needs, RoReport report, RoItemTableLanguage language = RoItemTableLanguage.Portuguese) =>
-            RoCatalogTables.Load(_data, _system, needs, language, report, _own);
+            RoCatalogTables.Load(_data, _system, needs, language, report, _own, Path.Combine(_own, "item_db.conf"));
 
         [Test]
         public void LoadsEveryGroup()
@@ -94,6 +95,7 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(t.Skills.Ids["SM_BASH"], Is.EqualTo(5));
             Assert.That(t.Scales.ScaleOf(1002), Is.EqualTo(1.2f));
             Assert.That(t.Own.ShieldNames[1], Is.EqualTo("가드"));
+            Assert.That(t.ItemKinds.KindOf(1201), Is.EqualTo(Uninarok.Catalog.EquipmentKind.Weapon));
         }
 
         [Test]
@@ -158,7 +160,7 @@ namespace Uninarok.RoImport.Tests.Catalog
         {
             var report = new RoReport();
             var t = RoCatalogTables.Load(new RoFolderSource(CatalogTestFiles.DataRoot), new RoFolderSource(CatalogTestFiles.SystemRoot),
-                RoCatalogNeeds.All, RoItemTableLanguage.Portuguese, report);
+                RoCatalogNeeds.All, RoItemTableLanguage.Portuguese, report, null, CatalogTestFiles.ItemDbPath);
             Assert.That(report.Issues, Is.Empty, string.Join("\n", report.Issues));
             Assert.That(t.Jobs.SpriteNames.Count, Is.EqualTo(5300));
             Assert.That(t.Items.Count, Is.EqualTo(17482));

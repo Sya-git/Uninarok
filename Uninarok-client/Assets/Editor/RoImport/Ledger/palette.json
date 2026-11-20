@@ -1,0 +1,31 @@
+{
+    "entries": [
+        {
+            "Source": "palette/몸/검사_남_2.pal",
+            "SourceHash": "b988e6c474ed2938611956fb27adbbd8d63e7f378fb90809526f8f58c8316c21",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/palette/몸/검사_남_2.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "palette/몸/초보자_남_1.pal",
+            "SourceHash": "30b8c28a7b72eecb2818f1fedd2762cd440a79e21c87e8f95d1ec31ff32f2a6d",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/palette/몸/초보자_남_1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "palette/몸/초보자_남_3.pal",
+            "SourceHash": "8ba0f4b6aeff658c34537b12c966a702172312926103aef1502203b9d4511e5b",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/palette/몸/초보자_남_3.png"
+            ],
+            "Dependencies": []
+        }
+    ]
+}

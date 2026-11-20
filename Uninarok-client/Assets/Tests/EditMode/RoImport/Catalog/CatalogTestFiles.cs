@@ -33,6 +33,17 @@ namespace Uninarok.RoImport.Tests.Catalog
             }
         }
 
+        /// <summary>The repository's Hercules item database (PLAN-0008 D21); the test is ignored without it.</summary>
+        public static string ItemDbPath
+        {
+            get
+            {
+                string path = Path.GetFullPath(Uninarok.RoImport.Editor.Catalog.RoImportSettings.DefaultItemDbPath);
+                if (!File.Exists(path)) Assert.Ignore($"Hercules item_db.conf not found: {path}");
+                return path;
+            }
+        }
+
         /// <summary>The bytes of <c>data/&lt;relative&gt;</c>.</summary>
         public static byte[] Data(string relative) => Read(DataRoot, relative);
 

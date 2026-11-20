@@ -36,6 +36,9 @@ namespace Uninarok.RoImport.Editor.Pipeline
         /// <summary>The client's <c>System</c> folder (item and scale tables, PLAN-0008 4.2); null: <see cref="RoSourceLocation.ResolveSystem"/>.</summary>
         public IRoSource SystemSource;
 
+        /// <summary>The server's item_db.conf of this run (PLAN-0008 D21); null: the project setting.</summary>
+        public string ItemDbPath;
+
         /// <summary>Test hook: the folder of the own catalog CSV tables; null: the project's (PLAN-0008 4.2).</summary>
         internal string CatalogOwnTablesFolder;
 
