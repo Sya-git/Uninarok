@@ -15,7 +15,7 @@ Korean folder names: 몬스터 monster, 인간족 human race, 도람족 doram ra
 
 ## 1. Lub files (`data/luafiles514/lua files/`)
 
-All `.lub` files are Lua 5.1 bytecode (header `ESC L u a Q`). GRF's `Lub` class decompiles 367 of the 379; 12 are plain-text Lua already (GRF reports "Unrecognized file format (Lua)": read them as text). Lub loading in .NET needs `Encoding.RegisterProvider(CodePagesEncodingProvider.Instance)` before GRF's `EncodingService` is first touched (Korean code page 949).
+All `.lub` files are Lua 5.1 bytecode (header `ESC L u a Q`). GRF's `Lub` class decompiles 367 of the 379; 12 are plain-text Lua already (GRF reports "Unrecognized file format (Lua)": read them as text). GRF decodes string constants with `EncodingService.DisplayEncoding`: code page 949 (Korean) for the `luafiles514` tables and the scale table, UTF-8 for the item tables (PLAN-0008 §4.1, T0.3). Unity's Mono provides code page 949 itself; `CodePagesEncodingProvider` is not in Unity's API profile.
 
 | Table (global) | File | Maps | Used for |
 |---|---|---|---|

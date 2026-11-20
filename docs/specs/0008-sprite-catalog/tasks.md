@@ -50,7 +50,7 @@ Chosen in T0.4 (2026-11-20, from the data set and the decompiled tables):
   *Done when:* the tests compile and are listed as ignored.
 - [x] **T2.2** Implement `RoLuaLexer`, `RoLuaReader`, `RoLuaValue`, `RoLuaOptions`, `RoLuaChunk` in `Editor/RoImport/Core/Catalog/Lua/`; remove the ignore. (FR-1 to FR-7)
   *Done when:* `RoLuaReaderTests` pass (command + result reported); the reader parses the decompiled item table of T0.3 in under 10 seconds and keeps only the three fields asked for (reported).
-- [ ] **T2.3** Implement `RoLubReader` (GRF adapter, plan §4.1) and `RoLubReaderTests` (`NeedsData`): one bytecode file and one plain-text file with a known Korean string in each encoding; garbage and empty input return false and never throw. (FR-1 to FR-7)
+- [x] **T2.3** Implement `RoLubReader` (GRF adapter, plan §4.1) and `RoLubReaderTests` (`NeedsData`): one bytecode file and one plain-text file with a known Korean string in each encoding; garbage and empty input return false and never throw. (FR-1 to FR-7)
   *Done when:* the tests pass; `RoArchitectureTests` still pass (only the adapter touches GRF).
 - [ ] **T2.4** Implement `RoJobTables` (`jobtbl` from `npcidentity.lub`, `JTtbl` from `jobidentity.lub`, `JobNameTable` from `jobname.lub`, read in dependency order) with tests (`NeedsData`: `JobNameTable` has 5,300 entries, Poring 1002 → `PORING`; a synthetic case for the import order). (FR-1, FR-2)
   *Done when:* the tests pass and report the counts.
