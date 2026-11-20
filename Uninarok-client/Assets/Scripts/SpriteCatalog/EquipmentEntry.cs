@@ -22,6 +22,10 @@ namespace Uninarok.Catalog
         /// <summary>Weapons only, parallel to <see cref="Slots"/>; empty for other kinds. A slot without a trail has an empty reference.</summary>
         public SpriteAnimationReference[] Trails = Array.Empty<SpriteAnimationReference>();
 
+        /// <summary>The import's numbers for this entry (PLAN-0008 4.7, D12): stored actions of its animations, distinct sheets.</summary>
+        public int StoredActions;
+        public int SheetCount;
+
         /// <summary>How many times the lookup dictionaries were built (once per loaded entry; tests).</summary>
         internal int DictionaryBuilds { get; private set; }
 

@@ -13,6 +13,10 @@ namespace Uninarok.Catalog
         public int Style;
         public HeadVariant[] Variants = Array.Empty<HeadVariant>();
 
+        /// <summary>The import's numbers for this entry (PLAN-0008 4.7, D12): stored actions of its animations, distinct sheets.</summary>
+        public int StoredActions;
+        public int SheetCount;
+
         /// <summary>The variant for exactly (<paramref name="sex"/>, <paramref name="race"/>); false when the style has none.</summary>
         public bool TryGetVariant(AccountSex sex, SpriteRace race, out HeadVariant variant)
         {

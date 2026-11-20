@@ -153,5 +153,135 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(outputs.Single().AssetPath, Is.EqualTo(_roots.Art.TrimEnd('/') + "/palette/몸/초보자_남_1.png"));
             Assert.That(Run(false, Palette()).report.Skipped, Is.EqualTo(1));
         }
+
+        // ---- T5.7: entry assets (FR-2, FR-3, FR-4, FR-8, FR-9; PLAN-0008 4.4, 4.6) ----
+
+        const Uninarok.Networking.Data.AccountSex Male = Uninarok.Networking.Data.AccountSex.SEX_MALE;
+
+        void EntryFiles()
+        {
+            Pair("sprite/인간족/몸통/남/초보자_남", SpriteTestData.Monster());
+            Pair("sprite/인간족/머리통/남/1_남", SpriteTestData.Anchored());
+            Write("palette/머리/머리1_남_0.pal", SpriteFileWriter.Pal(SpriteTestData.Palette(5)));
+            Pair("sprite/악세사리/남/남_햇", SpriteTestData.Anchored());
+            Pair("sprite/인간족/초보자/초보자_남_단검", SpriteTestData.Weapon());
+            Pair("sprite/인간족/초보자/초보자_남_단검_검광", SpriteTestData.Weapon());
+            Pair("sprite/로브/천사날개/천사날개", SpriteTestData.Anchored());
+        }
+
+        static RoCatalogRecord Body()
+        {
+            string role = RoCatalogRoles.Body(Uninarok.Networking.Data.PlayerJob.JOB_NOVICE, Male, SpriteRace.Human, BodyVariantKind.Base);
+            return new RoCatalogRecord(SpriteCatalogCategory.Bodies, "body-0000", new[] { RoFileNames.Pair("인간족/몸통/남", "초보자_남", role) }, new[]
+            {
+                RoCatalogValue.Of("baseJob", "JOB_NOVICE"), RoCatalogValue.Of(RoCatalogRoles.Name(role), "초보자"),
+                RoCatalogValue.Of(RoCatalogRoles.Palette(role, 1), "palette/몸/초보자_남_1.pal"),
+            });
+        }
+
+        static RoCatalogRecord Head()
+        {
+            string role = RoCatalogRoles.Head(Male, SpriteRace.Human);
+            return new RoCatalogRecord(SpriteCatalogCategory.Heads, "head-01", new[] { RoFileNames.Pair("인간족/머리통/남", "1_남", role) },
+                new[] { RoCatalogValue.Of("style", 1), RoCatalogValue.Of(RoCatalogRoles.Palette(role, 0), "palette/머리/머리1_남_0.pal") });
+        }
+
+        static RoCatalogRecord Hat() =>
+            new RoCatalogRecord(SpriteCatalogCategory.Headgears, "headgear-0016", new[] { RoFileNames.Pair("악세사리/남", "남_햇", RoCatalogRoles.Headgear(Male, SpriteRace.Human)) },
+                new[] { RoCatalogValue.Of("viewId", 16), RoCatalogValue.Of("name", "_햇") });
+
+        static RoCatalogRecord Dagger()
+        {
+            var job = Uninarok.Networking.Data.PlayerJob.JOB_NOVICE;
+            string role = RoCatalogRoles.Weapon(job, Male, SpriteRace.Human);
+            return new RoCatalogRecord(SpriteCatalogCategory.Weapons, "weapon-0001", new[]
+            {
+                RoFileNames.Pair("인간족/초보자", "초보자_남_단검", role),
+                RoFileNames.Pair("인간족/초보자", "초보자_남_단검_검광", RoCatalogRoles.WeaponTrail(job, Male, SpriteRace.Human)),
+            }, new[] { RoCatalogValue.Of("viewId", 1), RoCatalogValue.Of("name", "_단검"), RoCatalogValue.Of(RoCatalogRoles.Fallback(role), 50) });
+        }
+
+        static RoCatalogRecord Wings() =>
+            new RoCatalogRecord(SpriteCatalogCategory.Garments, "garment-0001", new[] { RoFileNames.Pair("로브/천사날개", "천사날개", RoCatalogRoles.GarmentRoot(SpriteRace.Human)) },
+                new[] { RoCatalogValue.Of("viewId", 1), RoCatalogValue.Of("name", "천사날개") });
+
+        T Entry<T>(SpriteCatalogCategory c, string key) where T : UnityEngine.Object => AssetDatabase.LoadAssetAtPath<T>(RoCatalogOutputPaths.Entry(_roots, c, key));
+
+        static string GuidOf(string path) => AssetDatabase.AssetPathToGUID(path);
+
+        [Test]
+        public void ABodyEntry_HasItsVariantWithTypedReferences_AndItsPalettes()
+        {
+            EntryFiles();
+            var (report, _) = Run(false, Body());
+
+            Assert.That(report.Failed, Is.EqualTo(0), report.Summarize());
+            var body = Entry<BodyEntry>(SpriteCatalogCategory.Bodies, "body-0000");
+            Assert.That(body.BaseJob, Is.EqualTo(Uninarok.Networking.Data.PlayerJob.JOB_NOVICE));
+            var v = body.Variants.Single();
+            Assert.That(v.Name, Is.EqualTo("초보자"));
+            Assert.That(v.Sex, Is.EqualTo(Male));
+            Assert.That(v.Sprite.Animation.AssetGUID, Is.EqualTo(GuidOf(_roots.Art.TrimEnd('/') + "/sprite/인간족/몸통/남/초보자_남.asset")));
+            Assert.That(v.Palettes.Colours.Single().Colour, Is.EqualTo(1));
+            Assert.That(v.Palettes.Colours.Single().Palette.AssetGUID, Is.EqualTo(GuidOf(_roots.Art.TrimEnd('/') + "/palette/몸/초보자_남_1.png")), "its own palette, converted");
+            Assert.That(body.StoredActions, Is.GreaterThan(0));
+            Assert.That(body.SheetCount, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void AHeadEntry_HasItsStyleAndHairPalette()
+        {
+            EntryFiles();
+            Run(false, Head());
+
+            var head = Entry<HeadEntry>(SpriteCatalogCategory.Heads, "head-01");
+            Assert.That(head.Style, Is.EqualTo(1));
+            Assert.That(head.Variants.Single().Palettes.Colours.Single().Colour, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void EquipmentEntries_HaveTheirSlots_TrailsAndFallbacks()
+        {
+            EntryFiles();
+            var (report, _) = Run(false, Hat(), Dagger(), Wings());
+            Assert.That(report.Failed, Is.EqualTo(0), report.Summarize());
+
+            var hat = Entry<EquipmentEntry>(SpriteCatalogCategory.Headgears, "headgear-0016");
+            Assert.That(hat.Kind, Is.EqualTo(EquipmentKind.Headgear));
+            Assert.That(hat.ViewId, Is.EqualTo(16));
+            Assert.That(hat.Slots.Single().AnyClass, Is.True);
+            Assert.That(hat.Trails, Is.Empty, "only weapons have trails");
+
+            var dagger = Entry<EquipmentEntry>(SpriteCatalogCategory.Weapons, "weapon-0001");
+            var slot = dagger.Slots.Single();
+            Assert.That(slot.AnyClass, Is.False);
+            Assert.That(slot.Job, Is.EqualTo(Uninarok.Networking.Data.PlayerJob.JOB_NOVICE));
+            Assert.That(slot.FallbackOf, Is.EqualTo(50));
+            Assert.That(dagger.Trails.Single().AssetGUID, Is.EqualTo(GuidOf(_roots.Art.TrimEnd('/') + "/sprite/인간족/초보자/초보자_남_단검_검광.asset")));
+
+            var wings = Entry<EquipmentEntry>(SpriteCatalogCategory.Garments, "garment-0001");
+            Assert.That(wings.Slots.Select(s => (s.AnyClass, s.Sex)), Is.EquivalentTo(new[] { (true, Male), (true, Uninarok.Networking.Data.AccountSex.SEX_FEMALE) }),
+                "the root ACT is an any-class slot for both sexes");
+        }
+
+        [Test]
+        public void AForcedRerun_KeepsTheEntrysGuidAndBytes()
+        {
+            EntryFiles();
+            Run(false, Hat(), Body());
+            string hatPath = RoCatalogOutputPaths.Entry(_roots, SpriteCatalogCategory.Headgears, "headgear-0016");
+            string bodyPath = RoCatalogOutputPaths.Entry(_roots, SpriteCatalogCategory.Bodies, "body-0000");
+            string hatGuid = GuidOf(hatPath), bodyGuid = GuidOf(bodyPath);
+            byte[] hatBytes = File.ReadAllBytes(RoImportTestRoot.FullPath(hatPath)), bodyBytes = File.ReadAllBytes(RoImportTestRoot.FullPath(bodyPath));
+
+            var (report, _) = Run(true, Hat(), Body());
+
+            Assert.That(report.Failed, Is.EqualTo(0), report.Summarize());
+            Assert.That(GuidOf(hatPath), Is.EqualTo(hatGuid));
+            Assert.That(GuidOf(bodyPath), Is.EqualTo(bodyGuid));
+            Assert.That(File.ReadAllBytes(RoImportTestRoot.FullPath(hatPath)), Is.EqualTo(hatBytes));
+            Assert.That(File.ReadAllBytes(RoImportTestRoot.FullPath(bodyPath)), Is.EqualTo(bodyBytes));
+            Assert.That(Run(false, Hat(), Body()).report.Skipped, Is.EqualTo(2), "and current afterwards");
+        }
     }
 }

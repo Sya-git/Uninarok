@@ -40,8 +40,8 @@ namespace Uninarok.RoImport.Editor.Catalog
                 return Fail(RoIssueCode.Unexpected, path, "a catalog job outside a catalog run (use RoImport.Catalog)");
             if (!run.TryGetRecord(path.Canonical, out var record))
                 return Fail(RoIssueCode.SourceMissing, path, "the run's plan has no record for this job");
-            if (RoCatalogOutputPaths.HasEntryAssets(record.Category))
-                return Fail(RoIssueCode.Unexpected, path, "the entry categories are pending T5.7");
+            bool hasEntry = RoCatalogOutputPaths.HasEntryAssets(record.Category);
+            string entryPath = hasEntry ? RoCatalogOutputPaths.Entry(ctx.Roots, record.Category, record.Key) : null;
 
             var ledger = ctx.Ledger(LedgerCategory);
             bool ledgerCurrent = !ctx.Force && ledger.IsCurrent(path, record.Fingerprint, RulesVersion, ctx.Source, ctx.Writer);
@@ -72,6 +72,13 @@ namespace Uninarok.RoImport.Editor.Catalog
             }
 
             run.SetOutputs(path.Canonical, outputs.ToArray());
+            if (hasEntry)
+            {
+                // Written in place: GUID kept, and an unchanged entry is not touched (PLAN-0002 4.7).
+                var status = ctx.Writer.UpsertObject(entryPath, RoCatalogEntryWriter.Build(record, outputs));
+                allSkipped &= status == RoStatus.Skipped;
+                first = ctx.Writer.Load<ScriptableObject>(entryPath);
+            }
             if (ledgerCurrent && allSkipped) return RoResult<UnityEngine.Object>.Skipped(first);
 
             bool existed = ledger.Find(path) != null;
@@ -80,6 +87,7 @@ namespace Uninarok.RoImport.Editor.Catalog
                 Source = path.Canonical,
                 SourceHash = record.Fingerprint,
                 Rules = RulesVersion,
+                Outputs = hasEntry ? new[] { entryPath } : new string[0],
                 Dependencies = Dependencies(ctx, record),
             }, ctx.Report);
             return existed ? RoResult<UnityEngine.Object>.Updated(first) : RoResult<UnityEngine.Object>.Created(first);

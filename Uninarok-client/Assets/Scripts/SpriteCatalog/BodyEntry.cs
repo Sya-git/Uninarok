@@ -25,6 +25,10 @@ namespace Uninarok.Catalog
         public PlayerJob BaseJob;
         public BodyVariant[] Variants = Array.Empty<BodyVariant>();
 
+        /// <summary>The import's numbers for this entry (PLAN-0008 4.7, D12): stored actions of its animations, distinct sheets.</summary>
+        public int StoredActions;
+        public int SheetCount;
+
         /// <summary>The variant of <paramref name="job"/> (mount, outfit) for <paramref name="sex"/>, else the base variant for that sex.</summary>
         public bool TryGetVariant(PlayerJob job, AccountSex sex, out BodyVariant variant)
         {
