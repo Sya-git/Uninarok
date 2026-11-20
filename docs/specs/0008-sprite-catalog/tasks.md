@@ -48,7 +48,7 @@ Chosen in T0.4 (2026-11-20, from the data set and the decompiled tables):
 
 - [x] **T2.1** Write `RoLuaReaderTests` (plan §6): tables, nested tables, `[ref.Name] = "x"` keys, negative numbers, string escapes, references to imports and earlier globals, `function … end` and `main()` skipped, `SkipField`, unknown construct → rejected with a line number. Marked `[Ignore("pending T2.2")]`. (FR-1 to FR-7)
   *Done when:* the tests compile and are listed as ignored.
-- [ ] **T2.2** Implement `RoLuaLexer`, `RoLuaReader`, `RoLuaValue`, `RoLuaOptions`, `RoLuaChunk` in `Editor/RoImport/Core/Catalog/Lua/`; remove the ignore. (FR-1 to FR-7)
+- [x] **T2.2** Implement `RoLuaLexer`, `RoLuaReader`, `RoLuaValue`, `RoLuaOptions`, `RoLuaChunk` in `Editor/RoImport/Core/Catalog/Lua/`; remove the ignore. (FR-1 to FR-7)
   *Done when:* `RoLuaReaderTests` pass (command + result reported); the reader parses the decompiled item table of T0.3 in under 10 seconds and keeps only the three fields asked for (reported).
 - [ ] **T2.3** Implement `RoLubReader` (GRF adapter, plan §4.1) and `RoLubReaderTests` (`NeedsData`): one bytecode file and one plain-text file with a known Korean string in each encoding; garbage and empty input return false and never throw. (FR-1 to FR-7)
   *Done when:* the tests pass; `RoArchitectureTests` still pass (only the adapter touches GRF).

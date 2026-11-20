@@ -96,7 +96,19 @@ namespace Uninarok.RoImport.Core.Catalog.Lua
             return false;
         }
 
-        public void Add(RoLuaValue item) => _items.Add(item ?? throw new ArgumentNullException(nameof(item)));
+        int _positions;
+
+        /// <summary>
+        /// Adds the next positional value. <c>null</c> (Lua <c>nil</c>) leaves a hole: the position is used and nothing is
+        /// stored, and a later value lands in <see cref="Indexed"/> under its position (D17).
+        /// </summary>
+        public void Add(RoLuaValue item)
+        {
+            int position = ++_positions;
+            if (item == null) return;
+            if (position == _items.Count + 1) _items.Add(item);
+            else _indexed[position] = item;
+        }
 
         /// <summary>Sets a field; <c>null</c> (Lua <c>nil</c>) removes it.</summary>
         public void Set(string key, RoLuaValue value)

@@ -5,7 +5,6 @@ using Uninarok.RoImport.Core.Catalog.Lua;
 namespace Uninarok.RoImport.Tests.Catalog
 {
     // TASKS-0008 T2.1 (FR-1 to FR-7; PLAN-0008 4.1): the Lua data subset of the client's lub tables.
-    [Ignore("pending T2.2")]
     public class RoLuaReaderTests
     {
         static RoLuaChunk Read(string lua, RoLuaOptions options = null, IReadOnlyDictionary<string, RoLuaValue> imports = null)
@@ -189,6 +188,18 @@ namespace Uninarok.RoImport.Tests.Catalog
             bool ok = RoLuaReader.TryRead("T = {\n\t[jobtbl.JT_PORING] = \"PORING\"\n}", null, null, out _, out string reason);
             Assert.That(ok, Is.False);
             Assert.That(reason, Does.Contain("jobtbl").And.Contain("line 2"));
+        }
+
+        [Test]
+        public void ABareUnknownNameIsNilAndLeavesAHole()
+        {
+            // D17: monster_size_effect_new.lub line 3253 has MonsterEff = { EF_LEVEL99_RED }, which the client reads as nil.
+            var t = Table(Read("T = { a = UNKNOWN, list = { UNKNOWN }, gap = { 1, nil, 3 } }"), "T");
+            Assert.That(t.Fields.ContainsKey("a"), Is.False);
+            Assert.That(((RoLuaTable)t.Fields["list"]).Items.Count, Is.EqualTo(0));
+            var gap = (RoLuaTable)t.Fields["gap"];
+            Assert.That(gap.TryGet(2, out _), Is.False);
+            Assert.That(gap.TryGet(3, out var third) && Number(third) == 3, Is.True, "the value after a hole keeps its position");
         }
 
         [Test]
