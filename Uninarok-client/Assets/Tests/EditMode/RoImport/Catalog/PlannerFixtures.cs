@@ -67,6 +67,33 @@ namespace Uninarok.RoImport.Tests.Catalog
             return t;
         }
 
+        /// <summary>The class table of the body, garment and weapon tests.</summary>
+        public const string ClassBodies =
+            "BodyName,Job,Race,Kind,BaseJob\n" +
+            "검사,JOB_SWORDMAN,Human,Base,JOB_SWORDMAN\n" +
+            "기사,JOB_KNIGHT,Human,Base,JOB_KNIGHT\n" +
+            "페코페코_기사,JOB_KNIGHT2,Human,Mount,JOB_KNIGHT\n" +
+            "기사_h,JOB_KNIGHT,Human,Outfit,JOB_KNIGHT\n" +
+            "summoner,JOB_SUMMONER,Doram,Base,JOB_SUMMONER\n" +
+            "결혼,JOB_WEDDING,Human,Base,JOB_WEDDING\n" +
+            "결혼,JOB_WEDDING,Doram,Base,JOB_WEDDING\n";
+
+        public static RoOwnTables Own(string shields = "ViewId,Name\n1,가드\n2,버클러\n")
+        {
+            Assert.That(RoOwnTables.TryRead(ClassBodies, shields, out var t, out string reason), Is.True, reason);
+            return t;
+        }
+
+        public static RoViewIdTables ViewIds(string accIds = "", string accNames = "", string robeIds = "", string robeNames = "",
+                                             string weaponIds = "", string weaponNames = "", string expansion = "")
+        {
+            Assert.That(RoViewIdTables.TryRead($"ACCESSORY_IDs = {{ {accIds} }}", $"AccNameTable = {{ {accNames} }}",
+                $"SPRITE_ROBE_IDs = {{ {robeIds} }}", $"RobeNameTable = {{ {robeNames} }}",
+                $"Weapon_IDs = {{ {weaponIds} }}\nWeaponNameTable = {{ {weaponNames} }}\nExpansion_Weapon_IDs = {{ {expansion} }}",
+                out var t, out string reason), Is.True, reason);
+            return t;
+        }
+
         public static RoEmoteTable Emotes(string lua)
         {
             Assert.That(RoEmoteTable.TryRead(lua, out var t, out string reason), Is.True, reason);
