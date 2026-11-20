@@ -46,7 +46,7 @@ namespace Uninarok.RoImport.Tests.Catalog
                 new RoJob(RoJobKind.CatalogIndex, RoPath.Parse("catalog/monsters/_index")),
             }, Options());
 
-            Assert.That(report.Failures.Select(f => f.Message), Has.Some.Contains("entry converter is pending").And.Some.Contains("index converter is pending"));
+            Assert.That(report.Failures.Select(f => f.Message), Has.Some.Contains("outside a catalog run").And.Some.Contains("index converter is pending"));
         }
     }
 }

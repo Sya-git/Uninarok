@@ -19,7 +19,7 @@ namespace Uninarok.RoImport.Tests.Catalog
 {
     // TASKS-0008 T5.5 (FR-8, FR-9, FR-10, FR-12; PLAN-0008 4.7, §6): the catalog importer on a small synthetic client, written
     // to a temporary data and System folder and imported into Assets/__RoImportTests; the ledgers go to a temporary folder.
-    [Ignore("pending T5.6")]
+    [Ignore("pending T5.9: needs RoImport.Catalog")]
     public class RoCatalogImporterTests
     {
         const string Tables = "luafiles514/lua files/";
@@ -186,7 +186,7 @@ namespace Uninarok.RoImport.Tests.Catalog
             var result = Import(Options(), SpriteCatalogCategory.Monsters);
 
             Assert.That(result.Report.Failed, Is.EqualTo(1));
-            Assert.That(result.Report.Failures.Single().Item, Is.EqualTo("catalog/monsters/1100"));
+            Assert.That(result.Report.Failures.Single().Referrer, Is.EqualTo("catalog/monsters/1100"));
             Assert.That(result.Of(SpriteCatalogCategory.Monsters).Failed, Is.EqualTo(1));
             var index = AssetDatabase.LoadAssetAtPath<UnitIndex>(RoCatalogOutputPaths.Index(_roots, SpriteCatalogCategory.Monsters));
             Assert.That(index.JobIds, Is.EqualTo(new[] { 1002, 1063 }), "no partial record");

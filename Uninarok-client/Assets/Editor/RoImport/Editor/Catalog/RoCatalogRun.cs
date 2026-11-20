@@ -36,5 +36,28 @@ namespace Uninarok.RoImport.Editor.Catalog
             category == SpriteCatalogCategory.Palettes ? "palettes" : SpriteCatalogKeys.Folder(category);
 
         public bool TryGetRecord(string jobPath, out RoCatalogRecord record) => _byJob.TryGetValue(jobPath ?? string.Empty, out record);
+
+        readonly Dictionary<string, RoCatalogOutput[]> _outputs = new Dictionary<string, RoCatalogOutput[]>(StringComparer.Ordinal);
+
+        /// <summary>What the entry job of a record produced, as strings, for the index (PLAN-0008 4.7: no asset loaded to build it).</summary>
+        public void SetOutputs(string jobPath, RoCatalogOutput[] outputs) => _outputs[jobPath] = outputs;
+
+        public bool TryGetOutputs(string jobPath, out RoCatalogOutput[] outputs) => _outputs.TryGetValue(jobPath ?? string.Empty, out outputs);
+    }
+
+    /// <summary>One converted pair (or palette) of a record: its role, the asset and, for a static sprite, the sub-asset name.</summary>
+    internal sealed class RoCatalogOutput
+    {
+        public string Role;
+        /// <summary>The animation, the sheet of a static sprite, or the palette texture.</summary>
+        public string AssetPath;
+        /// <summary>The sprite's name inside its sheet; null for an animation or a palette.</summary>
+        public string SubAsset;
+        /// <summary>The sheet texture the animation or sprite draws from.</summary>
+        public string SheetPath;
+        /// <summary>Stored (deduplicated) actions of the animation; 0 for a still or a palette.</summary>
+        public int Actions;
+
+        public bool IsStill => SubAsset != null;
     }
 }
