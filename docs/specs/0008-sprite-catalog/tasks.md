@@ -161,6 +161,7 @@ Chosen in T0.4 (2026-11-20, from the data set and the decompiled tables):
   *Result (T6.1):* on the T5.9 synthetic data, `RoCatalogImporterTests.TheLookup_FindsItem2220ForAMaleKnight_AsTheHatOnItsOwn` resolves item 2220 for a male knight to `sprite/악세사리/남/남_햇.asset` alone and saves the preview frame: `evidence/t6.1-item-2220-knight-male-synthetic.png` (the synthetic test sprite). A unit, a static skill icon and a miss are checked too; `TheLookup_SaysSoWhenTheCatalogIsNotImported` checks the message. The window builds the facade from the imported indices through the AssetDatabase (`SpriteCatalog.Create`, internal, now visible to the editor assembly). The real-data check is Phase 7.
 - [ ] **T6.2** Add the play-mode assembly `Uninarok.SpriteCatalog.PlayTests` and `SpriteCatalogPlayTests`: `LoadAsync(Monsters)` then Poring 1002 → `LoadAnimation` returns the animation; `Release()` leaves no open handles. (FR-1)
   *Done when:* the play-mode test passes (command + result reported).
+  *Note (T6.2, order change):* the assembly and the test are written and compile (play mode, run through the Unity MCP: listed, ignored with the message "the monster catalog is not imported yet"). The test needs the monster catalog imported into the project with its Addressables settings, which is the first import of T7.2, so this task is ticked after T7.2's monster run.
 
 ## Phase 7: Data runs, reference checks and close
 

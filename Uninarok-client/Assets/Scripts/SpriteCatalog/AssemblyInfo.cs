@@ -4,3 +4,5 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Uninarok.SpriteCatalog.Tests")]
 // The editor's lookup preview builds the facade from the imported index assets, with no Addressables load (PLAN-0008 4.9).
 [assembly: InternalsVisibleTo("Uninarok.RoImport.Editor")]
+// The play-mode test checks that Release lets the loaded index assets go (PLAN-0008 §6).
+[assembly: InternalsVisibleTo("Uninarok.SpriteCatalog.PlayTests")]

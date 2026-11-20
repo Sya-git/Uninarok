@@ -169,6 +169,9 @@ namespace Uninarok.Catalog
             Fill(_emoteActions, f.EmoteIds, f.EmoteActions, id => id);
         }
 
+        /// <summary>True while the index assets that <see cref="LoadAsync"/> loaded are held (tests: <see cref="Release"/> lets them go).</summary>
+        internal bool HoldsLoadedAssets => _loaded.IsValid();
+
         /// <summary>Releases what <see cref="LoadAsync"/> loaded; the lookups then miss. A facade built in memory has nothing to release.</summary>
         public void Release()
         {
