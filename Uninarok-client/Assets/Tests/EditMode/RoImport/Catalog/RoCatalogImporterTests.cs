@@ -210,6 +210,22 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(result.Of(SpriteCatalogCategory.SkillIcons).Entries, Is.EqualTo(1));
         }
 
+        // TASKS-0008 T5.10 (FR-9; PLAN-0008 4.7): the window's Import is the code path (PLAN-0002 4.11).
+        [Test]
+        public void TheWindowAndTheCodePath_GiveTheSameReport()
+        {
+            var categories = new[] { SpriteCatalogCategory.Monsters, SpriteCatalogCategory.SkillIcons };
+            Import(Options(), categories);
+
+            var fromCode = Import(Options(), categories);
+            var fromWindow = RoCatalogWindow.Import(categories, force: false, Options());
+
+            Assert.That(fromWindow.Categories.Select(c => (c.Category, c.Entries, c.Sheets, c.Actions, c.Warnings, c.Failed, c.Skipped)),
+                Is.EqualTo(fromCode.Categories.Select(c => (c.Category, c.Entries, c.Sheets, c.Actions, c.Warnings, c.Failed, c.Skipped))));
+            Assert.That((fromWindow.Report.Created, fromWindow.Report.Updated, fromWindow.Report.Skipped, fromWindow.Report.Failed),
+                Is.EqualTo((fromCode.Report.Created, fromCode.Report.Updated, fromCode.Report.Skipped, fromCode.Report.Failed)));
+        }
+
         [Test]
         public void ImportingOnlyMonsters_WritesNoEquipmentAsset()
         {
