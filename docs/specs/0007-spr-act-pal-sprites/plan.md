@@ -192,20 +192,22 @@ Satisfies FR-1, FR-3, FR-5, FR-6.
 
 One table of named constants, each verified by the rules check (phase 0) against the reference viewer and pinned by tests:
 
-| Rule | Candidate | Verified by |
+| Rule | Final value (`RoSpriteRules`) | Verified by |
 |---|---|---|
-| Frame time | `AnimationSpeed × 25` ms | act-reference §4 (confirmed) |
-| Directional | action count is a multiple of 8; the caller may override it per file (R7) | rules check (8-action effects) |
-| Layer offset | pixel position of the frame's **centre** relative to the origin, X right, **Y down** | rules check |
-| Origin | the unit's ground point (feet) | rules check |
-| Pixels per unit | measured: a reference monster's height against GAT cells (`RoUnits.GatCell`) in the reference client | rules check |
-| Mirror | horizontal flip about the layer's own centre | rules check |
-| Rotation | degrees, sign verified; about the layer centre | rules check |
-| Scale | multiplies the image size; applied before rotation | rules check |
-| Tint | multiplies the frame colour, alpha included | rules check |
-| Palette index 0 | transparent whatever its stored alpha | act-reference §5 |
-| Draw order | layers in file order, later on top | rules check |
-| Loop | every action loops; the caller decides to hold the last frame (death) | rules check |
+| Frame time | `AnimationSpeed × 25` ms (`FrameUnitMs`) | act-reference §4 (confirmed) |
+| Directional | action count is a non-zero multiple of 8 (`IsDirectional`); no per-file override is needed: the 49 eight-action effects are carts with 8 distinct directions or repeat in pairs or are identical (T0.2) | rules check, T0.4 counts |
+| Layer offset | pixel position of the image **centre** relative to the origin, X right, **Y down** (`OffsetYDown`) | rules check, owner |
+| Origin | the unit's ground point (feet) | rules check, owner |
+| Pixels per unit | **35 sprite pixels per GAT cell** (`PixelsPerGatCell`), so `PixelsPerUnit` = 35 / `RoUnits.GatCell` = **70** | rules check, owner |
+| Mirror | horizontal flip about the layer's own centre, before scale and rotation (`MirrorAboutLayerCentre`) | rules check, owner |
+| Rotation | degrees, **clockwise on screen**, about the layer centre (`RotationClockwise`) | rules check, owner |
+| Scale | multiplies the image size; applied before rotation (`ScaleBeforeRotation`) | rules check, owner |
+| Tint | multiplies the frame colour, alpha included (`TintMultipliesAlphaIncluded`) | rules check, owner |
+| Palette index 0 | transparent whatever its stored alpha (`PaletteIndex0Transparent`) | act-reference §5 |
+| Draw order | layers in file order, later on top (`LaterLayersOnTop`) | rules check, owner |
+| Loop | every action loops; the caller decides to hold the last frame (death) (`EveryActionLoops`) | rules check, owner |
+
+**Rules check (TASKS T0.2, 2026-11-19).** Contact sheets of the reference set (poring in 8 directions and all animations, a true-colour monster, body + head on the anchor, swordsman with sword and trail, NPC, emote, garment class ACT on the root sheet, ground item, an 8-action cart) were drawn under these values on a GAT-cell grid; the owner compared them with the reference viewer (poring, true-colour monster, sword, and lunatic for the full set of rules) and confirmed every rule unchanged.
 
 A rules change touches this table and its pinning tests only, and raises `RoSpriteConverter.RulesVersion`.
 
@@ -361,7 +363,7 @@ Satisfies every FR. EditMode NUnit. Data-dependent tests are `[Category("NeedsDa
 | D14 (T5.2) | Converter details: (a) the sheet index is loaded once per run and saved with the ledgers (`RoImportContext.SaveWithLedgers`), not after every sheet; (b) every check (versions from the header, GRF read, compile against the SPR's counts, packing) runs before anything is written, so a bad file leaves no sheet either; (c) offset sprites `f<slot>@x_y` that other ACTs added to a shared sheet are kept when the sheet is rewritten; (d) a run asks for palettes with `RoImportOptions.SpritePalettes` (`RoImportContext.SpritePalettes`), a later spec per pair with `RoSpriteOptions`; (e) the sheet index records each sheet's indexed-frame count, so a current static sprite is found without reading the SPR; (f) the adapters expose `TryReadVersion` (header bytes only) because GRF refuses SPR 1.x itself | Saving the index per sheet (about 17,000 rewrites of a growing file in a full run); writing the sheet before checking the ACT (a reusable but unasked-for sheet on failure) |
 | D15 (T5.4) | `SpriteActor.Step(seconds)` advances one actor alone, for tools and the editor preview (which must not tick the scene's actors); in the game only `SpriteSystem` advances actors | Exposing `SpriteSystem.Tick` to the editor (it advances every actor); a second preview-only player |
 
-D6 approved by the owner (2026-11-19): RGBA32 now; the full-data run measures the real total and the owner decides on R1's options from that number. D3–D5 approved by the owner with the plan (2026-11-19).
+D6 approved by the owner (2026-11-19): RGBA32 now; the full-data run measures the real total and the owner decides on R1's options from that number. **R1 decided by the owner (2026-11-19), after the sample run of §9: keep RGBA32** (uncompressed, pixel-exact). D3–D5 approved by the owner with the plan (2026-11-19).
 
 ## 9. Risks
 
