@@ -36,6 +36,9 @@ namespace Uninarok.RoImport.Editor.Pipeline
         /// <summary>The client's <c>System</c> folder (item and scale tables, PLAN-0008 4.2); null: <see cref="RoSourceLocation.ResolveSystem"/>.</summary>
         public IRoSource SystemSource;
 
+        /// <summary>Test hook: the folder of the own catalog CSV tables; null: the project's (PLAN-0008 4.2).</summary>
+        internal string CatalogOwnTablesFolder;
+
         /// <summary>The catalog run the catalog converters work from (PLAN-0008 4.7); set by the catalog importer.</summary>
         internal Uninarok.RoImport.Editor.Catalog.RoCatalogRun CatalogPlan;
 
@@ -153,6 +156,17 @@ namespace Uninarok.RoImport.Editor.Pipeline
             using (var session = new Session(options))
                 return Sprites.RoPaletteConverter.ConvertPalette(session.Context, path);
         }
+
+        /// <summary>
+        /// Imports the sprite catalog of <paramref name="categories"/> (SPEC-0008 FR-9; PLAN-0008 4.7): the tables they need, their
+        /// plan, one job per record, then one index job per category; the report has the numbers of each category.
+        /// </summary>
+        public static global::Uninarok.RoImport.Editor.Catalog.RoCatalogReport Catalog(Uninarok.Catalog.SpriteCatalogCategory[] categories, RoImportOptions options = null) =>
+            throw new NotImplementedException("pending T5.9");
+
+        /// <summary>Every category of the catalog (PLAN-0008 4.7).</summary>
+        public static global::Uninarok.RoImport.Editor.Catalog.RoCatalogReport CatalogAll(RoImportOptions options = null) =>
+            Catalog((Uninarok.Catalog.SpriteCatalogCategory[])Enum.GetValues(typeof(Uninarok.Catalog.SpriteCatalogCategory)), options);
 
         /// <summary>Runs a batch (plan 4.10): continues past failures and returns the report, whose summary lists them.</summary>
         public static RoReport Run(IEnumerable<RoJob> jobs, RoImportOptions options = null) => RoBatch.Run(jobs, options);
