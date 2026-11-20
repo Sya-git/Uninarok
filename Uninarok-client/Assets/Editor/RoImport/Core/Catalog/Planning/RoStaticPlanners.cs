@@ -137,7 +137,40 @@ namespace Uninarok.RoImport.Core.Catalog.Planning
         public SpriteCatalogCategory Category => SpriteCatalogCategory.Effects;
         public RoCatalogNeeds Needs => RoCatalogNeeds.Emotes;
 
-        public void Plan(RoCatalogContext ctx, RoCatalogPlan.Builder plan) => throw new NotImplementedException("pending T4.5");
+        public const string Role = "effect";
+
+        public void Plan(RoCatalogContext ctx, RoCatalogPlan.Builder plan)
+        {
+            string prefix = RoFileNames.SpriteFolder(Folder);
+            var files = ctx.Files(prefix);
+            var emotes = ctx.Tables.Emotes;
+            bool emoteSet = false;
+
+            foreach (var spr in files.All)
+            {
+                if (spr.Extension != RoFileNames.SprExtension) continue;
+                string key = RoFileNames.StemUnder(spr, prefix);
+                var act = spr.WithExtension(RoFileNames.ActExtension);
+                var pair = files.Contains(act) ? new RoCatalogPair(act, spr, Role) : new RoCatalogPair(default, spr, Role);
+                var values = new List<RoCatalogValue> { RoCatalogValue.Of("name", key) };
+                if (key == EmoteSet)
+                {
+                    emoteSet = true;
+                    // Action = emote id (Candidate, sprite-catalog.md §3.10), in id order.
+                    if (emotes != null)
+                        foreach (var e in emotes.Ids.OrderBy(e => e.Value).ThenBy(e => e.Key, StringComparer.Ordinal))
+                            values.Add(RoCatalogValue.Of(EmoteValuePrefix + e.Key, e.Value));
+                }
+                plan.Add(Category, key, new[] { pair }, values);
+            }
+
+            foreach (var path in files.All)
+                if (path.Extension == RoFileNames.ActExtension && !files.Contains(path.WithExtension(RoFileNames.SprExtension)))
+                    plan.Gap(RoIssueCode.CatalogOrphanAct, Category, path.Canonical, "the ACT has no SPR");
+
+            if (!emoteSet)
+                plan.Gap(RoIssueCode.CatalogNameWithoutFile, Category, RoFileNames.Spr(Folder, EmoteSet).Canonical, "the emote set has no sprite");
+        }
     }
 
     /// <summary>File helpers shared by the static planners (PLAN-0008 4.3.8, 4.3.9).</summary>

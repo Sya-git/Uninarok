@@ -93,8 +93,9 @@ Chosen in T0.4 (2026-11-20, from the data set and the decompiled tables):
 - [x] **T4.4** Implement the planners of ground items and skill icons (one scan of `아이템/` shared). (FR-5, FR-7, FR-10)
   *Done when:* the static tests for these two pass; the real-data run reports records and gaps (17,079 of 17,482 Portuguese items have a ground sprite; 1,295 of 1,806 `SKID` entries have an icon).
   *Result (T4.4):* 17,079 of 17,482 items have an identified ground sprite (7,196 distinct resources; 428 orphan ACTs, 29 names without a file, 6 orphan SPRs); 1,295 skill icons over 1,801 skill ids (1,806 constants), 305 player skills without an icon plus one summary gap for `NPC_*`. Pinned by `RoStaticPlannerTests.TheClientData_GroundItemsAndSkillIcons`.
-- [ ] **T4.5** Implement the effects planner (whole `이팩트/` by name, emote set). (FR-6, FR-10)
+- [x] **T4.5** Implement the effects planner (whole `이팩트/` by name, emote set). (FR-6, FR-10)
   *Done when:* the remaining static tests pass; the real-data run reports the record count.
+  *Result (T4.5):* 225 effect records (as the survey), 47 in subfolders, 1 still (SPR only); the emote set carries all 88 `ET_*` ids; 10 orphan ACTs (`emotion_index*`, and baby carts and falcon such as `베이비손수레*.act`, `베이비매.act`, which have no SPR of their own). Pinned by `RoStaticPlannerTests.TheClientData_Effects`.
 - [ ] **T4.6** Write `RoBodyPlannerTests`, `RoHeadPlannerTests`, `RoEquipmentPlannerTests`: class table rows → variants (mount, outfit, costume, doram); palettes by colour number; stray names ignored with one warning; headgear sex and doram slots; garment root sheet vs own SPR vs `_doram`; weapon suffix → item-id → base type order (OQ-3); trail pairs; shield names and item-id records; unreferenced files reported. Marked `[Ignore("pending T4.7")]` and so on. (FR-2, FR-3, FR-4, FR-10)
   *Done when:* the tests compile and are listed as ignored.
 - [ ] **T4.7** Implement the body and head planners (palettes of their own records only). (FR-2, FR-3, FR-10)

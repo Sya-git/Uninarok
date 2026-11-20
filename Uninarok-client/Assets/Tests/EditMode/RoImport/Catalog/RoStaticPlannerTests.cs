@@ -87,7 +87,6 @@ namespace Uninarok.RoImport.Tests.Catalog
         }
 
         [Test]
-        [Ignore("pending T4.5")]
         public void EffectsAreByName_WithStillSprites_AndOrphans()
         {
             var files = Pairs("sprite/이팩트/cart", "sprite/이팩트/sub/glow", "sprite/이팩트/emotion")
@@ -100,7 +99,6 @@ namespace Uninarok.RoImport.Tests.Catalog
         }
 
         [Test]
-        [Ignore("pending T4.5")]
         public void TheEmoteSet_CarriesTheEmoteIds()
         {
             var emotes = RoCatalogTables.Create(emotes: Emotes("ET_SURPRISE = 0\nET_QUESTION = 1"));
@@ -112,6 +110,29 @@ namespace Uninarok.RoImport.Tests.Catalog
 
             var missing = Plan(new RoEffectPlanner(), emotes, Pairs("sprite/이팩트/cart"));
             Assert.That(missing.Gaps.Single(g => g.Code == RoIssueCode.CatalogNameWithoutFile).Item, Does.Contain("emotion"));
+        }
+
+        // T4.5 real-data run (2026-11-20): 225 effect sprites (as the survey of sprite-catalog.md §2), 88 emotes, 10 orphan ACTs.
+        [Test, Category(CatalogTestFiles.Category)]
+        public void TheClientData_Effects()
+        {
+            var data = new Uninarok.RoImport.Core.Source.RoFolderSource(CatalogTestFiles.DataRoot);
+            var report = new RoReport();
+            var tables = RoCatalogTables.Load(data, null, RoCatalogNeeds.Emotes, RoItemTableLanguage.Portuguese, report);
+            var plan = PlanData(new RoEffectPlanner(), tables, data);
+
+            Assert.That(report.Issues, Is.Empty);
+            Assert.That(plan.Records.Count, Is.EqualTo(225));
+            Assert.That(plan.Records.Single(r => r.Key == RoEffectPlanner.EmoteSet).Values.Count(v => v.Name.StartsWith(RoEffectPlanner.EmoteValuePrefix)), Is.EqualTo(88));
+            Assert.That(plan.Records.Any(r => r.Key == "손수레") && plan.Records.Any(r => r.Key == "매"), Is.True, "the cart and the falcon by name");
+            Assert.That(plan.Gaps.Count(g => g.Code == RoIssueCode.CatalogOrphanAct), Is.EqualTo(10));
+        }
+
+        static RoCatalogPlan PlanData(IRoCatalogPlanner planner, RoCatalogTables tables, Uninarok.RoImport.Core.Source.IRoSource data)
+        {
+            var b = new RoCatalogPlan.Builder();
+            planner.Plan(new RoCatalogContext(data, tables), b);
+            return b.Build();
         }
     }
 }
