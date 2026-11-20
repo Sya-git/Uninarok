@@ -86,7 +86,7 @@ namespace Uninarok.RoImport.Tests.Catalog
                 "sprite/로브/천사날개/남/abyss_chaser_남.act",
             }));
 
-        [Test, Ignore("pending T4.9")]
+        [Test]
         public void AClassActTakesItsOwnSpr_ElseTheRootSheet_ElseTheDoramSheet()
         {
             var wings = Record(Garments(), RoCatalogKeys.Garment(1));
@@ -98,7 +98,7 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(PairOf(wings, RoCatalogRoles.Garment(PlayerJob.JOB_SUMMONER, M, D)).Spr.Canonical, Is.EqualTo("sprite/로브/천사날개/천사날개_doram.spr"));
         }
 
-        [Test, Ignore("pending T4.9")]
+        [Test]
         public void TheRootActIsTheAnyClassSlot()
         {
             var wings = Record(Garments(), RoCatalogKeys.Garment(1));
@@ -107,13 +107,34 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(PairOf(wings, RoCatalogRoles.GarmentRoot(D)).Spr.Canonical, Is.EqualTo("sprite/로브/천사날개/천사날개_doram.spr"));
         }
 
-        [Test, Ignore("pending T4.9")]
+        [Test]
         public void AnActOfABodyNotInTheTable_IsStray_AndAGarmentWithoutAFolderIsWarned()
         {
             var plan = Garments();
 
-            Assert.That(plan.Gaps.Single(g => g.Code == RoIssueCode.CatalogStrayFile).Item, Is.EqualTo("sprite/로브/천사날개/남/abyss_chaser_남.act"));
+            var stray = plan.Gaps.Single(g => g.Code == RoIssueCode.CatalogStrayFile);
+            Assert.That(stray.Item, Is.EqualTo("sprite/로브/*/남/abyss_chaser_남"), "one warning per body name, not per garment");
+            Assert.That(stray.Message, Does.Contain("sprite/로브/천사날개/남/abyss_chaser_남.act"));
             Assert.That(plan.Gaps.Single(g => g.Code == RoIssueCode.CatalogNameWithoutFile).Item, Does.Contain("없는"));
+        }
+
+        // T4.9 real-data run (2026-11-20): 222 of 330 garments planned; 천사날개 has the root slots, 130 class slots with their own
+        // SPR and 2 (rebellion) on the root sheet; 4th-class ACTs are one stray each.
+        [Test, Category(CatalogTestFiles.Category)]
+        public void TheClientData_Garments()
+        {
+            var plan = ClientPlan(new RoGarmentPlanner(), out var report);
+            var wings = Record(plan, RoCatalogKeys.Garment(1));
+
+            Assert.That(report.Issues, Is.Empty);
+            Assert.That(plan.Records.Count, Is.EqualTo(222));
+            Assert.That(plan.Gaps.Count(g => g.Code == RoIssueCode.CatalogNameWithoutFile), Is.EqualTo(108));
+            Assert.That(wings.Value("name"), Is.EqualTo("천사날개"));
+            Assert.That(wings.Pairs.Count, Is.EqualTo(134));
+            Assert.That(PairOf(wings, RoCatalogRoles.Garment(PlayerJob.JOB_KNIGHT, M, H)).Spr.Canonical, Is.EqualTo("sprite/로브/천사날개/남/기사_남.spr"));
+            Assert.That(PairOf(wings, RoCatalogRoles.Garment(PlayerJob.JOB_REBELLION, M, H)).Spr.Canonical, Is.EqualTo("sprite/로브/천사날개/천사날개.spr"));
+            Assert.That(PairOf(wings, RoCatalogRoles.GarmentRoot(H)).Act.Canonical, Is.EqualTo("sprite/로브/천사날개/천사날개.act"));
+            Assert.That(plan.Gaps.Any(g => g.Item == "sprite/로브/*/남/abyss_chaser_남"), Is.True);
         }
 
         // ---- weapons (4.3.6) ----

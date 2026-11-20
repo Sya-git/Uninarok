@@ -38,6 +38,40 @@ namespace Uninarok.RoImport.Core.Catalog.Planning
             return false;
         }
 
+        /// <summary>The class table row of a body name, human first (a body name is unique per race).</summary>
+        public static bool TryBody(RoOwnTables own, string bodyName, out RoClassBody body) =>
+            own.TryGetBody(bodyName, false, out body) || own.TryGetBody(bodyName, true, out body);
+
+        /// <summary>
+        /// Unclaimed files grouped by their first folder under <paramref name="root"/>: one <see cref="RoIssueCode.CatalogFileWithoutName"/>
+        /// per folder no table names (a whole garment nobody refers to), one per file for files directly in a named folder.
+        /// </summary>
+        public static void ReportUnclaimedFolders(RoCatalogContext.FileSet files, HashSet<RoPath> claimed, string root, SpriteCatalogCategory category,
+                                                  RoCatalogPlan.Builder plan, string message)
+        {
+            var claimedFolders = new HashSet<string>(claimed.Select(p => FirstFolder(p, root)), StringComparer.Ordinal);
+            var reported = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var path in files.All)
+            {
+                if (claimed.Contains(path)) continue;
+                string folder = FirstFolder(path, root);
+                if (folder == null || claimedFolders.Contains(folder))
+                {
+                    if (path.Extension == RoFileNames.SprExtension
+                        || (path.Extension == RoFileNames.ActExtension && !files.Contains(path.WithExtension(RoFileNames.SprExtension))))
+                        plan.Gap(RoIssueCode.CatalogFileWithoutName, category, path.Canonical, "no slot uses this file");
+                }
+                else if (reported.Add(folder)) plan.Gap(RoIssueCode.CatalogFileWithoutName, category, root + folder + "/", message);
+            }
+        }
+
+        static string FirstFolder(RoPath path, string root)
+        {
+            string rest = path.Canonical.Substring(root.Length);
+            int slash = rest.IndexOf('/');
+            return slash < 0 ? null : rest.Substring(0, slash);
+        }
+
         /// <summary>One <see cref="RoIssueCode.CatalogFileWithoutName"/> per unclaimed sprite stem (its SPR, else its ACT).</summary>
         public static void ReportUnclaimed(RoCatalogContext.FileSet files, HashSet<RoPath> claimed, SpriteCatalogCategory category,
                                            RoCatalogPlan.Builder plan, string message)
@@ -49,6 +83,33 @@ namespace Uninarok.RoImport.Core.Catalog.Planning
                     || (path.Extension == RoFileNames.ActExtension && !files.Contains(path.WithExtension(RoFileNames.SprExtension))))
                     plan.Gap(RoIssueCode.CatalogFileWithoutName, category, path.Canonical, message);
             }
+        }
+    }
+
+    /// <summary>
+    /// Body names that share one equipment slot (PLAN-0008 D20): the Base row wins, else the first offered; the files left out
+    /// are counted and reported once per category.
+    /// </summary>
+    sealed class RoSharedSlots
+    {
+        int _dropped;
+
+        public void Offer<T>(Dictionary<string, (RoClassBody body, T pair)> slots, string role, RoClassBody body, T pair)
+        {
+            if (!slots.TryGetValue(role, out var held))
+            {
+                slots.Add(role, (body, pair));
+                return;
+            }
+            _dropped++;
+            if (body.Kind == "Base" && held.body.Kind != "Base") slots[role] = (body, pair);
+        }
+
+        public void Report(SpriteCatalogCategory category, RoCatalogPlan.Builder plan)
+        {
+            if (_dropped > 0)
+                plan.Gap(RoIssueCode.CatalogStrayFile, category, $"{category}: shared slots",
+                    $"{_dropped} files of outfits and all-class mounts share their class's slot and are not used (PLAN-0008 D20)");
         }
     }
 
@@ -109,10 +170,92 @@ namespace Uninarok.RoImport.Core.Catalog.Planning
     {
         public const string Folder = "로브";
 
+        public const string DoramSheetSuffix = "_doram";
+
         public SpriteCatalogCategory Category => SpriteCatalogCategory.Garments;
         public RoCatalogNeeds Needs => RoCatalogNeeds.ViewIds | RoCatalogNeeds.Own;
 
-        public void Plan(RoCatalogContext ctx, RoCatalogPlan.Builder plan) => throw new NotImplementedException("pending T4.9");
+        public void Plan(RoCatalogContext ctx, RoCatalogPlan.Builder plan)
+        {
+            var views = ctx.Tables.ViewIds;
+            var own = ctx.Tables.Own;
+            if (views == null || own == null) return;
+            string root = RoFileNames.SpriteFolder(Folder);
+            var files = ctx.Files(root);
+            var claimed = new HashSet<RoPath>();
+            var shared = new RoSharedSlots();
+
+            foreach (int id in views.GarmentConstants.Values.Distinct().OrderBy(i => i))
+            {
+                if (!views.GarmentFolders.TryGetValue(id, out string name) || string.IsNullOrWhiteSpace(name)
+                    || !RoPath.TryParse(root + name, out var folderPath))
+                {
+                    plan.Gap(RoIssueCode.CatalogNameWithoutFile, Category, $"RobeNameTable[{id}]", $"garment view id {id} has no folder name");
+                    continue;
+                }
+                string prefix = folderPath.Canonical + "/";
+                string folder = Folder + "/" + name;
+                var rootAct = RoFileNames.Act(folder, name);
+                var rootSpr = RoFileNames.Spr(folder, name);
+                var doramSpr = RoFileNames.Spr(folder, name + DoramSheetSuffix);
+                bool hasRoot = files.Contains(rootSpr), hasDoram = files.Contains(doramSpr);
+                var pairs = new List<RoCatalogPair>();
+                var slots = new Dictionary<string, (RoClassBody body, RoCatalogPair pair)>(StringComparer.Ordinal);
+
+                if (files.Contains(rootAct) && hasRoot) pairs.Add(new RoCatalogPair(rootAct, rootSpr, RoCatalogRoles.GarmentRoot(SpriteRace.Human)));
+                if (files.Contains(rootAct) && hasDoram) pairs.Add(new RoCatalogPair(rootAct, doramSpr, RoCatalogRoles.GarmentRoot(SpriteRace.Doram)));
+                foreach (var p in new[] { rootAct, rootSpr, doramSpr }) if (files.Contains(p)) claimed.Add(p);
+
+                foreach (var sex in RoEquipmentFiles.Sexes)
+                {
+                    string marker = RoCatalogRoles.SexMarker(sex);
+                    string sexPrefix = prefix + marker + "/";
+                    foreach (var act in files.Under(sexPrefix).Where(p => p.Extension == RoFileNames.ActExtension).ToList())
+                    {
+                        claimed.Add(act);
+                        string stem = RoFileNames.StemUnder(act, sexPrefix);
+                        string suffix = "_" + marker;
+                        if (!stem.EndsWith(suffix, StringComparison.Ordinal) || stem.Length == suffix.Length
+                            || !RoEquipmentFiles.TryBody(own, stem.Substring(0, stem.Length - suffix.Length), out var body))
+                        {
+                            // Its own SPR goes with it; one warning per body name across every garment (4th classes are in most).
+                            claimed.Add(act.WithExtension(RoFileNames.SprExtension));
+                            plan.Gap(RoIssueCode.CatalogStrayFile, Category, $"{root}*/{marker}/{stem}",
+                                "a garment ACT of a body the class table does not have (first seen: " + act.Canonical + ")");
+                            continue;
+                        }
+                        var race = body.Doram ? SpriteRace.Doram : SpriteRace.Human;
+                        var ownSpr = act.WithExtension(RoFileNames.SprExtension);
+                        RoPath sheet;
+                        if (files.Contains(ownSpr))
+                        {
+                            sheet = ownSpr;
+                            claimed.Add(ownSpr);
+                        }
+                        else if (race == SpriteRace.Doram && hasDoram) sheet = doramSpr;
+                        else if (hasRoot) sheet = rootSpr;
+                        else
+                        {
+                            plan.Gap(RoIssueCode.CatalogOrphanAct, Category, act.Canonical, "the ACT has no SPR of its own and the garment no root sheet");
+                            continue;
+                        }
+                        string role = RoCatalogRoles.Garment(body.Job, sex, race);
+                        shared.Offer(slots, role, body, new RoCatalogPair(act, sheet, role));
+                    }
+                }
+
+                pairs.AddRange(slots.Values.Select(s => s.pair));
+                if (pairs.Count == 0)
+                {
+                    plan.Gap(RoIssueCode.CatalogNameWithoutFile, Category, prefix, $"garment view id {id} ({name}) has no sprite");
+                    continue;
+                }
+                plan.Add(Category, RoCatalogKeys.Garment(id), pairs, new[] { RoCatalogValue.Of("viewId", id), RoCatalogValue.Of("name", name) });
+            }
+
+            RoEquipmentFiles.ReportUnclaimedFolders(files, claimed, root, Category, plan, "no RobeNameTable name refers to this garment folder");
+            shared.Report(Category, plan);
+        }
     }
 
     /// <summary>

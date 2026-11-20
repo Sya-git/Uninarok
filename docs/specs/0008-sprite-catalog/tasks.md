@@ -105,8 +105,9 @@ Chosen in T0.4 (2026-11-20, from the data set and the decompiled tables):
 - [x] **T4.8** Implement the headgear planner. (FR-4, FR-10)
   *Done when:* the headgear tests pass; the real-data run reports 2,266 of 2,859 ids with a file and 593 warnings (plan §4.3.4).
   *Result (T4.8):* 2,266 of 2,859 ids planned (4,705 slots, 173 doram), 593 ids without a file, 154 files no name refers to. Pinned by `RoEquipmentPlannerTests.TheClientData_Headgears`.
-- [ ] **T4.9** Implement the garment planner (root sheet or doram sheet unless the job has its own SPR). (FR-4, FR-10)
+- [x] **T4.9** Implement the garment planner (root sheet or doram sheet unless the job has its own SPR). (FR-4, FR-10)
   *Done when:* the garment tests pass; on `천사날개` the plan has the pairs of every class file and the root sheet for those without their own SPR (reported).
+  *Result (T4.9):* 222 of 330 garment ids planned (28,816 slots), 108 without a folder or file. `천사날개` (garment-0001): 134 slots = 2 root (human, doram) + 130 class ACTs with their own SPR + 2 on the root sheet (rebellion male and female); 120 of its 366 class ACTs are 4th-class bodies (stray) and the rest of the difference are outfit and all-class-mount ACTs sharing their class's slot (plan D20). Strays are now one per body name (433), not one per file (plan 4.3.5 note). Pinned by `RoEquipmentPlannerTests.TheClientData_Garments`.
 - [ ] **T4.10** Implement the weapon planner (view-id records, item-id records, trails, fallback to the base type). (FR-4, FR-10)
   *Done when:* the weapon tests pass; item 1201 plans the short-sword weapon for a swordman; the item-id file of T0.4 gets its own record (reported).
 - [ ] **T4.11** Implement the shield planner. (FR-4, FR-10)

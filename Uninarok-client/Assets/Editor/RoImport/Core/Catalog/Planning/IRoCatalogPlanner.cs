@@ -65,6 +65,20 @@ namespace Uninarok.RoImport.Core.Catalog.Planning
             public IReadOnlyList<RoPath> All { get; }
             public int Count => All.Count;
             public bool Contains(RoPath path) => _set.Contains(path);
+
+            /// <summary>The files whose canonical path starts with <paramref name="prefix"/>, by binary search over the sorted list.</summary>
+            public IEnumerable<RoPath> Under(string prefix)
+            {
+                int lo = 0, hi = All.Count;
+                while (lo < hi)
+                {
+                    int mid = (lo + hi) >> 1;
+                    if (string.CompareOrdinal(All[mid].Canonical, prefix) < 0) lo = mid + 1;
+                    else hi = mid;
+                }
+                for (int i = lo; i < All.Count && All[i].Canonical.StartsWith(prefix, StringComparison.Ordinal); i++)
+                    yield return All[i];
+            }
         }
     }
 }
