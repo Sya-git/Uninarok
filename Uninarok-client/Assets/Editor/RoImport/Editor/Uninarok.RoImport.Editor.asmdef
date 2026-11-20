@@ -6,7 +6,10 @@
         "Uninarok.Map",
         "Unity.2D.Sprite.Editor",
         "Uninarok.Sprites",
-        "Uninarok.SpriteCatalog"
+        "Uninarok.SpriteCatalog",
+        "Unity.Addressables",
+        "Unity.Addressables.Editor",
+        "Unity.ResourceManager"
     ],
     "includePlatforms": [
         "Editor"

@@ -9,7 +9,10 @@
         "Uninarok.Map",
         "Uninarok.Sprites",
         "Uninarok.Networking",
-        "Uninarok.SpriteCatalog"
+        "Uninarok.SpriteCatalog",
+        "Unity.Addressables",
+        "Unity.Addressables.Editor",
+        "Unity.ResourceManager"
     ],
     "includePlatforms": [
         "Editor"
