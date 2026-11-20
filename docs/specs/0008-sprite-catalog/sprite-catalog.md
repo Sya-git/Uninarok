@@ -28,7 +28,7 @@ All `.lub` files are Lua 5.1 bytecode (header `ESC L u a Q`). GRF's `Lub` class 
 | `PCJobNameTableMan`/`Woman` | `datainfo/pcjobnamegender*.lub` | player job id → **display name** (localised, not a file name) | UI only |
 | `ACCESSORY_IDs` | `datainfo/accessoryid.lub` | constant → **headgear view id** (`ACCESSORY_GOGGLES = 1`), 2,859 entries | headgear id |
 | `AccNameTable` | `datainfo/accname.lub` | view id → **headgear file stem** (`"_고글"`) | headgear file |
-| `SPRITE_ROBE_IDs` | `datainfo/spriterobeid.lub` | constant → **garment view id** (`ROBE_WINGS = 1`), 331 ids | garment id |
+| `SPRITE_ROBE_IDs` | `datainfo/spriterobeid.lub` | constant → **garment view id** (`ROBE_WINGS = 1`), 330 ids (1–331, 168 unused; T2.5) | garment id |
 | `RobeNameTable` (+ `_Eng`), `RobeTopLayer` | `datainfo/spriterobename.lub` | garment view id → **garment folder name** (`"천사날개"`); list of garments drawn above the body | garment folder; layer order (later spec) |
 | `Weapon_IDs` | `datainfo/weapontable.lub` | constant → **weapon view id** (0–102 plus named expansions) | weapon id |
 | `WeaponNameTable` | same file | weapon view id → **weapon file suffix** (`"_검"`, `"_1207"`) | weapon file |

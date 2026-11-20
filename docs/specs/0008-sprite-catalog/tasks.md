@@ -54,7 +54,7 @@ Chosen in T0.4 (2026-11-20, from the data set and the decompiled tables):
   *Done when:* the tests pass; `RoArchitectureTests` still pass (only the adapter touches GRF).
 - [x] **T2.4** Implement `RoJobTables` (`jobtbl` from `npcidentity.lub`, `JTtbl` from `jobidentity.lub`, `JobNameTable` from `jobname.lub`, read in dependency order) with tests (`NeedsData`: `JobNameTable` has 5,300 entries, Poring 1002 → `PORING`; a synthetic case for the import order). (FR-1, FR-2)
   *Done when:* the tests pass and report the counts.
-- [ ] **T2.5** Implement `RoViewIdTables` (`ACCESSORY_IDs`, `AccNameTable`, `SPRITE_ROBE_IDs`, `RobeNameTable`, `Weapon_IDs`, `WeaponNameTable`, `Expansion_Weapon_IDs`) with tests (`NeedsData`: headgear 1 → goggles stem, garment 1 → `천사날개`, a specific weapon id → its base type). (FR-4)
+- [x] **T2.5** Implement `RoViewIdTables` (`ACCESSORY_IDs`, `AccNameTable`, `SPRITE_ROBE_IDs`, `RobeNameTable`, `Weapon_IDs`, `WeaponNameTable`, `Expansion_Weapon_IDs`) with tests (`NeedsData`: headgear 1 → goggles stem, garment 1 → `천사날개`, a specific weapon id → its base type). (FR-4)
   *Done when:* the tests pass and report the counts (headgear ids 2,859; garment ids 331).
 - [ ] **T2.6** Implement `RoItemTable` (`SkipField` keeps `identifiedResourceName`, `unidentifiedResourceName`, `ClassNum`) and the enum `RoItemTableLanguage` (in Core, so the reader can take it; the settings of T5.1 use it; note this placement under `plan.md` §4.8) with tests (`NeedsData`: Portuguese 17,482 items, English 17,906; item 501 → `빨간포션`, 1201 → ClassNum 1, 2220 → ClassNum 16). (FR-4, FR-5, FR-12)
   *Done when:* the tests pass; parse time and managed memory of the Portuguese table are reported.
