@@ -39,6 +39,20 @@ namespace Uninarok.RoImport.Tests.Catalog
         /// <summary>The bytes of <c>System/&lt;relative&gt;</c>.</summary>
         public static byte[] System(string relative) => Read(SystemRoot, relative);
 
+        /// <summary>The decompiled text of <c>data/luafiles514/lua files/&lt;relative&gt;</c> (CP949).</summary>
+        public static string TableLua(string relative) => Lua(Data(Tables + relative), Uninarok.RoImport.Core.Formats.RoLubEncoding.Cp949, relative);
+
+        /// <summary>The decompiled text of <c>System/&lt;relative&gt;</c>.</summary>
+        public static string SystemLua(string relative, Uninarok.RoImport.Core.Formats.RoLubEncoding encoding) => Lua(System(relative), encoding, relative);
+
+        static string Lua(byte[] bytes, Uninarok.RoImport.Core.Formats.RoLubEncoding encoding, string relative)
+        {
+            bool ok = Uninarok.RoImport.Core.Formats.RoLubReader.TryRead(Uninarok.RoImport.Core.Paths.RoPath.Parse(relative), bytes, encoding,
+                out string lua, out string reason);
+            Assert.That(ok, Is.True, reason);
+            return lua;
+        }
+
         static byte[] Read(string root, string relative)
         {
             string file = Path.Combine(root, relative);
