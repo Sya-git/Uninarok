@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [spec.md](spec.md) (SPEC-0007 revision 3, approved 2026-11-19) |
-| **Status** | Approved (by the owner, 2026-11-19) |
+| **Status** | Implemented (2026-11-19) |
 | **Audience** | Architects, senior developers, AI agents |
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. Format facts come from [act-reference.md](act-reference.md). Shared import rules (paths, source, writer, ledger, results, batch, menu, window) come from [PLAN-0002](../0002-ro-import-foundation/plan.md). This plan replaces the earlier draft (animator controllers and clips per file, withdrawn by spec §6).
@@ -379,16 +379,18 @@ D6 approved by the owner (2026-11-19): RGBA32 now; the full-data run measures th
 
 ## 10. Traceability
 
-| FR | Plan sections |
-|---|---|
-| FR-1 | 4.1, 4.2, 4.3, 4.7, 6 |
-| FR-2 | 2, 4.2, 4.4, 6 |
-| FR-3 | 4.1, 4.3, 4.5, 4.6, 6 |
-| FR-4 | 4.5, 6 |
-| FR-5 | 4.3, 4.5, 4.6, 6 |
-| FR-6 | 4.3, 4.5, 4.6, 6 |
-| FR-7 | 4.2, 4.4, 4.7, 6 |
-| FR-8 | 4.1, 4.4, 5, 6 |
-| FR-9 | 4.2, 4.4, 5, 6 |
-| FR-10 | 4.8, 6 |
-| FR-11 | 4.4, 6 |
+Closing check (TASKS T7.3, 2026-11-19): the 157 tests of `Uninarok.Sprites.Tests`, `Uninarok.RoImport.Tests.Sprites` and `RoArchitectureTests` pass.
+
+| FR | Plan sections | Passing tests and recorded evidence |
+|---|---|---|
+| FR-1 | 4.1, 4.2, 4.3, 4.7, 6 | `RoSprReaderTests`, `RoSpriteSheetPackerTests`, `RoSpriteSheetPixelsTests`, `RoSpriteSheetWriterTests`, `SpritePaletteTests`, `RoSpriteReferenceTests`; T7.1 bright/dark ground at 1× and 4× (owner) |
+| FR-2 | 2, 4.2, 4.4, 6 | `RoSpriteSheetIndexTests`, `RoSpriteConverterTests` (identical SPR reuses the sheet, ACT against another file's sheet), `RoSpriteReferenceTests` (one sheet per distinct content); T6.2 sample: 1,053 ACTs → 685 sheets |
+| FR-3 | 4.1, 4.3, 4.5, 4.6, 6 | `RoActReaderTests`, `RoActCompilerTests`, `RoSpriteRulesTests`, `SpriteAnimationLookupTests`, `SpriteActorTests`, `SpriteSystemTests`; T0.2 rules and T7.1 (owner) |
+| FR-4 | 4.5, 6 | `RoActCompilerTests`, `RoSpriteReferenceTests` (poring stores 36 of 72) |
+| FR-5 | 4.3, 4.5, 4.6, 6 | `SpriteAnimationLookupTests`, `SpriteActorTests`, `RoActCompilerTests`, `RoSpriteConverterTests` (weapon), `RoSpriteReferenceTests` (sword empty walking, drawn in attack 2); T5.4 preview fallback / draw nothing |
+| FR-6 | 4.3, 4.5, 4.6, 6 | `SpriteActorTests` (anchors), `RoSpriteRulesTests`; T7.1 head on the anchor and units on GAT cells (owner; the pitched-camera ground contact is the display spec's, `BACKLOG.md`) |
+| FR-7 | 4.2, 4.4, 4.7, 6 | `RoPalReaderTests`, `RoPaletteConverterTests`, `SpritePaletteTests`, `RoSpriteSheetPixelsTests`; T5.4 and T7.1 body with two cloth palettes (owner) |
+| FR-8 | 4.1, 4.4, 5, 6 | reader truncation tests, `RoSpriteConverterTests` (out of range, corrupt, missing SPR, unsupported version: one issue, no output); T6.2 0 failures |
+| FR-9 | 4.2, 4.4, 5, 6 | `RoSpriteSheetWriterTests` (second write changes nothing), `RoSpriteSheetIndexTests`, `RoSpriteConverterTests` (second run skipped, forced run keeps GUIDs, ids and bytes, changed SPR converts again); T6.2 second run 4.0 s all skipped |
+| FR-10 | 4.8, 6 | T5.4: inspector counts and preview (directions, step, speed, missing-action policy, palette, anchors) on converted sprites, frames saved as evidence |
+| FR-11 | 4.4, 6 | `RoSpriteConverterTests` (static sprite, offset sprite), `RoSpriteReferenceTests` (ground item and skill icon are sprites) |

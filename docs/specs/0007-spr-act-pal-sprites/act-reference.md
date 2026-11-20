@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Belongs to** | [SPEC-0007](spec.md) (reference material, normative for its topic) |
-| **Status** | Draft (survey of 2026-11-19) |
+| **Status** | Final (survey of 2026-11-19; the GRF mapping is in PLAN-0007 §4.1, the rules in §4.3) |
 | **Data set** | `Uninarok-client/Assets/Editor/GRF Resources~/data/sprite`, `data/palette` and `data/wav` (LATAM client) |
 | **Method** | SPR/ACT read with GRF `Spr`/`Act` in a scratch tool over every category (up to 1,500 files each); MD5 for duplicate files. Nothing parses bytes by hand. |
 

@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Approved (by the owner, 2026-11-19) |
+| **Status** | Implemented (2026-11-19) |
 
 **How to use this file**
 - Start only when TASKS-0002 phases 0 to 6 are done (paths, source, writer, ledger, context, batch, menu, window). This spec does not depend on 0003 to 0006.
@@ -96,7 +96,7 @@ Reference set (spec §5), used by every check below: a multi-layer monster `몬�
   *Result (owner, 2026-11-19):* layout, timing, direction, mirror, rotation, palettes, the head anchor and the weapon hidden/shown match. Two findings go to later specs (`BACKLOG.md`): the sword drawn behind the head (part order, composition spec), and feet below the ACT origin sinking into the ground under a pitched camera; variant E (face the camera, move toward it with size kept) is approved as good, for the display spec.
 - [x] **T7.2** Budget: in a development build place 300 actors (a mix of the reference set) and record the `SpriteSystem` loop time, the render cost and managed allocation per frame, on screen and off screen. If over budget, open the D5 fallback as a plan item. (FR-3)
   *Done when:* the numbers are in the PR, steady-state `GC.Alloc` is zero, and the owner accepts the budget or the fallback is opened.
-- [ ] **T7.3** Close: verify each FR against tests and evidence; set `spec.md`, `plan.md` and `tasks.md` to `Implemented`; move leftovers (unused-sheet cleanup, clip export for Timeline, texture compression if pending) to `docs/specs/BACKLOG.md`.
+- [x] **T7.3** Close: verify each FR against tests and evidence; set `spec.md`, `plan.md` and `tasks.md` to `Implemented`; move leftovers (unused-sheet cleanup, clip export for Timeline, texture compression if pending) to `docs/specs/BACKLOG.md`.
   *Done when:* the traceability table of the plan has a passing test or recorded evidence for each FR and the leftovers are in `BACKLOG.md`.
 
 ---

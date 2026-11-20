@@ -2,13 +2,13 @@
 
 | | |
 |---|---|
-| **Status** | Approved (revision 3, by the owner, 2026-11-19) |
+| **Status** | Implemented (2026-11-19; approved revision 3) |
 | **Created** | 2026-11-16 |
 | **Revised** | 2026-11-19: scope narrowed to converting one sprite (images, animations, palettes); finding sprites by game id and grouping them is a later spec. |
 | **Owner** | _(fill in)_ |
 | **Reference** | [act-reference.md](act-reference.md) (format facts read through GRF), [SpriteAction](../../data/SpriteAction.md), [UninarokPosition](../../data/UninarokPosition.md) (direction) |
-| **Plan** | [plan.md](plan.md) (Approved, 2026-11-19) |
-| **Tasks** | [tasks.md](tasks.md) (Approved, 2026-11-19) |
+| **Plan** | [plan.md](plan.md) (Implemented, 2026-11-19) |
+| **Tasks** | [tasks.md](tasks.md) (Implemented, 2026-11-19) |
 
 ## 1. Why
 
