@@ -132,6 +132,22 @@ namespace Uninarok.RoImport.Core.Catalog.Tables
             return t;
         }
 
+        /// <summary>Tables already read, for the planner tests (PLAN-0008 §6); a null group is missing.</summary>
+        internal static RoCatalogTables Create(RoJobTables jobs = null, RoViewIdTables viewIds = null, RoItemTable items = null,
+                                               RoEmoteTable emotes = null, RoSkillTable skills = null, RoMonsterScaleTable scales = null,
+                                               RoOwnTables own = null)
+        {
+            var t = new RoCatalogTables { Jobs = jobs, ViewIds = viewIds, Items = items, Emotes = emotes, Skills = skills, Scales = scales, Own = own };
+            t.Mark(RoCatalogNeeds.Jobs, jobs != null);
+            t.Mark(RoCatalogNeeds.ViewIds, viewIds != null);
+            t.Mark(RoCatalogNeeds.Items, items != null);
+            t.Mark(RoCatalogNeeds.Emotes, emotes != null);
+            t.Mark(RoCatalogNeeds.Skills, skills != null);
+            t.Mark(RoCatalogNeeds.Scales, scales != null);
+            t.Mark(RoCatalogNeeds.Own, own != null);
+            return t;
+        }
+
         void Mark(RoCatalogNeeds group, bool loaded)
         {
             if (loaded) Loaded |= group;
