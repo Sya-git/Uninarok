@@ -7,7 +7,8 @@
         "Uninarok.RoImport.Core",
         "Uninarok.RoImport.Editor",
         "Uninarok.Map",
-        "Uninarok.Sprites"
+        "Uninarok.Sprites",
+        "Uninarok.Networking"
     ],
     "includePlatforms": [
         "Editor"
@@ -16,7 +17,8 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "nunit.framework.dll", "Utilities.dll"
+        "nunit.framework.dll",
+        "Utilities.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [

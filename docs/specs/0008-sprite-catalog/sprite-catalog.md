@@ -216,3 +216,25 @@ A palette replaces the 256-colour table of an indexed SPR; index 0 is transparen
 4. **Lookups need the lub tables** of §1, `itemInfo` (§2.1) and two small hand-made tables (player job names, shield names; OQ-1).
 5. **Monster display scale** comes from `monster_size_effect_new.lub` (§2.2).
 6. **Tolerate gaps:** missing animations, missing SPR (shared root sheet), orphans, regional names without files.
+
+## 5. Own tables (`Uninarok-client/Assets/Editor/RoImport/Catalog/Data/`)
+
+No lub maps a player class to its body file name, or a shield view id to its file name (OQ-1). Two small CSV files beside the importer hold them. They are **data, not generated code**: a first draft was written once from the body folder names and `PlayerJob` (TASKS-0008 T2.8), the owner reviews it, and from then on the CSV is the source and is edited by hand. `RoOwnTables` reads both (PLAN-0008 §4.2).
+
+Format of both files: UTF-8, one header line, lines starting with `#` are comments (the draft marks rows to review with `# note:`), no quoting (no value holds a comma). A malformed row rejects the file with its line number.
+
+**`class-bodies.csv`**: `BodyName,Job,Race,Kind,BaseJob`, one row per body file name and race.
+
+| Column | Meaning |
+|---|---|
+| `BodyName` | the file name without sex and extension: `페코페코_기사` for `인간족/몸통/남/페코페코_기사_남.spr` |
+| `Job` | the `PlayerJob` the server sends for this body (`JOB_KNIGHT2`) |
+| `Race` | `Human` (`인간족/`) or `Doram` (`도람족/`) |
+| `Kind` | `Base`, `Mount` (a class mount with its own id such as the peco knight, or an all-class mount that keeps the class id such as `사자기사`), `Outfit` (an alternate body of the class: the `_h` bodies, `무희바지`, `턱시도`, `cart_summoner`) or `Costume1`…`Costume4` |
+| `BaseJob` | the class whose catalog entry holds the body (`JOB_KNIGHT` for the peco knight) |
+
+Costume styles come from the `costume_1`…`costume_4` folders, not from this file: a body of `costume_1/` takes the row of its name with kind `Costume1`. Files that break the `<name>_<sex>.spr` pattern (weapons in the body folder, `로드나이트_남''`, the numbered `가드_남_1`, the mercenaries `검용병`) are not rows; the planner reports them as stray (OQ-6).
+
+Not in the draft (no `PlayerJob`, so no row; the planner reports them as files no table references): the 4th-class bodies (`dragon_knight`, `meister`, `shadow_cross`, `arch_mage`, `cardinal`, `windhawk`, `imperial_guard`, `biolo`, `abyss_chaser`, `elemetal_master`, `inquisitor`, `troubadour`, `trouvere`, `sky_emperor`, `soul_ascetic`, `shinkiro`, `shiranui`, `night_watch`, `hyper_novice`, `spirit_handler` and their `_riding`, `_chicken`, `madogear` forms, `드래곤나이트`, `인퀴지터`), because Hercules 2026.09 has no 4th classes (PLAN-0008 D18); and `구페코크루세이더`, `마도아머`, `성제융합`, `성투사`, `성투사2`, `여름2`, `옥토버패스트`, `운영자`, `운영자2`, `한복`, `dancer_b_riding`.
+
+**`shield-names.csv`**: `ViewId,Name`: 1 `가드`, 2 `버클러`, 3 `쉴드`, 4 `미러쉴드` (the basic shields of `방패/<job>/<job>_<sex>_<name>.spr`). A shield's view id is its item's `ClassNum`, the same ids as Hercules' `ViewSprite` (1 Guard, 2 Buckler, 3 Shield, 4 Mirror Shield, 5 books; checked in T2.8). View 5 has no file in `방패/` (books are not drawn as a shield). Every other shield sprite is a file named by item id (`2189_방패`, `28901_방패`, `28902_방패`, `28942_방패`, `28945_방패`, `28946_방패`, `460020_방패`) or by resource name (`매드바니`, item 2189), reached through item-id records (§3.7).

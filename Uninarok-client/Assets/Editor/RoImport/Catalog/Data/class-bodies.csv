@@ -1,0 +1,239 @@
+# class-bodies.csv: player body file name -> class (SPEC-0008 OQ-1, PLAN-0008 4.2, sprite-catalog.md §5).
+# First drafted (T2.8) from the body folder names and PlayerJob; reviewed by the owner on 2026-11-20. This file is the source:
+# edit it by hand, nothing regenerates it.
+# Lines starting with # are comments. Costume styles come from the costume_1..4 folders, not from this file.
+BodyName,Job,Race,Kind,BaseJob
+# note: cart_summoner: with cart
+cart_summoner,JOB_SUMMONER,Doram,Outfit,JOB_SUMMONER
+# note: frog_kagerou: all-class mount: same job id as the class
+frog_kagerou,JOB_KAGEROU,Human,Mount,JOB_KAGEROU
+# note: frog_oboro: all-class mount: same job id as the class
+frog_oboro,JOB_OBORO,Human,Mount,JOB_OBORO
+kagerou,JOB_KAGEROU,Human,Base,JOB_KAGEROU
+oboro,JOB_OBORO,Human,Base,JOB_OBORO
+# note: peco_rebellion: English-named copy of 페코rebellion?
+peco_rebellion,JOB_REBELLION,Human,Outfit,JOB_REBELLION
+# note: rebellion: English-named copy of 리벨리온?
+rebellion,JOB_REBELLION,Human,Outfit,JOB_REBELLION
+summoner,JOB_SUMMONER,Doram,Base,JOB_SUMMONER
+가드,JOB_ROYAL_GUARD,Human,Base,JOB_ROYAL_GUARD
+건너,JOB_GUNSLINGER,Human,Base,JOB_GUNSLINGER
+검사,JOB_SWORDMAN,Human,Base,JOB_SWORDMAN
+결혼,JOB_WEDDING,Doram,Base,JOB_WEDDING
+결혼,JOB_WEDDING,Human,Base,JOB_WEDDING
+궁수,JOB_ARCHER,Human,Base,JOB_ARCHER
+권성,JOB_STAR_GLADIATOR,Human,Base,JOB_STAR_GLADIATOR
+권성융합,JOB_STAR_GLADIATOR2,Human,Mount,JOB_STAR_GLADIATOR
+# note: 권성포링: all-class mount: same job id as the class
+권성포링,JOB_STAR_GLADIATOR,Human,Mount,JOB_STAR_GLADIATOR
+그리폰가드,JOB_ROYAL_GUARD2,Human,Mount,JOB_ROYAL_GUARD
+기사,JOB_KNIGHT,Human,Base,JOB_KNIGHT
+# note: 기사_h: _h
+기사_h,JOB_KNIGHT,Human,Outfit,JOB_KNIGHT
+길로틴크로스,JOB_GUILLOTINE_CROSS,Human,Base,JOB_GUILLOTINE_CROSS
+# note: 노비스포링: all-class mount: same job id as the class
+노비스포링,JOB_NOVICE,Human,Mount,JOB_NOVICE
+닌자,JOB_NINJA,Human,Base,JOB_NINJA
+도둑,JOB_THIEF,Human,Base,JOB_THIEF
+# note: 두꺼비닌자: all-class mount: same job id as the class
+두꺼비닌자,JOB_NINJA,Human,Mount,JOB_NINJA
+# note: 두꺼비소울링커: all-class mount: same job id as the class
+두꺼비소울링커,JOB_SOUL_LINKER,Human,Mount,JOB_SOUL_LINKER
+레인져,JOB_RANGER,Human,Base,JOB_RANGER
+레인져늑대,JOB_RANGER2,Human,Mount,JOB_RANGER
+로그,JOB_ROGUE,Human,Base,JOB_ROGUE
+# note: 로그_h: _h
+로그_h,JOB_ROGUE,Human,Outfit,JOB_ROGUE
+로드나이트,JOB_LORD_KNIGHT,Human,Base,JOB_LORD_KNIGHT
+로드페코,JOB_LORD_KNIGHT2,Human,Mount,JOB_LORD_KNIGHT
+룬나이트,JOB_RUNE_KNIGHT,Human,Base,JOB_RUNE_KNIGHT
+룬나이트쁘띠,JOB_RUNE_KNIGHT2,Human,Mount,JOB_RUNE_KNIGHT
+룬나이트쁘띠2,JOB_RUNE_KNIGHT3,Human,Mount,JOB_RUNE_KNIGHT
+룬나이트쁘띠3,JOB_RUNE_KNIGHT4,Human,Mount,JOB_RUNE_KNIGHT
+룬나이트쁘띠4,JOB_RUNE_KNIGHT5,Human,Mount,JOB_RUNE_KNIGHT
+룬나이트쁘띠5,JOB_RUNE_KNIGHT6,Human,Mount,JOB_RUNE_KNIGHT
+리벨리온,JOB_REBELLION,Human,Base,JOB_REBELLION
+마도기어,JOB_MECHANIC2,Human,Mount,JOB_MECHANIC
+마법사,JOB_MAGE,Human,Base,JOB_MAGE
+몽크,JOB_MONK,Human,Base,JOB_MONK
+# note: 몽크_h: _h
+몽크_h,JOB_MONK,Human,Outfit,JOB_MONK
+# note: 몽크알파카: all-class mount: same job id as the class
+몽크알파카,JOB_MONK,Human,Mount,JOB_MONK
+무희,JOB_DANCER,Human,Base,JOB_DANCER
+# note: 무희_h: _h
+무희_h,JOB_DANCER,Human,Outfit,JOB_DANCER
+# note: 무희바지: dancer in trousers
+무희바지,JOB_DANCER,Human,Outfit,JOB_DANCER
+미케닉,JOB_MECHANIC,Human,Base,JOB_MECHANIC
+# note: 미케닉멧돼지: all-class mount: same job id as the class
+미케닉멧돼지,JOB_MECHANIC,Human,Mount,JOB_MECHANIC
+민스트럴,JOB_MINSTREL,Human,Base,JOB_MINSTREL
+바드,JOB_BARD,Human,Base,JOB_BARD
+# note: 바드_h: _h
+바드_h,JOB_BARD,Human,Outfit,JOB_BARD
+# note: 복사알파카: all-class mount: same job id as the class
+복사알파카,JOB_ACOLYTE,Human,Mount,JOB_ACOLYTE
+# note: 사자기사: all-class mount: same job id as the class
+사자기사,JOB_KNIGHT,Human,Mount,JOB_KNIGHT
+# note: 사자로드나이트: all-class mount: same job id as the class
+사자로드나이트,JOB_LORD_KNIGHT,Human,Mount,JOB_LORD_KNIGHT
+# note: 사자로얄가드: all-class mount: same job id as the class
+사자로얄가드,JOB_ROYAL_GUARD,Human,Mount,JOB_ROYAL_GUARD
+# note: 사자룬나이트: all-class mount: same job id as the class
+사자룬나이트,JOB_RUNE_KNIGHT,Human,Mount,JOB_RUNE_KNIGHT
+# note: 사자크루세이더: all-class mount: same job id as the class
+사자크루세이더,JOB_CRUSADER,Human,Mount,JOB_CRUSADER
+# note: 사자팔라딘: all-class mount: same job id as the class
+사자팔라딘,JOB_PALADIN,Human,Mount,JOB_PALADIN
+산타,JOB_XMAS,Human,Base,JOB_XMAS
+상인,JOB_MERCHANT,Human,Base,JOB_MERCHANT
+# note: 상인멧돼지: all-class mount: same job id as the class
+상인멧돼지,JOB_MERCHANT,Human,Mount,JOB_MERCHANT
+성제,JOB_STAR_EMPEROR,Human,Base,JOB_STAR_EMPEROR
+성직자,JOB_ACOLYTE,Human,Base,JOB_ACOLYTE
+# note: 성직자_h: _h
+성직자_h,JOB_ACOLYTE,Human,Outfit,JOB_ACOLYTE
+세이지,JOB_SAGE,Human,Base,JOB_SAGE
+# note: 세이지_h: _h
+세이지_h,JOB_SAGE,Human,Outfit,JOB_SAGE
+소서러,JOB_SORCERER,Human,Base,JOB_SORCERER
+소울리퍼,JOB_SOUL_REAPER,Human,Base,JOB_SOUL_REAPER
+소울링커,JOB_SOUL_LINKER,Human,Base,JOB_SOUL_LINKER
+쉐도우체이서,JOB_SHADOW_CHASER,Human,Base,JOB_SHADOW_CHASER
+슈라,JOB_SURA,Human,Base,JOB_SURA
+# note: 슈라알파카: all-class mount: same job id as the class
+슈라알파카,JOB_SURA,Human,Mount,JOB_SURA
+슈퍼노비스,JOB_SUPER_NOVICE,Human,Base,JOB_SUPER_NOVICE
+# note: 슈퍼노비스포링: all-class mount: same job id as the class
+슈퍼노비스포링,JOB_SUPER_NOVICE,Human,Mount,JOB_SUPER_NOVICE
+스나이퍼,JOB_SNIPER,Human,Base,JOB_SNIPER
+스토커,JOB_STALKER,Human,Base,JOB_STALKER
+신페코크루세이더,JOB_CRUSADER2,Human,Mount,JOB_CRUSADER
+# note: 신페코크루세이더_h: _h
+신페코크루세이더_h,JOB_CRUSADER2,Human,Outfit,JOB_CRUSADER
+아크비숍,JOB_ARCH_BISHOP,Human,Base,JOB_ARCH_BISHOP
+# note: 아크비숍알파카: all-class mount: same job id as the class
+아크비숍알파카,JOB_ARCH_BISHOP,Human,Mount,JOB_ARCH_BISHOP
+어세신,JOB_ASSASSIN,Human,Base,JOB_ASSASSIN
+# note: 어세신_h: _h
+어세신_h,JOB_ASSASSIN,Human,Outfit,JOB_ASSASSIN
+어쌔신크로스,JOB_ASSASSIN_CROSS,Human,Base,JOB_ASSASSIN_CROSS
+여름,JOB_SUMMER,Doram,Base,JOB_SUMMER
+여름,JOB_SUMMER,Human,Base,JOB_SUMMER
+# note: 여우마법사: all-class mount: same job id as the class
+여우마법사,JOB_MAGE,Human,Mount,JOB_MAGE
+# note: 여우세이지: all-class mount: same job id as the class
+여우세이지,JOB_SAGE,Human,Mount,JOB_SAGE
+# note: 여우소서러: all-class mount: same job id as the class
+여우소서러,JOB_SORCERER,Human,Mount,JOB_SORCERER
+# note: 여우워록: all-class mount: same job id as the class
+여우워록,JOB_WARLOCK,Human,Mount,JOB_WARLOCK
+# note: 여우위저드: all-class mount: same job id as the class
+여우위저드,JOB_WIZARD,Human,Mount,JOB_WIZARD
+# note: 여우프로페서: all-class mount: same job id as the class
+여우프로페서,JOB_PROFESSOR,Human,Mount,JOB_PROFESSOR
+# note: 여우하이위저드: all-class mount: same job id as the class
+여우하이위저드,JOB_HIGH_WIZARD,Human,Mount,JOB_HIGH_WIZARD
+연금술사,JOB_ALCHEMIST,Human,Base,JOB_ALCHEMIST
+# note: 연금술사_h: _h
+연금술사_h,JOB_ALCHEMIST,Human,Outfit,JOB_ALCHEMIST
+# note: 연금술사멧돼지: all-class mount: same job id as the class
+연금술사멧돼지,JOB_ALCHEMIST,Human,Mount,JOB_ALCHEMIST
+워록,JOB_WARLOCK,Human,Base,JOB_WARLOCK
+원더러,JOB_WANDERER,Human,Base,JOB_WANDERER
+위저드,JOB_WIZARD,Human,Base,JOB_WIZARD
+# note: 위저드_h: _h
+위저드_h,JOB_WIZARD,Human,Outfit,JOB_WIZARD
+제네릭,JOB_GENETIC,Human,Base,JOB_GENETIC
+# note: 제네릭멧돼지: all-class mount: same job id as the class
+제네릭멧돼지,JOB_GENETIC,Human,Mount,JOB_GENETIC
+제철공,JOB_BLACKSMITH,Human,Base,JOB_BLACKSMITH
+# note: 제철공_h: _h
+제철공_h,JOB_BLACKSMITH,Human,Outfit,JOB_BLACKSMITH
+# note: 제철공멧돼지: all-class mount: same job id as the class
+제철공멧돼지,JOB_BLACKSMITH,Human,Mount,JOB_BLACKSMITH
+집시,JOB_GYPSY,Human,Base,JOB_GYPSY
+챔피온,JOB_CHAMPION,Human,Base,JOB_CHAMPION
+# note: 챔피온알파카: all-class mount: same job id as the class
+챔피온알파카,JOB_CHAMPION,Human,Mount,JOB_CHAMPION
+초보자,JOB_NOVICE,Human,Base,JOB_NOVICE
+# note: 켈베로스길로틴크로스: all-class mount: same job id as the class
+켈베로스길로틴크로스,JOB_GUILLOTINE_CROSS,Human,Mount,JOB_GUILLOTINE_CROSS
+# note: 켈베로스도둑: all-class mount: same job id as the class
+켈베로스도둑,JOB_THIEF,Human,Mount,JOB_THIEF
+# note: 켈베로스로그: all-class mount: same job id as the class
+켈베로스로그,JOB_ROGUE,Human,Mount,JOB_ROGUE
+# note: 켈베로스쉐도우체이서: all-class mount: same job id as the class
+켈베로스쉐도우체이서,JOB_SHADOW_CHASER,Human,Mount,JOB_SHADOW_CHASER
+# note: 켈베로스스토커: all-class mount: same job id as the class
+켈베로스스토커,JOB_STALKER,Human,Mount,JOB_STALKER
+# note: 켈베로스어쎄신: all-class mount: same job id as the class
+켈베로스어쎄신,JOB_ASSASSIN,Human,Mount,JOB_ASSASSIN
+# note: 켈베로스어쎄신크로스: all-class mount: same job id as the class
+켈베로스어쎄신크로스,JOB_ASSASSIN_CROSS,Human,Mount,JOB_ASSASSIN_CROSS
+크루세이더,JOB_CRUSADER,Human,Base,JOB_CRUSADER
+# note: 크루세이더_h: _h
+크루세이더_h,JOB_CRUSADER,Human,Outfit,JOB_CRUSADER
+크리에이터,JOB_CREATOR,Human,Base,JOB_CREATOR
+# note: 크리에이터멧돼지: all-class mount: same job id as the class
+크리에이터멧돼지,JOB_CREATOR,Human,Mount,JOB_CREATOR
+클라운,JOB_CLOWN,Human,Base,JOB_CLOWN
+# note: 타조궁수: all-class mount: same job id as the class
+타조궁수,JOB_ARCHER,Human,Mount,JOB_ARCHER
+# note: 타조레인져: all-class mount: same job id as the class
+타조레인져,JOB_RANGER,Human,Mount,JOB_RANGER
+# note: 타조무희: all-class mount: same job id as the class
+타조무희,JOB_DANCER,Human,Mount,JOB_DANCER
+# note: 타조민스트럴: all-class mount: same job id as the class
+타조민스트럴,JOB_MINSTREL,Human,Mount,JOB_MINSTREL
+# note: 타조바드: all-class mount: same job id as the class
+타조바드,JOB_BARD,Human,Mount,JOB_BARD
+# note: 타조스나이퍼: all-class mount: same job id as the class
+타조스나이퍼,JOB_SNIPER,Human,Mount,JOB_SNIPER
+# note: 타조원더러: all-class mount: same job id as the class
+타조원더러,JOB_WANDERER,Human,Mount,JOB_WANDERER
+# note: 타조짚시: all-class mount: same job id as the class
+타조짚시,JOB_GYPSY,Human,Mount,JOB_GYPSY
+# note: 타조크라운: all-class mount: same job id as the class
+타조크라운,JOB_CLOWN,Human,Mount,JOB_CLOWN
+# note: 타조헌터: all-class mount: same job id as the class
+타조헌터,JOB_HUNTER,Human,Mount,JOB_HUNTER
+# note: 태권소녀포링: all-class mount: same job id as the class
+태권소녀포링,JOB_TAEKWON,Human,Mount,JOB_TAEKWON
+태권소년,JOB_TAEKWON,Human,Base,JOB_TAEKWON
+# note: 태권소년포링: all-class mount: same job id as the class
+태권소년포링,JOB_TAEKWON,Human,Mount,JOB_TAEKWON
+# note: 턱시도: tuxedo
+턱시도,JOB_WEDDING,Human,Outfit,JOB_WEDDING
+팔라딘,JOB_PALADIN,Human,Base,JOB_PALADIN
+# note: 페코rebellion: all-class mount: same job id as the class
+페코rebellion,JOB_REBELLION,Human,Mount,JOB_REBELLION
+# note: 페코건너: all-class mount: same job id as the class
+페코건너,JOB_GUNSLINGER,Human,Mount,JOB_GUNSLINGER
+# note: 페코검사: all-class mount: same job id as the class
+페코검사,JOB_SWORDMAN,Human,Mount,JOB_SWORDMAN
+페코팔라딘,JOB_PALADIN2,Human,Mount,JOB_PALADIN
+페코페코_기사,JOB_KNIGHT2,Human,Mount,JOB_KNIGHT
+# note: 페코페코_기사_h: _h
+페코페코_기사_h,JOB_KNIGHT2,Human,Outfit,JOB_KNIGHT
+프로페서,JOB_PROFESSOR,Human,Base,JOB_PROFESSOR
+프리스트,JOB_PRIEST,Human,Base,JOB_PRIEST
+# note: 프리스트_h: _h
+프리스트_h,JOB_PRIEST,Human,Outfit,JOB_PRIEST
+# note: 프리스트알파카: all-class mount: same job id as the class
+프리스트알파카,JOB_PRIEST,Human,Mount,JOB_PRIEST
+하이위저드,JOB_HIGH_WIZARD,Human,Base,JOB_HIGH_WIZARD
+하이프리,JOB_HIGH_PRIEST,Human,Base,JOB_HIGH_PRIEST
+# note: 하이프리스트알파카: all-class mount: same job id as the class
+하이프리스트알파카,JOB_HIGH_PRIEST,Human,Mount,JOB_HIGH_PRIEST
+# note: 해태성제: all-class mount: same job id as the class
+해태성제,JOB_STAR_EMPEROR,Human,Mount,JOB_STAR_EMPEROR
+# note: 해태소울리퍼: all-class mount: same job id as the class
+해태소울리퍼,JOB_SOUL_REAPER,Human,Mount,JOB_SOUL_REAPER
+헌터,JOB_HUNTER,Human,Base,JOB_HUNTER
+# note: 헌터_h: _h
+헌터_h,JOB_HUNTER,Human,Outfit,JOB_HUNTER
+화이트스미스,JOB_WHITESMITH,Human,Base,JOB_WHITESMITH
+# note: 화이트스미스멧돼지: all-class mount: same job id as the class
+화이트스미스멧돼지,JOB_WHITESMITH,Human,Mount,JOB_WHITESMITH

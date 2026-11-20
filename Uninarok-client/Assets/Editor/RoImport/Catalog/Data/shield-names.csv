@@ -1,0 +1,13 @@
+# shield-names.csv: shield view id -> file name of the shield (SPEC-0008 OQ-1, PLAN-0008 4.2, sprite-catalog.md §5).
+# Files: 방패/<job>/<job>_<sex>_<name>.spr. The view id is the item table's ClassNum of a shield, the same ids as
+# Hercules' ViewSprite (db/re/item_db.conf, checked in T2.8): 1 Guard, 2 Buckler, 3 Shield, 4 Mirror Shield, 5 books.
+# Only 1 to 4 have a file named after them in this client. Not rows here:
+#   5 (books: Memorize Book 2109, Exorcism Bible 2129, ...): no file in 방패/; the book is not drawn as a shield.
+#   Shields with their own sprite are files named by item id (2189_방패, 28901_방패, 28902_방패, 28942_방패,
+#   28945_방패, 28946_방패, 460020_방패) or by resource name (매드바니 = item 2189, ClassNum 1); the shield planner
+#   finds them through item-id records (PLAN-0008 4.3.7), not through this table.
+ViewId,Name
+1,가드
+2,버클러
+3,쉴드
+4,미러쉴드
