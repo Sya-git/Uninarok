@@ -33,6 +33,12 @@ namespace Uninarok.RoImport.Editor.Pipeline
         /// <summary>Source files; null: a folder source over <see cref="RoSourceLocation.Resolve"/> with the local hash cache.</summary>
         public IRoSource Source;
 
+        /// <summary>The client's <c>System</c> folder (item and scale tables, PLAN-0008 4.2); null: <see cref="RoSourceLocation.ResolveSystem"/>.</summary>
+        public IRoSource SystemSource;
+
+        /// <summary>The catalog run the catalog converters work from (PLAN-0008 4.7); set by the catalog importer.</summary>
+        internal Uninarok.RoImport.Editor.Catalog.RoCatalogRun CatalogPlan;
+
         /// <summary>Ledger folder; null: <see cref="RoLedger.DefaultFolder"/>.</summary>
         public string LedgerFolder;
 
@@ -174,6 +180,7 @@ namespace Uninarok.RoImport.Editor.Pipeline
                     Force = options.Force,
                     GatImage = options.GatImage,
                     SpritePalettes = options.SpritePalettes,
+                    CatalogPlan = options.CatalogPlan,
                 };
             }
 

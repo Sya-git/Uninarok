@@ -38,6 +38,9 @@ namespace Uninarok.RoImport.Editor.Pipeline
         }
 
         public IRoSource Source { get; }
+
+        /// <summary>The catalog run of this batch (PLAN-0008 4.7); null outside a catalog import.</summary>
+        internal Uninarok.RoImport.Editor.Catalog.RoCatalogRun CatalogPlan { get; set; }
         public RoAssetWriter Writer { get; }
         public RoReport Report { get; }
         public RoOutputRoots Roots { get; }
