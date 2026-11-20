@@ -8,7 +8,7 @@
 | **Depends on** | [SPEC-0007](../0007-spr-act-pal-sprites/spec.md) (converting one sprite) |
 | **Reference** | [sprite-catalog.md](sprite-catalog.md) (which table maps what, where every category lives), [SpriteAction](../../data/SpriteAction.md) |
 | **Plan** | [plan.md](plan.md) |
-| **Tasks** | _(after approval)_ |
+| **Tasks** | [tasks.md](tasks.md) |
 
 ## 1. Why
 
