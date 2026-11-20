@@ -2,9 +2,10 @@ namespace Uninarok.Networking.Data
 {
     /// <summary>
     /// Player class id, as the server sends it (<c>CharInfo.Class</c>, a <c>short</c> on the wire). Hand-written from Hercules
-    /// <c>src/common/class.h</c> and <c>class_hidden.h</c> (154 values, including mounted and second forms such as
-    /// <see cref="JOB_KNIGHT2"/>); documented in docs/data/PlayerJob.md. Monster, NPC, homunculus and mercenary ids are a
-    /// different id space and are not members.
+    /// <c>src/common/class.h</c>, <c>class_hidden.h</c> and <c>class_special.h</c> (the three headers of its <c>e_class</c>
+    /// enum: 172 values, including mounted and second forms such as <see cref="JOB_KNIGHT2"/>, the sex-specific classes such as
+    /// <see cref="JOB_BARD"/>, and the range markers <see cref="JOB_MAX_BASIC"/> and <see cref="JOB_2004_BEGIN"/>);
+    /// documented in docs/data/PlayerJob.md. Monster, NPC, homunculus and mercenary ids are a different id space.
     /// </summary>
     public enum PlayerJob : short
     {
@@ -27,6 +28,8 @@ namespace Uninarok.Networking.Data
         JOB_SAGE = 16,
         JOB_ROGUE = 17,
         JOB_ALCHEMIST = 18,
+        JOB_BARD = 19,
+        JOB_DANCER = 20,
         JOB_CRUSADER2 = 21,
         JOB_WEDDING = 22,
         JOB_SUPER_NOVICE = 23,
@@ -34,6 +37,8 @@ namespace Uninarok.Networking.Data
         JOB_NINJA = 25,
         JOB_XMAS = 26,
         JOB_SUMMER = 27,
+        JOB_MAX_BASIC = 28,
+        JOB_2004_BEGIN = 4000,
         JOB_NOVICE_HIGH = 4001,
         JOB_SWORDMAN_HIGH = 4002,
         JOB_MAGE_HIGH = 4003,
@@ -53,6 +58,8 @@ namespace Uninarok.Networking.Data
         JOB_PROFESSOR = 4017,
         JOB_STALKER = 4018,
         JOB_CREATOR = 4019,
+        JOB_CLOWN = 4020,
+        JOB_GYPSY = 4021,
         JOB_PALADIN2 = 4022,
         JOB_BABY = 4023,
         JOB_BABY_SWORDMAN = 4024,
@@ -73,6 +80,8 @@ namespace Uninarok.Networking.Data
         JOB_BABY_SAGE = 4039,
         JOB_BABY_ROGUE = 4040,
         JOB_BABY_ALCHEMIST = 4041,
+        JOB_BABY_BARD = 4042,
+        JOB_BABY_DANCER = 4043,
         JOB_BABY_CRUSADER2 = 4044,
         JOB_SUPER_BABY = 4045,
         JOB_TAEKWON = 4046,
@@ -96,11 +105,15 @@ namespace Uninarok.Networking.Data
         JOB_GUILLOTINE_CROSS_T = 4065,
         JOB_ROYAL_GUARD = 4066,
         JOB_SORCERER = 4067,
+        JOB_MINSTREL = 4068,
+        JOB_WANDERER = 4069,
         JOB_SURA = 4070,
         JOB_GENETIC = 4071,
         JOB_SHADOW_CHASER = 4072,
         JOB_ROYAL_GUARD_T = 4073,
         JOB_SORCERER_T = 4074,
+        JOB_MINSTREL_T = 4075,
+        JOB_WANDERER_T = 4076,
         JOB_SURA_T = 4077,
         JOB_GENETIC_T = 4078,
         JOB_SHADOW_CHASER_T = 4079,
@@ -128,6 +141,8 @@ namespace Uninarok.Networking.Data
         JOB_BABY_CROSS = 4101,
         JOB_BABY_GUARD = 4102,
         JOB_BABY_SORCERER = 4103,
+        JOB_BABY_MINSTREL = 4104,
+        JOB_BABY_WANDERER = 4105,
         JOB_BABY_SURA = 4106,
         JOB_BABY_GENETIC = 4107,
         JOB_BABY_CHASER = 4108,
@@ -138,12 +153,16 @@ namespace Uninarok.Networking.Data
         JOB_THIRD_LAST = 4113,
         JOB_SUPER_NOVICE_E = 4190,
         JOB_SUPER_BABY_E = 4191,
+        JOB_KAGEROU = 4211,
+        JOB_OBORO = 4212,
         JOB_REBELLION = 4215,
         JOB_SUMMONER = 4218,
         JOB_DUMMY4219 = 4219,
         JOB_BABY_SUMMONER = 4220,
         JOB_DUMMY4221 = 4221,
         JOB_BABY_NINJA = 4222,
+        JOB_BABY_KAGEROU = 4223,
+        JOB_BABY_OBORO = 4224,
         JOB_BABY_TAEKWON = 4225,
         JOB_BABY_STAR_GLADIATOR = 4226,
         JOB_BABY_SOUL_LINKER = 4227,

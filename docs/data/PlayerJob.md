@@ -3,7 +3,7 @@
 - **Kind:** Shared enum
 - **Underlying type:** `short`
 - **Description:** Player class ids used by networking (`CharInfo.Class`) and by the sprite catalog (bodies, class tables, equipment slots). Monster, NPC, homunculus and mercenary ids are a different id space and are not members.
-- **Source of the values:** Hercules `src/common/class.h` (`JOB_ENUM_VALUE(NAME, id, msg)`) and `src/common/class_hidden.h` (second forms of mounted classes). Member name = `JOB_` + the Hercules constant. Hand-written; checked against the client's `JTtbl` by `PlayerJobTests`.
+- **Source of the values:** the three headers of Hercules' `e_class` enum (`src/common/mmo.h`): `src/common/class.h` (`JOB_ENUM_VALUE(NAME, id, msg)`), `class_hidden.h` (second forms of mounted classes) and `class_special.h` (sex-specific classes and two range markers). Member name = `JOB_` + the Hercules constant. Hercules 2026.09 has no 4th classes. Hand-written; checked against the client's `JTtbl` by `PlayerJobTests`.
 
 | Name | Value | Description |
 |---|---:|---|
@@ -26,6 +26,8 @@
 | `JOB_SAGE` | `16` | Name in messages: `JOB_SAGE` (`class.h`). |
 | `JOB_ROGUE` | `17` | Name in messages: `JOB_ROGUE` (`class.h`). |
 | `JOB_ALCHEMIST` | `18` | Name in messages: `JOB_ALCHEMIST` (`class.h`). |
+| `JOB_BARD` | `19` | Name in messages: `JOB_BARD` (`class_special.h`). |
+| `JOB_DANCER` | `20` | Name in messages: `JOB_DANCER` (`class_special.h`). |
 | `JOB_CRUSADER2` | `21` | Second (mounted) form; name in messages: `JOB_CRUSADER` (`class_hidden.h`). |
 | `JOB_WEDDING` | `22` | Name in messages: `JOB_WEDDING` (`class.h`). |
 | `JOB_SUPER_NOVICE` | `23` | Name in messages: `JOB_SUPER_NOVICE` (`class.h`). |
@@ -33,6 +35,8 @@
 | `JOB_NINJA` | `25` | Name in messages: `JOB_NINJA` (`class.h`). |
 | `JOB_XMAS` | `26` | Name in messages: `JOB_XMAS` (`class.h`). |
 | `JOB_SUMMER` | `27` | Name in messages: `JOB_SUMMER` (`class.h`). |
+| `JOB_MAX_BASIC` | `28` | Range marker, not a class (`class_special.h`). |
+| `JOB_2004_BEGIN` | `4000` | Range marker, not a class (`class_special.h`). |
 | `JOB_NOVICE_HIGH` | `4001` | Name in messages: `JOB_NOVICE_HIGH` (`class.h`). |
 | `JOB_SWORDMAN_HIGH` | `4002` | Name in messages: `JOB_SWORDMAN_HIGH` (`class.h`). |
 | `JOB_MAGE_HIGH` | `4003` | Name in messages: `JOB_MAGE_HIGH` (`class.h`). |
@@ -52,6 +56,8 @@
 | `JOB_PROFESSOR` | `4017` | Name in messages: `JOB_PROFESSOR` (`class.h`). |
 | `JOB_STALKER` | `4018` | Name in messages: `JOB_STALKER` (`class.h`). |
 | `JOB_CREATOR` | `4019` | Name in messages: `JOB_CREATOR` (`class.h`). |
+| `JOB_CLOWN` | `4020` | Name in messages: `JOB_CLOWN` (`class_special.h`). |
+| `JOB_GYPSY` | `4021` | Name in messages: `JOB_GYPSY` (`class_special.h`). |
 | `JOB_PALADIN2` | `4022` | Second (mounted) form; name in messages: `JOB_PALADIN` (`class_hidden.h`). |
 | `JOB_BABY` | `4023` | Name in messages: `JOB_BABY` (`class.h`). |
 | `JOB_BABY_SWORDMAN` | `4024` | Name in messages: `JOB_BABY_SWORDMAN` (`class.h`). |
@@ -72,6 +78,8 @@
 | `JOB_BABY_SAGE` | `4039` | Name in messages: `JOB_BABY_SAGE` (`class.h`). |
 | `JOB_BABY_ROGUE` | `4040` | Name in messages: `JOB_BABY_ROGUE` (`class.h`). |
 | `JOB_BABY_ALCHEMIST` | `4041` | Name in messages: `JOB_BABY_ALCHEMIST` (`class.h`). |
+| `JOB_BABY_BARD` | `4042` | Name in messages: `JOB_BABY_BARD` (`class_special.h`). |
+| `JOB_BABY_DANCER` | `4043` | Name in messages: `JOB_BABY_DANCER` (`class_special.h`). |
 | `JOB_BABY_CRUSADER2` | `4044` | Second (mounted) form; name in messages: `JOB_BABY_CRUSADER` (`class_hidden.h`). |
 | `JOB_SUPER_BABY` | `4045` | Name in messages: `JOB_SUPER_BABY` (`class.h`). |
 | `JOB_TAEKWON` | `4046` | Name in messages: `JOB_TAEKWON` (`class.h`). |
@@ -95,11 +103,15 @@
 | `JOB_GUILLOTINE_CROSS_T` | `4065` | Name in messages: `JOB_GUILLOTINE_CROSS_T` (`class.h`). |
 | `JOB_ROYAL_GUARD` | `4066` | Name in messages: `JOB_ROYAL_GUARD` (`class.h`). |
 | `JOB_SORCERER` | `4067` | Name in messages: `JOB_SORCERER` (`class.h`). |
+| `JOB_MINSTREL` | `4068` | Name in messages: `JOB_MINSTREL` (`class_special.h`). |
+| `JOB_WANDERER` | `4069` | Name in messages: `JOB_WANDERER` (`class_special.h`). |
 | `JOB_SURA` | `4070` | Name in messages: `JOB_SURA` (`class.h`). |
 | `JOB_GENETIC` | `4071` | Name in messages: `JOB_GENETIC` (`class.h`). |
 | `JOB_SHADOW_CHASER` | `4072` | Name in messages: `JOB_SHADOW_CHASER` (`class.h`). |
 | `JOB_ROYAL_GUARD_T` | `4073` | Name in messages: `JOB_ROYAL_GUARD_T` (`class.h`). |
 | `JOB_SORCERER_T` | `4074` | Name in messages: `JOB_SORCERER_T` (`class.h`). |
+| `JOB_MINSTREL_T` | `4075` | Name in messages: `JOB_MINSTREL_T` (`class_special.h`). |
+| `JOB_WANDERER_T` | `4076` | Name in messages: `JOB_WANDERER_T` (`class_special.h`). |
 | `JOB_SURA_T` | `4077` | Name in messages: `JOB_SURA_T` (`class.h`). |
 | `JOB_GENETIC_T` | `4078` | Name in messages: `JOB_GENETIC_T` (`class.h`). |
 | `JOB_SHADOW_CHASER_T` | `4079` | Name in messages: `JOB_SHADOW_CHASER_T` (`class.h`). |
@@ -127,6 +139,8 @@
 | `JOB_BABY_CROSS` | `4101` | Name in messages: `JOB_BABY_CROSS` (`class.h`). |
 | `JOB_BABY_GUARD` | `4102` | Name in messages: `JOB_BABY_GUARD` (`class.h`). |
 | `JOB_BABY_SORCERER` | `4103` | Name in messages: `JOB_BABY_SORCERER` (`class.h`). |
+| `JOB_BABY_MINSTREL` | `4104` | Name in messages: `JOB_BABY_MINSTREL` (`class_special.h`). |
+| `JOB_BABY_WANDERER` | `4105` | Name in messages: `JOB_BABY_WANDERER` (`class_special.h`). |
 | `JOB_BABY_SURA` | `4106` | Name in messages: `JOB_BABY_SURA` (`class.h`). |
 | `JOB_BABY_GENETIC` | `4107` | Name in messages: `JOB_BABY_GENETIC` (`class.h`). |
 | `JOB_BABY_CHASER` | `4108` | Name in messages: `JOB_BABY_CHASER` (`class.h`). |
@@ -137,12 +151,16 @@
 | `JOB_THIRD_LAST` | `4113` | Second (mounted) form; name in messages: `UNKNOWN_JOB` (`class_hidden.h`). |
 | `JOB_SUPER_NOVICE_E` | `4190` | Name in messages: `JOB_SUPER_NOVICE_E` (`class.h`). |
 | `JOB_SUPER_BABY_E` | `4191` | Name in messages: `JOB_SUPER_BABY_E` (`class.h`). |
+| `JOB_KAGEROU` | `4211` | Name in messages: `JOB_KAGEROU` (`class_special.h`). |
+| `JOB_OBORO` | `4212` | Name in messages: `JOB_OBORO` (`class_special.h`). |
 | `JOB_REBELLION` | `4215` | Name in messages: `JOB_REBELLION` (`class.h`). |
 | `JOB_SUMMONER` | `4218` | Name in messages: `JOB_SUMMONER` (`class.h`). |
 | `JOB_DUMMY4219` | `4219` | Second (mounted) form; name in messages: `UNKNOWN_JOB` (`class_hidden.h`). |
 | `JOB_BABY_SUMMONER` | `4220` | Name in messages: `JOB_BABY_SUMMONER` (`class.h`). |
 | `JOB_DUMMY4221` | `4221` | Second (mounted) form; name in messages: `UNKNOWN_JOB` (`class_hidden.h`). |
 | `JOB_BABY_NINJA` | `4222` | Name in messages: `JOB_BABY_NINJA` (`class.h`). |
+| `JOB_BABY_KAGEROU` | `4223` | Name in messages: `JOB_BABY_KAGEROU` (`class_special.h`). |
+| `JOB_BABY_OBORO` | `4224` | Name in messages: `JOB_BABY_OBORO` (`class_special.h`). |
 | `JOB_BABY_TAEKWON` | `4225` | Name in messages: `JOB_BABY_TAEKWON` (`class.h`). |
 | `JOB_BABY_STAR_GLADIATOR` | `4226` | Name in messages: `JOB_BABY_STAR_GLADIATOR` (`class.h`). |
 | `JOB_BABY_SOUL_LINKER` | `4227` | Name in messages: `JOB_BABY_SOUL_LINKER` (`class.h`). |
