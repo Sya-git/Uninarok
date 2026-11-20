@@ -19,18 +19,19 @@ namespace Uninarok.RoImport.Tests.Catalog
 {
     // TASKS-0008 T5.5 (FR-8, FR-9, FR-10, FR-12; PLAN-0008 4.7, §6): the catalog importer on a small synthetic client, written
     // to a temporary data and System folder and imported into Assets/__RoImportTests; the ledgers go to a temporary folder.
-    [Ignore("pending T5.9: needs RoImport.Catalog")]
     public class RoCatalogImporterTests
     {
         const string Tables = "luafiles514/lua files/";
 
         RoOutputRoots _roots;
         string _temp, _data, _system, _own;
+        UnityEditor.AddressableAssets.Settings.AddressableAssetSettings _addressables;
 
         [SetUp]
         public void SetUp()
         {
             _roots = RoImportTestRoot.Create();
+            _addressables = UnityEditor.AddressableAssets.Settings.AddressableAssetSettings.Create(RoImportTestRoot.Folder + "/aa", "TestAddressables", false, true);
             _temp = Path.Combine(Path.GetTempPath(), "RoCatalogImporterTests", Guid.NewGuid().ToString("N"));
             _data = Path.Combine(_temp, "data");
             _system = Path.Combine(_temp, "System");
@@ -53,6 +54,7 @@ namespace Uninarok.RoImport.Tests.Catalog
             Text(_system, "english/iteminfo_new.lub", "tbl = { [501] = { identifiedResourceName = \"red_potion\", unidentifiedResourceName = \"red_potion\", ClassNum = 0 } }", Encoding.UTF8);
             Text(_own, RoOwnTables.ClassBodiesFile, "BodyName,Job,Race,Kind,BaseJob\n초보자,JOB_NOVICE,Human,Base,JOB_NOVICE\n", Encoding.UTF8);
             Text(_own, RoOwnTables.ShieldNamesFile, "ViewId,Name\n1,가드\n", Encoding.UTF8);
+            Text(_own, "item_db.conf", "item_db: (\n{\n\tId: 501\n\tType: \"IT_HEALING\"\n},\n)", Encoding.UTF8);
 
             Pair("sprite/몬스터/poring", SpriteTestData.Monster());
             Pair("sprite/몬스터/lunatic", SpriteTestData.Weapon());
@@ -101,6 +103,8 @@ namespace Uninarok.RoImport.Tests.Catalog
             LedgerFolder = Path.Combine(_temp, "ledger"),
             ItemTableLanguage = language,
             CatalogOwnTablesFolder = _own,
+            ItemDbPath = Path.Combine(_own, "item_db.conf"),
+            CatalogAddressables = _addressables,
         };
 
         RoCatalogReport Import(RoImportOptions options, params SpriteCatalogCategory[] categories) => RoImportApi.Catalog(categories, options);
@@ -176,8 +180,10 @@ namespace Uninarok.RoImport.Tests.Catalog
             var result = Import(Options(language: RoItemTableLanguage.English), SpriteCatalogCategory.Monsters, SpriteCatalogCategory.GroundItems);
 
             Assert.That(result.Of(SpriteCatalogCategory.GroundItems).Entries, Is.EqualTo(1));
-            Assert.That(ExistsInProject(Art + "/sprite/아이템/red_potion.asset"), Is.True, "the English resource");
-            Assert.That(result.Report.Created + result.Report.Updated, Is.EqualTo(3), "red_potion's sprite and record, the ground item index; " + result.Summarize());
+            var ground = AssetDatabase.LoadAssetAtPath<GroundItemIndex>(RoCatalogOutputPaths.Index(_roots, SpriteCatalogCategory.GroundItems));
+            Assert.That(ground.ResourceNames, Is.EqualTo(new[] { "red_potion" }), "the English resource");
+            Assert.That(result.Report.Created + result.Report.Updated, Is.EqualTo(2),
+                "red_potion's record and the ground item index; the monsters stay current; " + result.Summarize());
         }
 
         [Test]
@@ -205,7 +211,6 @@ namespace Uninarok.RoImport.Tests.Catalog
         }
 
         [Test]
-        [Ignore("pending T5.9")]
         public void ImportingOnlyMonsters_WritesNoEquipmentAsset()
         {
             Import(Options(), SpriteCatalogCategory.Monsters);

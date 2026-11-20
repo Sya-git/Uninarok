@@ -15,6 +15,12 @@ namespace Uninarok.RoImport.Editor.Pipeline
     /// <summary>Options of one run (plan 4.10). Null members mean the project defaults.</summary>
     public sealed class RoImportOptions
     {
+        /// <summary>A copy whose members can be set for one batch without changing the caller's options.</summary>
+        internal RoImportOptions Clone() => (RoImportOptions)MemberwiseClone();
+
+        /// <summary>Test hook: the Addressables settings of a catalog run; null: the project's (PLAN-0008 4.6).</summary>
+        internal UnityEditor.AddressableAssets.Settings.AddressableAssetSettings CatalogAddressables;
+
         /// <summary>Convert even items the ledger says are current.</summary>
         public bool Force;
 
@@ -165,7 +171,7 @@ namespace Uninarok.RoImport.Editor.Pipeline
         /// plan, one job per record, then one index job per category; the report has the numbers of each category.
         /// </summary>
         public static global::Uninarok.RoImport.Editor.Catalog.RoCatalogReport Catalog(Uninarok.Catalog.SpriteCatalogCategory[] categories, RoImportOptions options = null) =>
-            throw new NotImplementedException("pending T5.9");
+            global::Uninarok.RoImport.Editor.Catalog.RoCatalogImporter.Run(categories, options);
 
         /// <summary>Every category of the catalog (PLAN-0008 4.7).</summary>
         public static global::Uninarok.RoImport.Editor.Catalog.RoCatalogReport CatalogAll(RoImportOptions options = null) =>
