@@ -476,9 +476,58 @@ namespace Uninarok.RoImport.Core.Catalog.Planning
     {
         public const string Folder = "방패";
 
+        public const string ItemSuffix = "_방패";
+
         public SpriteCatalogCategory Category => SpriteCatalogCategory.Shields;
         public RoCatalogNeeds Needs => RoCatalogNeeds.Own;
 
-        public void Plan(RoCatalogContext ctx, RoCatalogPlan.Builder plan) => throw new NotImplementedException("pending T4.11");
+        public void Plan(RoCatalogContext ctx, RoCatalogPlan.Builder plan)
+        {
+            var own = ctx.Tables.Own;
+            if (own == null) return;
+            var files = RoClassFiles.Collect(ctx, new[] { Folder }, null, own);
+            var claimed = new HashSet<RoPath>();
+            var shared = new RoSharedSlots();
+
+            foreach (var shield in own.ShieldNames.OrderBy(s => s.Key))
+            {
+                var pairs = Slots(files, "_" + shield.Value.Trim().ToLowerInvariant(), claimed, shared);
+                if (pairs.Count == 0)
+                {
+                    plan.Gap(RoIssueCode.CatalogNameWithoutFile, Category, $"{RoOwnTables.ShieldNamesFile}[{shield.Key}] ({shield.Value})",
+                        $"shield view id {shield.Key} has no file for any class");
+                    continue;
+                }
+                plan.Add(Category, RoCatalogKeys.Shield(shield.Key), pairs, new[] { RoCatalogValue.Of("viewId", shield.Key), RoCatalogValue.Of("name", shield.Value) });
+            }
+
+            // Item-id files (<body>_<sex>_<digits>_방패), 4.3.7.
+            var items = new SortedSet<int>();
+            foreach (string rest in files.Rests)
+                if (rest.Length > ItemSuffix.Length + 1 && rest[0] == '_' && rest.EndsWith(ItemSuffix, StringComparison.Ordinal)
+                    && int.TryParse(rest.Substring(1, rest.Length - 1 - ItemSuffix.Length), System.Globalization.NumberStyles.None,
+                        System.Globalization.CultureInfo.InvariantCulture, out int item))
+                    items.Add(item);
+            foreach (int item in items)
+            {
+                var pairs = Slots(files, "_" + item.ToString(System.Globalization.CultureInfo.InvariantCulture) + ItemSuffix, claimed, shared);
+                if (pairs.Count > 0) plan.Add(Category, RoCatalogKeys.ShieldItem(item), pairs, new[] { RoCatalogValue.Of("itemId", item) });
+            }
+
+            files.ReportUnclaimed(claimed, Category, plan, "no shield name or item id uses this file");
+            shared.Report(Category, plan);
+        }
+
+        static List<RoCatalogPair> Slots(RoClassFiles files, string rest, HashSet<RoPath> claimed, RoSharedSlots shared)
+        {
+            var slots = new Dictionary<string, (RoClassBody body, RoCatalogPair pair)>(StringComparer.Ordinal);
+            foreach (var group in files.Groups)
+            {
+                if (!group.Has(rest)) continue;
+                string role = RoCatalogRoles.Shield(group.Body.Job, group.Sex, group.Body.Doram ? SpriteRace.Doram : SpriteRace.Human);
+                shared.Offer(slots, role, group.Body, group.Pair(rest, role, claimed));
+            }
+            return slots.Values.Select(s => s.pair).ToList();
+        }
     }
 }

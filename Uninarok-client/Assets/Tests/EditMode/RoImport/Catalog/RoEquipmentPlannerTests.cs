@@ -219,7 +219,7 @@ namespace Uninarok.RoImport.Tests.Catalog
         static RoCatalogPlan Shields() => Plan(new RoShieldPlanner(), RoCatalogTables.Create(own: Own()),
             Pairs("sprite/방패/기사/기사_남_가드", "sprite/방패/기사/기사_남_2189_방패", "sprite/방패/기사/기사_남_매드바니").Concat(new[] { "sprite/방패/기사/가드.act" }));
 
-        [Test, Ignore("pending T4.11")]
+        [Test]
         public void ShieldsByName_AndByItemId()
         {
             var plan = Shields();
@@ -230,12 +230,30 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(plan.Gaps.Single(g => g.Code == RoIssueCode.CatalogNameWithoutFile).Item, Does.Contain("버클러"));
         }
 
-        [Test, Ignore("pending T4.11")]
+        [Test]
         public void UnreferencedShieldFiles_AreReported()
         {
             var unnamed = Shields().Gaps.Where(g => g.Code == RoIssueCode.CatalogFileWithoutName).Select(g => g.Item).ToArray();
 
             Assert.That(unnamed, Is.EquivalentTo(new[] { "sprite/방패/기사/기사_남_매드바니.spr", "sprite/방패/기사/가드.act" }));
+        }
+
+        // T4.11 real-data run (2026-11-20): the four basic shields and the item-id files, among them 검사_남_2189_방패 of T0.4.
+        [Test, Category(CatalogTestFiles.Category)]
+        public void TheClientData_Shields()
+        {
+            var plan = ClientPlan(new RoShieldPlanner(), out var report);
+
+            Assert.That(report.Issues, Is.Empty);
+            Assert.That(plan.Records.Select(r => r.Key), Is.EqualTo(new[]
+            {
+                "shield-0001", "shield-0002", "shield-0003", "shield-0004", "shield-item-2189", "shield-item-28901", "shield-item-28902",
+                "shield-item-28942", "shield-item-28945", "shield-item-28946", "shield-item-460020",
+            }));
+            Assert.That(PairOf(Record(plan, RoCatalogKeys.ShieldItem(2189)), RoCatalogRoles.Shield(PlayerJob.JOB_SWORDMAN, M, H)).Spr.Canonical,
+                Is.EqualTo("sprite/방패/검사/검사_남_2189_방패.spr"));
+            Assert.That(PairOf(Record(plan, RoCatalogKeys.Shield(1)), RoCatalogRoles.Shield(PlayerJob.JOB_KNIGHT, M, H)).Spr.Canonical,
+                Is.EqualTo("sprite/방패/기사/기사_남_가드.spr"));
         }
     }
 }

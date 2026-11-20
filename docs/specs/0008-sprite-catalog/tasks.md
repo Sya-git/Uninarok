@@ -111,8 +111,9 @@ Chosen in T0.4 (2026-11-20, from the data set and the decompiled tables):
 - [x] **T4.10** Implement the weapon planner (view-id records, item-id records, trails, fallback to the base type). (FR-4, FR-10)
   *Done when:* the weapon tests pass; item 1201 plans the short-sword weapon for a swordman; the item-id file of T0.4 gets its own record (reported).
   *Result (T4.10):* 101 of 103 view ids planned (0 and 24 have no name), 83 item-id records, 4,136 slots with 756 trails and 699 base-type fallbacks. Item 1201 (ClassNum 1) → `weapon-0001` (`_단검`) → `인간족/검사/검사_남_단검` for a male swordman; `검사_남_1117` is in `weapon-item-1117` (12 slots). 2,404 files no record uses (mostly 4th-class weapons, prefixes that are no body name). Pinned by `RoEquipmentPlannerTests.TheClientData_Weapons`.
-- [ ] **T4.11** Implement the shield planner. (FR-4, FR-10)
+- [x] **T4.11** Implement the shield planner. (FR-4, FR-10)
   *Done when:* the shield tests pass; the four basic shields and the item-id file of T0.4 are planned (reported).
+  *Result (T4.11):* shields 1–4 planned (96, 38, 8 and 8 class slots) and seven item-id records (2189, 28901, 28902, 28942, 28945, 28946, 460020, about 100 slots each); `방패/검사/검사_남_2189_방패` is the male swordman's slot of `shield-item-2189`. 471 files no record uses (4th classes, `매드바니`). Pinned by `RoEquipmentPlannerTests.TheClientData_Shields`.
 - [ ] **T4.12** Implement the palettes planner (every `.pal` under `palette/`). (FR-2, FR-3, FR-9)
   *Done when:* the real-data run plans 4,464 palettes (749 + 3,375 + 340) with no orphan (reported).
 
