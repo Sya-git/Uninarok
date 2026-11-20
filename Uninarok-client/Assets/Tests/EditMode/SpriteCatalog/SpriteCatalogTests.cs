@@ -11,7 +11,6 @@ using UnityConstraints = UnityEngine.TestTools.Constraints.ConstraintExtensions;
 namespace Uninarok.Catalog.Tests
 {
     // TASKS-0008 T3.2 (FR-1 to FR-7; PLAN-0008 4.5, D10, D16): the facade over in-memory indices, no Addressables load.
-    [Ignore("pending T3.4")]
     public class SpriteCatalogTests
     {
         readonly List<Object> _created = new List<Object>();

@@ -76,8 +76,9 @@ Chosen in T0.4 (2026-11-20, from the data set and the decompiled tables):
 - [x] **T3.3** Implement `BodyEntry`, `HeadEntry`, `EquipmentEntry` (slots hold `SpriteAnimationReference` only; `TryResolve` with the lazily built dictionaries) and `PaletteSet`; remove the matching ignores. (FR-2, FR-3, FR-4)
   *Done when:* the entry tests pass (command + result reported).
   *Note (T3.3):* `ClassTable.TryGet`/`RaceOf` were implemented here, not in T3.4, because `EquipmentEntry.TryResolve` reads the job's race from it.
-- [ ] **T3.4** Implement `UnitIndex`, `BodyIndex`, `HeadIndex`, `EquipmentIndex`, `ItemSpriteTable`, `GroundItemIndex`, `SkillIconIndex`, `EffectIndex`, `ClassTable`, `SpriteCatalogKeys` and the `SpriteCatalog` facade (dictionaries built once at load, plan §4.5); remove the remaining ignores. (FR-1 to FR-7)
+- [x] **T3.4** Implement `UnitIndex`, `BodyIndex`, `HeadIndex`, `EquipmentIndex`, `ItemSpriteTable`, `GroundItemIndex`, `SkillIconIndex`, `EffectIndex`, `ClassTable`, `SpriteCatalogKeys` and the `SpriteCatalog` facade (dictionaries built once at load, plan §4.5); remove the remaining ignores. (FR-1 to FR-7)
   *Done when:* `SpriteCatalogTests` pass; the zero-allocation lookup test passes.
+  *Note (T3.4):* `LoadAsync` is written but not exercised in edit mode (no Addressables settings exist until T5.x); the play-mode test of T6.2 covers it.
 
 ## Phase 4: Planning (Core, pure)
 

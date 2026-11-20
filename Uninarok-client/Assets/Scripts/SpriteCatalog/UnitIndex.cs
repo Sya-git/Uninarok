@@ -11,6 +11,16 @@ namespace Uninarok.Catalog
         public UnitRecord[] Records = Array.Empty<UnitRecord>();
 
         /// <summary>Binary search over <see cref="JobIds"/>; the facade uses its own dictionary.</summary>
-        public bool TryGet(int jobId, out UnitRecord record) => throw new NotImplementedException("pending T3.4");
+        public bool TryGet(int jobId, out UnitRecord record)
+        {
+            int i = JobIds == null ? -1 : Array.BinarySearch(JobIds, jobId);
+            if (i >= 0 && Records != null && i < Records.Length)
+            {
+                record = Records[i];
+                return true;
+            }
+            record = default;
+            return false;
+        }
     }
 }
