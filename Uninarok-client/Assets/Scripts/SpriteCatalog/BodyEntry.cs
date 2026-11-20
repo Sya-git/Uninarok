@@ -25,6 +25,9 @@ namespace Uninarok.Catalog
         public PlayerJob BaseJob;
         public BodyVariant[] Variants = Array.Empty<BodyVariant>();
 
+        /// <summary>The variant of <paramref name="job"/> (mount, outfit) for <paramref name="sex"/>, else the base variant for that sex.</summary>
+        public bool TryGetVariant(PlayerJob job, AccountSex sex, out BodyVariant variant) => throw new NotImplementedException("pending T3.3");
+
         [Serializable]
         public struct BodyVariant
         {

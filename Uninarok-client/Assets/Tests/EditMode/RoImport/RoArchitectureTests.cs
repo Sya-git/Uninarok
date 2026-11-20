@@ -69,6 +69,7 @@ namespace Uninarok.RoImport.Tests
         [TestCase("Editor/RoImport/Editor/Uninarok.RoImport.Editor.asmdef")]
         [TestCase("Tests/EditMode/RoImport/Uninarok.RoImport.Tests.asmdef")]
         [TestCase("Tests/EditMode/Sprites/Uninarok.Sprites.Tests.asmdef")]
+        [TestCase("Tests/EditMode/SpriteCatalog/Uninarok.SpriteCatalog.Tests.asmdef")]
         public void AssemblyDefinition_IsEditorOnly(string relative)
         {
             string json = File.ReadAllText(Path.Combine(Application.dataPath, relative));

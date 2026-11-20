@@ -15,5 +15,8 @@ namespace Uninarok.Catalog
     public struct PaletteSet
     {
         public PaletteRef[] Colours;
+
+        /// <summary>The palette of colour number <paramref name="colour"/>; false when the set has none.</summary>
+        public bool TryGet(int colour, out PaletteReference palette) => throw new NotImplementedException("pending T3.3");
     }
 }

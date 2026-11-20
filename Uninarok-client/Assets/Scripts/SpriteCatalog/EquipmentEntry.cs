@@ -21,6 +21,18 @@ namespace Uninarok.Catalog
         /// <summary>Weapons only, parallel to <see cref="Slots"/>; empty for other kinds. A slot without a trail has an empty reference.</summary>
         public SpriteAnimationReference[] Trails = Array.Empty<SpriteAnimationReference>();
 
+        /// <summary>How many times the lookup dictionaries were built (once per loaded entry; tests).</summary>
+        internal int DictionaryBuilds { get; private set; }
+
+        /// <summary>
+        /// The animation for <paramref name="job"/> and <paramref name="sex"/> (FR-4, D16): the slot for exactly (job, sex); else
+        /// the any-class slot for (the job's race in <paramref name="classes"/>, sex); else the any-class human slot for the sex.
+        /// <paramref name="trail"/> is the weapon trail of that slot, null when it has none. False when no slot applies: the
+        /// equipment draws nothing. O(1) after the first call.
+        /// </summary>
+        public bool TryResolve(PlayerJob job, AccountSex sex, ClassTable classes, out SpriteAnimationReference animation, out SpriteAnimationReference trail) =>
+            throw new NotImplementedException("pending T3.3");
+
         [Serializable]
         public struct EquipmentSlot
         {
