@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Uninarok.Networking.Data;
 
@@ -30,8 +31,58 @@ namespace Uninarok.Catalog
         /// <paramref name="trail"/> is the weapon trail of that slot, null when it has none. False when no slot applies: the
         /// equipment draws nothing. O(1) after the first call.
         /// </summary>
-        public bool TryResolve(PlayerJob job, AccountSex sex, ClassTable classes, out SpriteAnimationReference animation, out SpriteAnimationReference trail) =>
-            throw new NotImplementedException("pending T3.3");
+        public bool TryResolve(PlayerJob job, AccountSex sex, ClassTable classes, out SpriteAnimationReference animation, out SpriteAnimationReference trail)
+        {
+            if (_byJob == null) BuildDictionaries();
+            SpriteRace race = classes != null ? classes.RaceOf(job) : SpriteRace.Human;
+            if (_byJob.TryGetValue(JobKey(job, sex), out int slot)
+                || _anyClass.TryGetValue(RaceKey(race, sex), out slot)
+                || (race != SpriteRace.Human && _anyClass.TryGetValue(RaceKey(SpriteRace.Human, sex), out slot)))
+            {
+                animation = Slots[slot].Animation;
+                trail = TrailOf(slot);
+                return true;
+            }
+            animation = null;
+            trail = null;
+            return false;
+        }
+
+        // Built on the first lookup and kept for the life of the loaded entry (D16); not serialized.
+        [NonSerialized] Dictionary<int, int> _byJob, _anyClass;
+
+        static int JobKey(PlayerJob job, AccountSex sex) => ((ushort)job << 2) | (byte)sex;
+        static int RaceKey(SpriteRace race, AccountSex sex) => ((byte)race << 2) | (byte)sex;
+
+        void BuildDictionaries()
+        {
+            var slots = Slots ?? Array.Empty<EquipmentSlot>();
+            var byJob = new Dictionary<int, int>(slots.Length);
+            var anyClass = new Dictionary<int, int>(4);
+            for (int i = 0; i < slots.Length; i++)
+            {
+                // The first slot of a key wins; the importer writes one slot per key.
+                if (slots[i].AnyClass) anyClass.TryAdd(RaceKey(slots[i].Race, slots[i].Sex), i);
+                else byJob.TryAdd(JobKey(slots[i].Job, slots[i].Sex), i);
+            }
+            _byJob = byJob;
+            _anyClass = anyClass;
+            DictionaryBuilds++;
+        }
+
+        SpriteAnimationReference TrailOf(int slot)
+        {
+            if (Kind != EquipmentKind.Weapon || Trails == null || slot >= Trails.Length) return null;
+            var trail = Trails[slot];
+            return trail != null && trail.RuntimeKeyIsValid() ? trail : null;
+        }
+
+        // An edit in the editor (the importer rewriting the entry) invalidates the dictionaries.
+        void OnValidate()
+        {
+            _byJob = null;
+            _anyClass = null;
+        }
 
         [Serializable]
         public struct EquipmentSlot

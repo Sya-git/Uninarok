@@ -7,7 +7,6 @@ using static Uninarok.Catalog.Tests.CatalogFixtures;
 namespace Uninarok.Catalog.Tests
 {
     // TASKS-0008 T3.2 (FR-4; PLAN-0008 4.4, D9, D16): slot resolution of an equipment entry.
-    [Ignore("pending T3.3")]
     public class EquipmentEntryTests
     {
         readonly List<Object> _created = new List<Object>();

@@ -14,7 +14,18 @@ namespace Uninarok.Catalog
         public HeadVariant[] Variants = Array.Empty<HeadVariant>();
 
         /// <summary>The variant for exactly (<paramref name="sex"/>, <paramref name="race"/>); false when the style has none.</summary>
-        public bool TryGetVariant(AccountSex sex, SpriteRace race, out HeadVariant variant) => throw new NotImplementedException("pending T3.3");
+        public bool TryGetVariant(AccountSex sex, SpriteRace race, out HeadVariant variant)
+        {
+            var variants = Variants ?? Array.Empty<HeadVariant>();
+            for (int i = 0; i < variants.Length; i++)
+            {
+                if (variants[i].Sex != sex || variants[i].Race != race) continue;
+                variant = variants[i];
+                return true;
+            }
+            variant = default;
+            return false;
+        }
 
         [Serializable]
         public struct HeadVariant

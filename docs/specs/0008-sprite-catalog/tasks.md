@@ -73,8 +73,9 @@ Chosen in T0.4 (2026-11-20, from the data set and the decompiled tables):
   *Note (T3.1):* namespace `Uninarok.Catalog` (plan D19). The entry references need their types, so `BodyEntry`, `HeadEntry` and `EquipmentEntry` were added here as data only (fields and nested structs, `BodyVariantKind`); T3.3 adds their methods.
 - [x] **T3.2** Create the test assembly `Uninarok.SpriteCatalog.Tests` and write `EquipmentEntryTests`, `BodyEntryTests`, `HeadEntryTests` and `SpriteCatalogTests` (plan §6, hand-built entries and in-memory indices): exact (job, sex) slot beats any-class doram beats any-class human; `AnyClass` does not collide with `JOB_NOVICE`; a missing action draws nothing; a unit falls back; item id → kind and view id; ground slot; emote action = id; a miss returns false; lookups after load allocate nothing; the entry dictionaries are built once. Marked `[Ignore("pending T3.3")]` / `T3.4`. (FR-1 to FR-7)
   *Done when:* the tests compile and are listed as ignored.
-- [ ] **T3.3** Implement `BodyEntry`, `HeadEntry`, `EquipmentEntry` (slots hold `SpriteAnimationReference` only; `TryResolve` with the lazily built dictionaries) and `PaletteSet`; remove the matching ignores. (FR-2, FR-3, FR-4)
+- [x] **T3.3** Implement `BodyEntry`, `HeadEntry`, `EquipmentEntry` (slots hold `SpriteAnimationReference` only; `TryResolve` with the lazily built dictionaries) and `PaletteSet`; remove the matching ignores. (FR-2, FR-3, FR-4)
   *Done when:* the entry tests pass (command + result reported).
+  *Note (T3.3):* `ClassTable.TryGet`/`RaceOf` were implemented here, not in T3.4, because `EquipmentEntry.TryResolve` reads the job's race from it.
 - [ ] **T3.4** Implement `UnitIndex`, `BodyIndex`, `HeadIndex`, `EquipmentIndex`, `ItemSpriteTable`, `GroundItemIndex`, `SkillIconIndex`, `EffectIndex`, `ClassTable`, `SpriteCatalogKeys` and the `SpriteCatalog` facade (dictionaries built once at load, plan §4.5); remove the remaining ignores. (FR-1 to FR-7)
   *Done when:* `SpriteCatalogTests` pass; the zero-allocation lookup test passes.
 

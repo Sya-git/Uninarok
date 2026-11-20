@@ -7,7 +7,6 @@ using static Uninarok.Catalog.Tests.CatalogFixtures;
 namespace Uninarok.Catalog.Tests
 {
     // TASKS-0008 T3.2 (FR-2; PLAN-0008 4.4): the variants of a class body.
-    [Ignore("pending T3.3")]
     public class BodyEntryTests
     {
         readonly List<Object> _created = new List<Object>();
@@ -62,7 +61,6 @@ namespace Uninarok.Catalog.Tests
     }
 
     // TASKS-0008 T3.2 (FR-2; PLAN-0008 4.4): the variants of a head style.
-    [Ignore("pending T3.3")]
     public class HeadEntryTests
     {
         readonly List<Object> _created = new List<Object>();
@@ -89,7 +87,6 @@ namespace Uninarok.Catalog.Tests
     }
 
     // TASKS-0008 T3.2 (FR-2, FR-3; PLAN-0008 4.4): palettes by colour number.
-    [Ignore("pending T3.3")]
     public class PaletteSetTests
     {
         [Test]
