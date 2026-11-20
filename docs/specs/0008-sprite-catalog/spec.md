@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Draft (waiting for approval) |
+| **Status** | Draft (open questions resolved 2026-11-20; waiting for approval) |
 | **Created** | 2026-11-19 |
 | **Owner** | _(fill in)_ |
 | **Depends on** | [SPEC-0007](../0007-spr-act-pal-sprites/spec.md) (converting one sprite) |
@@ -42,6 +42,7 @@ Priority: **M** = must, **S** = should.
 | FR-9 | M | Import by category: the import menu offers each category on its own, any selection of categories, and everything. A run imports only what it needs from SPEC-0007 (shared sheets converted once even across categories) and reports per category: entries, sheets, actions, warnings, time. | Importing only monsters touches no equipment; importing equipment after monsters reuses no stale data and re-imports nothing already current. |
 | FR-10 | M | Gaps are warnings, not failures: a table name without a file, a file no table references, an orphan ACT or SPR, a stray legacy folder each give one warning; the rest continues. | A full run completes and lists each gap once, grouped by category. |
 | FR-11 | S | Lookup preview: in the editor, enter an id (job id, item id, view id + class + sex) and see the resolved entry play. | Entering item 2220 with knight male shows the hat on its own. |
+| FR-12 | M | Item table choice: a project setting selects which language's item table feeds ground items and equipment lookups (Portuguese, English or Spanish). Portuguese is the default. | With the setting on English, item 501 resolves from the English table; a fresh project uses Portuguese. |
 
 ## 5. Success criteria
 
@@ -51,16 +52,19 @@ Priority: **M** = must, **S** = should.
 ## 6. Assumptions and constraints
 
 - Ids and names come from the GRF's lub tables and the client's `System` item table, read through the GRF library; the reference document lists every table used.
-- The item table (`itemInfo`) is the Portuguese one (OQ-4); only its resource names and view ids are used here.
+- The item table (`itemInfo`) comes in three languages; only its resource names and view ids are used here. Portuguese is the default, chosen by a project setting (FR-12).
+- For weapons and shields the view id wins, then the item id, then the base type (OQ-3). This is recorded as Candidate until checked against the server's look packets.
 - The sprite direction is the network direction (`UninarokDirection`).
 
 ## 7. Open questions
 
-| # | Question | Blocks | Default if not answered |
-|---|---|---|---|
-| OQ-1 | Class → body file name and shield view id → name are not in any lub (hard-coded in the client). OK to keep our own small tables, built from the folder names and `itemInfo`? | FR-2, FR-4 | Own tables in the shared data docs, reviewed by the owner. |
-| OQ-2 | Monsters with 48–72 actions have extra animations; do we need names for them now? | FR-1 naming only | `Extra5`, `Extra6`, … |
-| OQ-3 | Weapons and shields also have files named by item id (`_1530`, `28901_방패`). Does the item id win over the view id? To check against what the server sends in the look packets. | FR-4 | Item-id file first, then view id, then base type. |
-| OQ-4 | Which item table: Portuguese (`iteminfo_new`, 17,482 items), English or Spanish (17,9xx items each)? | FR-5 | Portuguese; others later for the UI. |
-| OQ-5 | Which effect sprites are in scope beyond emotes, carts, falcon/wolf and status icons? | FR-6 | The whole effect folder, by name. |
-| OQ-6 | Stray or legacy files (bodies outside the body folder, a misspelt headgear folder, files with stray quotes): ignore? | FR-10 | Ignore with one warning each. |
+All resolved on 2026-11-20.
+
+| # | Question | Decision |
+|---|---|---|
+| OQ-1 | Class → body file name and shield view id → name are not in any lub. | Keep our own small tables in the shared data docs, built from folder names and `itemInfo`, reviewed by the owner. |
+| OQ-2 | Names for the extra animations of monsters with 48–72 actions. | `Extra5`, `Extra6`, … |
+| OQ-3 | Does the item id win over the view id for weapon/shield files named by item id? | View id first, then item id, then base type. |
+| OQ-4 | Which item table? | A project setting chooses the language; Portuguese by default (FR-12). |
+| OQ-5 | Effect sprites in scope. | The whole effect folder, by name. |
+| OQ-6 | Stray or legacy files. | Ignored, one warning each. |

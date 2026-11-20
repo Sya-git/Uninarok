@@ -79,7 +79,7 @@ Lub files here are the client's own, outside the GRF. Same decompiler; **text en
 
 Examples: 501 Poção Vermelha → `빨간포션`, ClassNum 0; 1201 Faca → `나이프`, ClassNum 1 (short sword, suffix `_단검`); 1207 Main Gauche → ClassNum 31 (suffix `_1207`); 2220 Chapéu → ClassNum 16 (headgear); 2101 Vembrassa → `가드`, ClassNum 1.
 
-**Item-id sprites (Candidate).** Some weapon and shield files are named by item id: `_1530` (Mjolnir, ClassNum 8) and `28901_방패` (ClassNum 1). The client appears to try the item-id file first and fall back to the ClassNum name; to be checked against the server's look packets (OQ-3).
+**Item-id sprites (Candidate).** Some weapon and shield files are named by item id: `_1530` (Mjolnir, ClassNum 8) and `28901_방패` (ClassNum 1). The client appears to try the item-id file first and fall back to the ClassNum name; decision (OQ-3): view id first, then item id, then base type; still to be checked against the server's look packets.
 
 ### 2.2 Other System tables
 
@@ -181,14 +181,14 @@ Counts are SPR files; "unique" counts distinct SPR contents (MD5).
 
 - `방패/<job>/<job>_<sex>_<name>.spr`, name is a shield type (`가드` guard, `버클러` buckler, `쉴드` shield, `미러쉴드` mirror shield, `매드바니`) or `<item id>_방패` (`2189_방패`).
 - **Lookup by item id:** `itemInfo[id].ClassNum` 1 `가드`, 2 `버클러`, 3 `쉴드`, 4 `미러쉴드` (Confirmed for the basic shields 2101–2108). No lub table holds this list: it is a small hand-made table (OQ-1).
-- Item-id files (`28901_방패`, `2189_방패`, `460020_방패`) and `매드바니` belong to items whose ClassNum is 1: the client likely prefers the item-id file (OQ-3).
+- Item-id files (`28901_방패`, `2189_방패`, `460020_방패`) and `매드바니` belong to items whose ClassNum is 1: decision (OQ-3): view id first, then item id, then base type.
 - 1,320 SPR, **29 distinct**: one sheet per shield, the ACT differs per job.
 
 ### 3.8 Weapons — Confirmed
 
 - `인간족/<job>/<job>_<sex><suffix>.spr`; doram `도람족/<job>/`. `<suffix>` = `WeaponNameTable[view id]`: a type (`_검` sword, `_단검` dagger, `_롯드` rod, `_활` bow, `_카타르_카타르` katar, dual wield `_단검_검`) or an item id (`_1207`).
 - `…<suffix>_검광.spr` and `<job>_<sex>_검광.spr` are the **weapon trail** ("sword light") drawn during attacks; `…광` variants (`도끼광`, `권총광`) likewise.
-- **Lookup by item id:** `itemInfo[id].ClassNum` is the weapon view id (§2.1). Unknown specific id → `Expansion_Weapon_IDs[id]` gives the base type to try next. Item-id files such as `_1530` (Mjolnir, ClassNum 8) suggest the item id is tried first (OQ-3).
+- **Lookup by item id:** `itemInfo[id].ClassNum` is the weapon view id (§2.1). Unknown specific id → `Expansion_Weapon_IDs[id]` gives the base type to try next. Item-id files such as `_1530` (Mjolnir, ClassNum 8) suggest the item id is tried early; decision (OQ-3): view id first, then item id, then base type.
 - Weapon folder names are the base job (`검사` swordman, `inquisitor`); mounts reuse the job folder (`페코페코_기사` is its own folder).
 - 104 actions; frames without a weapon are layer index −1; scale and tint are set on every file sampled.
 
