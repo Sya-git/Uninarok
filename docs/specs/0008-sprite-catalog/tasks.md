@@ -41,7 +41,7 @@ Chosen in T0.4 (2026-11-20, from the data set and the decompiled tables):
 
 ## Phase 1: Shared enum
 
-- [ ] **T1.1** Add `PlayerJob : short` (hand-written) in `Scripts/Networking/Runtime/Data/PlayerJob.cs`, namespace `Uninarok.Networking.Data`, beside `AccountSex`; write `docs/data/PlayerJob.md` in the format of `docs/data/AccountSex.md` (kind, underlying type, source of the values = Hercules `src/common/class.h` and `class_hidden.h`, one table row per member). (FR-2)
+- [x] **T1.1** Add `PlayerJob : short` (hand-written) in `Scripts/Networking/Runtime/Data/PlayerJob.cs`, namespace `Uninarok.Networking.Data`, beside `AccountSex`; write `docs/data/PlayerJob.md` in the format of `docs/data/AccountSex.md` (kind, underlying type, source of the values = Hercules `src/common/class.h` and `class_hidden.h`, one table row per member). (FR-2)
   *Done when:* the enum has all 154 members with the Hercules ids (a scratch count against both `.h` files), the doc table lists every member, the project compiles with no new warnings.
 
 ## Phase 2: Reading the tables (Core, pure)
