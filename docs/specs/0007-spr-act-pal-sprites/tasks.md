@@ -91,8 +91,9 @@ Reference set (spec §5), used by every check below: a multi-layer monster `몬�
 
 ## Phase 7: Verify and close
 
-- [ ] **T7.1** Visual check against the reference viewer for the whole reference set: layout, timing, direction, mirror, rotation, no background or fringe on bright and dark ground at 1× and 4×, a sprite standing on a GAT cell, a body's head anchor following the body, a weapon hidden while walking and shown while attacking, a body with two cloth palettes from one sheet. (FR-1, FR-3, FR-5, FR-6, FR-7)
+- [x] **T7.1** Visual check against the reference viewer for the whole reference set: layout, timing, direction, mirror, rotation, no background or fringe on bright and dark ground at 1× and 4×, a sprite standing on a GAT cell, a body's head anchor following the body, a weapon hidden while walking and shown while attacking, a body with two cloth palettes from one sheet. (FR-1, FR-3, FR-5, FR-6, FR-7)
   *Done when:* recordings or screenshots are in the PR and the owner marks each case as matching.
+  *Result (owner, 2026-11-19):* layout, timing, direction, mirror, rotation, palettes, the head anchor and the weapon hidden/shown match. Two findings go to later specs (`BACKLOG.md`): the sword drawn behind the head (part order, composition spec), and feet below the ACT origin sinking into the ground under a pitched camera; variant E (face the camera, move toward it with size kept) is approved as good, for the display spec.
 - [x] **T7.2** Budget: in a development build place 300 actors (a mix of the reference set) and record the `SpriteSystem` loop time, the render cost and managed allocation per frame, on screen and off screen. If over budget, open the D5 fallback as a plan item. (FR-3)
   *Done when:* the numbers are in the PR, steady-state `GC.Alloc` is zero, and the owner accepts the budget or the fallback is opened.
 - [ ] **T7.3** Close: verify each FR against tests and evidence; set `spec.md`, `plan.md` and `tasks.md` to `Implemented`; move leftovers (unused-sheet cleanup, clip export for Timeline, texture compression if pending) to `docs/specs/BACKLOG.md`.
