@@ -148,7 +148,7 @@ namespace Uninarok.RoImport.Tests.Catalog
                 "sprite/인간족/기사/기사_남_1117", "sprite/인간족/검사/검사_남_검", "sprite/인간족/페코페코_기사/페코페코기사_남_1185",
                 "sprite/인간족/기사/기사_남_1530_검광", "sprite/인간족/몸통/남/기사_남", "sprite/도람족/summoner/summoner_남_검"));
 
-        [Test, Ignore("pending T4.10")]
+        [Test]
         public void AViewIdHasTheSlotsOfTheClassesWithItsFile_AndTheirTrails()
         {
             var plan = Weapons();
@@ -165,7 +165,7 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(PairOf(sword, RoCatalogRoles.Weapon(PlayerJob.JOB_SUMMONER, M, D)).Spr.Canonical, Is.EqualTo("sprite/도람족/summoner/summoner_남_검.spr"));
         }
 
-        [Test, Ignore("pending T4.10")]
+        [Test]
         public void WithoutItsOwnFile_AClassFallsBackToTheBaseType()
         {
             var custom = Record(Weapons(), RoCatalogKeys.Weapon(50));
@@ -176,7 +176,7 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(PairOf(custom, RoCatalogRoles.Weapon(PlayerJob.JOB_SWORDMAN, M, H)).Spr.Canonical, Is.EqualTo("sprite/인간족/검사/검사_남_검.spr"));
         }
 
-        [Test, Ignore("pending T4.10")]
+        [Test]
         public void AnItemIdFile_GetsItsOwnRecord()
         {
             var item = Record(Weapons(), RoCatalogKeys.WeaponItem(1117));
@@ -185,7 +185,7 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(item.Value("itemId"), Is.EqualTo("1117"));
         }
 
-        [Test, Ignore("pending T4.10")]
+        [Test]
         public void UnmatchedWeaponFiles_AreReported_AndBodyFoldersAreNotWeapons()
         {
             var unnamed = Weapons().Gaps.Where(g => g.Code == RoIssueCode.CatalogFileWithoutName).Select(g => g.Item).ToArray();
@@ -194,6 +194,24 @@ namespace Uninarok.RoImport.Tests.Catalog
             {
                 "sprite/인간족/페코페코_기사/페코페코기사_남_1185.spr", "sprite/인간족/기사/기사_남_1530_검광.spr",
             }), "a prefix that is no body name; a trail of a weapon with no file");
+        }
+
+        // T4.10 real-data run (2026-11-20): item 1201 (ClassNum 1) → weapon-0001 → the swordman's short sword; the item-id file
+        // 검사_남_1117 of T0.4 has its own record.
+        [Test, Category(CatalogTestFiles.Category)]
+        public void TheClientData_Weapons()
+        {
+            var plan = ClientPlan(new RoWeaponPlanner(), out var report);
+
+            Assert.That(report.Issues, Is.Empty);
+            Assert.That(plan.Records.Count(r => r.Key.StartsWith("weapon-0")), Is.EqualTo(101));
+            Assert.That(plan.Records.Count(r => r.Key.StartsWith("weapon-item-")), Is.EqualTo(83));
+            Assert.That(PairOf(Record(plan, RoCatalogKeys.Weapon(1)), RoCatalogRoles.Weapon(PlayerJob.JOB_SWORDMAN, M, H)).Act.Canonical,
+                Is.EqualTo("sprite/인간족/검사/검사_남_단검.act"));
+            Assert.That(PairOf(Record(plan, RoCatalogKeys.WeaponItem(1117)), RoCatalogRoles.Weapon(PlayerJob.JOB_SWORDMAN, M, H)).Spr.Canonical,
+                Is.EqualTo("sprite/인간족/검사/검사_남_1117.spr"));
+            Assert.That(plan.Records.Sum(r => r.Pairs.Count(p => p.Role.StartsWith(RoCatalogRoles.Trail))), Is.EqualTo(756));
+            Assert.That(plan.Records.Sum(r => r.Values.Count(v => v.Name.StartsWith(RoCatalogRoles.FallbackPrefix))), Is.EqualTo(699));
         }
 
         // ---- shields (4.3.7) ----

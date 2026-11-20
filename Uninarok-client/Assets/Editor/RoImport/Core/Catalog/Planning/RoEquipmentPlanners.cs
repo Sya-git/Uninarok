@@ -87,6 +87,108 @@ namespace Uninarok.RoImport.Core.Catalog.Planning
     }
 
     /// <summary>
+    /// The class-prefixed files of the weapon and shield folders (PLAN-0008 4.3.11): every <c>&lt;BodyName&gt;_&lt;sex&gt;&lt;rest&gt;</c>
+    /// file whatever its folder, grouped by (body, sex) in class table order, with the rests each group has as a full pair.
+    /// </summary>
+    sealed class RoClassFiles
+    {
+        readonly List<RoCatalogContext.FileSet> _sets = new List<RoCatalogContext.FileSet>();
+        readonly HashSet<string> _excluded = new HashSet<string>(StringComparer.Ordinal);
+
+        public List<Group> Groups { get; } = new List<Group>();
+        public IEnumerable<string> Rests => Groups.SelectMany(g => g.Rests).Distinct();
+
+        public static RoClassFiles Collect(RoCatalogContext ctx, IEnumerable<string> folders, IEnumerable<string> excludedSubfolders, RoOwnTables own)
+        {
+            var result = new RoClassFiles();
+            var bodies = own.Bodies.Select(b => (canonical: b.BodyName.ToLowerInvariant(), body: b))
+                .GroupBy(b => b.canonical).Select(g => g.First()).OrderByDescending(b => b.canonical.Length).ToList();
+            var groups = new Dictionary<(string, AccountSex), Group>();
+            foreach (string folder in folders)
+            {
+                string prefix = RoFileNames.SpriteFolder(folder);
+                var set = ctx.Files(prefix);
+                result._sets.Add(set);
+                var excluded = (excludedSubfolders ?? Enumerable.Empty<string>()).Select(e => RoFileNames.SpriteFolder(folder + "/" + e)).ToArray();
+                foreach (var spr in set.All)
+                {
+                    if (excluded.Any(e => spr.Canonical.StartsWith(e, StringComparison.Ordinal)))
+                    {
+                        result._excluded.Add(spr.Canonical);
+                        continue;
+                    }
+                    if (spr.Extension != RoFileNames.SprExtension) continue;
+                    var act = spr.WithExtension(RoFileNames.ActExtension);
+                    if (!set.Contains(act)) continue;
+                    string stem = spr.FileNameWithoutExtension;
+                    foreach (var (canonical, body) in bodies)
+                    {
+                        AccountSex sex;
+                        if (stem.StartsWith(canonical + "_남", StringComparison.Ordinal)) sex = AccountSex.SEX_MALE;
+                        else if (stem.StartsWith(canonical + "_여", StringComparison.Ordinal)) sex = AccountSex.SEX_FEMALE;
+                        else continue;
+                        string rest = stem.Substring(canonical.Length + 2);
+                        if (rest.Length > 0 && rest[0] != '_' && !char.IsDigit(rest[0]) && rest[0] != '광') continue;   // 기사_남자… is not 기사_남
+                        if (!groups.TryGetValue((canonical, sex), out var group))
+                            groups.Add((canonical, sex), group = new Group(body, sex));
+                        group.Add(rest, act, spr);
+                        break;
+                    }
+                }
+            }
+            // Class table order, so the first row of a shared slot is the table's first (D20).
+            foreach (var b in own.Bodies)
+                foreach (var sex in RoEquipmentFiles.Sexes)
+                    if (groups.TryGetValue((b.BodyName.ToLowerInvariant(), sex), out var g) && !result.Groups.Contains(g))
+                        result.Groups.Add(g);
+            return result;
+        }
+
+        /// <summary>Every sprite stem of the folders that no record claimed (excluded subfolders aside).</summary>
+        public void ReportUnclaimed(HashSet<RoPath> claimed, SpriteCatalogCategory category, RoCatalogPlan.Builder plan, string message)
+        {
+            foreach (var set in _sets)
+            foreach (var path in set.All)
+            {
+                if (claimed.Contains(path) || _excluded.Contains(path.Canonical)) continue;
+                if (path.Extension == RoFileNames.SprExtension
+                    || (path.Extension == RoFileNames.ActExtension && !set.Contains(path.WithExtension(RoFileNames.SprExtension))))
+                    plan.Gap(RoIssueCode.CatalogFileWithoutName, category, path.Canonical, message);
+            }
+        }
+
+        public sealed class Group
+        {
+            readonly Dictionary<string, (RoPath act, RoPath spr)> _files = new Dictionary<string, (RoPath, RoPath)>(StringComparer.Ordinal);
+
+            public Group(RoClassBody body, AccountSex sex)
+            {
+                Body = body;
+                Sex = sex;
+            }
+
+            public RoClassBody Body { get; }
+            public AccountSex Sex { get; }
+            public IEnumerable<string> Rests => _files.Keys;
+
+            public void Add(string rest, RoPath act, RoPath spr)
+            {
+                if (!_files.ContainsKey(rest)) _files.Add(rest, (act, spr));
+            }
+
+            public bool Has(string rest) => _files.ContainsKey(rest);
+
+            public RoCatalogPair Pair(string rest, string role, HashSet<RoPath> claimed)
+            {
+                var f = _files[rest];
+                claimed.Add(f.act);
+                claimed.Add(f.spr);
+                return new RoCatalogPair(f.act, f.spr, role);
+            }
+        }
+    }
+
+    /// <summary>
     /// Body names that share one equipment slot (PLAN-0008 D20): the Base row wins, else the first offered; the files left out
     /// are counted and reported once per category.
     /// </summary>
@@ -264,10 +366,106 @@ namespace Uninarok.RoImport.Core.Catalog.Planning
     /// </summary>
     public sealed class RoWeaponPlanner : IRoCatalogPlanner
     {
+        static readonly string[] TrailSuffixes = { "_검광", "광" };
+        static readonly string[] RaceFolders = { "인간족", "도람족" };
+        static readonly string[] NotWeaponFolders = { "몸통", "머리통" };
+
         public SpriteCatalogCategory Category => SpriteCatalogCategory.Weapons;
         public RoCatalogNeeds Needs => RoCatalogNeeds.ViewIds | RoCatalogNeeds.Own;
 
-        public void Plan(RoCatalogContext ctx, RoCatalogPlan.Builder plan) => throw new NotImplementedException("pending T4.10");
+        public void Plan(RoCatalogContext ctx, RoCatalogPlan.Builder plan)
+        {
+            var views = ctx.Tables.ViewIds;
+            var own = ctx.Tables.Own;
+            if (views == null || own == null) return;
+            var weaponFiles = RoClassFiles.Collect(ctx, RaceFolders, NotWeaponFolders, own);
+            var claimed = new HashSet<RoPath>();
+            var suffixes = new HashSet<string>(views.WeaponSuffixes.Values.Where(s => !string.IsNullOrEmpty(s)).Select(Canonical), StringComparer.Ordinal);
+            var shared = new RoSharedSlots();
+
+            foreach (int id in views.WeaponConstants.Values.Distinct().OrderBy(i => i))
+            {
+                string suffix = views.WeaponSuffixes.TryGetValue(id, out var s) && !string.IsNullOrEmpty(s) ? Canonical(s) : null;
+                string baseSuffix = views.WeaponBaseTypes.TryGetValue(id, out int baseId) && baseId != id
+                                    && views.WeaponSuffixes.TryGetValue(baseId, out var b) && !string.IsNullOrEmpty(b) ? Canonical(b) : null;
+                if (suffix == null && baseSuffix == null)
+                {
+                    plan.Gap(RoIssueCode.CatalogNameWithoutFile, Category, $"WeaponNameTable[{id}]", $"weapon view id {id} has no name");
+                    continue;
+                }
+                var slots = Slots(weaponFiles, own, suffix, baseSuffix, id, claimed, shared);
+                if (slots.pairs.Count == 0)
+                {
+                    plan.Gap(RoIssueCode.CatalogNameWithoutFile, Category, $"Weapon_IDs[{id}] ({suffix ?? baseSuffix})", $"weapon view id {id} has no file for any class");
+                    continue;
+                }
+                var values = new List<RoCatalogValue> { RoCatalogValue.Of("viewId", id), RoCatalogValue.Of("name", suffix ?? baseSuffix) };
+                values.AddRange(slots.values);
+                plan.Add(Category, RoCatalogKeys.Weapon(id), slots.pairs, values);
+            }
+
+            // Item-id files (<body>_<sex>_<digits>) that no view id claims (4.3.6).
+            var itemIds = new SortedSet<int>();
+            foreach (var rest in weaponFiles.Rests)
+                if (!suffixes.Contains(rest) && TryItemId(rest, out int item)) itemIds.Add(item);
+            foreach (int item in itemIds)
+            {
+                string rest = "_" + item.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                var slots = Slots(weaponFiles, own, rest, null, 0, claimed, shared);
+                if (slots.pairs.Count == 0) continue;
+                plan.Add(Category, RoCatalogKeys.WeaponItem(item), slots.pairs, new[] { RoCatalogValue.Of("itemId", item) });
+            }
+
+            weaponFiles.ReportUnclaimed(claimed, Category, plan, "no weapon view id or item id uses this file");
+            shared.Report(Category, plan);
+        }
+
+        // The slots of one record: per class file group, the file of `suffix`, else of `baseSuffix` (a fallback for view id `viewId`), with its trail.
+        static (List<RoCatalogPair> pairs, List<RoCatalogValue> values) Slots(RoClassFiles files, RoOwnTables own, string suffix, string baseSuffix, int viewId,
+                                                                              HashSet<RoPath> claimed, RoSharedSlots shared)
+        {
+            var slots = new Dictionary<string, (RoClassBody body, (RoCatalogPair weapon, RoCatalogPair? trail, bool fallback) pair)>(StringComparer.Ordinal);
+            foreach (var group in files.Groups)
+            {
+                bool fallback = false;
+                string rest = suffix != null && group.Has(suffix) ? suffix : null;
+                if (rest == null && baseSuffix != null && group.Has(baseSuffix))
+                {
+                    rest = baseSuffix;
+                    fallback = true;
+                }
+                if (rest == null) continue;
+                var race = group.Body.Doram ? SpriteRace.Doram : SpriteRace.Human;
+                string role = RoCatalogRoles.Weapon(group.Body.Job, group.Sex, race);
+                var weapon = group.Pair(rest, role, claimed);
+                RoCatalogPair? trail = null;
+                foreach (string t in TrailSuffixes)
+                    if (group.Has(rest + t))
+                    {
+                        trail = group.Pair(rest + t, RoCatalogRoles.WeaponTrail(group.Body.Job, group.Sex, race), claimed);
+                        break;
+                    }
+                shared.Offer(slots, role, group.Body, (weapon, trail, fallback));
+            }
+            var pairs = new List<RoCatalogPair>();
+            var values = new List<RoCatalogValue>();
+            foreach (var slot in slots.Values)
+            {
+                pairs.Add(slot.pair.weapon);
+                if (slot.pair.trail.HasValue) pairs.Add(slot.pair.trail.Value);
+                if (slot.pair.fallback) values.Add(RoCatalogValue.Of(RoCatalogRoles.Fallback(slot.pair.weapon.Role), viewId));
+            }
+            return (pairs, values);
+        }
+
+        static bool TryItemId(string rest, out int item)
+        {
+            item = 0;
+            return rest.Length > 1 && rest[0] == '_' && rest.Skip(1).All(char.IsDigit)
+                   && int.TryParse(rest.Substring(1), System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out item);
+        }
+
+        static string Canonical(string s) => s.Trim().ToLowerInvariant();
     }
 
     /// <summary>

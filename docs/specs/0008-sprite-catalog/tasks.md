@@ -108,8 +108,9 @@ Chosen in T0.4 (2026-11-20, from the data set and the decompiled tables):
 - [x] **T4.9** Implement the garment planner (root sheet or doram sheet unless the job has its own SPR). (FR-4, FR-10)
   *Done when:* the garment tests pass; on `천사날개` the plan has the pairs of every class file and the root sheet for those without their own SPR (reported).
   *Result (T4.9):* 222 of 330 garment ids planned (28,816 slots), 108 without a folder or file. `천사날개` (garment-0001): 134 slots = 2 root (human, doram) + 130 class ACTs with their own SPR + 2 on the root sheet (rebellion male and female); 120 of its 366 class ACTs are 4th-class bodies (stray) and the rest of the difference are outfit and all-class-mount ACTs sharing their class's slot (plan D20). Strays are now one per body name (433), not one per file (plan 4.3.5 note). Pinned by `RoEquipmentPlannerTests.TheClientData_Garments`.
-- [ ] **T4.10** Implement the weapon planner (view-id records, item-id records, trails, fallback to the base type). (FR-4, FR-10)
+- [x] **T4.10** Implement the weapon planner (view-id records, item-id records, trails, fallback to the base type). (FR-4, FR-10)
   *Done when:* the weapon tests pass; item 1201 plans the short-sword weapon for a swordman; the item-id file of T0.4 gets its own record (reported).
+  *Result (T4.10):* 101 of 103 view ids planned (0 and 24 have no name), 83 item-id records, 4,136 slots with 756 trails and 699 base-type fallbacks. Item 1201 (ClassNum 1) → `weapon-0001` (`_단검`) → `인간족/검사/검사_남_단검` for a male swordman; `검사_남_1117` is in `weapon-item-1117` (12 slots). 2,404 files no record uses (mostly 4th-class weapons, prefixes that are no body name). Pinned by `RoEquipmentPlannerTests.TheClientData_Weapons`.
 - [ ] **T4.11** Implement the shield planner. (FR-4, FR-10)
   *Done when:* the shield tests pass; the four basic shields and the item-id file of T0.4 are planned (reported).
 - [ ] **T4.12** Implement the palettes planner (every `.pal` under `palette/`). (FR-2, FR-3, FR-9)
