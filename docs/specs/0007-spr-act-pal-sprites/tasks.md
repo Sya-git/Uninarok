@@ -86,8 +86,8 @@ Reference set (spec §5), used by every check below: a multi-layer monster `몬�
   *Done when:* the tests pass on the owner's data.
 - [x] **T6.2** Sample run (changed by the owner on 2026-11-19 from the full-data run: "all classes, poring, fabre, lunatic and some basic weapons like knife, main gauche, sword, club"): convert every body ACT under `sprite/인간족/몸통/` with palettes, the weapon ACTs of every class for dagger `_단검`, main gauche `_1207`, sword `_검` and club `_클럽` (with their trails `_검광`), and `몬스터/poring`, `fabre`, `lunatic`, into the project. Record counts, issues, time, sheets, pixels, memory, disk and a second run, and extrapolate to the whole set for R1. (FR-2, FR-8, FR-9)
   *Done when:* every file of the sample converts or its failure is one listed issue, the second run skips all, and the numbers are in `plan.md` §9.
-- [ ] **T6.3** Full-data run (deferred by the owner, 2026-11-19): every ACT under `sprite/` and every PAL under `palette/`, after the owner's R1 decision. (FR-2, FR-8, FR-9)
-  *Done when:* every file converts or its failure is one listed issue, the second run skips all, and the numbers are in `plan.md` §9.
+- [x] **T6.3** Minimal data import (changed by the owner on 2026-11-19 from the full-data run: "I'll run full data later if needed or I'll import only specific assets"): the sample of T6.2 plus every head ACT under `sprite/인간족/머리통/` with palettes (85, 0 failures, 55 s), converted locally and not committed. The full run (`Tools/Ragnarok/Convert Sprite Folder…` on `sprite/`, `Convert All Palettes`) is left to the owner, on demand. (FR-2, FR-8, FR-9)
+  *Done when:* the minimal set converts with no failure and the full run stays available from the menu.
 
 ## Phase 7: Verify and close
 
