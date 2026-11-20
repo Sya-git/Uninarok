@@ -56,7 +56,7 @@ Chosen in T0.4 (2026-11-20, from the data set and the decompiled tables):
   *Done when:* the tests pass and report the counts.
 - [x] **T2.5** Implement `RoViewIdTables` (`ACCESSORY_IDs`, `AccNameTable`, `SPRITE_ROBE_IDs`, `RobeNameTable`, `Weapon_IDs`, `WeaponNameTable`, `Expansion_Weapon_IDs`) with tests (`NeedsData`: headgear 1 → goggles stem, garment 1 → `천사날개`, a specific weapon id → its base type). (FR-4)
   *Done when:* the tests pass and report the counts (headgear ids 2,859; garment ids 331).
-- [ ] **T2.6** Implement `RoItemTable` (`SkipField` keeps `identifiedResourceName`, `unidentifiedResourceName`, `ClassNum`) and the enum `RoItemTableLanguage` (in Core, so the reader can take it; the settings of T5.1 use it; note this placement under `plan.md` §4.8) with tests (`NeedsData`: Portuguese 17,482 items, English 17,906; item 501 → `빨간포션`, 1201 → ClassNum 1, 2220 → ClassNum 16). (FR-4, FR-5, FR-12)
+- [x] **T2.6** Implement `RoItemTable` (`SkipField` keeps `identifiedResourceName`, `unidentifiedResourceName`, `ClassNum`) and the enum `RoItemTableLanguage` (in Core, so the reader can take it; the settings of T5.1 use it; note this placement under `plan.md` §4.8) with tests (`NeedsData`: Portuguese 17,482 items, English 17,906; item 501 → `빨간포션`, 1201 → ClassNum 1, 2220 → ClassNum 16). (FR-4, FR-5, FR-12)
   *Done when:* the tests pass; parse time and managed memory of the Portuguese table are reported.
 - [ ] **T2.7** Implement `RoEmoteTable` (`ET_*` ids), `RoSkillTable` (`SKID` constants → ids, lower-case icon names) and `RoMonsterScaleTable` (`MonsterSize`, default 1) with tests (`NeedsData`: `ET_SURPRISE` = 0; `SM_BASH` = 5 → `sm_bash`; a scale of 1.2 exists). (FR-1, FR-6, FR-7)
   *Done when:* the tests pass.

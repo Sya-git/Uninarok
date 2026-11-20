@@ -451,6 +451,8 @@ public sealed class RoImportSettings : ScriptableSingleton<RoImportSettings>
 // SettingsProvider "Project/Uninarok/Ragnarok Import": a dropdown for the language
 ```
 
+- **Placement (T2.6).** `RoItemTableLanguage` lives in `Uninarok.RoImport.Core` (`Core/Catalog/Tables/RoItemTable.cs`), beside `RoItemTable`, so the pure table reader can take it; `RoItemTable.FileName(language)` maps it to the file under `System/`, and `RoImportSettings.ItemTableFile` (editor, T5.1) returns the same value.
+
 - The setting lives in the project (committed in `ProjectSettings/`), so a fresh clone uses the same table as the rest of the team; a fresh project (no file) uses Portuguese. `RoImportOptions.ItemTableLanguage` overrides it for one run (tests, scripts).
 - Changing the language changes the item table content and so the fingerprints of records that depend on it (ground items, headgears, garments, weapons, shields) and the `ItemSpriteTable`; SPEC-0007's sprite conversions are untouched.
 
