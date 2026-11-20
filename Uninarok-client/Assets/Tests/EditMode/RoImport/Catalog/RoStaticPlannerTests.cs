@@ -112,6 +112,30 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(missing.Gaps.Single(g => g.Code == RoIssueCode.CatalogNameWithoutFile).Item, Does.Contain("emotion"));
         }
 
+        // TASKS-0008 T4.12 (FR-2, FR-3, FR-9; PLAN-0008 4.3.10): every palette, keyed by its stem.
+        [Test]
+        public void EveryPalette_IsARecord_AndOtherFilesAreStray()
+        {
+            var plan = Plan(new RoPalettePlanner(), RoCatalogTables.Create(),
+                new[] { "palette/몸/기사_남_1.pal", "palette/머리/머리1_남_0.pal", "palette/도람족/body/summoner_남_0.pal", "palette/몸/readme.txt" });
+
+            Assert.That(plan.Records.Select(r => r.Key), Is.EqualTo(new[] { "도람족/body/summoner_남_0", "머리/머리1_남_0", "몸/기사_남_1" }));
+            Assert.That(plan.Records.Last().Value("palette"), Is.EqualTo("palette/몸/기사_남_1.pal"));
+            Assert.That(plan.Records.All(r => r.Pairs.Count == 0), Is.True);
+            Assert.That(plan.Gaps.Single(g => g.Code == RoIssueCode.CatalogStrayFile).Item, Is.EqualTo("palette/몸/readme.txt"));
+        }
+
+        // T4.12 real-data run (2026-11-20): 4,464 palettes (749 + 3,375 + 340), no stray.
+        [Test, Category(CatalogTestFiles.Category)]
+        public void TheClientData_Palettes()
+        {
+            var data = new Uninarok.RoImport.Core.Source.RoFolderSource(CatalogTestFiles.DataRoot);
+            var plan = PlanData(new RoPalettePlanner(), RoCatalogTables.Create(), data);
+
+            Assert.That(plan.Records.Count, Is.EqualTo(4464));
+            Assert.That(plan.Gaps, Is.Empty);
+        }
+
         // T4.5 real-data run (2026-11-20): 225 effect sprites (as the survey of sprite-catalog.md §2), 88 emotes, 10 orphan ACTs.
         [Test, Category(CatalogTestFiles.Category)]
         public void TheClientData_Effects()
