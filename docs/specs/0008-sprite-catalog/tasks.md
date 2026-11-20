@@ -82,7 +82,7 @@ Chosen in T0.4 (2026-11-20, from the data set and the decompiled tables):
 
 ## Phase 4: Planning (Core, pure)
 
-- [ ] **T4.1** Add the plan types (`RoCatalogPlan` and its builder, `RoCatalogRecord`, `RoCatalogPair`, `RoCatalogValue`, `RoCatalogGap`, `IRoCatalogPlanner`, `RoCatalogContext`, `RoFileNames`), the fingerprint (SHA-256 over the canonical record text) and the five `RoIssueCode` values of plan §4.3 with tests (a gap is reported once per `(code, item)`; the fingerprint changes with any value or pair; records sorted by `(category, key)`). (FR-10)
+- [x] **T4.1** Add the plan types (`RoCatalogPlan` and its builder, `RoCatalogRecord`, `RoCatalogPair`, `RoCatalogValue`, `RoCatalogGap`, `IRoCatalogPlanner`, `RoCatalogContext`, `RoFileNames`), the fingerprint (SHA-256 over the canonical record text) and the five `RoIssueCode` values of plan §4.3 with tests (a gap is reported once per `(code, item)`; the fingerprint changes with any value or pair; records sorted by `(category, key)`). (FR-10)
   *Done when:* the tests pass.
 - [ ] **T4.2** Write `RoUnitPlannerTests`, `RoStaticPlannerTests` (synthetic tables and file lists, plan §6): id ranges choose the folder; a name in both folders resolves by range; a `.gr2` or missing name → one warning; an ACT without SPR → orphan; scale default 1; items sharing a resource share one record; identified vs unidentified; skill icon by lower-case `SKID`; effects by name; the emote set. Marked `[Ignore("pending T4.3")]`. (FR-1, FR-5, FR-6, FR-7, FR-10)
   *Done when:* the tests compile and are listed as ignored.

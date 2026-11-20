@@ -52,6 +52,16 @@ namespace Uninarok.RoImport.Core.Results
         SpriteIndexOutOfRange,
         /// <summary>An SPR whose frames do not fit one 4096 × 4096 sheet; nothing is written (PLAN-0007 4.2).</summary>
         SpriteSheetTooLarge,
+        /// <summary>A catalog table names a sprite that has no SPR/ACT file (SPEC-0008 FR-10, PLAN-0008 4.3).</summary>
+        CatalogNameWithoutFile,
+        /// <summary>A sprite file in a catalog folder that no table names (SPEC-0008 FR-10, PLAN-0008 4.3).</summary>
+        CatalogFileWithoutName,
+        /// <summary>An ACT whose SPR is missing; the record is not planned (SPEC-0008 FR-10, PLAN-0008 4.3).</summary>
+        CatalogOrphanAct,
+        /// <summary>An SPR whose ACT is missing where an ACT is needed (SPEC-0008 FR-10, PLAN-0008 4.3).</summary>
+        CatalogOrphanSpr,
+        /// <summary>A legacy, misspelt or out-of-pattern file or folder in a catalog folder (SPEC-0008 FR-10, OQ-6).</summary>
+        CatalogStrayFile,
         Unexpected
     }
 }

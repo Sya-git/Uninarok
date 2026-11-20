@@ -4,7 +4,8 @@
     "references": [
         "Uninarok.Map",
         "Uninarok.Sprites",
-        "Uninarok.Networking"
+        "Uninarok.Networking",
+        "Uninarok.SpriteCatalog"
     ],
     "includePlatforms": [
         "Editor"
