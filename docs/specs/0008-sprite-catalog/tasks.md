@@ -90,8 +90,9 @@ Chosen in T0.4 (2026-11-20, from the data set and the decompiled tables):
 - [x] **T4.3** Implement `RoUnitFolders` and the unit planners (monsters, NPCs, homunculi). (FR-1, FR-10)
   *Done when:* the unit tests pass; a `NeedsData` run over the real data reports the counts of plan §4.3.1 (records, names without a file, orphan ACTs).
   *Result (T4.3):* monsters 3,856 records (104 names without a file, mostly `.gr2`; 29 orphan ACTs, pet accessories `acc_*`; 78 unnamed files), NPCs 1,097 (88; 0; 42), homunculi 21 (3; 0; 0); no id outside the ranges. Pinned by `RoUnitPlannerTests.TheClientData` (`NeedsData`).
-- [ ] **T4.4** Implement the planners of ground items and skill icons (one scan of `아이템/` shared). (FR-5, FR-7, FR-10)
+- [x] **T4.4** Implement the planners of ground items and skill icons (one scan of `아이템/` shared). (FR-5, FR-7, FR-10)
   *Done when:* the static tests for these two pass; the real-data run reports records and gaps (17,079 of 17,482 Portuguese items have a ground sprite; 1,295 of 1,806 `SKID` entries have an icon).
+  *Result (T4.4):* 17,079 of 17,482 items have an identified ground sprite (7,196 distinct resources; 428 orphan ACTs, 29 names without a file, 6 orphan SPRs); 1,295 skill icons over 1,801 skill ids (1,806 constants), 305 player skills without an icon plus one summary gap for `NPC_*`. Pinned by `RoStaticPlannerTests.TheClientData_GroundItemsAndSkillIcons`.
 - [ ] **T4.5** Implement the effects planner (whole `이팩트/` by name, emote set). (FR-6, FR-10)
   *Done when:* the remaining static tests pass; the real-data run reports the record count.
 - [ ] **T4.6** Write `RoBodyPlannerTests`, `RoHeadPlannerTests`, `RoEquipmentPlannerTests`: class table rows → variants (mount, outfit, costume, doram); palettes by colour number; stray names ignored with one warning; headgear sex and doram slots; garment root sheet vs own SPR vs `_doram`; weapon suffix → item-id → base type order (OQ-3); trail pairs; shield names and item-id records; unreferenced files reported. Marked `[Ignore("pending T4.7")]` and so on. (FR-2, FR-3, FR-4, FR-10)

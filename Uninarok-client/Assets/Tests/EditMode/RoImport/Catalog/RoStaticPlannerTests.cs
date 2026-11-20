@@ -8,7 +8,6 @@ using static Uninarok.RoImport.Tests.Catalog.PlannerFixtures;
 namespace Uninarok.RoImport.Tests.Catalog
 {
     // TASKS-0008 T4.2 (FR-5, FR-7, FR-10; PLAN-0008 4.3.8): ground items and skill icons from synthetic tables.
-    [Ignore("pending T4.4")]
     public class RoStaticPlannerTests
     {
         static readonly string[] ItemFiles = Pairs("sprite/아이템/빨간포션", "sprite/아이템/단검", "sprite/아이템/sm_bash", "sprite/아이템/al_heal")
@@ -61,6 +60,30 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(plan.Gaps.Count(g => g.Item.Contains("mg_noicon")), Is.EqualTo(1), "a player skill without an icon is warned");
             Assert.That(plan.Gaps.Count(g => g.Item.Contains("npc_")), Is.EqualTo(0), "monster skills are not warned one by one");
             Assert.That(plan.Gaps.Single(g => g.Item == RoSkillIconPlanner.MonsterSkillPrefix + "*").Message, Does.Contain("2"));
+        }
+
+        // T4.4 real-data run (Portuguese client, 2026-11-20): 17,079 of 17,482 items have a ground sprite; 1,295 skill icons.
+        [Test, Category(CatalogTestFiles.Category)]
+        public void TheClientData_GroundItemsAndSkillIcons()
+        {
+            var data = new Uninarok.RoImport.Core.Source.RoFolderSource(CatalogTestFiles.DataRoot);
+            var report = new RoReport();
+            var tables = RoCatalogTables.Load(data, new Uninarok.RoImport.Core.Source.RoFolderSource(CatalogTestFiles.SystemRoot),
+                RoCatalogNeeds.Items | RoCatalogNeeds.Skills, RoItemTableLanguage.Portuguese, report);
+            var ctx = new RoCatalogContext(data, tables);
+            var b = new RoCatalogPlan.Builder();
+            new RoGroundItemPlanner().Plan(ctx, b);
+            new RoSkillIconPlanner().Plan(ctx, b);
+            var plan = b.Build();
+
+            var ground = new System.Collections.Generic.HashSet<string>(plan.RecordsOf(Uninarok.Catalog.SpriteCatalogCategory.GroundItems).Select(r => r.Key));
+            int withSprite = tables.Items.ItemIds.Count(id =>
+                tables.Items.TryGet(id, out var info) && info.IdentifiedResource != null && ground.Contains(RoGroundItemPlanner.KeyOf(info.IdentifiedResource) ?? ""));
+
+            Assert.That(report.Issues, Is.Empty);
+            Assert.That(withSprite, Is.EqualTo(17079));
+            Assert.That(ground.Count, Is.EqualTo(7196), "distinct resources with a sprite");
+            Assert.That(plan.RecordsOf(Uninarok.Catalog.SpriteCatalogCategory.SkillIcons).Count(), Is.EqualTo(1295));
         }
 
         [Test]
