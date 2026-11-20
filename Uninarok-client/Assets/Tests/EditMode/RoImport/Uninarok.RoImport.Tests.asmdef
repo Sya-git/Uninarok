@@ -6,7 +6,8 @@
         "UnityEditor.TestRunner",
         "Uninarok.RoImport.Core",
         "Uninarok.RoImport.Editor",
-        "Uninarok.Map"
+        "Uninarok.Map",
+        "Uninarok.Sprites"
     ],
     "includePlatforms": [
         "Editor"

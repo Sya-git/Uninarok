@@ -22,6 +22,7 @@ namespace Uninarok.RoImport.Editor.Ui
         [SerializeField] int _kind;
         [SerializeField] bool _force;
         [SerializeField] bool _gatImage;
+        [SerializeField] bool _spritePalettes;
         [SerializeField] string _paths = "texture/";
         [SerializeField] Vector2 _scroll;
 
@@ -56,6 +57,8 @@ namespace Uninarok.RoImport.Editor.Ui
             _force = EditorGUILayout.Toggle(new GUIContent("Force", "Convert even items the ledger says are current"), _force);
             if (kinds[_kind] == RoJobKind.MapData)
                 _gatImage = EditorGUILayout.Toggle(new GUIContent("With Image", "Also write the cell type image of each map (PLAN-0005 4.5)"), _gatImage);
+            if (kinds[_kind] == RoJobKind.Sprite)
+                _spritePalettes = EditorGUILayout.Toggle(new GUIContent("With Palettes", "Also write the index texture, so palettes can recolour the sprites (PLAN-0007 4.4)"), _spritePalettes);
 
             EditorGUILayout.LabelField("Ragnarok paths or folders (end a folder with /; / alone is the data root), one per line");
             EditorGUI.BeginChangeCheck();
@@ -98,7 +101,7 @@ namespace Uninarok.RoImport.Editor.Ui
                 _summary = "Nothing to convert.";
                 return;
             }
-            RoReport report = RoImportApi.Run(expansion.Jobs, new RoImportOptions { Force = _force, GatImage = _gatImage });   // logs the summary once
+            RoReport report = RoImportApi.Run(expansion.Jobs, new RoImportOptions { Force = _force, GatImage = _gatImage, SpritePalettes = _spritePalettes });   // logs the summary once
             _summary = report.Summarize();
             _scan = null;
         }

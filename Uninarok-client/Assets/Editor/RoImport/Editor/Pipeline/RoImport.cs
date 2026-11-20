@@ -21,6 +21,9 @@ namespace Uninarok.RoImport.Editor.Pipeline
         /// <summary>Also write the optional cell type image of each map data (PLAN-0005 4.5, FR-8).</summary>
         public bool GatImage;
 
+        /// <summary>Give converted sprites their index texture, so palettes can recolour them (PLAN-0007 4.4, FR-7).</summary>
+        public bool SpritePalettes;
+
         /// <summary>Show a cancelable progress bar during a batch.</summary>
         public bool ShowProgress = true;
 
@@ -120,6 +123,28 @@ namespace Uninarok.RoImport.Editor.Pipeline
             }
         }
 
+        /// <summary>
+        /// Converts one ACT with the SPR of the same folder and name (or skips it when current) and returns its animation,
+        /// or the sprite of a static ACT (PLAN-0007 4.4). A sprite that cannot be converted is <see cref="RoStatus.Failed"/>
+        /// with no value and its reason.
+        /// </summary>
+        public static RoResult<UnityEngine.Object> Sprite(string actPath, RoImportOptions options = null)
+        {
+            if (!RoPath.TryParse(actPath, out var path))
+                return RoResult<UnityEngine.Object>.Failed(new RoIssue(RoIssueCode.SourceMissing, actPath, null, "not a valid Ragnarok path"));
+            using (var session = new Session(options))
+                return RoConverterRegistry.For(RoJobKind.Sprite).Convert(session.Context, path);
+        }
+
+        /// <summary>Converts one PAL (or skips it when current) and returns its 256 × 1 palette texture (PLAN-0007 4.4, FR-7).</summary>
+        public static RoResult<Texture2D> Palette(string palPath, RoImportOptions options = null)
+        {
+            if (!RoPath.TryParse(palPath, out var path))
+                return RoResult<Texture2D>.Failed(new RoIssue(RoIssueCode.SourceMissing, palPath, null, "not a valid Ragnarok path"));
+            using (var session = new Session(options))
+                return Sprites.RoPaletteConverter.ConvertPalette(session.Context, path);
+        }
+
         /// <summary>Runs a batch (plan 4.10): continues past failures and returns the report, whose summary lists them.</summary>
         public static RoReport Run(IEnumerable<RoJob> jobs, RoImportOptions options = null) => RoBatch.Run(jobs, options);
 
@@ -145,6 +170,7 @@ namespace Uninarok.RoImport.Editor.Pipeline
                 {
                     Force = options.Force,
                     GatImage = options.GatImage,
+                    SpritePalettes = options.SpritePalettes,
                 };
             }
 

@@ -13,7 +13,11 @@ namespace Uninarok.RoImport.Editor.Pipeline
         /// <summary>The map data of a GAT file (PLAN-0005).</summary>
         MapData,
         /// <summary>A map scene from an RSW file (PLAN-0006).</summary>
-        Map
+        Map,
+        /// <summary>An ACT with its SPR: a sheet and an animation, or a sprite when static (PLAN-0007).</summary>
+        Sprite,
+        /// <summary>A PAL palette to a 256 × 1 texture (PLAN-0007).</summary>
+        Palette
     }
 
     /// <summary>One conversion request: a kind and a Ragnarok path (plan 4.10, SPEC-0002 FR-2).</summary>

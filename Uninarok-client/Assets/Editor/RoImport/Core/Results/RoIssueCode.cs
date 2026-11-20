@@ -44,6 +44,14 @@ namespace Uninarok.RoImport.Core.Results
         RswUnknownAnimType,
         /// <summary>A model a map places cannot be converted; reported once per model and map, a placeholder keeps the instance (PLAN-0006 4.2).</summary>
         ModelMissing,
+        /// <summary>An SPR version GRF reads but the sprite rules do not support; nothing is written (PLAN-0007 4.4).</summary>
+        UnsupportedSprVersion,
+        /// <summary>An ACT version GRF reads but the sprite rules do not support; nothing is written (PLAN-0007 4.4).</summary>
+        UnsupportedActVersion,
+        /// <summary>An ACT layer points at an image its sheet does not have; nothing is written (PLAN-0007 4.4, SPEC-0007 FR-8).</summary>
+        SpriteIndexOutOfRange,
+        /// <summary>An SPR whose frames do not fit one 4096 × 4096 sheet; nothing is written (PLAN-0007 4.2).</summary>
+        SpriteSheetTooLarge,
         Unexpected
     }
 }

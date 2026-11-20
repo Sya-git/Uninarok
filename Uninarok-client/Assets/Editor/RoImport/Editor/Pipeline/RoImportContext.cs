@@ -49,6 +49,12 @@ namespace Uninarok.RoImport.Editor.Pipeline
         /// <summary>Also write the optional cell type image of each map data (PLAN-0005 4.5, FR-8).</summary>
         public bool GatImage { get; set; }
 
+        /// <summary>Give converted sprites their index texture, so palettes can recolour them (PLAN-0007 4.4, FR-7).</summary>
+        public bool SpritePalettes { get; set; }
+
+        /// <summary>Where the ledgers (and the sprite sheet index, PLAN-0007 4.2) live.</summary>
+        public string LedgerFolder => _ledgerFolder;
+
         /// <summary>The ledger of a category (<c>texture</c>, <c>material</c>, ...), loaded once per run.</summary>
         public RoLedger Ledger(string category)
         {
@@ -64,7 +70,13 @@ namespace Uninarok.RoImport.Editor.Pipeline
         public void SaveLedgers()
         {
             foreach (var ledger in _ledgers.Values) ledger.Save();
+            foreach (var save in _savers) save();
         }
+
+        readonly List<Action> _savers = new List<Action>();
+
+        /// <summary>Adds something saved with the ledgers (the sprite sheet index, PLAN-0007 D14).</summary>
+        internal void SaveWithLedgers(Action save) => _savers.Add(save);
 
         sealed class TextureMemo
         {
@@ -192,6 +204,13 @@ namespace Uninarok.RoImport.Editor.Pipeline
             AddDependency(path, Source.TryGetFile(path, out var file) ? file.ContentHash() : string.Empty);
             return known;
         }
+
+        /// <summary>
+        /// A sprite of an ACT with a given SPR (PLAN-0007 4.4): its animation, or for a static ACT its sprite, converted on
+        /// demand when missing or stale. Repeat requests in a run are free. A later spec passes its own pairs here.
+        /// </summary>
+        public RoResult<UnityEngine.Object> Sprite(RoPath act, RoPath spr, Sprites.RoSpriteOptions options = null) =>
+            Sprites.RoSpriteConverter.Convert(this, act, spr, options);
 
         /// <summary>A result already produced in this run, by key (e.g. <c>texture:texture/a.bmp</c>).</summary>
         internal bool TryGetMemo<T>(string key, out T value)

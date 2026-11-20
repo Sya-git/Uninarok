@@ -3,7 +3,9 @@
     "rootNamespace": "Uninarok.RoImport.Editor",
     "references": [
         "Uninarok.RoImport.Core",
-        "Uninarok.Map"
+        "Uninarok.Map",
+        "Unity.2D.Sprite.Editor",
+        "Uninarok.Sprites"
     ],
     "includePlatforms": [
         "Editor"
