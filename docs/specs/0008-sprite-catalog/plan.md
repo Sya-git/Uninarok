@@ -491,6 +491,8 @@ Satisfies every FR. EditMode NUnit. Data-dependent tests are `[Category("NeedsDa
 | `RoImportSettingsTests` | 12 | default Portuguese; each language maps to its file; the override option beats the setting |
 | `RoCatalogReferenceTests` (`NeedsData`) | 1–7, 10 | the acceptance lookups of spec §4: Poring 1002 at scale 1; novice male, knight on peco female, summoner male bodies; hair style 1 male; garment with 178 classes: distinct sheet paths = distinct SPR hashes, right animation for a knight and a summoner; item 1201 → short sword for a swordman; item 501; emote 0; cart by name; skill 5 (Bash); item 2220 hat; a full run lists each gap once |
 
+**Reference set and counts (TASKS T0.4).** The constants of `RoCatalogReferenceTests` and the `NeedsData` table tests: unit `8W_SOLDIER` (105 → `npc/`, 2245 → `몬스터/`); Poring 1002; garment `천사날개` (`기사_남` own SPR, `abyss_chaser_남` root sheet, `summoner_남` own SPR, 178/188 class ACTs); weapon item-id file `인간족/검사/검사_남_1117` (item 1117); item 1201 → `_단검`; shield item-id file `방패/검사/검사_남_2189_방패` (item 2189); counts `JobNameTable` 5,300, `SKID` 1,806, `Weapon_IDs` 103, `ACCESSORY_IDs` 2,859, `SPRITE_ROBE_IDs` 330, items 17,482 (pt) / 17,906 (en) / 17,905 (es). The full list is at the head of tasks.md.
+
 **Manual checks** (PR evidence, Unity MCP or owner): each acceptance lookup through `RoCatalogLookupWindow` against the reference viewer; a full import per category with the report numbers recorded (the owner sets the texture memory target from them, spec §5); the project window shows one folder per category.
 
 ## 7. Migration and compatibility

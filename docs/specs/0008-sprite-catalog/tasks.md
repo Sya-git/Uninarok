@@ -17,7 +17,14 @@
 - Importing a category from the real data writes many assets. Phase 7 runs are done by the owner or through the Unity MCP, one category at a time, and the generated assets are committed by the owner (not in a task commit).
 - Unrelated problems go to `docs/specs/BACKLOG.md` as one line each.
 
-Reference set (spec §4 acceptance), used by every check below: Poring (job id 1002); a unit name that exists in both `npc/` and `몬스터/` (chosen in T0.4); bodies of novice male, knight on peco female and summoner male; hair style 1 male with a hair palette; the garment `천사날개` (view id 1, 178 class files); item 1201 (Faca) for a swordman; item 501 on the ground; emote 0; cart 1 (`손수레1`); skill 5 (Bash); item 2220 with knight male.
+Reference set (spec §4 acceptance), used by every check below: Poring (job id 1002); the unit name `8W_SOLDIER`, which exists in both `npc/` and `몬스터/` (T0.4: job id 105 → `npc/8w_soldier`, job id 2245 `JT_EXP_TEST` → `몬스터/8w_soldier`; 194 names are in both folders); bodies of novice male, knight on peco female and summoner male; hair style 1 male with a hair palette; the garment `천사날개` (view id 1, 178 class files); item 1201 (Faca) for a swordman; item 501 on the ground; emote 0; cart 1 (`손수레1`); skill 5 (Bash); item 2220 with knight male.
+
+Chosen in T0.4 (2026-11-20, from the data set and the decompiled tables):
+- Garment with its own class SPR: `로브/천사날개/남/기사_남.act` + `기사_남.spr`; garment on the root sheet: `로브/천사날개/남/abyss_chaser_남.act` (no SPR) → `천사날개.spr`; doram sheet `천사날개_doram.spr`; summoner `summoner_남.act` + its own SPR. `천사날개` has 178 male and 188 female class ACTs, 128 and 137 own SPRs; 222 of 227 garment folders have at least one own SPR.
+- Weapon with an item-id file: `인간족/검사/검사_남_1117` (item 1117 `카타나`, ClassNum 3; the suffix `_1117` is not in `WeaponNameTable`, while `_1116` is view id 48); 128 item-id SPRs in `인간족/검사/`. Item 1201 (`나이프`, ClassNum 1) → `_단검` (view id 1).
+- Shield with an item-id file: `방패/검사/검사_남_2189_방패` (item 2189 `매드바니`, ClassNum 1); the basic shields `검사_남_가드`, `…_버클러`, `…_쉴드`, `…_미러쉴드`.
+- Counts: `JobNameTable` 5,300; `SKID` 1,806; `Weapon_IDs` 103 (`WeaponNameTable` 102, `Expansion_Weapon_IDs` 72); `ACCESSORY_IDs` 2,859; `SPRITE_ROBE_IDs` 330 entries (ids 1–331); items: Portuguese 17,482, English 17,906, Spanish 17,905.
+- Items: 501 → `빨간포션` (both names, ClassNum 0); 2220 → `햇` / unidentified `캡`, ClassNum 16.
 
 ---
 
@@ -29,7 +36,7 @@ Reference set (spec §4 acceptance), used by every check below: Poring (job id 1
   *Done when:* the results (works / does not, the fallback chosen if not, the measured memory) are written in `plan.md` R4 and R10, the scratch assets and script are deleted.
 - [x] **T0.3** GRF `Lub` mapping check (plan §4.1, R3). In a scratch editor script, load every table file of plan §4.2 (including the three item tables and `monster_size_effect_new.lub`) and one plain-text `.lub` through GRF; print for each: decompile success, text length, the way the text encoding is set or must be handled (UTF-8 for the item tables, CP949 for the rest), a known Korean string decoded right, and what happens on garbage and empty input. Register `CodePagesEncodingProvider` before GRF's `EncodingService` is first touched.
   *Done when:* each file's encoding and the GRF members used are written in `plan.md` §4.1 (a mapping table like PLAN-0007 §4.1), every table of §4.2 decompiles, and the scratch script is deleted.
-- [ ] **T0.4** Choose and record the reference set. With a scratch script over the source folders, list: a unit name present in both `npc/` and `몬스터/`, a garment whose class ACT has its own SPR and one that uses the root sheet, a weapon with an item-id file, a shield with an item-id file, and the counts of `JobNameTable`, `SKID`, `Weapon_IDs`, items per language. Write them at the head of this file and in the reference tests' constants.
+- [x] **T0.4** Choose and record the reference set. With a scratch script over the source folders, list: a unit name present in both `npc/` and `몬스터/`, a garment whose class ACT has its own SPR and one that uses the root sheet, a weapon with an item-id file, a shield with an item-id file, and the counts of `JobNameTable`, `SKID`, `Weapon_IDs`, items per language. Write them at the head of this file and in the reference tests' constants.
   *Done when:* the set and counts are written here and in `plan.md` §6, and the scratch script is deleted.
 
 ## Phase 1: Shared enum
