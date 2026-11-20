@@ -23,7 +23,7 @@ Reference set (spec §4 acceptance), used by every check below: Poring (job id 1
 
 ## Phase 0: Verify before building
 
-- [ ] **T0.1** Add the package `com.unity.addressables` to `Uninarok-client/Packages/manifest.json`, with the newest version that supports Unity 6000.7.0b7. Record the version in `plan.md` §1 (D13). (FR-8)
+- [x] **T0.1** Add the package `com.unity.addressables` to `Uninarok-client/Packages/manifest.json`, with the newest version that supports Unity 6000.7.0b7. Record the version in `plan.md` §1 (D13). (FR-8)
   *Done when:* the project compiles with the package, no new warnings (Logs/Editor.log), and the version is in `plan.md`.
 - [ ] **T0.2** Addressables spike (plan §4.6, R4, R10). In a scratch editor script: make a folder entry over a scratch folder holding a `ScriptableObject` animation stand-in, a sheet PNG sliced into named sprites and a Texture2D; create a `SpriteAnimationReference`-like `AssetReferenceT<…>` and an `AssetReferenceSprite` (with a sub-asset name) **from GUIDs of assets that are addressable only through the folder entry**; load each in the editor (asset-database play mode) and in a play-mode test; check two animations in different groups share one sheet from the `sprite-sheets` group (one copy); measure the managed memory of one synthetic equipment entry with 245 `SpriteAnimationReference` slots and its two dictionaries (Profiler or `GC.GetTotalMemory`).
   *Done when:* the results (works / does not, the fallback chosen if not, the measured memory) are written in `plan.md` R4 and R10, the scratch assets and script are deleted.
