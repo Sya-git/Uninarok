@@ -36,6 +36,9 @@ namespace Uninarok.RoImport.Editor.Pipeline
         /// <summary>Ledger folder; null: <see cref="RoLedger.DefaultFolder"/>.</summary>
         public string LedgerFolder;
 
+        /// <summary>The item table of this run (PLAN-0008 4.8, FR-12); null: the project setting (<see cref="Catalog.RoImportSettings"/>).</summary>
+        public Uninarok.RoImport.Core.Catalog.Tables.RoItemTableLanguage? ItemTableLanguage;
+
         /// <summary>Test hook: asked before each job; true cancels the batch there, like the progress bar's Cancel.</summary>
         internal Func<RoJob, bool> CancelBefore;
 

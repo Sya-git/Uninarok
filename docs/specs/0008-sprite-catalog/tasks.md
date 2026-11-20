@@ -120,8 +120,9 @@ Chosen in T0.4 (2026-11-20, from the data set and the decompiled tables):
 
 ## Phase 5: Import (Editor)
 
-- [ ] **T5.1** Implement `RoImportSettings` (`ScriptableSingleton`, `ProjectSettings/UninarokRoImport.asset`), `RoImportSettingsProvider` (`Project/Uninarok/Ragnarok Import`), `ItemTableFile(language)`, the `RoImportOptions.ItemTableLanguage` override and `RoImportSettingsTests`. (FR-12)
+- [x] **T5.1** Implement `RoImportSettings` (`ScriptableSingleton`, `ProjectSettings/UninarokRoImport.asset`), `RoImportSettingsProvider` (`Project/Uninarok/Ragnarok Import`), `ItemTableFile(language)`, the `RoImportOptions.ItemTableLanguage` override and `RoImportSettingsTests`. (FR-12)
   *Done when:* the tests pass (default Portuguese, each language maps to its file, the override beats the setting); the settings page shows the dropdown (screenshot or owner check).
+  *Result (T5.1):* 5 `RoImportSettingsTests` pass. The page `Project/Uninarok/Ragnarok Import` is registered (found by `SettingsService`) and was opened in the editor for the owner's look; the asset file is written only when the language is changed. `RoImportSettings.Effective`/`LanguageFor` give the run's language.
 - [ ] **T5.2** Pipeline hooks: `RoJobKind.CatalogEntry` and `CatalogIndex`, `RoImportOptions.SystemSource` (default: `System` next to the data root) and the internal `CatalogPlan`, `RoImportContext.CatalogPlan`, `RoConverterRegistry` entries (stub converters), `RoLedger` category `catalog`. (FR-9)
   *Done when:* the existing importer tests still pass (groups reported); a job of the new kinds reaches its stub converter (test).
 - [ ] **T5.3** Implement `RoCatalogOutputPaths` (entry, index, tables, the 12 folders) and add `Art/Imported/catalog/` to the reserved generated paths, with tests. (FR-8)
