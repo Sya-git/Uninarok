@@ -50,11 +50,12 @@ namespace Uninarok.RoImport.Tests.Catalog
             Text(_data, Tables + "emotion/emotionlist.lub", "ET_SURPRISE = 0\nET_QUESTION = 1", cp949);
             Text(_data, Tables + "skillinfoz/skillid.lub", "SKID = { SM_BASH = 5 }", cp949);
             Scales("[1002] = { MonsterSize = 1.5 }");
-            Text(_system, "iteminfo_new.lub", "tbl = { [501] = { identifiedResourceName = \"빨간포션\", unidentifiedResourceName = \"빨간포션\", ClassNum = 0 } }", Encoding.UTF8);
-            Text(_system, "english/iteminfo_new.lub", "tbl = { [501] = { identifiedResourceName = \"red_potion\", unidentifiedResourceName = \"red_potion\", ClassNum = 0 } }", Encoding.UTF8);
+            const string hat = "[2220] = { identifiedResourceName = \"햇\", unidentifiedResourceName = \"모자\", ClassNum = 16 }";
+            Text(_system, "iteminfo_new.lub", "tbl = { [501] = { identifiedResourceName = \"빨간포션\", unidentifiedResourceName = \"빨간포션\", ClassNum = 0 }, " + hat + " }", Encoding.UTF8);
+            Text(_system, "english/iteminfo_new.lub", "tbl = { [501] = { identifiedResourceName = \"red_potion\", unidentifiedResourceName = \"red_potion\", ClassNum = 0 }, " + hat + " }", Encoding.UTF8);
             Text(_own, RoOwnTables.ClassBodiesFile, "BodyName,Job,Race,Kind,BaseJob\n초보자,JOB_NOVICE,Human,Base,JOB_NOVICE\n", Encoding.UTF8);
             Text(_own, RoOwnTables.ShieldNamesFile, "ViewId,Name\n1,가드\n", Encoding.UTF8);
-            Text(_own, "item_db.conf", "item_db: (\n{\n\tId: 501\n\tType: \"IT_HEALING\"\n},\n)", Encoding.UTF8);
+            Text(_own, "item_db.conf", "item_db: (\n{\n\tId: 501\n\tType: \"IT_HEALING\"\n},\n{\n\tId: 2220\n\tType: \"IT_ARMOR\"\n\tLoc: \"EQP_HEAD_TOP\"\n},\n)", Encoding.UTF8);
 
             Pair("sprite/몬스터/poring", SpriteTestData.Monster());
             Pair("sprite/몬스터/lunatic", SpriteTestData.Weapon());
@@ -211,6 +212,44 @@ namespace Uninarok.RoImport.Tests.Catalog
         }
 
         // TASKS-0008 T5.10 (FR-9; PLAN-0008 4.7): the window's Import is the code path (PLAN-0002 4.11).
+        // TASKS-0008 T6.1 (FR-11; PLAN-0008 4.9): the lookup preview through the facade over the imported indices.
+        [Test]
+        public void TheLookup_FindsItem2220ForAMaleKnight_AsTheHatOnItsOwn()
+        {
+            Import(Options(), SpriteCatalogCategory.Headgears, SpriteCatalogCategory.Monsters, SpriteCatalogCategory.SkillIcons);
+
+            var result = RoCatalogLookupWindow.Resolve(new RoCatalogLookupRequest
+            {
+                Mode = RoCatalogLookupMode.ItemId, Id = 2220, Job = Uninarok.Networking.Data.PlayerJob.JOB_KNIGHT, Sex = Uninarok.Networking.Data.AccountSex.SEX_MALE,
+            }, _roots, out string message);
+
+            Assert.That(result?.Animation, Is.Not.Null, message);
+            Assert.That(AssetDatabase.GetAssetPath(result.Animation), Is.EqualTo(Art + "/sprite/악세사리/남/남_햇.asset"), "the hat's animation, on its own");
+            Assert.That(message, Does.Contain("Headgear").And.Contain("_햇"));
+
+            // Evidence of T6.1: one frame of the result, as the preview window draws it.
+            var window = Uninarok.RoImport.Editor.Sprites.RoSpritePreviewWindow.Open(result.Animation);
+            string png = Path.Combine(Path.GetTempPath(), "RoCatalogLookup-item2220-knight-male.png");
+            window.SaveFrame(png, 0, 0, 0f);
+            window.Close();
+            Assert.That(System.IO.File.Exists(png), Is.True);
+            TestContext.WriteLine("evidence: " + png);
+
+            var monster = RoCatalogLookupWindow.Resolve(new RoCatalogLookupRequest { Mode = RoCatalogLookupMode.UnitJobId, Id = 1002 }, _roots, out _);
+            Assert.That(monster?.Animation, Is.Not.Null, "a unit");
+            var icon = RoCatalogLookupWindow.Resolve(new RoCatalogLookupRequest { Mode = RoCatalogLookupMode.SkillId, Id = 5 }, _roots, out _);
+            Assert.That(icon?.Still, Is.Not.Null, "a static result shows the sprite");
+            Assert.That(RoCatalogLookupWindow.Resolve(new RoCatalogLookupRequest { Mode = RoCatalogLookupMode.UnitJobId, Id = 9999 }, _roots, out string miss), Is.Null);
+            Assert.That(miss, Does.Contain("Nothing found"));
+        }
+
+        [Test]
+        public void TheLookup_SaysSoWhenTheCatalogIsNotImported()
+        {
+            Assert.That(RoCatalogLookupWindow.Resolve(new RoCatalogLookupRequest { Mode = RoCatalogLookupMode.ItemId, Id = 2220 }, _roots, out string message), Is.Null);
+            Assert.That(message, Does.Contain("not imported"));
+        }
+
         [Test]
         public void TheWindowAndTheCodePath_GiveTheSameReport()
         {

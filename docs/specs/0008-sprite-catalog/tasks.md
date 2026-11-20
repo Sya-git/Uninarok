@@ -156,8 +156,9 @@ Chosen in T0.4 (2026-11-20, from the data set and the decompiled tables):
 
 ## Phase 6: Lookup preview and run-time check
 
-- [ ] **T6.1** Implement `RoCatalogLookupWindow` (`Tools/Ragnarok/Catalog Lookup…`): mode popup, class, sex, race, Resolve through `SpriteCatalog`, the result opened in `RoSpritePreviewWindow` (a static result shows the sprite); a clear message when the catalog is not imported. (FR-11)
+- [x] **T6.1** Implement `RoCatalogLookupWindow` (`Tools/Ragnarok/Catalog Lookup…`): mode popup, class, sex, race, Resolve through `SpriteCatalog`, the result opened in `RoSpritePreviewWindow` (a static result shows the sprite); a clear message when the catalog is not imported. (FR-11)
   *Done when:* on the Phase 7 data (or the T5.9 synthetic data), entering item 2220 with knight male shows the hat on its own (screenshot saved as evidence).
+  *Result (T6.1):* on the T5.9 synthetic data, `RoCatalogImporterTests.TheLookup_FindsItem2220ForAMaleKnight_AsTheHatOnItsOwn` resolves item 2220 for a male knight to `sprite/악세사리/남/남_햇.asset` alone and saves the preview frame: `evidence/t6.1-item-2220-knight-male-synthetic.png` (the synthetic test sprite). A unit, a static skill icon and a miss are checked too; `TheLookup_SaysSoWhenTheCatalogIsNotImported` checks the message. The window builds the facade from the imported indices through the AssetDatabase (`SpriteCatalog.Create`, internal, now visible to the editor assembly). The real-data check is Phase 7.
 - [ ] **T6.2** Add the play-mode assembly `Uninarok.SpriteCatalog.PlayTests` and `SpriteCatalogPlayTests`: `LoadAsync(Monsters)` then Poring 1002 → `LoadAnimation` returns the animation; `Release()` leaves no open handles. (FR-1)
   *Done when:* the play-mode test passes (command + result reported).
 
