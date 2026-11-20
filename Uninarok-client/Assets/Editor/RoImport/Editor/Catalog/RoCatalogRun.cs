@@ -43,6 +43,31 @@ namespace Uninarok.RoImport.Editor.Catalog
         public void SetOutputs(string jobPath, RoCatalogOutput[] outputs) => _outputs[jobPath] = outputs;
 
         public bool TryGetOutputs(string jobPath, out RoCatalogOutput[] outputs) => _outputs.TryGetValue(jobPath ?? string.Empty, out outputs);
+
+        /// <summary>The Addressables settings the index step ensures and verifies; null: the project's (created when missing).</summary>
+        public UnityEditor.AddressableAssets.Settings.AddressableAssetSettings Addressables { get; set; }
+
+        /// <summary>Set once the layout was ensured in this run, and once each shared table was written.</summary>
+        public bool AddressablesEnsured { get; set; }
+        public bool ItemTableWritten { get; set; }
+        public bool ClassTableWritten { get; set; }
+
+        /// <summary>The category of a job folder (<c>ground-items</c> → <see cref="SpriteCatalogCategory.GroundItems"/>).</summary>
+        public static bool TryCategoryOf(string jobPath, out SpriteCatalogCategory category)
+        {
+            category = default;
+            if (jobPath == null || !jobPath.StartsWith(JobRoot, StringComparison.Ordinal)) return false;
+            string rest = jobPath.Substring(JobRoot.Length);
+            int slash = rest.IndexOf('/');
+            string folder = slash < 0 ? rest : rest.Substring(0, slash);
+            foreach (SpriteCatalogCategory c in Enum.GetValues(typeof(SpriteCatalogCategory)))
+                if (FolderOf(c) == folder)
+                {
+                    category = c;
+                    return true;
+                }
+            return false;
+        }
     }
 
     /// <summary>One converted pair (or palette) of a record: its role, the asset and, for a static sprite, the sub-asset name.</summary>

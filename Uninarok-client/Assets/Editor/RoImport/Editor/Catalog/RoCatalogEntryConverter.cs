@@ -138,15 +138,97 @@ namespace Uninarok.RoImport.Editor.Catalog
             RoResult<UnityEngine.Object>.Failed(new RoIssue(code, path.Canonical, null, message));
     }
 
-    /// <summary>The index of one catalog category (PLAN-0008 4.7): job path <c>catalog/&lt;category&gt;/_index</c>.</summary>
+    /// <summary>
+    /// The index of one catalog category (PLAN-0008 4.6, 4.7): job path <c>catalog/&lt;category&gt;/_index</c>, run after every
+    /// entry job (D6). It makes sure the Addressables layout exists (once per run), writes the index from the run's outputs
+    /// (in place, untouched when unchanged), writes the item and class tables the first time a category needs them, and
+    /// verifies every reference it and the category's entries hold.
+    /// </summary>
     public sealed class RoCatalogIndexConverter : IRoConverter
     {
+        public const int RulesVersion = 1;
+
         public RoJobKind Kind => RoJobKind.CatalogIndex;
 
         public bool Handles(RoPath path) =>
             path.Canonical.StartsWith(RoCatalogRun.JobRoot, StringComparison.Ordinal) && path.Canonical.EndsWith("/" + RoCatalogRun.IndexKey, StringComparison.Ordinal);
 
-        public RoResult<UnityEngine.Object> Convert(RoImportContext ctx, RoPath path) =>
-            RoResult<UnityEngine.Object>.Failed(new RoIssue(RoIssueCode.Unexpected, path.Canonical, null, "the catalog index converter is pending T5.8"));
+        public RoResult<UnityEngine.Object> Convert(RoImportContext ctx, RoPath path)
+        {
+            var run = ctx.CatalogPlan;
+            if (run == null)
+                return RoResult<UnityEngine.Object>.Failed(new RoIssue(RoIssueCode.Unexpected, path.Canonical, null, "a catalog job outside a catalog run (use RoImport.Catalog)"));
+            if (!RoCatalogRun.TryCategoryOf(path.Canonical, out var category))
+                return RoResult<UnityEngine.Object>.Failed(new RoIssue(RoIssueCode.SourceMissing, path.Canonical, null, "not a catalog category"));
+            if (category == SpriteCatalogCategory.Palettes) return RoResult<UnityEngine.Object>.Skipped(null);   // palettes have no index
+
+            if (!run.AddressablesEnsured)
+            {
+                run.Addressables = run.Addressables ?? RoCatalogAddressables.ProjectSettings();
+                RoCatalogAddressables.Ensure(run.Addressables, ctx.Roots);
+                run.AddressablesEnsured = true;
+            }
+
+            var ledger = ctx.Ledger(RoCatalogEntryConverter.LedgerCategory);
+            var statuses = new List<RoStatus>();
+            var written = new List<UnityEngine.Object>();
+
+            string indexPath = RoCatalogOutputPaths.Index(ctx.Roots, category);
+            statuses.Add(Write(ctx, ledger, path.Canonical, indexPath, RoCatalogIndexWriter.Build(run, category, ctx.Roots), Fingerprint(run, category)));
+            var index = ctx.Writer.Load<ScriptableObject>(indexPath);
+            written.Add(index);
+
+            bool equipment = RoCatalogOutputPaths.HasEntryAssets(category) && category != SpriteCatalogCategory.Bodies && category != SpriteCatalogCategory.Heads;
+            if ((equipment || category == SpriteCatalogCategory.GroundItems) && !run.ItemTableWritten && run.Tables?.Items != null)
+            {
+                string itemsPath = RoCatalogOutputPaths.Items(ctx.Roots);
+                var table = RoCatalogIndexWriter.Items(run.Tables.Items, run.Tables.ItemKinds, GroundNames(ctx, run));
+                statuses.Add(Write(ctx, ledger, RoCatalogRun.JobRoot + RoCatalogOutputPaths.ItemsFolder + "/" + RoCatalogRun.IndexKey, itemsPath, table,
+                    run.Tables.ItemKinds == null ? "no-kinds" : "kinds"));
+                written.Add(ctx.Writer.Load<ScriptableObject>(itemsPath));
+                run.ItemTableWritten = true;
+            }
+            if ((equipment || category == SpriteCatalogCategory.Bodies) && !run.ClassTableWritten && run.Tables?.Own != null)
+            {
+                string classesPath = RoCatalogOutputPaths.Classes(ctx.Roots);
+                statuses.Add(Write(ctx, ledger, RoCatalogRun.JobRoot + RoCatalogOutputPaths.ClassesFolder + "/" + RoCatalogRun.IndexKey, classesPath,
+                    RoCatalogIndexWriter.Classes(run.Tables.Own), "classes"));
+                written.Add(ctx.Writer.Load<ScriptableObject>(classesPath));
+                run.ClassTableWritten = true;
+            }
+
+            if (RoCatalogOutputPaths.HasEntryAssets(category))
+                foreach (var (record, _) in RoCatalogIndexWriter.Converted(run, category))
+                    written.Add(ctx.Writer.Load<ScriptableObject>(RoCatalogOutputPaths.Entry(ctx.Roots, category, record.Key)));
+            RoCatalogAddressables.Verify(run.Addressables, ctx.Roots, written, ctx.Report);
+
+            if (statuses.All(s => s == RoStatus.Skipped)) return RoResult<UnityEngine.Object>.Skipped(index);
+            return statuses.Contains(RoStatus.Created) ? RoResult<UnityEngine.Object>.Created(index) : RoResult<UnityEngine.Object>.Updated(index);
+        }
+
+        // In place through the writer (unchanged content is not rewritten), owned by its own ledger entry.
+        static RoStatus Write(RoImportContext ctx, RoLedger ledger, string source, string assetPath, ScriptableObject fresh, string hash)
+        {
+            var status = ctx.Writer.UpsertObject(assetPath, fresh);
+            ledger.Record(new RoLedgerEntry { Source = source, SourceHash = hash, Rules = RulesVersion, Outputs = new[] { assetPath } }, ctx.Report);
+            return status;
+        }
+
+        /// <summary>The fingerprints of the category's converted records, hashed: the index's ledger hash (PLAN-0008 4.6).</summary>
+        static string Fingerprint(RoCatalogRun run, SpriteCatalogCategory category)
+        {
+            var text = string.Join("\n", RoCatalogIndexWriter.Converted(run, category).Select(x => x.record.Key + "\t" + x.record.Fingerprint));
+            using (var sha = System.Security.Cryptography.SHA256.Create())
+                return string.Concat(sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(text)).Select(b => b.ToString("x2")));
+        }
+
+        // The ground item index's resource names: this run's, else the index already on disk, else none.
+        static IReadOnlyList<string> GroundNames(RoImportContext ctx, RoCatalogRun run)
+        {
+            var mine = RoCatalogIndexWriter.Converted(run, SpriteCatalogCategory.GroundItems);
+            if (mine.Count > 0) return mine.Select(x => x.record.Key).OrderBy(k => k, StringComparer.Ordinal).ToArray();
+            var existing = ctx.Writer.Load<GroundItemIndex>(RoCatalogOutputPaths.Index(ctx.Roots, SpriteCatalogCategory.GroundItems));
+            return existing != null ? existing.ResourceNames : Array.Empty<string>();
+        }
     }
 }
