@@ -99,8 +99,9 @@ Chosen in T0.4 (2026-11-20, from the data set and the decompiled tables):
 - [x] **T4.6** Write `RoBodyPlannerTests`, `RoHeadPlannerTests`, `RoEquipmentPlannerTests`: class table rows → variants (mount, outfit, costume, doram); palettes by colour number; stray names ignored with one warning; headgear sex and doram slots; garment root sheet vs own SPR vs `_doram`; weapon suffix → item-id → base type order (OQ-3); trail pairs; shield names and item-id records; unreferenced files reported. Marked `[Ignore("pending T4.7")]` and so on. (FR-2, FR-3, FR-4, FR-10)
   *Done when:* the tests compile and are listed as ignored.
   *Note (T4.6):* 19 tests, all ignored. The keys and roles the tests rely on are `RoCatalogKeys` and `RoCatalogRoles` (plan 4.3.11, implemented here because the tests build their expectations with them); the planners are stubs. The data showed that weapon folders are named after body variants and file prefixes are body names (plan 4.3.11 note).
-- [ ] **T4.7** Implement the body and head planners (palettes of their own records only). (FR-2, FR-3, FR-10)
+- [x] **T4.7** Implement the body and head planners (palettes of their own records only). (FR-2, FR-3, FR-10)
   *Done when:* the body and head tests pass; the real-data run reports records, palettes and stray files.
+  *Result (T4.7):* bodies 61 records (base classes), 370 pairs, 1,732 palettes; 146 body files no row names (4th classes, legacy bodies) and 46 strays (weapons in `몸통/`, `_여/`, costume files without the `_<n>` suffix); every class row has a body. Heads 42 styles, 104 pairs, 929 palettes, 1 stray (`인간족/머리통/13_남` outside a sex folder). Pinned by `RoPlayerPlannersClientDataTests`.
 - [ ] **T4.8** Implement the headgear planner. (FR-4, FR-10)
   *Done when:* the headgear tests pass; the real-data run reports 2,266 of 2,859 ids with a file and 593 warnings (plan §4.3.4).
 - [ ] **T4.9** Implement the garment planner (root sheet or doram sheet unless the job has its own SPR). (FR-4, FR-10)

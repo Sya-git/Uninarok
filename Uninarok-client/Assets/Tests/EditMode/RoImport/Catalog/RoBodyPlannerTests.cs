@@ -10,7 +10,6 @@ using static Uninarok.RoImport.Tests.Catalog.PlannerFixtures;
 namespace Uninarok.RoImport.Tests.Catalog
 {
     // TASKS-0008 T4.6 (FR-2, FR-10; PLAN-0008 4.3.2, 4.3.11): class bodies from the class table and synthetic files.
-    [Ignore("pending T4.7")]
     public class RoBodyPlannerTests
     {
         const AccountSex M = AccountSex.SEX_MALE, F = AccountSex.SEX_FEMALE;
@@ -105,7 +104,6 @@ namespace Uninarok.RoImport.Tests.Catalog
     }
 
     // TASKS-0008 T4.6 (FR-3, FR-10; PLAN-0008 4.3.3): hair styles from synthetic files.
-    [Ignore("pending T4.7")]
     public class RoHeadPlannerTests
     {
         static readonly string[] Files = Pairs("sprite/인간족/머리통/남/1_남", "sprite/인간족/머리통/여/1_여", "sprite/도람족/머리통/남/1_남",
@@ -142,6 +140,36 @@ namespace Uninarok.RoImport.Tests.Catalog
         public void ANonNumericName_IsStray()
         {
             Assert.That(Heads().Gaps.Single(g => g.Code == RoIssueCode.CatalogStrayFile).Item, Is.EqualTo("sprite/인간족/머리통/남/old_남.spr"));
+        }
+    }
+
+    // TASKS-0008 T4.7 real-data run (2026-11-20): bodies and heads of the client with the owner's class table.
+    public class RoPlayerPlannersClientDataTests
+    {
+        [Test, Category(CatalogTestFiles.Category)]
+        public void TheClientData_BodiesAndHeads()
+        {
+            var data = new Uninarok.RoImport.Core.Source.RoFolderSource(CatalogTestFiles.DataRoot);
+            var report = new RoReport();
+            var ctx = new RoCatalogContext(data, RoCatalogTables.Load(data, null, RoCatalogNeeds.Own, RoItemTableLanguage.Portuguese, report));
+            var b = new RoCatalogPlan.Builder();
+            new RoBodyPlanner().Plan(ctx, b);
+            new RoHeadPlanner().Plan(ctx, b);
+            var plan = b.Build();
+
+            Assert.That(report.Issues, Is.Empty);
+            var bodies = plan.RecordsOf(SpriteCatalogCategory.Bodies).ToList();
+            var heads = plan.RecordsOf(SpriteCatalogCategory.Heads).ToList();
+            Assert.That(bodies.Count, Is.EqualTo(61));
+            Assert.That(bodies.Sum(r => r.Pairs.Count), Is.EqualTo(370));
+            Assert.That(bodies.Sum(r => r.Values.Count(v => v.Name.StartsWith(RoCatalogRoles.PalettePrefix))), Is.EqualTo(1732));
+            Assert.That(heads.Count, Is.EqualTo(42));
+            Assert.That(heads.Sum(r => r.Pairs.Count), Is.EqualTo(104));
+            Assert.That(heads.Sum(r => r.Values.Count(v => v.Name.StartsWith(RoCatalogRoles.PalettePrefix))), Is.EqualTo(929));
+            Assert.That(plan.GapsOf(SpriteCatalogCategory.Bodies).Count(g => g.Code == RoIssueCode.CatalogStrayFile), Is.EqualTo(46));
+            Assert.That(plan.GapsOf(SpriteCatalogCategory.Bodies).Count(g => g.Code == RoIssueCode.CatalogFileWithoutName), Is.EqualTo(146));
+            Assert.That(plan.GapsOf(SpriteCatalogCategory.Bodies).Count(g => g.Code == RoIssueCode.CatalogNameWithoutFile), Is.EqualTo(0), "every class row has a body");
+            Assert.That(plan.GapsOf(SpriteCatalogCategory.Heads).Count(), Is.EqualTo(1));
         }
     }
 }
