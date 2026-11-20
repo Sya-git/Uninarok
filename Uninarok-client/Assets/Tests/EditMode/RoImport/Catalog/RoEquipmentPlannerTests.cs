@@ -27,7 +27,7 @@ namespace Uninarok.RoImport.Tests.Catalog
             Pairs("sprite/악세사리/남/남_햇", "sprite/악세사리/여/여_햇", "sprite/악세사리/남_doram/남_햇", "sprite/악세사리/여/여_밴드",
                 "sprite/악세사리/남/belka_남"));
 
-        [Test, Ignore("pending T4.8")]
+        [Test]
         public void AHeadgear_HasASlotPerSex_AndADoramSlotWhereItsFileExists()
         {
             var hat = Record(Headgears(), RoCatalogKeys.Headgear(16));
@@ -41,13 +41,37 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(Record(Headgears(), RoCatalogKeys.Headgear(17)).Pairs.Single().Role, Is.EqualTo(RoCatalogRoles.Headgear(F, H)));
         }
 
-        [Test, Ignore("pending T4.8")]
+        [Test]
         public void AHeadgearWithoutAFile_AndAFileWithoutAName_AreWarned()
         {
             var plan = Headgears();
 
             Assert.That(plan.Gaps.Single(g => g.Code == RoIssueCode.CatalogNameWithoutFile).Item, Does.Contain("없음"));
             Assert.That(plan.Gaps.Single(g => g.Code == RoIssueCode.CatalogFileWithoutName).Item, Is.EqualTo("sprite/악세사리/남/belka_남.spr"));
+        }
+
+        /// <summary>The client's data through one planner (NeedsData tests of T4.8–T4.11).</summary>
+        static RoCatalogPlan ClientPlan(IRoCatalogPlanner planner, out RoReport report)
+        {
+            var data = new Uninarok.RoImport.Core.Source.RoFolderSource(CatalogTestFiles.DataRoot);
+            report = new RoReport();
+            var tables = RoCatalogTables.Load(data, null, planner.Needs, RoItemTableLanguage.Portuguese, report);
+            var b = new RoCatalogPlan.Builder();
+            planner.Plan(new RoCatalogContext(data, tables), b);
+            return b.Build();
+        }
+
+        // T4.8 real-data run (2026-11-20): 2,266 of 2,859 headgear ids have a file, 593 warnings (plan 4.3.4).
+        [Test, Category(CatalogTestFiles.Category)]
+        public void TheClientData_Headgears()
+        {
+            var plan = ClientPlan(new RoHeadgearPlanner(), out var report);
+
+            Assert.That(report.Issues, Is.Empty);
+            Assert.That(plan.Records.Count, Is.EqualTo(2266));
+            Assert.That(plan.Gaps.Count(g => g.Code == RoIssueCode.CatalogNameWithoutFile), Is.EqualTo(593));
+            Assert.That(plan.Gaps.Count(g => g.Code == RoIssueCode.CatalogFileWithoutName), Is.EqualTo(154));
+            Assert.That(Record(plan, RoCatalogKeys.Headgear(16)).Pairs.Count, Is.GreaterThanOrEqualTo(2), "view id 16 (item 2220) for both sexes");
         }
 
         // ---- garments (4.3.5) ----
