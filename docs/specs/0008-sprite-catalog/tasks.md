@@ -87,8 +87,9 @@ Chosen in T0.4 (2026-11-20, from the data set and the decompiled tables):
 - [x] **T4.2** Write `RoUnitPlannerTests`, `RoStaticPlannerTests` (synthetic tables and file lists, plan §6): id ranges choose the folder; a name in both folders resolves by range; a `.gr2` or missing name → one warning; an ACT without SPR → orphan; scale default 1; items sharing a resource share one record; identified vs unidentified; skill icon by lower-case `SKID`; effects by name; the emote set. Marked `[Ignore("pending T4.3")]`. (FR-1, FR-5, FR-6, FR-7, FR-10)
   *Done when:* the tests compile and are listed as ignored.
   *Note (T4.2):* the planners exist as stubs (`RoUnitFolders`, `RoUnitPlanner`, `RoGroundItemPlanner`, `RoSkillIconPlanner`, `RoEffectPlanner`); the effect tests carry their own `[Ignore("pending T4.5")]`. `RoCatalogTables.Create` (internal) builds tables in memory for the tests. 13 tests, all ignored.
-- [ ] **T4.3** Implement `RoUnitFolders` and the unit planners (monsters, NPCs, homunculi). (FR-1, FR-10)
+- [x] **T4.3** Implement `RoUnitFolders` and the unit planners (monsters, NPCs, homunculi). (FR-1, FR-10)
   *Done when:* the unit tests pass; a `NeedsData` run over the real data reports the counts of plan §4.3.1 (records, names without a file, orphan ACTs).
+  *Result (T4.3):* monsters 3,856 records (104 names without a file, mostly `.gr2`; 29 orphan ACTs, pet accessories `acc_*`; 78 unnamed files), NPCs 1,097 (88; 0; 42), homunculi 21 (3; 0; 0); no id outside the ranges. Pinned by `RoUnitPlannerTests.TheClientData` (`NeedsData`).
 - [ ] **T4.4** Implement the planners of ground items and skill icons (one scan of `아이템/` shared). (FR-5, FR-7, FR-10)
   *Done when:* the static tests for these two pass; the real-data run reports records and gaps (17,079 of 17,482 Portuguese items have a ground sprite; 1,295 of 1,806 `SKID` entries have an icon).
 - [ ] **T4.5** Implement the effects planner (whole `이팩트/` by name, emote set). (FR-6, FR-10)

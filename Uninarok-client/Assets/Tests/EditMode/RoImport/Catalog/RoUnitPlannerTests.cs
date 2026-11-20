@@ -9,7 +9,6 @@ using static Uninarok.RoImport.Tests.Catalog.PlannerFixtures;
 namespace Uninarok.RoImport.Tests.Catalog
 {
     // TASKS-0008 T4.2 (FR-1, FR-10; PLAN-0008 4.3.1, D11): monsters, NPCs and homunculi from synthetic tables.
-    [Ignore("pending T4.3")]
     public class RoUnitPlannerTests
     {
         static RoCatalogTables Tables() => RoCatalogTables.Create(
@@ -90,6 +89,29 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(plan.Gaps.Count(g => g.Code == RoIssueCode.CatalogStrayFile && g.Item.Contains("7000")), Is.EqualTo(1));
             Assert.That(plan.Gaps.Any(g => g.Item.Contains("KNIGHT") || g.Item.Contains(" 7 ")), Is.False, "player job 7 is not a unit");
             Assert.That(plan.Records.Any(r => r.Key == "7000"), Is.False);
+        }
+
+        // T4.3 real-data run (Portuguese client, 2026-11-20): records, names without a file, orphan ACTs, unnamed files.
+        [TestCase(SpriteCatalogCategory.Monsters, 3856, 104, 29, 78)]
+        [TestCase(SpriteCatalogCategory.Npcs, 1097, 88, 0, 42)]
+        [TestCase(SpriteCatalogCategory.Homunculi, 21, 3, 0, 0)]
+        [Category(CatalogTestFiles.Category)]
+        public void TheClientData(SpriteCatalogCategory category, int records, int withoutFile, int orphanActs, int unnamed)
+        {
+            var data = new Uninarok.RoImport.Core.Source.RoFolderSource(CatalogTestFiles.DataRoot);
+            var report = new RoReport();
+            var tables = RoCatalogTables.Load(data, new Uninarok.RoImport.Core.Source.RoFolderSource(CatalogTestFiles.SystemRoot),
+                RoCatalogNeeds.Jobs | RoCatalogNeeds.Scales, RoItemTableLanguage.Portuguese, report);
+            var b = new RoCatalogPlan.Builder();
+            new RoUnitPlanner(category).Plan(new RoCatalogContext(data, tables), b);
+            var plan = b.Build();
+
+            Assert.That(report.Issues, Is.Empty);
+            Assert.That(plan.Records.Count, Is.EqualTo(records));
+            Assert.That(plan.Gaps.Count(g => g.Code == RoIssueCode.CatalogNameWithoutFile), Is.EqualTo(withoutFile));
+            Assert.That(plan.Gaps.Count(g => g.Code == RoIssueCode.CatalogOrphanAct), Is.EqualTo(orphanActs));
+            Assert.That(plan.Gaps.Count(g => g.Code == RoIssueCode.CatalogFileWithoutName), Is.EqualTo(unnamed));
+            Assert.That(plan.Gaps.Count(g => g.Code == RoIssueCode.CatalogStrayFile), Is.EqualTo(0));
         }
 
         [Test]
