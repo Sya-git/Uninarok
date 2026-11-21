@@ -79,7 +79,7 @@ Lub files here are the client's own, outside the GRF. Same decompiler; **text en
 
 Examples: 501 Poção Vermelha → `빨간포션`, ClassNum 0; 1201 Faca → `나이프`, ClassNum 1 (short sword, suffix `_단검`); 1207 Main Gauche → ClassNum 31 (suffix `_1207`); 2220 Chapéu → ClassNum 16 (headgear); 2101 Vembrassa → `가드`, ClassNum 1.
 
-**Item-id sprites (Candidate).** Some weapon and shield files are named by item id: `_1530` (Mjolnir, ClassNum 8) and `28901_방패` (ClassNum 1). The client appears to try the item-id file first and fall back to the ClassNum name; decision (OQ-3): view id first, then item id, then base type; still to be checked against the server's look packets.
+**Item-id sprites (Confirmed for the files, owner T7.5 2026-11-21; Open against the server).** Some weapon and shield files are named by item id: `_1530` (Mjolnir, ClassNum 8) and `28901_방패` (ClassNum 1). The client appears to try the item-id file first and fall back to the ClassNum name; decision (OQ-3): view id first, then item id, then base type. The owner checked the resolved files in the reference viewer (T7.5: item 1201, shield 2189); whether the server's look packets send the view id or the item id stays **Open** until those packets are implemented (plan R6).
 
 ### 2.2 Other System tables
 
@@ -202,9 +202,9 @@ Counts are SPR files; "unique" counts distinct SPR contents (MD5).
 
 A palette replaces the 256-colour table of an indexed SPR; index 0 is transparent.
 
-### 3.10 Effects and emotes (`이팩트/`) — Candidate
+### 3.10 Effects and emotes (`이팩트/`) — Confirmed (owner, T7.5, 2026-11-21)
 
-- Plain sprite effects: `emotion.spr` (98 actions, one per emote, no directions: action index = `ET_*` id, Candidate), carts (`손수레1..8`, `마도카트`, …), falcon and wolf (`매`, `windhawk_wolf`), status (`status-sleep`, `status-stun`), damage numbers (`숫자`, `newnumber*`), traps, firewall, `shield`, and so on.
+- Plain sprite effects: `emotion.spr` (98 actions, one per emote, no directions: action index = `ET_*` id, **Confirmed**: emote 0 is the `ET_SURPRISE` "!" in the reference viewer, T7.5), carts (`손수레1..8`, `마도카트`, …), falcon and wolf (`매`, `windhawk_wolf`), status (`status-sleep`, `status-stun`), damage numbers (`숫자`, `newnumber*`), traps, firewall, `shield`, and so on.
 - Action counts vary (1, 8, 5, 16, 98 …); many use true-colour frames and several layers.
 - Skill effects mostly live in STR files (`data/texture/effect`), out of scope.
 
