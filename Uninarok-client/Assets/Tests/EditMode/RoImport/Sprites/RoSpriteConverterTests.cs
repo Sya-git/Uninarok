@@ -205,7 +205,6 @@ namespace Uninarok.RoImport.Tests.Sprites
 
         // ---- FR-8: bad input ----
 
-        [TestCase("sprite/bad/oob", RoIssueCode.SpriteIndexOutOfRange)]
         [TestCase("sprite/bad/corrupt", RoIssueCode.CorruptFile)]
         [TestCase("sprite/bad/nospr", RoIssueCode.SourceMissing)]
         [TestCase("sprite/bad/oldspr", RoIssueCode.UnsupportedSprVersion)]
@@ -219,6 +218,21 @@ namespace Uninarok.RoImport.Tests.Sprites
             Assert.AreEqual(1, Count(ctx.Report, code), "one warning");
             Assert.IsFalse(Exists(AnimationPath(name)));
             Assert.IsFalse(Directory.Exists(RoImportTestRoot.FullPath(_roots.Art + "/" + RoSpriteOutputPaths.SheetsFolder)), "no sheet either");
+        }
+
+        // FR-8 revision 4, D16 (owner, 2026-11-21): a layer past its sheet draws nothing, the file converts with one warning.
+        [Test]
+        public void ALayerPastItsSheet_Converts_DrawingNothing_WithOneWarning()
+        {
+            var ctx = Context();
+            var result = Convert(ctx, "sprite/bad/oob");
+
+            Assert.AreEqual(RoStatus.Created, result.Status, result.Failure?.Message);
+            Assert.AreEqual(1, Count(ctx.Report, RoIssueCode.SpriteIndexOutOfRange), "one warning");
+            Assert.IsTrue(Exists(AnimationPath("sprite/bad/oob")));
+            var animation = (SpriteAnimation)result.Value;
+            var bad = animation.Actions[animation.ActionMap[1]];
+            Assert.AreEqual(-1, animation.Layers[animation.Frames[bad.FirstFrame].FirstLayer].Slot, "the out-of-range layer is empty");
         }
 
         // ---- FR-9: re-import is stable ----

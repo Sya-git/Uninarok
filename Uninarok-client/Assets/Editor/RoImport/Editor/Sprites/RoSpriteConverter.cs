@@ -111,7 +111,12 @@ namespace Uninarok.RoImport.Editor.Sprites
                 return Fail(ctx, act, RoIssueCode.SpriteSheetTooLarge, $"the frames of '{spr.Canonical}' do not fit one {RoSpriteSheetPacker.MaxSize} sheet");
             ReportUnknownEvents(ctx, act, compiled.Events);
 
-            bool isStatic = RoSpriteRules.IsStatic(animation) && DrawnLayer(animation, out _);
+            // FR-8 revision 4, D16: layers past the sheet draw nothing; the file converts with one warning. Such a file is never
+            // static (its one layer may be the bad one), so the static paths only ever see layers inside the sheet.
+            if (compiled.OutOfRangeLayers > 0)
+                ctx.Report.Warn(RoIssueCode.SpriteIndexOutOfRange, act.Canonical, null,
+                    $"{compiled.OutOfRangeLayers} layer(s) point past the images of '{spr.Canonical}' and draw nothing; the first: {compiled.FirstOutOfRange}");
+            bool isStatic = compiled.OutOfRangeLayers == 0 && RoSpriteRules.IsStatic(animation) && DrawnLayer(animation, out _);
             RoSheetSprite? offsetSprite = isStatic ? OffsetSprite(animation, sprite) : null;
 
             try

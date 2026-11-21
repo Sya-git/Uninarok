@@ -18,6 +18,10 @@ namespace Uninarok.RoImport.Core.Sprites
         public Vector2Int[] Anchors = Array.Empty<Vector2Int>();
         public string[] Events = Array.Empty<string>();
         public int MaxLayers;
+        /// <summary>Layers whose image index is past their type's list: compiled as empty, they draw nothing (SPEC-0007 FR-8 rev. 4, D16).</summary>
+        public int OutOfRangeLayers;
+        /// <summary>Where the first of them is ("action 8, frame 4, layer 0 uses indexed image 9, the sheet has 9"); null when none.</summary>
+        public string FirstOutOfRange;
 
         /// <summary>Copies the arrays into <paramref name="target"/> with its sprites (by slot) and pixels per unit.</summary>
         public void ApplyTo(SpriteAnimation target, Sprite[] sprites, float pixelsPerUnit)
@@ -41,7 +45,8 @@ namespace Uninarok.RoImport.Core.Sprites
     /// (speed, every frame's layers, event and anchors) and the first of equal ones is kept; the action map points every
     /// file action at its unique action. Empty actions and empty layers stay as data (FR-5); an empty layer is stored as
     /// slot −1 with its unused fields cleared, so equal empties compare equal. A layer that points outside its type's list
-    /// rejects the whole file (FR-8). Pure: no Unity object is created.
+    /// draws nothing: it is compiled (and keyed) as an empty layer and counted, so the converter can warn once (FR-8
+    /// revision 4, D16); an unknown image type rejects the whole file. Pure: no Unity object is created.
     /// </summary>
     public static class RoActCompiler
     {
@@ -55,12 +60,14 @@ namespace Uninarok.RoImport.Core.Sprites
             var unique = new List<RoActAction>();
             var byKey = new Dictionary<string, short>(StringComparer.Ordinal);
             var key = new System.Text.StringBuilder(256);
+            int outOfRange = 0;
+            string firstOutOfRange = null;
 
             for (int a = 0; a < act.Actions.Count; a++)
             {
                 var action = act.Actions[a];
-                if (!Check(action, a, indexedCount, trueColorCount, out reason)) return false;
-                Key(action, key);
+                if (!Check(action, a, indexedCount, trueColorCount, ref outOfRange, ref firstOutOfRange, out reason)) return false;
+                Key(action, key, indexedCount, trueColorCount);
                 string k = key.ToString();
                 if (!byKey.TryGetValue(k, out short id))
                 {
@@ -96,7 +103,7 @@ namespace Uninarok.RoImport.Core.Sprites
                         FirstAnchor = anchors.Count,
                         AnchorCount = (short)frame.Anchors.Count
                     });
-                    foreach (var l in frame.Layers) layers.Add(Layer(l, indexedCount));
+                    foreach (var l in frame.Layers) layers.Add(Layer(l, indexedCount, trueColorCount));
                     anchors.AddRange(frame.Anchors);
                 }
             }
@@ -114,13 +121,15 @@ namespace Uninarok.RoImport.Core.Sprites
                 Layers = layers.ToArray(),
                 Anchors = anchors.ToArray(),
                 Events = events,
-                MaxLayers = maxLayers
+                MaxLayers = maxLayers,
+                OutOfRangeLayers = outOfRange,
+                FirstOutOfRange = firstOutOfRange
             };
             reason = null;
             return true;
         }
 
-        static bool Check(RoActAction action, int a, int indexedCount, int trueColorCount, out string reason)
+        static bool Check(RoActAction action, int a, int indexedCount, int trueColorCount, ref int outOfRange, ref string first, out string reason)
         {
             for (int f = 0; f < action.Frames.Count; f++)
             {
@@ -133,19 +142,23 @@ namespace Uninarok.RoImport.Core.Sprites
                     if (layer.IsEmpty) continue;
                     if (layer.SpriteType != RoActLayer.Indexed && layer.SpriteType != RoActLayer.TrueColor)
                         return Fail($"action {a}, frame {f}, layer {l} has the unknown image type {layer.SpriteType}", out reason);
-                    int count = layer.SpriteType == RoActLayer.Indexed ? indexedCount : trueColorCount;
-                    if (layer.SpriteIndex >= count)
-                        return Fail($"action {a}, frame {f}, layer {l} uses {(layer.SpriteType == RoActLayer.Indexed ? "indexed" : "true-colour")} " +
-                                    $"image {layer.SpriteIndex}, the sheet has {count}", out reason);
+                    if (!IsPastSheet(layer, indexedCount, trueColorCount)) continue;
+                    outOfRange++;
+                    first = first ?? $"action {a}, frame {f}, layer {l} uses {(layer.SpriteType == RoActLayer.Indexed ? "indexed" : "true-colour")} " +
+                                     $"image {layer.SpriteIndex}, the sheet has {(layer.SpriteType == RoActLayer.Indexed ? indexedCount : trueColorCount)}";
                 }
             }
             reason = null;
             return true;
         }
 
-        static SpriteAnimation.LayerData Layer(RoActLayer l, int indexedCount)
+        /// <summary>A layer whose image is not in its type's list: it draws nothing (FR-8 revision 4, D16).</summary>
+        static bool IsPastSheet(RoActLayer l, int indexedCount, int trueColorCount) =>
+            !l.IsEmpty && l.SpriteIndex >= (l.SpriteType == RoActLayer.Indexed ? indexedCount : trueColorCount);
+
+        static SpriteAnimation.LayerData Layer(RoActLayer l, int indexedCount, int trueColorCount)
         {
-            if (l.IsEmpty) return new SpriteAnimation.LayerData { Slot = -1 };
+            if (l.IsEmpty || IsPastSheet(l, indexedCount, trueColorCount)) return new SpriteAnimation.LayerData { Slot = -1 };
             return new SpriteAnimation.LayerData
             {
                 Slot = (short)RoSpriteRules.Slot(l.SpriteType, l.SpriteIndex, indexedCount),
@@ -162,7 +175,7 @@ namespace Uninarok.RoImport.Core.Sprites
         static short Clamp(int v) => (short)Math.Max(short.MinValue, Math.Min(short.MaxValue, v));
 
         /// <summary>A text form of everything that makes an action what it is (empty layers in their cleared form).</summary>
-        static void Key(RoActAction action, System.Text.StringBuilder key)
+        static void Key(RoActAction action, System.Text.StringBuilder key, int indexedCount, int trueColorCount)
         {
             key.Clear();
             key.Append(action.AnimationSpeed.ToString("R", System.Globalization.CultureInfo.InvariantCulture)).Append('|');
@@ -173,7 +186,7 @@ namespace Uninarok.RoImport.Core.Sprites
                 key.Append(':');
                 foreach (var l in frame.Layers)
                 {
-                    if (l.IsEmpty)
+                    if (l.IsEmpty || IsPastSheet(l, indexedCount, trueColorCount))
                     {
                         key.Append("e;");
                         continue;
