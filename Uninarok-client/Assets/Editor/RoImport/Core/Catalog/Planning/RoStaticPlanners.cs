@@ -103,13 +103,16 @@ namespace Uninarok.RoImport.Core.Catalog.Planning
                     if (files.Contains(spr))
                     {
                         found = constant;
-                        pair = files.Contains(act) ? new RoCatalogPair(act, spr, Role) : new RoCatalogPair(default, spr, Role);
+                        pair = new RoCatalogPair(act, spr, Role);
                         break;
                     }
                     if (firstMissing.IsEmpty && !constant.StartsWith(MonsterSkillPrefix, StringComparison.Ordinal)) firstMissing = spr;
                 }
 
-                if (found != null)
+                // An SPR without its ACT is an orphan warning, not a record: SPEC-0007 converts ACT/SPR pairs (FR-10, D22).
+                if (found != null && !files.Contains(pair.Act))
+                    plan.Gap(RoIssueCode.CatalogOrphanSpr, Category, pair.Spr.Canonical, $"skill {id} ({found}): the SPR has no ACT");
+                else if (found != null)
                     plan.Add(Category, id.ToString(CultureInfo.InvariantCulture), new[] { pair },
                         new[] { RoCatalogValue.Of("skillId", id), RoCatalogValue.Of("constant", found) });
                 else if (firstMissing.IsEmpty) monsterSkills++;
@@ -151,7 +154,13 @@ namespace Uninarok.RoImport.Core.Catalog.Planning
                 if (spr.Extension != RoFileNames.SprExtension) continue;
                 string key = RoFileNames.StemUnder(spr, prefix);
                 var act = spr.WithExtension(RoFileNames.ActExtension);
-                var pair = files.Contains(act) ? new RoCatalogPair(act, spr, Role) : new RoCatalogPair(default, spr, Role);
+                // An SPR without its ACT is an orphan warning, not a record: SPEC-0007 converts ACT/SPR pairs (FR-10, D22).
+                if (!files.Contains(act))
+                {
+                    plan.Gap(RoIssueCode.CatalogOrphanSpr, Category, spr.Canonical, "the SPR has no ACT");
+                    continue;
+                }
+                var pair = new RoCatalogPair(act, spr, Role);
                 var values = new List<RoCatalogValue> { RoCatalogValue.Of("name", key) };
                 if (key == EmoteSet)
                 {

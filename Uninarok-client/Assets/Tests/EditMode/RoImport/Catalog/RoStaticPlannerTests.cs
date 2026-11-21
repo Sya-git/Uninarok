@@ -62,6 +62,19 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(plan.Gaps.Single(g => g.Item == RoSkillIconPlanner.MonsterSkillPrefix + "*").Message, Does.Contain("2"));
         }
 
+        // T7.2 (FR-10, D22): an icon whose SPR has no ACT is an orphan warning, not a record SPEC-0007 could not convert.
+        [Test]
+        public void ASkillIcon_WithoutItsAct_IsAnOrphanWarning_NotARecord()
+        {
+            var tables = RoCatalogTables.Create(skills: Skills("SM_BASH = 5, BS_SKINTEMPER = 109"));
+            var plan = Plan(new RoSkillIconPlanner(), tables, ItemFiles.Concat(new[] { "sprite/아이템/bs_skintemper.spr" }));
+
+            Assert.That(plan.Records.Select(r => r.Key), Is.EquivalentTo(new[] { "5" }));
+            var orphan = plan.Gaps.Single(g => g.Code == RoIssueCode.CatalogOrphanSpr);
+            Assert.That(orphan.Item, Is.EqualTo("sprite/아이템/bs_skintemper.spr"));
+            Assert.That(orphan.Message, Does.Contain("109"));
+        }
+
         // T4.4 real-data run (Portuguese client, 2026-11-20): 17,079 of 17,482 items have a ground sprite; 1,295 skill icons.
         [Test, Category(CatalogTestFiles.Category)]
         public void TheClientData_GroundItemsAndSkillIcons()
@@ -83,18 +96,21 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(report.Issues, Is.Empty);
             Assert.That(withSprite, Is.EqualTo(17079));
             Assert.That(ground.Count, Is.EqualTo(7196), "distinct resources with a sprite");
-            Assert.That(plan.RecordsOf(Uninarok.Catalog.SpriteCatalogCategory.SkillIcons).Count(), Is.EqualTo(1295));
+            // 1,295 icon files, of which 2 SPRs have no ACT (bs_skintemper, ht_falcon): orphans since T7.2 (D22).
+            Assert.That(plan.RecordsOf(Uninarok.Catalog.SpriteCatalogCategory.SkillIcons).Count(), Is.EqualTo(1293));
+            // Both planners scan 아이템/ and a gap is kept once per (code, item), so the ground items may list them first.
+            Assert.That(plan.Gaps.Count(g => g.Code == RoIssueCode.CatalogOrphanSpr && (g.Item.EndsWith("/bs_skintemper.spr") || g.Item.EndsWith("/ht_falcon.spr"))), Is.EqualTo(2));
         }
 
         [Test]
-        public void EffectsAreByName_WithStillSprites_AndOrphans()
+        public void EffectsAreByName_AndOrphansAreWarnings()
         {
             var files = Pairs("sprite/이팩트/cart", "sprite/이팩트/sub/glow", "sprite/이팩트/emotion")
                 .Concat(new[] { "sprite/이팩트/bluemsg.spr", "sprite/이팩트/emotion_index.act" });
             var plan = Plan(new RoEffectPlanner(), RoCatalogTables.Create(emotes: Emotes("ET_SURPRISE = 0\nET_QUESTION = 1")), files);
 
-            Assert.That(plan.Records.Select(r => r.Key), Is.EquivalentTo(new[] { "bluemsg", "cart", "emotion", "sub/glow" }));
-            Assert.That(plan.Records.Single(r => r.Key == "bluemsg").Pairs.Single().IsStatic, Is.True);
+            Assert.That(plan.Records.Select(r => r.Key), Is.EquivalentTo(new[] { "cart", "emotion", "sub/glow" }));
+            Assert.That(plan.Gaps.Single(g => g.Code == RoIssueCode.CatalogOrphanSpr).Item, Is.EqualTo("sprite/이팩트/bluemsg.spr"), "FR-10, D22");
             Assert.That(plan.Gaps.Single(g => g.Code == RoIssueCode.CatalogOrphanAct).Item, Is.EqualTo("sprite/이팩트/emotion_index.act"));
         }
 
@@ -136,7 +152,7 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(plan.Gaps, Is.Empty);
         }
 
-        // T4.5 real-data run (2026-11-20): 225 effect sprites (as the survey of sprite-catalog.md §2), 88 emotes, 10 orphan ACTs.
+        // T4.5 real-data run (2026-11-20): 225 effect sprites (as the survey of sprite-catalog.md §2), 88 emotes, 10 orphan ACTs; 1 orphan SPR (T7.2).
         [Test, Category(CatalogTestFiles.Category)]
         public void TheClientData_Effects()
         {
@@ -146,7 +162,8 @@ namespace Uninarok.RoImport.Tests.Catalog
             var plan = PlanData(new RoEffectPlanner(), tables, data);
 
             Assert.That(report.Issues, Is.Empty);
-            Assert.That(plan.Records.Count, Is.EqualTo(225));
+            Assert.That(plan.Records.Count, Is.EqualTo(224), "225 sprites less bluemsg, an SPR without ACT (D22)");
+            Assert.That(plan.Gaps.Count(g => g.Code == RoIssueCode.CatalogOrphanSpr), Is.EqualTo(1));
             Assert.That(plan.Records.Single(r => r.Key == RoEffectPlanner.EmoteSet).Values.Count(v => v.Name.StartsWith(RoEffectPlanner.EmoteValuePrefix)), Is.EqualTo(88));
             Assert.That(plan.Records.Any(r => r.Key == "손수레") && plan.Records.Any(r => r.Key == "매"), Is.True, "the cart and the falcon by name");
             Assert.That(plan.Gaps.Count(g => g.Code == RoIssueCode.CatalogOrphanAct), Is.EqualTo(10));
