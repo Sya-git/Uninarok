@@ -19,6 +19,8 @@ namespace Uninarok.RoImport.Editor.Pipeline
             new Map.RoMapConverter(),
             new Sprites.RoSpriteConverter(),
             new Sprites.RoPaletteConverter(),
+            new Catalog.RoCatalogEntryConverter(),
+            new Catalog.RoCatalogIndexConverter(),
         };
 
         public static IRoConverter For(RoJobKind kind)

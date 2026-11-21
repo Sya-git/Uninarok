@@ -3,7 +3,9 @@
     "rootNamespace": "Uninarok.RoImport.Core",
     "references": [
         "Uninarok.Map",
-        "Uninarok.Sprites"
+        "Uninarok.Sprites",
+        "Uninarok.Networking",
+        "Uninarok.SpriteCatalog"
     ],
     "includePlatforms": [
         "Editor"
@@ -12,7 +14,10 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "GRF.dll", "Encryption.dll", "ErrorManager.dll", "Utilities.dll"
+        "GRF.dll",
+        "Encryption.dll",
+        "ErrorManager.dll",
+        "Utilities.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [],

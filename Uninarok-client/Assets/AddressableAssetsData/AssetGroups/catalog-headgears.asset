@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: catalog-headgears
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: catalog-headgears
+  m_GUID: faca01e4203906a4bade848ee9194a21
+  m_SerializeEntries:
+  - m_GUID: 7039c77bdd7afdd47851ba837b0e7604
+    m_Address: Assets/Art/Imported/catalog/headgears
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+    m_FolderGuid: 
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d8bc4805746faf3439351e6c97f8018d, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 1511be6730d66bf42bad4cbb01c00cc2, type: 2}
+    - {fileID: 11400000, guid: df37ff86e400a7f40be0f270d84ed2a3, type: 2}
+    m_SchemaDisplayOrder:
+    - catalog-headgears_BundledAssetGroupSchema
+    - catalog-headgears_ContentUpdateGroupSchema
+  m_IncludeInBuild: 1
+  m_IncludeInBuildMigrated: 1

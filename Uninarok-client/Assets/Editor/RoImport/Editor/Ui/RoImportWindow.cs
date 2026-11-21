@@ -52,7 +52,7 @@ namespace Uninarok.RoImport.Editor.Ui
                 EditorGUILayout.HelpBox("The source folder does not exist.", MessageType.Warning);
 
             EditorGUILayout.Space();
-            var kinds = RoConverterRegistry.All.Select(c => c.Kind).ToArray();
+            var kinds = RoConverterRegistry.All.Select(c => c.Kind).Where(k => k != RoJobKind.CatalogEntry && k != RoJobKind.CatalogIndex).ToArray();   // the catalog has its own window (PLAN-0008 4.7)
             _kind = Mathf.Clamp(EditorGUILayout.Popup("Kind", _kind, kinds.Select(k => k.ToString()).ToArray()), 0, kinds.Length - 1);
             _force = EditorGUILayout.Toggle(new GUIContent("Force", "Convert even items the ledger says are current"), _force);
             if (kinds[_kind] == RoJobKind.MapData)

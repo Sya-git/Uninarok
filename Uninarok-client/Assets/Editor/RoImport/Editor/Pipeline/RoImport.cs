@@ -15,6 +15,12 @@ namespace Uninarok.RoImport.Editor.Pipeline
     /// <summary>Options of one run (plan 4.10). Null members mean the project defaults.</summary>
     public sealed class RoImportOptions
     {
+        /// <summary>A copy whose members can be set for one batch without changing the caller's options.</summary>
+        internal RoImportOptions Clone() => (RoImportOptions)MemberwiseClone();
+
+        /// <summary>Test hook: the Addressables settings of a catalog run; null: the project's (PLAN-0008 4.6).</summary>
+        internal UnityEditor.AddressableAssets.Settings.AddressableAssetSettings CatalogAddressables;
+
         /// <summary>Convert even items the ledger says are current.</summary>
         public bool Force;
 
@@ -33,8 +39,23 @@ namespace Uninarok.RoImport.Editor.Pipeline
         /// <summary>Source files; null: a folder source over <see cref="RoSourceLocation.Resolve"/> with the local hash cache.</summary>
         public IRoSource Source;
 
+        /// <summary>The client's <c>System</c> folder (item and scale tables, PLAN-0008 4.2); null: <see cref="RoSourceLocation.ResolveSystem"/>.</summary>
+        public IRoSource SystemSource;
+
+        /// <summary>The server's item_db.conf of this run (PLAN-0008 D21); null: the project setting.</summary>
+        public string ItemDbPath;
+
+        /// <summary>Test hook: the folder of the own catalog CSV tables; null: the project's (PLAN-0008 4.2).</summary>
+        internal string CatalogOwnTablesFolder;
+
+        /// <summary>The catalog run the catalog converters work from (PLAN-0008 4.7); set by the catalog importer.</summary>
+        internal Uninarok.RoImport.Editor.Catalog.RoCatalogRun CatalogPlan;
+
         /// <summary>Ledger folder; null: <see cref="RoLedger.DefaultFolder"/>.</summary>
         public string LedgerFolder;
+
+        /// <summary>The item table of this run (PLAN-0008 4.8, FR-12); null: the project setting (<see cref="Catalog.RoImportSettings"/>).</summary>
+        public Uninarok.RoImport.Core.Catalog.Tables.RoItemTableLanguage? ItemTableLanguage;
 
         /// <summary>Test hook: asked before each job; true cancels the batch there, like the progress bar's Cancel.</summary>
         internal Func<RoJob, bool> CancelBefore;
@@ -145,6 +166,17 @@ namespace Uninarok.RoImport.Editor.Pipeline
                 return Sprites.RoPaletteConverter.ConvertPalette(session.Context, path);
         }
 
+        /// <summary>
+        /// Imports the sprite catalog of <paramref name="categories"/> (SPEC-0008 FR-9; PLAN-0008 4.7): the tables they need, their
+        /// plan, one job per record, then one index job per category; the report has the numbers of each category.
+        /// </summary>
+        public static global::Uninarok.RoImport.Editor.Catalog.RoCatalogReport Catalog(Uninarok.Catalog.SpriteCatalogCategory[] categories, RoImportOptions options = null) =>
+            global::Uninarok.RoImport.Editor.Catalog.RoCatalogImporter.Run(categories, options);
+
+        /// <summary>Every category of the catalog (PLAN-0008 4.7).</summary>
+        public static global::Uninarok.RoImport.Editor.Catalog.RoCatalogReport CatalogAll(RoImportOptions options = null) =>
+            Catalog((Uninarok.Catalog.SpriteCatalogCategory[])Enum.GetValues(typeof(Uninarok.Catalog.SpriteCatalogCategory)), options);
+
         /// <summary>Runs a batch (plan 4.10): continues past failures and returns the report, whose summary lists them.</summary>
         public static RoReport Run(IEnumerable<RoJob> jobs, RoImportOptions options = null) => RoBatch.Run(jobs, options);
 
@@ -171,6 +203,7 @@ namespace Uninarok.RoImport.Editor.Pipeline
                     Force = options.Force,
                     GatImage = options.GatImage,
                     SpritePalettes = options.SpritePalettes,
+                    CatalogPlan = options.CatalogPlan,
                 };
             }
 

@@ -16,13 +16,16 @@ namespace Uninarok.RoImport.Editor.Pipeline
     {
         public const int ChunkSize = 200;
 
-        public static RoReport Run(IEnumerable<RoJob> jobs, RoImportOptions options = null)
+        public static RoReport Run(IEnumerable<RoJob> jobs, RoImportOptions options = null) => Run(jobs, options, null);
+
+        /// <summary>As <see cref="Run(IEnumerable{RoJob}, RoImportOptions)"/>, adding to <paramref name="into"/> (several batches, one report: PLAN-0008 4.7).</summary>
+        internal static RoReport Run(IEnumerable<RoJob> jobs, RoImportOptions options, RoReport into)
         {
             options = options ?? new RoImportOptions();
             var ordered = Order(jobs);
             var converters = options.Converters ?? RoConverterRegistry.All;
 
-            using (var session = new RoImport.Session(options))
+            using (var session = new RoImport.Session(options, into))
             {
                 var ctx = session.Context;
                 var report = ctx.Report;

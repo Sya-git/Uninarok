@@ -15,7 +15,7 @@ Korean folder names: 몬스터 monster, 인간족 human race, 도람족 doram ra
 
 ## 1. Lub files (`data/luafiles514/lua files/`)
 
-All `.lub` files are Lua 5.1 bytecode (header `ESC L u a Q`). GRF's `Lub` class decompiles 367 of the 379; 12 are plain-text Lua already (GRF reports "Unrecognized file format (Lua)": read them as text). Lub loading in .NET needs `Encoding.RegisterProvider(CodePagesEncodingProvider.Instance)` before GRF's `EncodingService` is first touched (Korean code page 949).
+All `.lub` files are Lua 5.1 bytecode (header `ESC L u a Q`). GRF's `Lub` class decompiles 367 of the 379; 12 are plain-text Lua already (GRF reports "Unrecognized file format (Lua)": read them as text). GRF decodes string constants with `EncodingService.DisplayEncoding`: code page 949 (Korean) for the `luafiles514` tables and the scale table, UTF-8 for the item tables (PLAN-0008 §4.1, T0.3). Unity's Mono provides code page 949 itself; `CodePagesEncodingProvider` is not in Unity's API profile.
 
 | Table (global) | File | Maps | Used for |
 |---|---|---|---|
@@ -28,7 +28,7 @@ All `.lub` files are Lua 5.1 bytecode (header `ESC L u a Q`). GRF's `Lub` class 
 | `PCJobNameTableMan`/`Woman` | `datainfo/pcjobnamegender*.lub` | player job id → **display name** (localised, not a file name) | UI only |
 | `ACCESSORY_IDs` | `datainfo/accessoryid.lub` | constant → **headgear view id** (`ACCESSORY_GOGGLES = 1`), 2,859 entries | headgear id |
 | `AccNameTable` | `datainfo/accname.lub` | view id → **headgear file stem** (`"_고글"`) | headgear file |
-| `SPRITE_ROBE_IDs` | `datainfo/spriterobeid.lub` | constant → **garment view id** (`ROBE_WINGS = 1`), 331 ids | garment id |
+| `SPRITE_ROBE_IDs` | `datainfo/spriterobeid.lub` | constant → **garment view id** (`ROBE_WINGS = 1`), 330 ids (1–331, 168 unused; T2.5) | garment id |
 | `RobeNameTable` (+ `_Eng`), `RobeTopLayer` | `datainfo/spriterobename.lub` | garment view id → **garment folder name** (`"천사날개"`); list of garments drawn above the body | garment folder; layer order (later spec) |
 | `Weapon_IDs` | `datainfo/weapontable.lub` | constant → **weapon view id** (0–102 plus named expansions) | weapon id |
 | `WeaponNameTable` | same file | weapon view id → **weapon file suffix** (`"_검"`, `"_1207"`) | weapon file |
@@ -79,7 +79,7 @@ Lub files here are the client's own, outside the GRF. Same decompiler; **text en
 
 Examples: 501 Poção Vermelha → `빨간포션`, ClassNum 0; 1201 Faca → `나이프`, ClassNum 1 (short sword, suffix `_단검`); 1207 Main Gauche → ClassNum 31 (suffix `_1207`); 2220 Chapéu → ClassNum 16 (headgear); 2101 Vembrassa → `가드`, ClassNum 1.
 
-**Item-id sprites (Candidate).** Some weapon and shield files are named by item id: `_1530` (Mjolnir, ClassNum 8) and `28901_방패` (ClassNum 1). The client appears to try the item-id file first and fall back to the ClassNum name; decision (OQ-3): view id first, then item id, then base type; still to be checked against the server's look packets.
+**Item-id sprites (Confirmed for the files, owner T7.5 2026-11-21; Open against the server).** Some weapon and shield files are named by item id: `_1530` (Mjolnir, ClassNum 8) and `28901_방패` (ClassNum 1). The client appears to try the item-id file first and fall back to the ClassNum name; decision (OQ-3): view id first, then item id, then base type. The owner checked the resolved files in the reference viewer (T7.5: item 1201, shield 2189); whether the server's look packets send the view id or the item id stays **Open** until those packets are implemented (plan R6).
 
 ### 2.2 Other System tables
 
@@ -202,9 +202,9 @@ Counts are SPR files; "unique" counts distinct SPR contents (MD5).
 
 A palette replaces the 256-colour table of an indexed SPR; index 0 is transparent.
 
-### 3.10 Effects and emotes (`이팩트/`) — Candidate
+### 3.10 Effects and emotes (`이팩트/`) — Confirmed (owner, T7.5, 2026-11-21)
 
-- Plain sprite effects: `emotion.spr` (98 actions, one per emote, no directions: action index = `ET_*` id, Candidate), carts (`손수레1..8`, `마도카트`, …), falcon and wolf (`매`, `windhawk_wolf`), status (`status-sleep`, `status-stun`), damage numbers (`숫자`, `newnumber*`), traps, firewall, `shield`, and so on.
+- Plain sprite effects: `emotion.spr` (98 actions, one per emote, no directions: action index = `ET_*` id, **Confirmed**: emote 0 is the `ET_SURPRISE` "!" in the reference viewer, T7.5), carts (`손수레1..8`, `마도카트`, …), falcon and wolf (`매`, `windhawk_wolf`), status (`status-sleep`, `status-stun`), damage numbers (`숫자`, `newnumber*`), traps, firewall, `shield`, and so on.
 - Action counts vary (1, 8, 5, 16, 98 …); many use true-colour frames and several layers.
 - Skill effects mostly live in STR files (`data/texture/effect`), out of scope.
 
@@ -216,3 +216,25 @@ A palette replaces the 256-colour table of an indexed SPR; index 0 is transparen
 4. **Lookups need the lub tables** of §1, `itemInfo` (§2.1) and two small hand-made tables (player job names, shield names; OQ-1).
 5. **Monster display scale** comes from `monster_size_effect_new.lub` (§2.2).
 6. **Tolerate gaps:** missing animations, missing SPR (shared root sheet), orphans, regional names without files.
+
+## 5. Own tables (`Uninarok-client/Assets/Editor/RoImport/Catalog/Data/`)
+
+No lub maps a player class to its body file name, or a shield view id to its file name (OQ-1). Two small CSV files beside the importer hold them. They are **data, not generated code**: a first draft was written once from the body folder names and `PlayerJob` (TASKS-0008 T2.8), the owner reviews it, and from then on the CSV is the source and is edited by hand. `RoOwnTables` reads both (PLAN-0008 §4.2).
+
+Format of both files: UTF-8, one header line, lines starting with `#` are comments (the draft marks rows to review with `# note:`), no quoting (no value holds a comma). A malformed row rejects the file with its line number.
+
+**`class-bodies.csv`**: `BodyName,Job,Race,Kind,BaseJob`, one row per body file name and race.
+
+| Column | Meaning |
+|---|---|
+| `BodyName` | the file name without sex and extension: `페코페코_기사` for `인간족/몸통/남/페코페코_기사_남.spr` |
+| `Job` | the `PlayerJob` the server sends for this body (`JOB_KNIGHT2`) |
+| `Race` | `Human` (`인간족/`) or `Doram` (`도람족/`) |
+| `Kind` | `Base`, `Mount` (a class mount with its own id such as the peco knight, or an all-class mount that keeps the class id such as `사자기사`), `Outfit` (an alternate body of the class: the `_h` bodies, `무희바지`, `턱시도`, `cart_summoner`) or `Costume1`…`Costume4` |
+| `BaseJob` | the class whose catalog entry holds the body (`JOB_KNIGHT` for the peco knight) |
+
+Costume styles come from the `costume_1`…`costume_4` folders, not from this file: a body of `costume_1/` takes the row of its name with kind `Costume1`. Files that break the `<name>_<sex>.spr` pattern (weapons in the body folder, `로드나이트_남''`, the numbered `가드_남_1`, the mercenaries `검용병`) are not rows; the planner reports them as stray (OQ-6).
+
+Not in the draft (no `PlayerJob`, so no row; the planner reports them as files no table references): the 4th-class bodies (`dragon_knight`, `meister`, `shadow_cross`, `arch_mage`, `cardinal`, `windhawk`, `imperial_guard`, `biolo`, `abyss_chaser`, `elemetal_master`, `inquisitor`, `troubadour`, `trouvere`, `sky_emperor`, `soul_ascetic`, `shinkiro`, `shiranui`, `night_watch`, `hyper_novice`, `spirit_handler` and their `_riding`, `_chicken`, `madogear` forms, `드래곤나이트`, `인퀴지터`), because Hercules 2026.09 has no 4th classes (PLAN-0008 D18); and `구페코크루세이더`, `마도아머`, `성제융합`, `성투사`, `성투사2`, `여름2`, `옥토버패스트`, `운영자`, `운영자2`, `한복`, `dancer_b_riding`.
+
+**`shield-names.csv`**: `ViewId,Name`: 1 `가드`, 2 `버클러`, 3 `쉴드`, 4 `미러쉴드` (the basic shields of `방패/<job>/<job>_<sex>_<name>.spr`). A shield's view id is its item's `ClassNum`, the same ids as Hercules' `ViewSprite` (1 Guard, 2 Buckler, 3 Shield, 4 Mirror Shield, 5 books; checked in T2.8). View 5 has no file in `방패/` (books are not drawn as a shield). Every other shield sprite is a file named by item id (`2189_방패`, `28901_방패`, `28902_방패`, `28942_방패`, `28945_방패`, `28946_방패`, `460020_방패`) or by resource name (`매드바니`, item 2189), reached through item-id records (§3.7).

@@ -69,6 +69,7 @@ namespace Uninarok.RoImport.Tests
         [TestCase("Editor/RoImport/Editor/Uninarok.RoImport.Editor.asmdef")]
         [TestCase("Tests/EditMode/RoImport/Uninarok.RoImport.Tests.asmdef")]
         [TestCase("Tests/EditMode/Sprites/Uninarok.Sprites.Tests.asmdef")]
+        [TestCase("Tests/EditMode/SpriteCatalog/Uninarok.SpriteCatalog.Tests.asmdef")]
         public void AssemblyDefinition_IsEditorOnly(string relative)
         {
             string json = File.ReadAllText(Path.Combine(Application.dataPath, relative));
@@ -109,6 +110,36 @@ namespace Uninarok.RoImport.Tests
 
             var offenders = sprites.GetReferencedAssemblies().Select(r => r.Name)
                 .Where(n => n.StartsWith("UnityEditor", StringComparison.Ordinal) || n.StartsWith("Uninarok.RoImport", StringComparison.Ordinal) || n == "GRF")
+                .ToArray();
+
+            CollectionAssert.IsEmpty(offenders);
+        }
+
+        // ---- PLAN-0008 §3, D19 (TASKS-0008 T3.1, FR-8): the catalog runtime ships in players, on the sprite runtime ----
+
+        static readonly string[] CatalogRuntimeReferences = { "Uninarok.Sprites", "Uninarok.Networking", "Unity.Addressables", "Unity.ResourceManager" };
+
+        [Test]
+        public void CatalogRuntimeAssembly_IsForAllPlatforms_WithOnlyItsPlannedReferences()
+        {
+            string json = File.ReadAllText(Path.Combine(Application.dataPath, "Scripts/SpriteCatalog/Uninarok.SpriteCatalog.asmdef"));
+
+            var asmdef = JsonUtility.FromJson<AsmdefPlatforms>(json);
+
+            CollectionAssert.IsEmpty(asmdef.includePlatforms ?? new string[0]);
+            CollectionAssert.IsEmpty(asmdef.excludePlatforms ?? new string[0]);
+            CollectionAssert.AreEquivalent(CatalogRuntimeReferences, asmdef.references ?? new string[0]);
+        }
+
+        [Test]
+        public void CatalogRuntimeAssembly_ReferencesNoEditorNoImporterAndNoGrf()
+        {
+            var catalog = Type.GetType("Uninarok.Catalog.SpriteRef, Uninarok.SpriteCatalog")?.Assembly;
+            Assert.IsNotNull(catalog, "the catalog runtime assembly is loaded");
+
+            var offenders = catalog.GetReferencedAssemblies().Select(r => r.Name)
+                .Where(n => n.StartsWith("UnityEditor", StringComparison.Ordinal) || n.StartsWith("Uninarok.RoImport", StringComparison.Ordinal)
+                            || n == "GRF" || n.StartsWith("Unity.Addressables.Editor", StringComparison.Ordinal))
                 .ToArray();
 
             CollectionAssert.IsEmpty(offenders);

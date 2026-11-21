@@ -1,0 +1,19 @@
+{
+    "name": "Uninarok.SpriteCatalog",
+    "rootNamespace": "Uninarok.Catalog",
+    "references": [
+        "Uninarok.Sprites",
+        "Uninarok.Networking",
+        "Unity.Addressables",
+        "Unity.ResourceManager"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

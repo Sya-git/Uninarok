@@ -105,15 +105,32 @@ namespace Uninarok.RoImport.Tests.Sprites
             Assert.AreEqual(1, anchored.Actions.Length, "8 identical directions");
         }
 
+        // FR-8 revision 4, D16: a layer past its sheet draws nothing; the file still compiles and says where.
         [Test]
-        public void ALayerOutsideItsSheet_IsRejected_WithWhere()
+        public void ALayerOutsideItsSheet_IsAnEmptyLayer_WithWhere()
         {
             var (spr, act) = SpriteTestData.OutOfRange();
 
-            Assert.IsFalse(RoActCompiler.TryCompile(act, spr.Indexed.Count, spr.TrueColor.Count, out var c, out var reason));
-            Assert.IsNull(c);
-            StringAssert.Contains("action 1", reason);
-            StringAssert.Contains("5", reason);
+            Assert.IsTrue(RoActCompiler.TryCompile(act, spr.Indexed.Count, spr.TrueColor.Count, out var c, out var reason), reason);
+            Assert.AreEqual(1, c.OutOfRangeLayers);
+            StringAssert.Contains("action 1", c.FirstOutOfRange);
+            StringAssert.Contains("5", c.FirstOutOfRange);
+            var bad = c.Actions[c.ActionMap[1]];
+            Assert.AreEqual(-1, c.Layers[c.Frames[bad.FirstFrame].FirstLayer].Slot, "draws nothing");
+            Assert.AreEqual(0, c.Layers[c.Frames[c.Actions[c.ActionMap[0]].FirstFrame].FirstLayer].Slot, "the good action is kept");
+        }
+
+        [Test]
+        public void AnOutOfRangeLayer_MergesWithAnEqualEmptyAction()
+        {
+            var act = SpriteTestData.Act(new[]
+            {
+                SpriteTestData.Action(4f, SpriteTestData.Frame(RoActLayer.Empty)),
+                SpriteTestData.Action(4f, SpriteTestData.Frame(RoActLayer.Simple(9))),
+            });
+
+            Assert.IsTrue(RoActCompiler.TryCompile(act, 2, 0, out var c, out _));
+            Assert.AreEqual(1, c.Actions.Length, "the blanked action equals the empty one");
         }
 
         [Test]
@@ -121,8 +138,10 @@ namespace Uninarok.RoImport.Tests.Sprites
         {
             var act = SpriteTestData.Act(new[] { SpriteTestData.Action(4f, SpriteTestData.Frame(RoActLayer.Simple(1, 0, 0, RoActLayer.TrueColor))) });
 
-            Assert.IsFalse(RoActCompiler.TryCompile(act, 5, 1, out _, out _), "true colour 1 of 1 frame");
+            Assert.IsTrue(RoActCompiler.TryCompile(act, 5, 1, out var past, out _), "true colour 1 of 1 frame");
+            Assert.AreEqual(1, past.OutOfRangeLayers);
             Assert.IsTrue(RoActCompiler.TryCompile(act, 0, 2, out var c, out _));
+            Assert.AreEqual(0, c.OutOfRangeLayers);
             Assert.AreEqual(1, c.Layers[0].Slot);
         }
     }

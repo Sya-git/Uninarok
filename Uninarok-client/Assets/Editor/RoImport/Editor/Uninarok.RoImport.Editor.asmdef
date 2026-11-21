@@ -5,7 +5,12 @@
         "Uninarok.RoImport.Core",
         "Uninarok.Map",
         "Unity.2D.Sprite.Editor",
-        "Uninarok.Sprites"
+        "Uninarok.Sprites",
+        "Uninarok.SpriteCatalog",
+        "Unity.Addressables",
+        "Unity.Addressables.Editor",
+        "Unity.ResourceManager",
+        "Uninarok.Networking"
     ],
     "includePlatforms": [
         "Editor"
@@ -14,7 +19,10 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "GRF.dll", "Encryption.dll", "ErrorManager.dll", "Utilities.dll"
+        "GRF.dll",
+        "Encryption.dll",
+        "ErrorManager.dll",
+        "Utilities.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [],

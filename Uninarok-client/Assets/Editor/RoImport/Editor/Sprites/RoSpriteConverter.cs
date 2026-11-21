@@ -60,7 +60,9 @@ namespace Uninarok.RoImport.Editor.Sprites
             if (ctx == null) throw new ArgumentNullException(nameof(ctx));
             options = options ?? new RoSpriteOptions { Palettes = ctx.SpritePalettes };
             string memoKey = "sprite:" + act.Canonical + "|" + spr.Canonical + (options.Palettes ? "|p" : "");
-            if (ctx.TryGetMemo(memoKey, out RoResult<Object> known))
+            // A remembered success whose asset was unloaded (RoBatch unloads unused assets between chunks) is looked up again:
+            // the ledger says it is current, so that is a cheap reload, not a conversion (found by the catalog, TASKS-0008 T7.2).
+            if (ctx.TryGetMemo(memoKey, out RoResult<Object> known) && (known.Status == RoStatus.Failed || known.Value != null))
                 return known.Status == RoStatus.Failed ? known : RoResult<Object>.Skipped(known.Value);
 
             var result = Run(ctx, act, spr, options);
@@ -109,7 +111,12 @@ namespace Uninarok.RoImport.Editor.Sprites
                 return Fail(ctx, act, RoIssueCode.SpriteSheetTooLarge, $"the frames of '{spr.Canonical}' do not fit one {RoSpriteSheetPacker.MaxSize} sheet");
             ReportUnknownEvents(ctx, act, compiled.Events);
 
-            bool isStatic = RoSpriteRules.IsStatic(animation) && DrawnLayer(animation, out _);
+            // FR-8 revision 4, D16: layers past the sheet draw nothing; the file converts with one warning. Such a file is never
+            // static (its one layer may be the bad one), so the static paths only ever see layers inside the sheet.
+            if (compiled.OutOfRangeLayers > 0)
+                ctx.Report.Warn(RoIssueCode.SpriteIndexOutOfRange, act.Canonical, null,
+                    $"{compiled.OutOfRangeLayers} layer(s) point past the images of '{spr.Canonical}' and draw nothing; the first: {compiled.FirstOutOfRange}");
+            bool isStatic = compiled.OutOfRangeLayers == 0 && RoSpriteRules.IsStatic(animation) && DrawnLayer(animation, out _);
             RoSheetSprite? offsetSprite = isStatic ? OffsetSprite(animation, sprite) : null;
 
             try

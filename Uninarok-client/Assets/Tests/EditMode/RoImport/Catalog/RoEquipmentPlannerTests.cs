@@ -1,0 +1,259 @@
+using System.Linq;
+using NUnit.Framework;
+using Uninarok.Catalog;
+using Uninarok.Networking.Data;
+using Uninarok.RoImport.Core.Catalog.Planning;
+using Uninarok.RoImport.Core.Catalog.Tables;
+using Uninarok.RoImport.Core.Results;
+using static Uninarok.RoImport.Tests.Catalog.PlannerFixtures;
+
+namespace Uninarok.RoImport.Tests.Catalog
+{
+    // TASKS-0008 T4.6 (FR-4, FR-10; PLAN-0008 4.3.4–4.3.7, 4.3.11, OQ-3): headgears, garments, weapons and shields.
+    public class RoEquipmentPlannerTests
+    {
+        const AccountSex M = AccountSex.SEX_MALE, F = AccountSex.SEX_FEMALE;
+        const SpriteRace H = SpriteRace.Human, D = SpriteRace.Doram;
+
+        static RoCatalogRecord Record(RoCatalogPlan plan, string key) => plan.Records.Single(r => r.Key == key);
+        static RoCatalogPair PairOf(RoCatalogRecord r, string role) => r.Pairs.Single(p => p.Role == role);
+
+        // ---- headgears (4.3.4) ----
+
+        static RoCatalogPlan Headgears() => Plan(new RoHeadgearPlanner(),
+            RoCatalogTables.Create(viewIds: ViewIds(
+                accIds: "ACCESSORY_HAT = 16, ACCESSORY_BAND = 17, ACCESSORY_LOST = 18",
+                accNames: "[ACCESSORY_IDs.ACCESSORY_HAT] = \"_햇\", [ACCESSORY_IDs.ACCESSORY_BAND] = \"_밴드\", [ACCESSORY_IDs.ACCESSORY_LOST] = \"_없음\"")),
+            Pairs("sprite/악세사리/남/남_햇", "sprite/악세사리/여/여_햇", "sprite/악세사리/남_doram/남_햇", "sprite/악세사리/여/여_밴드",
+                "sprite/악세사리/남/belka_남"));
+
+        [Test]
+        public void AHeadgear_HasASlotPerSex_AndADoramSlotWhereItsFileExists()
+        {
+            var hat = Record(Headgears(), RoCatalogKeys.Headgear(16));
+
+            Assert.That(hat.Pairs.Select(p => p.Role), Is.EquivalentTo(new[]
+            {
+                RoCatalogRoles.Headgear(M, H), RoCatalogRoles.Headgear(F, H), RoCatalogRoles.Headgear(M, D),
+            }));
+            Assert.That(PairOf(hat, RoCatalogRoles.Headgear(M, D)).Spr.Canonical, Is.EqualTo("sprite/악세사리/남_doram/남_햇.spr"));
+            Assert.That(hat.Value("viewId"), Is.EqualTo("16"));
+            Assert.That(Record(Headgears(), RoCatalogKeys.Headgear(17)).Pairs.Single().Role, Is.EqualTo(RoCatalogRoles.Headgear(F, H)));
+        }
+
+        [Test]
+        public void AHeadgearWithoutAFile_AndAFileWithoutAName_AreWarned()
+        {
+            var plan = Headgears();
+
+            Assert.That(plan.Gaps.Single(g => g.Code == RoIssueCode.CatalogNameWithoutFile).Item, Does.Contain("없음"));
+            Assert.That(plan.Gaps.Single(g => g.Code == RoIssueCode.CatalogFileWithoutName).Item, Is.EqualTo("sprite/악세사리/남/belka_남.spr"));
+        }
+
+        /// <summary>The client's data through one planner (NeedsData tests of T4.8–T4.11).</summary>
+        static RoCatalogPlan ClientPlan(IRoCatalogPlanner planner, out RoReport report)
+        {
+            var data = new Uninarok.RoImport.Core.Source.RoFolderSource(CatalogTestFiles.DataRoot);
+            report = new RoReport();
+            var tables = RoCatalogTables.Load(data, null, planner.Needs, RoItemTableLanguage.Portuguese, report);
+            var b = new RoCatalogPlan.Builder();
+            planner.Plan(new RoCatalogContext(data, tables), b);
+            return b.Build();
+        }
+
+        // T4.8 real-data run (2026-11-20): 2,266 of 2,859 headgear ids have a file, 593 warnings (plan 4.3.4).
+        [Test, Category(CatalogTestFiles.Category)]
+        public void TheClientData_Headgears()
+        {
+            var plan = ClientPlan(new RoHeadgearPlanner(), out var report);
+
+            Assert.That(report.Issues, Is.Empty);
+            Assert.That(plan.Records.Count, Is.EqualTo(2266));
+            Assert.That(plan.Gaps.Count(g => g.Code == RoIssueCode.CatalogNameWithoutFile), Is.EqualTo(593));
+            Assert.That(plan.Gaps.Count(g => g.Code == RoIssueCode.CatalogFileWithoutName), Is.EqualTo(154));
+            Assert.That(Record(plan, RoCatalogKeys.Headgear(16)).Pairs.Count, Is.GreaterThanOrEqualTo(2), "view id 16 (item 2220) for both sexes");
+        }
+
+        // ---- garments (4.3.5) ----
+
+        static RoCatalogPlan Garments() => Plan(new RoGarmentPlanner(),
+            RoCatalogTables.Create(own: Own(), viewIds: ViewIds(
+                robeIds: "ROBE_WINGS = 1, ROBE_NONE = 2",
+                robeNames: "[SPRITE_ROBE_IDs.ROBE_WINGS] = \"천사날개\", [SPRITE_ROBE_IDs.ROBE_NONE] = \"없는\"")),
+            Pairs("sprite/로브/천사날개/천사날개", "sprite/로브/천사날개/남/기사_남").Concat(new[]
+            {
+                "sprite/로브/천사날개/천사날개_doram.spr", "sprite/로브/천사날개/남/검사_남.act", "sprite/로브/천사날개/남/summoner_남.act",
+                "sprite/로브/천사날개/남/abyss_chaser_남.act",
+            }));
+
+        [Test]
+        public void AClassActTakesItsOwnSpr_ElseTheRootSheet_ElseTheDoramSheet()
+        {
+            var wings = Record(Garments(), RoCatalogKeys.Garment(1));
+
+            Assert.That(PairOf(wings, RoCatalogRoles.Garment(PlayerJob.JOB_KNIGHT, M, H)).Spr.Canonical, Is.EqualTo("sprite/로브/천사날개/남/기사_남.spr"), "own SPR");
+            var swordman = PairOf(wings, RoCatalogRoles.Garment(PlayerJob.JOB_SWORDMAN, M, H));
+            Assert.That(swordman.Act.Canonical, Is.EqualTo("sprite/로브/천사날개/남/검사_남.act"));
+            Assert.That(swordman.Spr.Canonical, Is.EqualTo("sprite/로브/천사날개/천사날개.spr"), "root sheet");
+            Assert.That(PairOf(wings, RoCatalogRoles.Garment(PlayerJob.JOB_SUMMONER, M, D)).Spr.Canonical, Is.EqualTo("sprite/로브/천사날개/천사날개_doram.spr"));
+        }
+
+        [Test]
+        public void TheRootActIsTheAnyClassSlot()
+        {
+            var wings = Record(Garments(), RoCatalogKeys.Garment(1));
+
+            Assert.That(PairOf(wings, RoCatalogRoles.GarmentRoot(H)).Act.Canonical, Is.EqualTo("sprite/로브/천사날개/천사날개.act"));
+            Assert.That(PairOf(wings, RoCatalogRoles.GarmentRoot(D)).Spr.Canonical, Is.EqualTo("sprite/로브/천사날개/천사날개_doram.spr"));
+        }
+
+        [Test]
+        public void AnActOfABodyNotInTheTable_IsStray_AndAGarmentWithoutAFolderIsWarned()
+        {
+            var plan = Garments();
+
+            var stray = plan.Gaps.Single(g => g.Code == RoIssueCode.CatalogStrayFile);
+            Assert.That(stray.Item, Is.EqualTo("sprite/로브/*/남/abyss_chaser_남"), "one warning per body name, not per garment");
+            Assert.That(stray.Message, Does.Contain("sprite/로브/천사날개/남/abyss_chaser_남.act"));
+            Assert.That(plan.Gaps.Single(g => g.Code == RoIssueCode.CatalogNameWithoutFile).Item, Does.Contain("없는"));
+        }
+
+        // T4.9 real-data run (2026-11-20): 222 of 330 garments planned; 천사날개 has the root slots, 130 class slots with their own
+        // SPR and 2 (rebellion) on the root sheet; 4th-class ACTs are one stray each.
+        [Test, Category(CatalogTestFiles.Category)]
+        public void TheClientData_Garments()
+        {
+            var plan = ClientPlan(new RoGarmentPlanner(), out var report);
+            var wings = Record(plan, RoCatalogKeys.Garment(1));
+
+            Assert.That(report.Issues, Is.Empty);
+            Assert.That(plan.Records.Count, Is.EqualTo(222));
+            Assert.That(plan.Gaps.Count(g => g.Code == RoIssueCode.CatalogNameWithoutFile), Is.EqualTo(108));
+            Assert.That(wings.Value("name"), Is.EqualTo("천사날개"));
+            Assert.That(wings.Pairs.Count, Is.EqualTo(134));
+            Assert.That(PairOf(wings, RoCatalogRoles.Garment(PlayerJob.JOB_KNIGHT, M, H)).Spr.Canonical, Is.EqualTo("sprite/로브/천사날개/남/기사_남.spr"));
+            Assert.That(PairOf(wings, RoCatalogRoles.Garment(PlayerJob.JOB_REBELLION, M, H)).Spr.Canonical, Is.EqualTo("sprite/로브/천사날개/천사날개.spr"));
+            Assert.That(PairOf(wings, RoCatalogRoles.GarmentRoot(H)).Act.Canonical, Is.EqualTo("sprite/로브/천사날개/천사날개.act"));
+            Assert.That(plan.Gaps.Any(g => g.Item == "sprite/로브/*/남/abyss_chaser_남"), Is.True);
+        }
+
+        // ---- weapons (4.3.6) ----
+
+        static RoCatalogPlan Weapons() => Plan(new RoWeaponPlanner(),
+            RoCatalogTables.Create(own: Own(), viewIds: ViewIds(
+                weaponIds: "WEAPONTYPE_SHORTSWORD = 1, WEAPONTYPE_SWORD = 2, WEAPONTYPE_CUSTOM = 50",
+                weaponNames: "[Weapon_IDs.WEAPONTYPE_SHORTSWORD] = \"_단검\", [Weapon_IDs.WEAPONTYPE_SWORD] = \"_검\", [Weapon_IDs.WEAPONTYPE_CUSTOM] = \"_커스텀\"",
+                expansion: "[Weapon_IDs.WEAPONTYPE_CUSTOM] = Weapon_IDs.WEAPONTYPE_SWORD")),
+            Pairs("sprite/인간족/기사/기사_남_단검", "sprite/인간족/기사/기사_남_단검_검광", "sprite/인간족/기사/기사_남_검", "sprite/인간족/기사/기사_남_검광",
+                "sprite/인간족/기사/기사_남_1117", "sprite/인간족/검사/검사_남_검", "sprite/인간족/페코페코_기사/페코페코기사_남_1185",
+                "sprite/인간족/기사/기사_남_1530_검광", "sprite/인간족/몸통/남/기사_남", "sprite/도람족/summoner/summoner_남_검"));
+
+        [Test]
+        public void AViewIdHasTheSlotsOfTheClassesWithItsFile_AndTheirTrails()
+        {
+            var plan = Weapons();
+            var dagger = Record(plan, RoCatalogKeys.Weapon(1));
+
+            Assert.That(dagger.Pairs.Select(p => p.Role), Is.EquivalentTo(new[]
+            {
+                RoCatalogRoles.Weapon(PlayerJob.JOB_KNIGHT, M, H), RoCatalogRoles.WeaponTrail(PlayerJob.JOB_KNIGHT, M, H),
+            }), "the swordman has no dagger file and no base type: no slot");
+            Assert.That(PairOf(dagger, RoCatalogRoles.WeaponTrail(PlayerJob.JOB_KNIGHT, M, H)).Spr.Canonical, Is.EqualTo("sprite/인간족/기사/기사_남_단검_검광.spr"));
+
+            var sword = Record(plan, RoCatalogKeys.Weapon(2));
+            Assert.That(PairOf(sword, RoCatalogRoles.WeaponTrail(PlayerJob.JOB_KNIGHT, M, H)).Spr.Canonical, Is.EqualTo("sprite/인간족/기사/기사_남_검광.spr"), "<suffix>광");
+            Assert.That(PairOf(sword, RoCatalogRoles.Weapon(PlayerJob.JOB_SUMMONER, M, D)).Spr.Canonical, Is.EqualTo("sprite/도람족/summoner/summoner_남_검.spr"));
+        }
+
+        [Test]
+        public void WithoutItsOwnFile_AClassFallsBackToTheBaseType()
+        {
+            var custom = Record(Weapons(), RoCatalogKeys.Weapon(50));
+            string knight = RoCatalogRoles.Weapon(PlayerJob.JOB_KNIGHT, M, H);
+
+            Assert.That(PairOf(custom, knight).Spr.Canonical, Is.EqualTo("sprite/인간족/기사/기사_남_검.spr"));
+            Assert.That(custom.Value(RoCatalogRoles.Fallback(knight)), Is.EqualTo("50"));
+            Assert.That(PairOf(custom, RoCatalogRoles.Weapon(PlayerJob.JOB_SWORDMAN, M, H)).Spr.Canonical, Is.EqualTo("sprite/인간족/검사/검사_남_검.spr"));
+        }
+
+        [Test]
+        public void AnItemIdFile_GetsItsOwnRecord()
+        {
+            var item = Record(Weapons(), RoCatalogKeys.WeaponItem(1117));
+
+            Assert.That(item.Pairs.Single().Role, Is.EqualTo(RoCatalogRoles.Weapon(PlayerJob.JOB_KNIGHT, M, H)));
+            Assert.That(item.Value("itemId"), Is.EqualTo("1117"));
+        }
+
+        [Test]
+        public void UnmatchedWeaponFiles_AreReported_AndBodyFoldersAreNotWeapons()
+        {
+            var unnamed = Weapons().Gaps.Where(g => g.Code == RoIssueCode.CatalogFileWithoutName).Select(g => g.Item).ToArray();
+
+            Assert.That(unnamed, Is.EquivalentTo(new[]
+            {
+                "sprite/인간족/페코페코_기사/페코페코기사_남_1185.spr", "sprite/인간족/기사/기사_남_1530_검광.spr",
+            }), "a prefix that is no body name; a trail of a weapon with no file");
+        }
+
+        // T4.10 real-data run (2026-11-20): item 1201 (ClassNum 1) → weapon-0001 → the swordman's short sword; the item-id file
+        // 검사_남_1117 of T0.4 has its own record.
+        [Test, Category(CatalogTestFiles.Category)]
+        public void TheClientData_Weapons()
+        {
+            var plan = ClientPlan(new RoWeaponPlanner(), out var report);
+
+            Assert.That(report.Issues, Is.Empty);
+            Assert.That(plan.Records.Count(r => r.Key.StartsWith("weapon-0")), Is.EqualTo(101));
+            Assert.That(plan.Records.Count(r => r.Key.StartsWith("weapon-item-")), Is.EqualTo(83));
+            Assert.That(PairOf(Record(plan, RoCatalogKeys.Weapon(1)), RoCatalogRoles.Weapon(PlayerJob.JOB_SWORDMAN, M, H)).Act.Canonical,
+                Is.EqualTo("sprite/인간족/검사/검사_남_단검.act"));
+            Assert.That(PairOf(Record(plan, RoCatalogKeys.WeaponItem(1117)), RoCatalogRoles.Weapon(PlayerJob.JOB_SWORDMAN, M, H)).Spr.Canonical,
+                Is.EqualTo("sprite/인간족/검사/검사_남_1117.spr"));
+            Assert.That(plan.Records.Sum(r => r.Pairs.Count(p => p.Role.StartsWith(RoCatalogRoles.Trail))), Is.EqualTo(756));
+            Assert.That(plan.Records.Sum(r => r.Values.Count(v => v.Name.StartsWith(RoCatalogRoles.FallbackPrefix))), Is.EqualTo(699));
+        }
+
+        // ---- shields (4.3.7) ----
+
+        static RoCatalogPlan Shields() => Plan(new RoShieldPlanner(), RoCatalogTables.Create(own: Own()),
+            Pairs("sprite/방패/기사/기사_남_가드", "sprite/방패/기사/기사_남_2189_방패", "sprite/방패/기사/기사_남_매드바니").Concat(new[] { "sprite/방패/기사/가드.act" }));
+
+        [Test]
+        public void ShieldsByName_AndByItemId()
+        {
+            var plan = Shields();
+
+            Assert.That(PairOf(Record(plan, RoCatalogKeys.Shield(1)), RoCatalogRoles.Shield(PlayerJob.JOB_KNIGHT, M, H)).Spr.Canonical,
+                Is.EqualTo("sprite/방패/기사/기사_남_가드.spr"));
+            Assert.That(Record(plan, RoCatalogKeys.ShieldItem(2189)).Pairs.Single().Spr.Canonical, Is.EqualTo("sprite/방패/기사/기사_남_2189_방패.spr"));
+            Assert.That(plan.Gaps.Single(g => g.Code == RoIssueCode.CatalogNameWithoutFile).Item, Does.Contain("버클러"));
+        }
+
+        [Test]
+        public void UnreferencedShieldFiles_AreReported()
+        {
+            var unnamed = Shields().Gaps.Where(g => g.Code == RoIssueCode.CatalogFileWithoutName).Select(g => g.Item).ToArray();
+
+            Assert.That(unnamed, Is.EquivalentTo(new[] { "sprite/방패/기사/기사_남_매드바니.spr", "sprite/방패/기사/가드.act" }));
+        }
+
+        // T4.11 real-data run (2026-11-20): the four basic shields and the item-id files, among them 검사_남_2189_방패 of T0.4.
+        [Test, Category(CatalogTestFiles.Category)]
+        public void TheClientData_Shields()
+        {
+            var plan = ClientPlan(new RoShieldPlanner(), out var report);
+
+            Assert.That(report.Issues, Is.Empty);
+            Assert.That(plan.Records.Select(r => r.Key), Is.EqualTo(new[]
+            {
+                "shield-0001", "shield-0002", "shield-0003", "shield-0004", "shield-item-2189", "shield-item-28901", "shield-item-28902",
+                "shield-item-28942", "shield-item-28945", "shield-item-28946", "shield-item-460020",
+            }));
+            Assert.That(PairOf(Record(plan, RoCatalogKeys.ShieldItem(2189)), RoCatalogRoles.Shield(PlayerJob.JOB_SWORDMAN, M, H)).Spr.Canonical,
+                Is.EqualTo("sprite/방패/검사/검사_남_2189_방패.spr"));
+            Assert.That(PairOf(Record(plan, RoCatalogKeys.Shield(1)), RoCatalogRoles.Shield(PlayerJob.JOB_KNIGHT, M, H)).Spr.Canonical,
+                Is.EqualTo("sprite/방패/기사/기사_남_가드.spr"));
+        }
+    }
+}

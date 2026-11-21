@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: sprites-effect
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: sprites-effect
+  m_GUID: c96cd73ccb5c0df46b23c41b0cdb942e
+  m_SerializeEntries:
+  - m_GUID: 54d560c619d0cc74f9808a561bbbd763
+    m_Address: "Assets/Art/Imported/sprite/\uC774\uD329\uD2B8"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+    m_FolderGuid: 
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d8bc4805746faf3439351e6c97f8018d, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 9b75cf3d6dce0b14bac36efd48d3a2c0, type: 2}
+    - {fileID: 11400000, guid: 8eaff001f58646843a816729708fa813, type: 2}
+    m_SchemaDisplayOrder:
+    - sprites-effect_BundledAssetGroupSchema
+    - sprites-effect_ContentUpdateGroupSchema
+  m_IncludeInBuild: 1
+  m_IncludeInBuildMigrated: 1

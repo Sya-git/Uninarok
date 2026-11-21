@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: sprite-sheets
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: sprite-sheets
+  m_GUID: bde272cd96c891c43a4a0592fbcbd8c9
+  m_SerializeEntries:
+  - m_GUID: a2d5d3b9e9c41b84784dd4b95fb379a5
+    m_Address: Assets/Art/Imported/sprite/_sheets
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+    m_FolderGuid: 
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d8bc4805746faf3439351e6c97f8018d, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: a4962697de75770408d274a4fe20aa48, type: 2}
+    - {fileID: 11400000, guid: 50ee50650bdebcd4bb5e19e39300b03d, type: 2}
+    m_SchemaDisplayOrder:
+    - sprite-sheets_BundledAssetGroupSchema
+    - sprite-sheets_ContentUpdateGroupSchema
+  m_IncludeInBuild: 1
+  m_IncludeInBuildMigrated: 1

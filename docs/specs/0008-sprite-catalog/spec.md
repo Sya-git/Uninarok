@@ -2,13 +2,13 @@
 
 | | |
 |---|---|
-| **Status** | Draft (open questions resolved 2026-11-20; waiting for approval) |
+| **Status** | Implemented (2026-11-21) |
 | **Created** | 2026-11-19 |
-| **Owner** | _(fill in)_ |
+| **Owner** | Jhonnatan |
 | **Depends on** | [SPEC-0007](../0007-spr-act-pal-sprites/spec.md) (converting one sprite) |
 | **Reference** | [sprite-catalog.md](sprite-catalog.md) (which table maps what, where every category lives), [SpriteAction](../../data/SpriteAction.md) |
-| **Plan** | _(after approval)_ |
-| **Tasks** | _(after approval)_ |
+| **Plan** | [plan.md](plan.md) |
+| **Tasks** | [tasks.md](tasks.md) |
 
 ## 1. Why
 
