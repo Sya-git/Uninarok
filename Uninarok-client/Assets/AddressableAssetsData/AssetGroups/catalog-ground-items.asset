@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: catalog-ground-items
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: catalog-ground-items
+  m_GUID: 98f65696d44a7344194e01e6ce22aedf
+  m_SerializeEntries:
+  - m_GUID: fcdd0638a610a5e4eb1c46890eb7e61e
+    m_Address: Assets/Art/Imported/catalog/ground-items
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+    m_FolderGuid: 
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d8bc4805746faf3439351e6c97f8018d, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 4ec0a7613050ec54e8ae85a39d56503a, type: 2}
+    - {fileID: 11400000, guid: 553473a0f00919044b70bcbb2262aa5c, type: 2}
+    m_SchemaDisplayOrder:
+    - catalog-ground-items_BundledAssetGroupSchema
+    - catalog-ground-items_ContentUpdateGroupSchema
+  m_IncludeInBuild: 1
+  m_IncludeInBuildMigrated: 1

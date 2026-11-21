@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: sprites-homun
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: sprites-homun
+  m_GUID: 08433bca055713840b8199c5a043a8ad
+  m_SerializeEntries:
+  - m_GUID: 5b4490f22fa469e4c86f8bf4846f9261
+    m_Address: Assets/Art/Imported/sprite/homun
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+    m_FolderGuid: 
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d8bc4805746faf3439351e6c97f8018d, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 0c85fe378f9beba48ab22c681077c774, type: 2}
+    - {fileID: 11400000, guid: 39339c90df141134da72bd6dbce1f282, type: 2}
+    m_SchemaDisplayOrder:
+    - sprites-homun_BundledAssetGroupSchema
+    - sprites-homun_ContentUpdateGroupSchema
+  m_IncludeInBuild: 1
+  m_IncludeInBuildMigrated: 1

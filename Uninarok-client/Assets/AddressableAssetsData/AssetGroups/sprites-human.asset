@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: sprites-human
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: sprites-human
+  m_GUID: e36a0927d5b125241a898bcb56573957
+  m_SerializeEntries:
+  - m_GUID: 7b362e4741f3e7c479065c9100d3ceba
+    m_Address: "Assets/Art/Imported/sprite/\uC778\uAC04\uC871"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+    m_FolderGuid: 
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d8bc4805746faf3439351e6c97f8018d, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 0d5ff11011743f74aba1654593c7b881, type: 2}
+    - {fileID: 11400000, guid: 95be1ce3e69488c42bbab462d651cc9d, type: 2}
+    m_SchemaDisplayOrder:
+    - sprites-human_BundledAssetGroupSchema
+    - sprites-human_ContentUpdateGroupSchema
+  m_IncludeInBuild: 1
+  m_IncludeInBuildMigrated: 1
