@@ -166,8 +166,9 @@ Chosen in T0.4 (2026-11-20, from the data set and the decompiled tables):
 
 ## Phase 7: Data runs, reference checks and close
 
-- [ ] **T7.1** Write `RoCatalogReferenceTests` (`NeedsData`, plan §6): the acceptance lookups of spec §4 and the reference set above; a garment with 178 class files has distinct sheet paths = distinct SPR hashes and returns the right animation for a knight and a summoner; item 501 → red potion; emote 0; cart by name; skill 5; item 2220; a full run lists each gap once. Marked `[Ignore("pending T7.2")]`. (FR-1 to FR-7, FR-10)
+- [x] **T7.1** Write `RoCatalogReferenceTests` (`NeedsData`, plan §6): the acceptance lookups of spec §4 and the reference set above; a garment with 178 class files has distinct sheet paths = distinct SPR hashes and returns the right animation for a knight and a summoner; item 501 → red potion; emote 0; cart by name; skill 5; item 2220; a full run lists each gap once. Marked `[Ignore("pending T7.2")]`. (FR-1 to FR-7, FR-10)
   *Done when:* the tests compile and are listed as ignored.
+  *Note (T7.1):* 12 tests, all listed and ignored; they read the catalog imported into the project (default roots) through `RoCatalogLookupWindow.Resolve` and the facade. Cart 1 is `손수레1` by name; the garment check compares distinct sheet textures of `천사날개`'s slots with the distinct hashes of the SPRs its plan pairs.
 - [ ] **T7.2** Import the small categories from the real data, one at a time, in this order: units (monsters, NPCs, homunculi), ground items, skill icons, effects, headgears, shields. Record per category entries, distinct sheets, stored actions, warnings and time in `plan.md` §9 (R7). Remove the ignore from the reference tests of these categories. (FR-1, FR-4 to FR-10)
   *Done when:* the run completes with no failure; the second run of each category is all `Skipped` (reported); the reference tests for these categories pass.
 - [ ] **T7.3** Import bodies, heads, palettes and weapons the same way; record the numbers. Remove the matching ignores. (FR-2, FR-3, FR-4, FR-9)
