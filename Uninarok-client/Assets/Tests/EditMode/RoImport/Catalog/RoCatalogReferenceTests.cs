@@ -15,7 +15,7 @@ using Uninarok.Sprites;
 namespace Uninarok.RoImport.Tests.Catalog
 {
     // TASKS-0008 T7.1 (FR-1 to FR-7, FR-10; spec §4 acceptance, plan §6): the reference lookups on the catalog imported into the
-    // project from the real data (T7.2 to T7.4). Each is ignored until its category is imported (T7.2, T7.3: enabled).
+    // project from the real data (T7.2 to T7.4). Each is ignored until its category is imported (T7.2 to T7.4: all enabled).
     public class RoCatalogReferenceTests
     {
         const string Art = "Assets/Art/Imported/";
@@ -140,7 +140,7 @@ namespace Uninarok.RoImport.Tests.Catalog
 
         // ---- T7.4: garments and the full run ----
 
-        [Test, Category(CatalogTestFiles.Category), Ignore("pending T7.4")]
+        [Test, Category(CatalogTestFiles.Category)]
         public void TheAngelWings_ForAKnightAndASummoner_AreTheirOwnAnimations_OnDistinctSheetsPerSpr()
         {
             var knight = Lookup(new RoCatalogLookupRequest { Mode = RoCatalogLookupMode.ViewId, Kind = EquipmentKind.Garment, Id = 1, Job = PlayerJob.JOB_KNIGHT, Sex = M });
@@ -162,7 +162,7 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(sheets, Is.EqualTo(hashes));
         }
 
-        [Test, Category(CatalogTestFiles.Category), Ignore("pending T7.4")]
+        [Test, Category(CatalogTestFiles.Category)]
         public void AFullPlan_ListsEachGapOnce_GroupedByCategory()
         {
             var data = new RoFolderSource(CatalogTestFiles.DataRoot);
