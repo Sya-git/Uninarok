@@ -14,7 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: sprites-garment
   m_GUID: 7d0e8a6d93b091d44ac091794eda2244
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 9b5514f32b2e3944aad2768a1990bf35
+    m_Address: "Assets/Art/Imported/sprite/\uB85C\uBE0C"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+    m_FolderGuid: 
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: d8bc4805746faf3439351e6c97f8018d, type: 2}
   m_SchemaSet:

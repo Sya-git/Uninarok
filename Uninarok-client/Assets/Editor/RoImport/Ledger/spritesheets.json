@@ -241,6 +241,14 @@
             "IndexedCount": 11
         },
         {
+            "Hash": "009722c55eb2d919d30625c97b686c2fb0779c8a0ad2dfe01c6840265da8ca11",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/00/summoner_남_009722c5.png",
+            "Source": "sprite/로브/c_leticia_wing/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "009eb9e865ac5d32f78067b98b7b718a273e9e2cb5d4d3073fa133575dc47ad6",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/00/4_f_kafra6_009eb9e8.png",
             "Source": "sprite/npc/4_f_kafra6.spr",
@@ -1297,6 +1305,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "0348638922cf9f00fd132baeef76841e1d1b38919560a1b35ed85dbf2ec320af",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/03/c_sakura_fes_tw_doram_03486389.png",
+            "Source": "sprite/로브/c_sakura_fes_tw/c_sakura_fes_tw_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "035778ffc6d991187f796fb66b09fcbb713bea029cbfe8cba0beaf33e92f2be5",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/03/phen_035778ff.png",
             "Source": "sprite/몬스터/phen.spr",
@@ -1807,6 +1823,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "046db499c6567cef3cfe952dfd33bbc45f892dc485a6d30adcb2a4952c1d44ea",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/04/kagerou_남_046db499.png",
+            "Source": "sprite/로브/c_heart_stick_choco/남/kagerou_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "046ed01d9562418f83f07ca309edf8f9fd67fe8b979954f29fbba30f0c7ca4ff",
@@ -3089,6 +3113,14 @@
             "IndexedCount": 7
         },
         {
+            "Hash": "06c7281f0ed83660bfe7a5f74f80306fe05fab0b425a1c5449d6ea62655472ac",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/06/summoner_남_06c7281f.png",
+            "Source": "sprite/로브/c_spoon_fork_set/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "06c980b5cbb11d7adb9940af40a2fcda56dc4368ec15ceffe249fcc41a92ab63",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/06/남_c_braids_wave_06c980b5.png",
             "Source": "sprite/악세사리/남/남_c_braids_wave.spr",
@@ -3193,6 +3225,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "06ed877e14c140741390dd454e1536d94a658c2de04f882a54ac068f8b10cc18",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/06/summoner_남_06ed877e.png",
+            "Source": "sprite/로브/c_wings_of_gabriel/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "06f34e5bcc018950be48cb79feea369e7d80a18b912c05be3ea8b935ca944585",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/06/bj_headseta_06f34e5b.png",
             "Source": "sprite/아이템/bj_headseta.spr",
@@ -3273,6 +3313,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "071a2a7b0091bc46bf36ec6bb9b80f0bdeebaeda0c3ac3a929dc18819e91d184",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/07/summoner_남_071a2a7b.png",
+            "Source": "sprite/로브/c_beer_server/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "072115719941e0630db7cf83ee2f2902169357a3877dbe9ddc85ef9651d2043f",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/07/호화로운양식_07211571.png",
             "Source": "sprite/아이템/호화로운양식.spr",
@@ -3335,6 +3383,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "074179cb20f81e7e9b95ba239d2865106969d1d7dc6b58820cfaaf6d0ab21b88",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/07/팔라딘_여_074179cb.png",
+            "Source": "sprite/로브/천사날개/여/팔라딘_여.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "0745199ed676870d2b86e1baf2566e2f6e31e6b1ca1ecdaeec1d5712fa27172f",
@@ -4127,6 +4183,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "091103facc366773c929ec146d9d4db7d4e665282eae1aab0facebc42975071c",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/09/2018_rtc_cape4_tw_doram_091103fa.png",
+            "Source": "sprite/로브/2018_rtc_cape4_tw/2018_rtc_cape4_tw_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "0915c3eeea540f60ace548b626e2ca363cf3a68957c9e503d12854667974105f",
@@ -4977,6 +5041,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "0ac80ab0c690b161f80d617a5f33fcb97e0ab2dddae132b3d8bd905237972d7e",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/0a/summoner_남_0ac80ab0.png",
+            "Source": "sprite/로브/하늘색큐피트날개/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "0aca37da20b26e9d85c44397964e828efbdaca252c073f999771022e6370f193",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/0a/c앵화난만의비녀파랑_0aca37da.png",
             "Source": "sprite/아이템/c앵화난만의비녀파랑.spr",
@@ -5303,6 +5375,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 30
+        },
+        {
+            "Hash": "0b7320a43becc87cd461109a29ddfd0b8f432c657307fd0c62bad65342b48640",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/0b/summoner_남_0b7320a4.png",
+            "Source": "sprite/로브/c_j_umbrella/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "0b7519d76bcff1efbcf85f7c8d583d694ee0fc0424ffbf219b35b29155ec8fe2",
@@ -6753,6 +6833,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "0ead56f7f5b80b2e87eaadc1c1da3b41f3707da383540b4a3dfc71c78772d389",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/0e/summoner_남_0ead56f7.png",
+            "Source": "sprite/로브/검의날개/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "0ec74f104646bc750d20121087758088ef09664a689fbb6ca12c9e4275521c19",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/0e/lk_parrying_0ec74f10.png",
             "Source": "sprite/아이템/lk_parrying.spr",
@@ -7063,6 +7151,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 3
+        },
+        {
+            "Hash": "0f5c3c6e1a43f5c66e25e2cd20475a1ffa9b37c0bca8c166ef514a6189b75fcc",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/0f/summoner_남_0f5c3c6e.png",
+            "Source": "sprite/로브/wings_of_lucifer/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "0f5fd3cd5cab41bd26ad6e4de7cc3642f4694da50145d24ac87dde5c2e9775ba",
@@ -7497,6 +7593,14 @@
             "IndexedCount": 9
         },
         {
+            "Hash": "104fca5c6b2082b6dadf882310802384613742e7756f57734fb18b1068ff959c",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/10/kagerou_남_104fca5c.png",
+            "Source": "sprite/로브/c_samba_carnival/남/kagerou_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "10511f4bf7e898fafe7a26d528c9ab1fd2d93f90edc1e1c5de91160ad19a3919",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/10/elemetal_master_riding_남_10511f4b.png",
             "Source": "sprite/인간족/몸통/남/elemetal_master_riding_남.spr",
@@ -7863,6 +7967,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "1122c62edd8ccbbac499e41bd62ce127f1cf678071b959fc1cd894faa8dbc619",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/11/summoner_남_1122c62e.png",
+            "Source": "sprite/로브/c_divine_phoenix/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "112457e84f54e4a4a7e82ac6e02a2b4d362a05fbd8b951df6f0ad85118537503",
@@ -8385,6 +8497,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "124bb2fcaac0e6541e261474d117f4d2b6e1a9b9f72fcc41da4f511efd386b77",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/12/summoner_남_124bb2fc.png",
+            "Source": "sprite/로브/모험가배낭/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "124fc1e513f0e884be5ace6d8eef11842652cfab8e16c9c0be32af7274ab391f",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/12/4_f_believer01_124fc1e5.png",
             "Source": "sprite/npc/4_f_believer01.spr",
@@ -8623,6 +8743,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 2
+        },
+        {
+            "Hash": "12e6c0cb7a69b1e69ae58aff36776a59371d4825053d0c16edc00b3a06566c82",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/12/summoner_남_12e6c0cb.png",
+            "Source": "sprite/로브/c_wedding_ribbon/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "12ee6b02e93bbf64a9ccc6955ce075586c367ae12ec6f55a865a70924a99db96",
@@ -9097,6 +9225,14 @@
             "IndexedCount": 11
         },
         {
+            "Hash": "13ea591bc00ce2a511f27d24308f5109ab1d70d9509ceeeb1b1ef509420d19cf",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/13/summoner_남_13ea591b.png",
+            "Source": "sprite/로브/c_clb_kp_dms/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "13f5712f89b1a365f8ee3ba51b5c711c5fbf41c73f747c929412ff40e9537b62",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/13/코크멤버스카드_13f5712f.png",
             "Source": "sprite/아이템/코크멤버스카드.spr",
@@ -9327,6 +9463,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "14795f14ed8f99a70d82cfe22ad29df101b6bb6b59bf82baa56eb89e9451873a",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/14/summoner_남_14795f14.png",
+            "Source": "sprite/로브/c_big_magic_book/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "14823ccf8c30d4c2d6f6b0484e49cf3bcb503c68def61f3e4aae7b51fcb0829b",
@@ -10129,6 +10273,14 @@
             "IndexedCount": 22
         },
         {
+            "Hash": "1634189351abc299972f0a474cf5170a66667568c5046749c67a2a992fd63a42",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/16/kagerou_여_16341893.png",
+            "Source": "sprite/로브/아미스트르가방/여/kagerou_여.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 7
+        },
+        {
             "Hash": "16341b63a3acce3708d4a762cf769e12619eefc4b876d244959ad2f62afc5eee",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/16/페코페코_기사_여_1354_16341b63.png",
             "Source": "sprite/인간족/페코페코_기사/페코페코_기사_여_1354.spr",
@@ -10697,6 +10849,14 @@
             "IndexedCount": 15
         },
         {
+            "Hash": "17a352e4ac6f0656e0a8054d7b16c89c68073b6f4e40d6c449f6e8dc46590d12",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/17/summoner_남_17a352e4.png",
+            "Source": "sprite/로브/arcanum_corvus_corax/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "17a6507bd2a565ea91721c7d52572531368bf07c6f46b5baf12bfdf50c8604b8",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/17/쥬빌레_17a6507b.png",
             "Source": "sprite/아이템/쥬빌레.spr",
@@ -10879,6 +11039,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "17f9dbbf7795aa785a9807765c4aeb990018eefc708227bb27f322885295c4db",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/17/c_gimmick_one_feather_doram_17f9dbbf.png",
+            "Source": "sprite/로브/c_gimmick_one_feather/c_gimmick_one_feather_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "17fa29f4b2de53e1e2d1b5388a41014d2b6f160e0747cf9dffabf702c399ced3",
@@ -11383,6 +11551,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "18d189371c26e12721daa99c752c69a2cda606e55c1ba6ca1ecd70741ce54938",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/18/summoner_남_18d18937.png",
+            "Source": "sprite/로브/c_milky/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "18d751a339a91f117dabb698cbe6b8dba96f70c16c1e9d7f62c88b7fc9b0474e",
@@ -12137,6 +12313,14 @@
             "IndexedCount": 15
         },
         {
+            "Hash": "1a5988dfebd92d4c9e00c4eca7f679cc9f847ec1d95d1ad39a3ec5878ad08621",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/1a/summoner_남_1a5988df.png",
+            "Source": "sprite/로브/c_pitaya_gg_parfait/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "1a5c6f1a92c96455137e69df57531983de386e592ac1d9c68201c4a7a96da12b",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/1a/신랑결혼반지_1a5c6f1a.png",
             "Source": "sprite/아이템/신랑결혼반지.spr",
@@ -12247,6 +12431,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "1a8db885bab59111d1f2fad534cbeca7b26b1aa6b38f340798927063af68de8d",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/1a/summoner_남_1a8db885.png",
+            "Source": "sprite/로브/c_unicorn_fan_trav/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "1a8deb8b2a691c911b1b4cce5d436a8de52f5182223a707a29682d75bde7e393",
@@ -12865,6 +13057,14 @@
             "IndexedCount": 18
         },
         {
+            "Hash": "1c346fddbe571c95b1702f1cff64f8b62900dd6cde967a3fb4d151b39fbc3cd7",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/1c/summoner_남_1c346fdd.png",
+            "Source": "sprite/로브/c_goldbutterfly_wing/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "1c366524c3456f36f6e8348a353c76bb7670e6ee734dd5fef33c70f9c2cadf62",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/1c/대형마제스틱고우트2_1c366524.png",
             "Source": "sprite/아이템/대형마제스틱고우트2.spr",
@@ -12927,6 +13127,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 15
+        },
+        {
+            "Hash": "1c57a2637bfae9e4894cca40deda1dcab645c5ddac208abd3e6d837530d23c8a",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/1c/kagerou_남_1c57a263.png",
+            "Source": "sprite/로브/fairy_of_eden/남/kagerou_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "1c5fc9d91507f5d235cde031eba23935b8c5b723155d29b815818208625565ef",
@@ -13441,6 +13649,14 @@
             "IndexedCount": 51
         },
         {
+            "Hash": "1dac0688c709a3410d733fc8deb7c844712f3bbde6d2886badf83f99c70b4aea",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/1d/summoner_남_1dac0688.png",
+            "Source": "sprite/로브/c_school_bag_bl/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "1dac45b35492f657ad6ce15d71d7191cc95f501447ffbaf3d3efe2e027e98e0d",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/1d/ko_hyouhu_hubuki_1dac45b3.png",
             "Source": "sprite/아이템/ko_hyouhu_hubuki.spr",
@@ -13585,6 +13801,14 @@
             "IndexedCount": 48
         },
         {
+            "Hash": "1df20fb61e99f0bf45946b73dc8837800e0d089766955c39fafe6afcad08219f",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/1d/summoner_남_1df20fb6.png",
+            "Source": "sprite/로브/c_valkyrie_spear/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "1df57d53f10654b32f5939aeafbcfc5d69e1397a66b63d1655091afb4a398601",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/1d/maxi_spanner_1df57d53.png",
             "Source": "sprite/아이템/maxi_spanner.spr",
@@ -13697,6 +13921,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "1e34a47d10d116e686c52a5ddadc22445bdbd1fcbc0e8fcbffcac5a788d056e1",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/1e/kagerou_남_1e34a47d.png",
+            "Source": "sprite/로브/c_qualifier_3rd/남/kagerou_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "1e3a8ffd0f815b7c58da9a1e40cb4ad84c427ff21a179ea967d8423c46b70244",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/1e/dragon_knight_riding_남_1e3a8ffd.png",
             "Source": "sprite/인간족/몸통/남/dragon_knight_riding_남.spr",
@@ -13759,6 +13991,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "1e5d69bedb3d09cc24ccf63b8142ded949aca13ca741bc67cf6b3ecdef688bce",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/1e/c_papilio_ulysses_feather_1e5d69be.png",
+            "Source": "sprite/로브/c_papilio_ulysses_feather/c_papilio_ulysses_feather.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "1e6128d2bc10aab02ad31234e2a14b67d5fcc1734e88187c815713feea4b8eec",
@@ -16737,6 +16977,14 @@
             "IndexedCount": 50
         },
         {
+            "Hash": "242de2d9bed8c4fea00f9f4375ac842694929b1de32f5a12832a93410b753fb1",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/24/summoner_남_242de2d9.png",
+            "Source": "sprite/로브/c_rabbit_tail/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "242eaa656ad41b5c7e41fdd36ddfb9e9f68d2876e5a9ec8df56209b6e738f7a8",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/24/남_드라이버밴드_242eaa65.png",
             "Source": "sprite/악세사리/남/남_드라이버밴드.spr",
@@ -17313,6 +17561,14 @@
             "IndexedCount": 5
         },
         {
+            "Hash": "25d41a0908bec63e2bc5499167fba78e3edda55b13a8b9571bda8004b6366353",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/25/summoner_남_25d41a09.png",
+            "Source": "sprite/로브/c_giant_shark/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "25dae8d035de2bdb9b2c64b316ed4f359dd59dc94561af8e6c176bfb9aa95347",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/25/놀라운가발_25dae8d0.png",
             "Source": "sprite/아이템/놀라운가발.spr",
@@ -17505,12 +17761,28 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "262c2c859406779f7041e1dae2134b0f45e0a014494b2b9bc4db98c670a146d6",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/26/summoner_남_262c2c85.png",
+            "Source": "sprite/로브/c_sweet_flower_garden/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "263253dbc77eeb2b864fb14cab8a913412a8e3d21a4dbed84904d99b052fbbaa",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/26/c흩날리는깃털_263253db.png",
             "Source": "sprite/아이템/c흩날리는깃털.spr",
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "263a4bb6ca70656959ab38baadf6d5cb7913f508ba049ba64b52728a3d71bc66",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/26/summoner_남_263a4bb6.png",
+            "Source": "sprite/로브/c_bloody_murderer_knife/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "2644ec5230090536c53594d20badd3ef29f9eeae67f912d43d231fad5294bfee",
@@ -17567,6 +17839,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "2666d4c960768a667344f1006370c0305b37aaab1b3ecbad27134f70814643ef",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/26/summoner_남_2666d4c9.png",
+            "Source": "sprite/로브/c_pitaya_g_bag/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "26679724ea2a013aebabbb5dd7b7d33e4e3f2bb1f576ab9b29a518dcc3b82fb9",
@@ -17857,6 +18137,14 @@
             "IndexedCount": 46
         },
         {
+            "Hash": "27183bc65ae3d2ca4a7bf19e3962947295c664c6f7e55d69ff16fafb8571b0dc",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/27/summoner_남_27183bc6.png",
+            "Source": "sprite/로브/c_pinkbutterfly_wing/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "271ca4a458ea6736e7b5cb10e0417e5e254642b1a32bd828e49749ca174b8397",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/27/subject_cape_tw_271ca4a4.png",
             "Source": "sprite/아이템/subject_cape_tw.spr",
@@ -17895,6 +18183,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "27356b483c6bde438a23a806bd79197694adefa44a0bf298990c8fd2a23f87de",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/27/summoner_남_27356b48.png",
+            "Source": "sprite/로브/c_cyber_sword/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "273b0c486b25be47c1534f1fd23fc0cff22b4bffda2568c483b311d1c80321e5",
@@ -17967,6 +18263,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "275d6364d8f63dccf49723a19b5ec8068bcb91a5f4ef4bfff560d96ea38d26f2",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/27/summoner_남_275d6364.png",
+            "Source": "sprite/로브/c_jp_ev16/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "275fe9b7f3ffce1ceb196a4e521d9c8d72d49487f0b37c9730eb9db5c62c8c11",
@@ -18319,6 +18623,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 8
+        },
+        {
+            "Hash": "282f3c62f1fda5c70ab7d1ffa7e7850427d97e7a7feb14a153b2cb8107ad3ac1",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/28/summoner_남_282f3c62.png",
+            "Source": "sprite/로브/c_t_bear_bag/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "2830ea2e93d54d38d299e3d4a2017b08fd1237038c0ad45e0aeac319fdb2c5f7",
@@ -19009,6 +19321,14 @@
             "IndexedCount": 50
         },
         {
+            "Hash": "29b545829761f7d07d4b0f59d571fa995c681e3cb54a017dcd22a70da6433251",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/29/summoner_남_29b54582.png",
+            "Source": "sprite/로브/c_rifle/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "29bc9528dc8d30bff41f76f2c5219f83a37d8ee2f16f2ede7e636f314f79829e",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/29/남_오딘마스크_29bc9528.png",
             "Source": "sprite/악세사리/남/남_오딘마스크.spr",
@@ -19047,6 +19367,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 11
+        },
+        {
+            "Hash": "29ca0f4be3daf9c3b97a54b35f660c04c7e183c35426a0b9029a88634a311ef3",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/29/c_clb_bs_bag_m_doram_29ca0f4b.png",
+            "Source": "sprite/로브/c_clb_bs_bag_m/c_clb_bs_bag_m_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "29ca1d9e70c447d5ac342145e909999c4217b1f5bebd277abe2b45b627e4ee73",
@@ -19385,6 +19713,14 @@
             "IndexedCount": 54
         },
         {
+            "Hash": "2a90bab94aff17db1ce11aae9fa5b8e06d26851e3f198709a9261a317e34aa08",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/2a/summoner_남_2a90bab9.png",
+            "Source": "sprite/로브/c_giant_angeling/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "2a91d98a8dabd2ae3a952d8425bccdc6e99f7fd5f3dc4cbd469faca9c851fa4b",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/2a/s_empel_2_2a91d98a.png",
             "Source": "sprite/몬스터/s_empel_2.spr",
@@ -19641,6 +19977,14 @@
             "IndexedCount": 42
         },
         {
+            "Hash": "2b06392cbc6c148180383902539d472acd903278221aa2fe521520dabb2dc4cc",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/2b/summoner_남_2b06392c.png",
+            "Source": "sprite/로브/c_sakura_rod/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "2b078482781dfd187aff84b134fd366a2a4ee1dded5be3ff8a2817e500abe840",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/2b/long_twin_bl_2b078482.png",
             "Source": "sprite/아이템/long_twin_bl.spr",
@@ -19679,6 +20023,14 @@
             "HasIndex": true,
             "Rules": 1,
             "IndexedCount": 60
+        },
+        {
+            "Hash": "2b1f725327343280907acfb3ea78926dca6f80ade15413a94939b06a582ace65",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/2b/summoner_남_2b1f7253.png",
+            "Source": "sprite/로브/valkyrie_curse_blight/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "2b23d9eb4b706125b928b3b45f2e35c8c22a51d3335db3f5e18febe26ef9063f",
@@ -19775,6 +20127,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 30
+        },
+        {
+            "Hash": "2b5b2943aa6efa5602ebc6cd266f9a68adcbb4e67e7a0b41c2cdacbe1de20fab",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/2b/summoner_남_2b5b2943.png",
+            "Source": "sprite/로브/santa_backpack/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "2b5d9745df55cb39584ce1ae1799a4c01c0427037cb53c52d053c85e0f3e3676",
@@ -19884,6 +20244,14 @@
             "Hash": "2b923178b922309e988ea7d0d642ef901a9f6b0003f90c7b1db81b51e9bc8563",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/2b/남_사무라이마스크_2b923178.png",
             "Source": "sprite/악세사리/남/남_사무라이마스크.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
+            "Hash": "2b94fba6857bce557747972d364097f99320f6ac2044607fe4ddd4a22d78d4f9",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/2b/summoner_남_2b94fba6.png",
+            "Source": "sprite/로브/c_diabolic_friend/남/summoner_남.spr",
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 9
@@ -20625,6 +20993,14 @@
             "IndexedCount": 15
         },
         {
+            "Hash": "2cd829a20b3c2b2696491c108f5bb80db8ff9c1ea1494cb3ad428d0a7bb12b8a",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/2c/마도기어_여_2cd829a2.png",
+            "Source": "sprite/로브/천사날개/여/마도기어_여.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 100
+        },
+        {
             "Hash": "2cd91f5f2e6d830431385f95452d09e702c73028c4a8189bfbf0f2a15a1e963d",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/2c/스위트바나나_2cd91f5f.png",
             "Source": "sprite/아이템/스위트바나나.spr",
@@ -20767,6 +21143,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "2d2a0b932206c9dcbf987f6befb989619015f2800be2e86785e295e778c7c550",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/2d/2018_rtc_cape3_tw_doram_2d2a0b93.png",
+            "Source": "sprite/로브/2018_rtc_cape3_tw/2018_rtc_cape3_tw_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "2d2b10af17095af28348affefef96c9ecae51aa590fa777d87f3ba515d3560c7",
@@ -21471,6 +21855,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 71
+        },
+        {
+            "Hash": "2ebace05a2457e63962e1f68f7ea27037f721e97a83f8d9fcdcdc4dc6afbe529",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/2e/summoner_남_2ebace05.png",
+            "Source": "sprite/로브/아버지사랑날개2012/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "2ebb43d95cd43f419ed8da96cf20e9ff0324618b8c5192f77ca4f0e40ac41b5b",
@@ -22961,6 +23353,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "31dbb2938072f100daf55f24a20e5ea563ffd80afffdcb61b782e8285161e18d",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/31/summoner_남_31dbb293.png",
+            "Source": "sprite/로브/c_aqua_fin_decoration/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "31dbf1b51a41e05c39818f64b8107513687be272dc3a2a72d9470282e6cc00ac",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/31/요르문간드_31dbf1b5.png",
             "Source": "sprite/아이템/요르문간드.spr",
@@ -23383,6 +23783,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 2
+        },
+        {
+            "Hash": "32910c0f0191615302fbc7d6247a39e42737ca5f327cdc630ae61aa65432f736",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/32/summoner_남_32910c0f.png",
+            "Source": "sprite/로브/기린의날개/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "32974aa547a5344de7021b500d6db865837d6c74e1df52a0a166a48c106d25fa",
@@ -24377,6 +24785,14 @@
             "IndexedCount": 5
         },
         {
+            "Hash": "345cde05c6bc52b4c35d0169c82162cc7b360034f70127babf6ddf07badce9ba",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/34/summoner_남_345cde05.png",
+            "Source": "sprite/로브/c_angel_gift/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "346967cbbfb42b7145abafea39e747c39b308b4d7354f65483d1378af1a64060",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/34/대악마날개_346967cb.png",
             "Source": "sprite/아이템/대악마날개.spr",
@@ -24431,6 +24847,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "34867fe863123d1e57513474ab11a40e010310cbeb903a02cca7dedba82303a3",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/34/summoner_남_34867fe8.png",
+            "Source": "sprite/로브/c_dark_lord_manteau/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "3488f08304202a626120933916c8bd527b8bea966bd8cdad7053d19c41129f47",
@@ -24655,6 +25079,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 5
+        },
+        {
+            "Hash": "34ea89be770db0d98ecb6d46c43ff7d46acba4477d4d6b16babfb12e8643c24e",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/34/summoner_남_34ea89be.png",
+            "Source": "sprite/로브/메카닉윙/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "34ecfd61b7525d25e4eafe8fd88878cc899527dd385beae0a6f560550ad565d0",
@@ -25089,6 +25521,14 @@
             "IndexedCount": 4
         },
         {
+            "Hash": "35ce51aa0ca14b0012aa065a14484cbc6ed038f5ec027ea72672e6fd978a9a2a",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/35/summoner_남_35ce51aa.png",
+            "Source": "sprite/로브/대악마날개/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "35d228cd65b491a0e5d41f6dd87010c6f1c37f73d3b8dfb837738d2ca9d23a2a",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/35/cramp_35d228cd.png",
             "Source": "sprite/몬스터/cramp.spr",
@@ -25311,6 +25751,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 85
+        },
+        {
+            "Hash": "3656dbee70fb461ead7aeeb72c4d93fe673bac7293ade235bb909c9fa7b3c441",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/36/summoner_남_3656dbee.png",
+            "Source": "sprite/로브/c_immortal_h_spear/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "365937ea8194e7ddb0394ee33c8325f3709cf749f3dfd210986dd83e794b7977",
@@ -26401,6 +26849,14 @@
             "IndexedCount": 6
         },
         {
+            "Hash": "388284760fa17c9acc10d34b377f13397d9ec79f67e4ddc7ec5674d80f66d24a",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/38/summoner_남_38828476.png",
+            "Source": "sprite/로브/루드라의날개/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "388841c90418809c632ee61bae5d0fe599df227f0f2c6360d2dd23e6bc33174d",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/38/파이로테크닉_388841c9.png",
             "Source": "sprite/이팩트/파이로테크닉.spr",
@@ -26831,6 +27287,22 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "398e11e8b20cb76bcfa15e223a9a62ba36ca40c4cf3636c8e158dae9f8f4d6cd",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/39/summoner_남_398e11e8.png",
+            "Source": "sprite/로브/heartchocobag/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
+            "Hash": "399036a89055c73d87210c9d3201a07714586ea6c9d0fc3afea260234bbfe822",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/39/summoner_남_399036a8.png",
+            "Source": "sprite/로브/balloon_wing/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "3991e2a3e8bdc066fdaf53723b9e7b1a9e65650ff03fc1e6556ee74319c37d4e",
@@ -28089,6 +28561,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "3c1e73597d11eed790c1c188d644c54d4933b949a05ce04e63e609f87197ed8e",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/3c/summoner_남_3c1e7359.png",
+            "Source": "sprite/로브/c_popcorn_bucket2/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "3c283824fbd09d689a86271c2996ce6b850da905dd53acd554e03e57eb6aa98a",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/3c/cylinder_boots_3c283824.png",
             "Source": "sprite/아이템/cylinder_boots.spr",
@@ -28481,6 +28961,14 @@
             "IndexedCount": 11
         },
         {
+            "Hash": "3cf503f64944a8018043c697068a34567467bd13921b7f3b59666733791775e5",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/3c/summoner_남_3cf503f6.png",
+            "Source": "sprite/로브/gerhard_von_devi_bag/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "3cf51f9f7942f13788331acddf604d527b6fd27f75aaa8c14cbe830326b14800",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/3c/남_흰호랑이왕모자_3cf51f9f.png",
             "Source": "sprite/악세사리/남/남_흰호랑이왕모자.spr",
@@ -28703,6 +29191,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 46
+        },
+        {
+            "Hash": "3d82c65346537e6e51848179e343819b65a9cf3040608326364b9ac6f590c038",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/3d/c_guardian_butterwing_doram_3d82c653.png",
+            "Source": "sprite/로브/c_guardian_butterwing/c_guardian_butterwing_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "3d82fd82449a5f047f4e5dc098b13d58d5c023c0b4c23835ad31739cfbdcacd3",
@@ -29001,6 +29497,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "3e21aa75c89f6cb70e895a46ef9763cabb1322d028bbef949214b4153e4d82b9",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/3e/summoner_남_3e21aa75.png",
+            "Source": "sprite/로브/c_seraphim_wing_tw/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "3e27220835ef83eb211613fd014ab8a187429e26884a6c0fd5975889c8f4495e",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/3e/아무거나전골_3e272208.png",
             "Source": "sprite/아이템/아무거나전골.spr",
@@ -29127,6 +29631,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "3e81c511f8171fa3f327eaa60cd2d37a01754b0715acb6862e9e696d4c4407ea",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/3e/summoner_남_3e81c511.png",
+            "Source": "sprite/로브/c_adventure_cat_bag/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "3e886e14aba4766105885fbad0e1c9d1767a1b6de5ca5a86b08e2423d98d7c28",
@@ -29353,6 +29865,14 @@
             "IndexedCount": 40
         },
         {
+            "Hash": "3f15ffb69fd8899025451bc5e139b0a414995fdd1a9f817f0675f6647ed127b4",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/3f/c_plant_outing_set_doram_3f15ffb6.png",
+            "Source": "sprite/로브/c_plant_outing_set/c_plant_outing_set_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 154
+        },
+        {
             "Hash": "3f169d308a76a7ff388e1d25b2b4d1cab7657bc2fea66467353ec757ff397a91",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/3f/남_신앙의눈_3f169d30.png",
             "Source": "sprite/악세사리/남/남_신앙의눈.spr",
@@ -29511,6 +30031,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "3f4db5d672ea5bb79f52c3d09ad523da46bf0ecdba97609a4396c5b1373bd6d9",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/3f/summoner_남_3f4db5d6.png",
+            "Source": "sprite/로브/c_ice_wing/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "3f51dbae3440b7ba38bfc7dc88ad2d40768546403fbb9be37628448024136a35",
@@ -30201,6 +30729,14 @@
             "IndexedCount": 2
         },
         {
+            "Hash": "40ba8c0f6cdab7a969973a7f72b452e127ca99503c6258106e68637fb9064c88",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/40/2018_rtc_cape1_tw_doram_40ba8c0f.png",
+            "Source": "sprite/로브/2018_rtc_cape1_tw/2018_rtc_cape1_tw_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "40cf33fc1d901f7d7de2fab47da009f9ee9d1be6de4246792a44497769db73db",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/40/남_금빛음색_40cf33fc.png",
             "Source": "sprite/악세사리/남/남_금빛음색.spr",
@@ -30655,6 +31191,14 @@
             "HasIndex": true,
             "Rules": 1,
             "IndexedCount": 46
+        },
+        {
+            "Hash": "4210408dbbea022c6701a84cfe9eed98e5b5ccff3a2b89af97ca3dda3f29d7a7",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/42/kagerou_남_4210408d.png",
+            "Source": "sprite/로브/c_sorcerer_cape/남/kagerou_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "421352f5719df18746cf8869661019d84d6cc9b06ab1b56661931ca0f1eb2e83",
@@ -31247,6 +31791,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 28
+        },
+        {
+            "Hash": "4380381b9de0a7bf092d08d28af66eba44d39c6a7c9fad91c25cd548cee8aec1",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/43/summoner_남_4380381b.png",
+            "Source": "sprite/로브/c_clb_dt_ts_wing/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "4380e102a9ede925d9e3dbcf7a5e2646a09d8c9b140786b9367558ac81abf3ed",
@@ -31873,6 +32425,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "450230148299fd6af05e1e8f46b8cf3c01e42d225cdc14ce09a405522a57e644",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/45/summoner_남_45023014.png",
+            "Source": "sprite/로브/c_school_bag_rd/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "4504fea42861f73da689ca087683433b3f640b4fae6fd3335ba3ed4b5acc2955",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/45/frontiaboots_4504fea4.png",
             "Source": "sprite/아이템/frontiaboots.spr",
@@ -32049,6 +32609,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "4574b4400d8cc581b8507832b51e89815e310cd5ee8dea77566d07647168ca36",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/45/c_school_bag_bu_doram_4574b440.png",
+            "Source": "sprite/로브/c_school_bag_bu/c_school_bag_bu_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "4575c9bb3d4da5d9e69723fc89c9d195189c4a311b8d2a5ff49bcdcb4d06633f",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/45/4_exjob_gerhold_4575c9bb.png",
             "Source": "sprite/npc/4_exjob_gerhold.spr",
@@ -32151,6 +32719,14 @@
             "HasIndex": true,
             "Rules": 1,
             "IndexedCount": 15
+        },
+        {
+            "Hash": "45b15d7fd0e761876ee389c4e488dacdd9387dc4b1003a2fa035e590c0990c4c",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/45/wing_of_angel_move_rb_doram_45b15d7f.png",
+            "Source": "sprite/로브/wing_of_angel_move_rb/wing_of_angel_move_rb_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 154
         },
         {
             "Hash": "45b53aa06439e463a7a445ab3cccbfb910ed9f58f915251f650e7e1a3dfb393e",
@@ -32479,6 +33055,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "46628c0b16a3d83e35dd6c9df5d7cab0b53a067aa19e13985e691440ac717e01",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/46/summoner_남_46628c0b.png",
+            "Source": "sprite/로브/wings_of_michael/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "4670069cabc146cd8a49681270f0e3b012055acc80cfefad1b8b09b9ebdd0116",
@@ -33625,6 +34209,14 @@
             "IndexedCount": 8
         },
         {
+            "Hash": "48a4dc5b0640fae8df04bd4985ac06ad04164bd9702ed76255dc909978982efa",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/48/summoner_남_48a4dc5b.png",
+            "Source": "sprite/로브/c_power_cable/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "48abb2bc4a0ceb2dca01df4f2352979ceb9397452ac56fefa3489758ba43163a",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/48/cr_cultivation_48abb2bc.png",
             "Source": "sprite/아이템/cr_cultivation.spr",
@@ -33857,6 +34449,14 @@
             "IndexedCount": 116
         },
         {
+            "Hash": "490ca84ba2b19f5c869eea7fa3958bd0b45267ef970979058e84c2f65d7df86f",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/49/ten_g_shield_tw_doram_490ca84b.png",
+            "Source": "sprite/로브/ten_g_shield_tw/ten_g_shield_tw_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "490da005f69a74b7d008791e8accbdce1891c4dc058a4a12709f7c2656fb1ac2",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/49/남_날고싶은엔젤링_490da005.png",
             "Source": "sprite/악세사리/남/남_날고싶은엔젤링.spr",
@@ -33943,6 +34543,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 11
+        },
+        {
+            "Hash": "4926d35108b1989cfe69fc5ad5ef46fc0b30541cf18c58f08e5045eaf9ed3ebb",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/49/summoner_남_4926d351.png",
+            "Source": "sprite/로브/c_ninetail_tail_wh/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "492c4cbbe344032d274e1f4a3cadc40802dbc4b8a2d54319991035031ecfe161",
@@ -34199,6 +34807,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "49cc30a08067ed5247d762498b897e8d23be3d3a4dba9f6a181856ceed0b032f",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/49/summoner_남_49cc30a0.png",
+            "Source": "sprite/로브/c_filir_bag/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "49d375f34c5279f357745b57fa7987fabd05f6845587d0211c46f445ca66fa18",
@@ -34953,6 +35569,14 @@
             "IndexedCount": 8
         },
         {
+            "Hash": "4b8135c550c4921ad81337ce20f92d0451a3006730f00713b0ee37da8266e428",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/4b/summoner_남_4b8135c5.png",
+            "Source": "sprite/로브/안토니오가방/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "4b89e256a6f101713f0839640fe4b27666ce7f3cb5b6fad23dcc059aa162cd20",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/4b/dc_humming_4b89e256.png",
             "Source": "sprite/아이템/dc_humming.spr",
@@ -34991,6 +35615,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "4b9d930f7904ab59ad2eef79a2f59ee37f69b02b4d656217be39fd2b794f2d76",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/4b/summoner_남_4b9d930f.png",
+            "Source": "sprite/로브/c_blackbear_back_tw/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "4baf71ef14460ca5b6f4f1fcef84c07cd059d03dcecc70802301dacb6ac82d34",
@@ -35039,6 +35671,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "4bc7c286968f0c44817887d3c003a0dace9a8aba0fbd19769e588a03a5e4aad3",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/4b/summoner_남_4bc7c286.png",
+            "Source": "sprite/로브/c_popcorn_bucket/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "4bc9a399e7bbdbcae42309408d4d05ea73c59d7d819c4e72ae2185515f101ec6",
@@ -35577,6 +36217,14 @@
             "IndexedCount": 50
         },
         {
+            "Hash": "4cbccfa771d508e2b98c0de4a0ac9672aba4ae0229dc6a48ce0ecf8f2d01b500",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/4c/kagerou_남_4cbccfa7.png",
+            "Source": "sprite/로브/c_big_ribbon_cloak/남/kagerou_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "4ccb6f3cf419dcc7f4fc285aeec19b2bcddbaee496536f09bbe2d3ea30d0283d",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/4c/달의안대_4ccb6f3c.png",
             "Source": "sprite/아이템/달의안대.spr",
@@ -35985,6 +36633,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "4db8e225f15ab43129c268da960830458f5ec57935134457b237e5e4636d6278",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/4d/c_clb_bs_bag_gf_doram_4db8e225.png",
+            "Source": "sprite/로브/c_clb_bs_bag_gf/c_clb_bs_bag_gf_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "4dc4c5b623c0ee28405b68944698d2a0bd6e2da17ab07250b24344bbfc293282",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/4d/무희_여_1216_4dc4c5b6.png",
             "Source": "sprite/인간족/무희/무희_여_1216.spr",
@@ -36183,6 +36839,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "4e1628b3268fd64d5383a0813d69a940d331cc7c811c92f7e15b32c9c41116fa",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/4e/wing_of_spider_doram_4e1628b3.png",
+            "Source": "sprite/로브/wing_of_spider/wing_of_spider_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "4e1767a44f3988023eb4b11c3ca2fdbc90e10a081489333445c75e20d49a105e",
@@ -38185,6 +38849,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "5252e7e747129d6e677583d301f8ff73fd2750613612200a4a8cbfcba5e06d3f",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/52/summoner_남_5252e7e7.png",
+            "Source": "sprite/로브/c_qualifier_2nd/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 154
+        },
+        {
             "Hash": "52533f31abda5d0992907232ba3ff754782e55060f79051f839499d8036ed4d9",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/52/제네릭멧돼지_여_52533f31.png",
             "Source": "sprite/인간족/몸통/여/제네릭멧돼지_여.spr",
@@ -38793,6 +39465,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "53a148c445f8997aef1dc0c2d096af4bd8ad60fd277c7b308cda18e739405bb8",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/53/summoner_남_53a148c4.png",
+            "Source": "sprite/로브/c_poring_basket/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "53a4d4b162a795c99106c0eabda46505bf6e456d2cfe61bfd9393b7be6fc6bf4",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/53/당고머리_황_53a4d4b1.png",
             "Source": "sprite/아이템/당고머리_황.spr",
@@ -39393,6 +40073,14 @@
             "IndexedCount": 15
         },
         {
+            "Hash": "54fa4647abe63ddbd43537fe0390625beac52c10c94a60b7e60a3e6a2df71550",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/54/리벨리온_남_54fa4647.png",
+            "Source": "sprite/로브/하늘색큐피트날개/남/리벨리온_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "54fc51d7683e4ae3b672b73dd0bba3543146993ccc1934347121b09d930b4c27",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/54/상인전직상자_54fc51d7.png",
             "Source": "sprite/아이템/상인전직상자.spr",
@@ -39703,6 +40391,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "55cb17a04aecc5412acc4f360d395eecb649c57b433f32e186dbef4b299bedc7",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/55/summoner_남_55cb17a0.png",
+            "Source": "sprite/로브/c_diabolic_rock_guitar/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "55ce234f231b41acf232df6ab045c581e959a65f56e8a763ff1fd5f0c25a393e",
@@ -40137,6 +40833,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "56d691e87c9dd5f8c37c2773480140dcbaae64d55fec7a13477af92ade1daa8d",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/56/summoner_남_56d691e8.png",
+            "Source": "sprite/로브/c_sandalphon_wing_tw/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "56d9b158bd51281cdd28b8610b1915cec00997452a86cd4ffe40cb2d5f2d684f",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/56/남_c_cat_whisper_cloth_56d9b158.png",
             "Source": "sprite/악세사리/남/남_c_cat_whisper_cloth.spr",
@@ -40313,6 +41017,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "572e5d77fe473514ad2984952f409e8723efe1e572eb5ec1390867cfa98bf145",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/57/summoner_남_572e5d77.png",
+            "Source": "sprite/로브/violet_halo/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "57300225c1abff3a03395819edf71a968dafc7b97d4fe3f01738ce1953c70cdf",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/57/thanos_violin_ad_57300225.png",
             "Source": "sprite/아이템/thanos_violin_ad.spr",
@@ -40391,6 +41103,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 15
+        },
+        {
+            "Hash": "5759c0c6dcf0a145cf4bc70de8b4c5124e5cd6772cae04274530b4c9f41ee2d5",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/57/summoner_남_5759c0c6.png",
+            "Source": "sprite/로브/c_mystical_wing/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "575d13768476b7be9a9a0d94645ff54377ba3cf0b467547d8db3f012d4a9e689",
@@ -41049,6 +41769,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "58b4ee1e63575df1e5fc170950d81567e1df8337d6b736a91967a71badcc1a99",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/58/summoner_남_58b4ee1e.png",
+            "Source": "sprite/로브/blackcatbag/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "58b5fbc883a01d48a2f5004c4285326df190948a00baafa6d364bbf4ec4a91dd",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/58/구름조각_58b5fbc8.png",
             "Source": "sprite/아이템/구름조각.spr",
@@ -41439,6 +42167,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 97
+        },
+        {
+            "Hash": "59954055eb87b80e79148fa2b5f2a3916dbe68b516feb2d6c3ce47992209d2e9",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/59/summoner_남_59954055.png",
+            "Source": "sprite/로브/c_rose_gothic_ribbon/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "5999b574dba3008bf4a4a7adca6fa22fddfb99c9c1cded1909b3df2427b8fe49",
@@ -42937,6 +43673,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "5caabb879427ee0453d1756c684c83fecaf070ff8d4e81f35112294fb4d7d8f9",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/5c/summoner_남_5caabb87.png",
+            "Source": "sprite/로브/c_defense_shield/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "5cb198c5e83ef943df1503cdd1340c0c943f90bdb8e43e857e5e17c364006410",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/5c/여_용투구_동_5cb198c5.png",
             "Source": "sprite/악세사리/여/여_용투구_동.spr",
@@ -43271,6 +44015,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 11
+        },
+        {
+            "Hash": "5d76e14506d92e0386780f959442c56e741936090ed59c15326dcb50637f97f5",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/5d/c_baldr_wing_tw_doram_5d76e145.png",
+            "Source": "sprite/로브/c_baldr_wing_tw/c_baldr_wing_tw_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "5d7903f0efa12b3dca1d20b3aa407d79f6e80cadf6201dbca11649dcdd1e55a5",
@@ -44463,6 +45215,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "601942e9568ec8320e8a9db1ed7dc27d454b7668dc96efb1443cc79cc8c3b400",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/60/summoner_남_601942e9.png",
+            "Source": "sprite/로브/아미스트르가방/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "601a54e2bf33e3b58d2f383535b4cc31846f84ac9596b966a0bb8b52bfb1d51b",
@@ -45889,6 +46649,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "62eb30732ff6e90672a13d9e0b9b1815ed7cf5949342d8e3d545a1e13a446a6b",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/62/summoner_남_62eb3073.png",
+            "Source": "sprite/로브/c_giant_mad_bunny/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "62fe92d70b3b5a43489103f8321a2dfbd9119201d2070df9c48fc5242c096938",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/62/up_freedom_stick_62fe92d7.png",
             "Source": "sprite/아이템/up_freedom_stick.spr",
@@ -45935,6 +46703,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "632351f3bcec8a4447c2cd1c966996422389070787e713f97eed4e13b33301fe",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/63/summoner_남_632351f3.png",
+            "Source": "sprite/로브/c_surf_board/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "632a31ff3652b751d2de3df428a93f00aa8fa913666cd26e048f26e91ecea6ec",
@@ -46487,6 +47263,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "6490e2f95df9d30f878d7fed1f8ecf560bfd0f164a1c5a15249d95bb13ef4110",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/64/닌자_남_6490e2f9.png",
+            "Source": "sprite/로브/천사날개/남/닌자_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "6493baadd1890b4e0ab022e839b8e2e170ee01fa0c6899cc3e4e5528e52afd66",
@@ -48089,6 +48873,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "680912f59024bb1e8b03df01a6ccc1fe154f962d2617ea93964f0f70974bbf31",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/68/wing_of_angel_move_rd_doram_680912f5.png",
+            "Source": "sprite/로브/wing_of_angel_move_rd/wing_of_angel_move_rd_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 154
+        },
+        {
             "Hash": "680aa8a2e2109fb744249061e0f45465ac5e88b16548a91cc8a733b934b89e96",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/68/남_side_pigtail_rd_680aa8a2.png",
             "Source": "sprite/악세사리/남/남_side_pigtail_rd.spr",
@@ -49049,6 +49841,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "69e0922c732c505f77d1d56be84f842d83b1a9f44d84abc2e0a5e30f279cf446",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/69/summoner_남_69e0922c.png",
+            "Source": "sprite/로브/c_put_on_coat/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "69e13535feac397d7e77e308bb6d6fbd123c9d3368c7711624802c60e014a843",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/69/4_m_rebellion2_69e13535.png",
             "Source": "sprite/npc/4_m_rebellion2.spr",
@@ -49223,6 +50023,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "6a417fa33584e156c447a3078971733afead3b22f8094d0febbee99ab8b2e5b3",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/6a/summoner_남_6a417fa3.png",
+            "Source": "sprite/로브/c_lord_of_death_shield/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "6a417fdcd9606c4eb75529637abfc6142766e93ec69338bc3ae5faa80d539749",
@@ -50057,12 +50865,28 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "6c1e637656bdae9e5155b77c3bf9a26af8fc9984088fa197befbbe8a97a9e13c",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/6c/c_clb_bs_bag_b_doram_6c1e6376.png",
+            "Source": "sprite/로브/c_clb_bs_bag_b/c_clb_bs_bag_b_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "6c1e9e02e24159f82f51d1f60d48d1cf55b61a95075aba8fa1433b30a479b57b",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/6c/하피의깃털_6c1e9e02.png",
             "Source": "sprite/아이템/하피의깃털.spr",
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "6c1fc444bef676ef4dce4c47e0ba9a886e694ac7619aafb120ba7caddca4af09",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/6c/summoner_남_6c1fc444.png",
+            "Source": "sprite/로브/c_poring_syringe/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "6c2117b7a068838272df7b134919e49af93664aeb12b777f03f77510c34626a8",
@@ -50985,6 +51809,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "6dd9c046d2e677e827ba89db6d4c9718d3cfa950ae323611f9bd38cd6a9e566d",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/6d/wing_of_angel_move_gd_doram_6dd9c046.png",
+            "Source": "sprite/로브/wing_of_angel_move_gd/wing_of_angel_move_gd_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 154
+        },
+        {
             "Hash": "6ddd349c01407b1c8cff1a1212e342697605532f7c9499e50b1635743ffd83ea",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/6d/nv_basic_6ddd349c.png",
             "Source": "sprite/아이템/nv_basic.spr",
@@ -51047,6 +51879,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "6e0b89dd108deaec81b8cc2f011809850c33332b61fb6cad6844a4908ce233f9",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/6e/summoner_남_6e0b89dd.png",
+            "Source": "sprite/로브/포링가방/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "6e0ddb47b4120ca3190a8f53306921e6f516335936cb955a37993f58915eea07",
@@ -51151,6 +51991,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "6e43cccaaea200af599a532ef56efb88eb0446cbcc2269d1161ba8b2e3eb4315",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/6e/summoner_남_6e43ccca.png",
+            "Source": "sprite/로브/빛과어둠의날개/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "6e4637ccff3a9346370b90f6285ab95ef314dac3f21b2693c54e5553f1418aae",
@@ -51279,6 +52127,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 14
+        },
+        {
+            "Hash": "6e8a2c329579672e7a5e1b1dc7e8484bcc74681a459c0e823f7d4adfd255ceee",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/6e/summoner_남_6e8a2c32.png",
+            "Source": "sprite/로브/c_labrys/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "6e8d7465d9ffbde7a525ce767053a72e9a125497fedf4276ae6624543ebacf08",
@@ -51649,6 +52505,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "6f3b96661692a80ded06321b82e911dc653f1e8261f567a8af948480d240630d",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/6f/summoner_남_6f3b9666.png",
+            "Source": "sprite/로브/c_cat_donut_tw/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "6f4721e46c2ea369e7b41cf639c240a3327eb0871bb29eeb2aba1712f84418a7",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/6f/1_m_knightmaster_6f4721e4.png",
             "Source": "sprite/npc/1_m_knightmaster.spr",
@@ -51689,6 +52553,14 @@
             "IndexedCount": 8
         },
         {
+            "Hash": "6f4dfb6f0cd0016347c00caf571fd0f952ac5bd22ca204a619062f98474e2561",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/6f/c_guardian_angelwing_doram_6f4dfb6f.png",
+            "Source": "sprite/로브/c_guardian_angelwing/c_guardian_angelwing_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "6f501ebac13e02bcd1cb788a042fcf875d6808e5b00b14b2eb37cda72a29c95c",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/6f/etel_skyblue_jewel_6f501eba.png",
             "Source": "sprite/아이템/etel_skyblue_jewel.spr",
@@ -51711,6 +52583,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 10
+        },
+        {
+            "Hash": "6f58533ee6c6476cc637cfa1c8a7e994e78e5ec28950c9eb643adee27a43c2a7",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/6f/summoner_남_6f58533e.png",
+            "Source": "sprite/로브/c_adventures_backpack/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "6f5a163bf346a3c26b5c660c7a45bfc12b1087d343b2fbecaa762cfbf203aa74",
@@ -52545,6 +53425,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "71171af50febab0f806bd252c0e8baa0072ff2aa29c9066d94fde4b584d4afb4",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/71/summoner_남_71171af5.png",
+            "Source": "sprite/로브/c_cat_doll_wh/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "7119acd4a4789e1837becea3a0c16b87828e3f9d8b12a932903bbde3dbbfd9b1",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/71/여_탐정모자_7119acd4.png",
             "Source": "sprite/악세사리/여/여_탐정모자.spr",
@@ -53217,6 +54105,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "728baf00ef404aff284dc784b7b1dcdbc1be24a35265d0a406f9e0edd6223313",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/72/c_rata_tail_doram_728baf00.png",
+            "Source": "sprite/로브/c_rata_tail/c_rata_tail_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "7290171c8ca40fc31ad94d152be3252969cb159567617153e02323830f0defad",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/72/남_c1학년풍선_7290171c.png",
             "Source": "sprite/악세사리/남/남_c1학년풍선.spr",
@@ -53343,6 +54239,22 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 10
+        },
+        {
+            "Hash": "72d8fa519e04fb8c8452b0a790d62045a78ab521ccd42ab5f2b50e65a4e9f26f",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/72/2018_rtc_cape2_tw_doram_72d8fa51.png",
+            "Source": "sprite/로브/2018_rtc_cape2_tw/2018_rtc_cape2_tw_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
+            "Hash": "72e48f166785780a9f503460c4c8837554a61e8902b40d045e3795c1b9d5b995",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/72/summoner_남_72e48f16.png",
+            "Source": "sprite/로브/wings_of_raphael/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "72e85a55482b9236db39c3aab9b052b22246d9d8d569ed87e85d62df7475ed8c",
@@ -54641,6 +55553,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "75b440f945d63deb20c55610c12f672c53ae922792b33cc276f773f335c3d2e3",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/75/summoner_남_75b440f9.png",
+            "Source": "sprite/로브/c_big_ribbon_cloak_wh/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "75b5246e4876c544cdecd00182198b7eaa1fa6ffaabfbdccdf4e283fec81487f",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/75/loki_coin_2_75b5246e.png",
             "Source": "sprite/아이템/loki_coin_2.spr",
@@ -55135,6 +56055,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "769468b946f30f48e0293898fc89853d3021bd8f196ed7ff8346d73ba62c481a",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/76/c_pitaya_y_bag_doram_769468b9.png",
+            "Source": "sprite/로브/c_pitaya_y_bag/c_pitaya_y_bag_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "7694d5afdd98104e79d462bb74e2a062a9ef6e183e37321b47b95db1ff440b24",
@@ -55929,6 +56857,14 @@
             "IndexedCount": 13
         },
         {
+            "Hash": "782c213c1783a04a9eea1fcb3516a3755762805c2b6a8df4367c3e5abc724627",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/78/summoner_남_782c213c.png",
+            "Source": "sprite/로브/angelribbonwing/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "7830abfad9bd8cd46e57df7efde5cef87529102fb610131062ade0f448baedb0",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/78/뿔투구모자_7830abfa.png",
             "Source": "sprite/아이템/뿔투구모자.spr",
@@ -56535,6 +57471,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 0
+        },
+        {
+            "Hash": "7980f36aaf8e4f1d6e2d6c4aa47a94020bffa7af2d4b471749d38ba44d42c0be",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/79/kagerou_남_7980f36a.png",
+            "Source": "sprite/로브/c_qualifier_1st/남/kagerou_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 154
         },
         {
             "Hash": "7981e9ce445a53700cbeeda58e40953af266f3bbb33d09b046f169ba1ff27261",
@@ -57977,6 +58921,14 @@
             "IndexedCount": 15
         },
         {
+            "Hash": "7cac61a7f7eb99d572e78b4ef120da51879ebbbb4eacdc8701edc168490a8dc8",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/7c/천사날개_7cac61a7.png",
+            "Source": "sprite/로브/천사날개/천사날개.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "7cb50abd289464aa055d686eeed1ffa2ec17cdbf59db4d6c448da0ed9a95e545",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/7c/1_m_moc_lord_7cb50abd.png",
             "Source": "sprite/npc/1_m_moc_lord.spr",
@@ -58447,6 +59399,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "7daa956d61b666e8d1e0ac31436b537f8118645f676d7c50c0588df36ceef8d6",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/7d/summoner_남_7daa956d.png",
+            "Source": "sprite/로브/santateddybear/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 154
         },
         {
             "Hash": "7db7133fbe3dcb58126a74ce7d7aaad9418945adc692554c81edda1d30c7dec3",
@@ -59113,6 +60073,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "7f5ac73ea6cfb5f7f4ada9553f63576cff386b2b9f5b027083eabdf887fed19c",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/7f/summoner_남_7f5ac73e.png",
+            "Source": "sprite/로브/chrismas_tree/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "7f5c4a9bac761197f6874cca5869b388963833307cafccbac9a26e5102076968",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/7f/까마귀천구의가면_7f5c4a9b.png",
             "Source": "sprite/아이템/까마귀천구의가면.spr",
@@ -59231,6 +60199,14 @@
             "HasIndex": true,
             "Rules": 1,
             "IndexedCount": 104
+        },
+        {
+            "Hash": "7f8cf7d6fba855ab7ac4bc967ef9a852c728fd54e6b23ffe21c2214914203289",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/7f/리벨리온_남_7f8cf7d6.png",
+            "Source": "sprite/로브/c_leaf_umbrella/남/리벨리온_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "7f8f538086ac00054023268283b9b7b1a465f58acb4d26cd3d867e2db66ebb8e",
@@ -60321,6 +61297,14 @@
             "IndexedCount": 9
         },
         {
+            "Hash": "8177072e0f1f97cbd4cbbaf4db02f22a6d21b5f2a3485313ecd2da9dc875721c",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/81/권성_남_8177072e.png",
+            "Source": "sprite/로브/천사날개/남/권성_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "817ba38b80218698490e8860007e3dcbe8e2756d20ff077cb9f1560882b53b31",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/81/c_bullhead_817ba38b.png",
             "Source": "sprite/아이템/c_bullhead.spr",
@@ -60495,6 +61479,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "81e8c384e5363db667a15cc17fefe9663f76f56d97bfd8e343b915bc487de37b",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/81/summoner_남_81e8c384.png",
+            "Source": "sprite/로브/c_qualifier_1st/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 154
         },
         {
             "Hash": "81f21a0ec18c43dbb16b770187098692294e2929bde89904ef49a7e60ba9ec87",
@@ -62361,6 +63353,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "857e9aadd21a0e95264572e2dd61ac7316fbf3f2d04809f0086c5156559aade8",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/85/summoner_남_857e9aad.png",
+            "Source": "sprite/로브/c_big_foxtail/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "8580aff78cb0915d0c53fcb9591e176eecd7c16ef26122eb98505fb74e65f840",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/85/c_clb_dt_ts_wing_8580aff7.png",
             "Source": "sprite/아이템/c_clb_dt_ts_wing.spr",
@@ -62791,6 +63791,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "864df13a3e068357d35b5f6b82ff135b221cebfb6893bc65fd51d6c86662573b",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/86/summoner_남_864df13a.png",
+            "Source": "sprite/로브/c_ancient_dragon_spear/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "865033aa69c46bea609c2d95d83efa7379383fee495f73b05a43bc5ddb3f1155",
@@ -64313,6 +65321,14 @@
             "IndexedCount": 12
         },
         {
+            "Hash": "89276c05969b829b95cb345ef2550cf80e4ce1b9883396848ca74e44e1f1450b",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/89/summoner_남_89276c05.png",
+            "Source": "sprite/로브/c_garmbebe_bag/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 154
+        },
+        {
             "Hash": "892e46079a89053cbd9f49f20692a2b0b7af1c8e691ccd76a4a2c061ffca1169",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/89/슈퍼노비스_남_892e4607.png",
             "Source": "sprite/인간족/몸통/남/슈퍼노비스_남.spr",
@@ -64327,6 +65343,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 30
+        },
+        {
+            "Hash": "89316507865698d6d0d3754eaca9366087e77a4d41de02307ebbba8f9e8afbf4",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/89/summoner_남_89316507.png",
+            "Source": "sprite/로브/fairy_of_eden/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "893441b7bec28639d42d190ce3d5abc55d66e217a720e23d699b55b4a798ef88",
@@ -64945,6 +65969,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "8a651c835f761c412509392ebd6f60d320d450ac4d27b508245ce8cebf752bbf",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/8a/성제_여_8a651c83.png",
+            "Source": "sprite/로브/c_evil_scythe/여/성제_여.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "8a6867a1895a99a07eca08810c78658e6909cb718aa612a919da5ef983828bea",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/8a/양갈래산타모자_8a6867a1.png",
             "Source": "sprite/아이템/양갈래산타모자.spr",
@@ -65233,6 +66265,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "8b17fbaf36edbfefdb6d3629895489f6b173272d8b32103d3a35c2623b6dffcb",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/8b/kagerou_남_8b17fbaf.png",
+            "Source": "sprite/로브/c_20th_anniversary_wing/남/kagerou_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 154
+        },
+        {
             "Hash": "8b1acfd7b4defc850bdaa691bf532c7a69a0fdfb4e0a854e4a9e5a2876bd8c53",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/8b/step_8b1acfd7.png",
             "Source": "sprite/몬스터/step.spr",
@@ -65391,6 +66431,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "8b817ff1b52a5706e455bac4c3e93151472ec57994489a05eb4b3e105bd0bdff",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/8b/summoner_남_8b817ff1.png",
+            "Source": "sprite/로브/c_niflheim_key/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "8b8c8bf7336b0d83652b6fb7d73eb655cecb905a88235937197a7908fc1e75b4",
@@ -67129,6 +68177,14 @@
             "IndexedCount": 5
         },
         {
+            "Hash": "8f94fd275cb3f2a2774e17a29afac08c8f9d3d73345edcd2b5155ea6a4816d6c",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/8f/도둑_남_8f94fd27.png",
+            "Source": "sprite/로브/천사날개/남/도둑_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "8fa023647208d3b62647bfac3555f2f47c9dfc197b1f870bf73bd23c36b51129",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/8f/am_cp_helm_8fa02364.png",
             "Source": "sprite/아이템/am_cp_helm.spr",
@@ -67161,6 +68217,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "8fa5ff3310813fd848a3adc5f7390d05972098e2df31d01dfb765e76554c59bc",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/8f/summoner_남_8fa5ff33.png",
+            "Source": "sprite/로브/c_sorcerer_cape/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "8faa0e9a172fc8accfa45884cbb7182040e748390c57e6a9bb026b008e6665db",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/8f/c_electro_two_side_up_8faa0e9a.png",
             "Source": "sprite/아이템/c_electro_two_side_up.spr",
@@ -67183,6 +68247,14 @@
             "HasIndex": true,
             "Rules": 1,
             "IndexedCount": 34
+        },
+        {
+            "Hash": "8fbbe8d1aa4cc7190a9eb535f875e719b742cc0ed6ccc0d8dc2bc5bc33d2f47e",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/8f/calabash_doram_8fbbe8d1.png",
+            "Source": "sprite/로브/calabash/calabash_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "8fbda70342ab71742bc5eeb29b2386c2fe9850ea0161e20b8a4c32c60f3cb068",
@@ -67793,6 +68865,14 @@
             "IndexedCount": 3
         },
         {
+            "Hash": "90f81ae8e443666aaa17fbd5668a42239afb57b3a8b0653a96448fe49665fbb7",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/90/c_loli_ruri_moon_doram_90f81ae8.png",
+            "Source": "sprite/로브/c_loli_ruri_moon/c_loli_ruri_moon_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "90fcb3880d4498e2940c5bc956d191b60d371735fec288c34ea7b847c44e4004",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/90/garm_baby_90fcb388.png",
             "Source": "sprite/몬스터/garm_baby.spr",
@@ -68129,6 +69209,14 @@
             "IndexedCount": 22
         },
         {
+            "Hash": "91ca2e6e7505329e671b3bc2759df81f223a3c50b0616532beadd1093c533a26",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/91/summoner_남_91ca2e6e.png",
+            "Source": "sprite/로브/c_heart_wing_backpack/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "91cdc19035010f73ccb8f344e6c744db8e8187762e67d98a9da0ad3089f1eb7d",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/91/남_c_medium_wave_91cdc190.png",
             "Source": "sprite/악세사리/남/남_c_medium_wave.spr",
@@ -68449,6 +69537,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "92529323ee601f46cd0e8f56744ddb8085215e9ef76512ab4c9de418acceb5fb",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/92/peco_rebellion_남_92529323.png",
+            "Source": "sprite/로브/피아멧트의리본/남/peco_rebellion_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 5
+        },
+        {
             "Hash": "925ec391931a4011bcfad633f53c8315256386139806294c3ac1496ee795e443",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/92/tha_horror_925ec391.png",
             "Source": "sprite/몬스터/tha_horror.spr",
@@ -68601,12 +69697,28 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "929b7e5921a7065cccb1e1041e59618bb61a2ea7264f0651272cc03c6c954649",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/92/summoner_남_929b7e59.png",
+            "Source": "sprite/로브/c_cat_fork/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "92a1f240df47c80fa899d6c91b8a49e4f53d67e4bc99dd128f55b3adb24041ee",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/92/dr_basilisk2_92a1f240.png",
             "Source": "sprite/몬스터/dr_basilisk2.spr",
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 32
+        },
+        {
+            "Hash": "92a3fdb73fa90f9195ce0395f100ec3a45156b584b4ac85399c1e17ea9f39241",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/92/summoner_남_92a3fdb7.png",
+            "Source": "sprite/로브/c_sakura_branch/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "92a87fb4056af395c910023a98489aff6351bdb19bb47af57274f93a6e39ed96",
@@ -69593,6 +70705,14 @@
             "IndexedCount": 2
         },
         {
+            "Hash": "94ce13644145235cfed995d58a7d4199facb865ac8ac93c23b78c5abc708f51b",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/94/summoner_남_94ce1364.png",
+            "Source": "sprite/로브/c_evil_double_edged/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "94cf1934dd8c5784fcd08981c37b2dc18276f892cb70efd4738f1e049575591f",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/94/c_papilio_ulysses_feather_94cf1934.png",
             "Source": "sprite/아이템/c_papilio_ulysses_feather.spr",
@@ -69607,6 +70727,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 90
+        },
+        {
+            "Hash": "94d555225b06013275ee0190fa345a8100881cbdc85f2e0f240bb2713193eb22",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/94/summoner_남_94d55522.png",
+            "Source": "sprite/로브/c_kyel_hyre_ulti_tw/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "94dac2750b383f767fceab49e945f24e55e7b95a638769e450786178f3223afa",
@@ -69967,6 +71095,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 15
+        },
+        {
+            "Hash": "95b72f5d41b33bfa2f62a6d625d34a195d068108e2a4779aa6029e628b8bcfbd",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/95/c_clb_bs_bag_f_doram_95b72f5d.png",
+            "Source": "sprite/로브/c_clb_bs_bag_f/c_clb_bs_bag_f_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "95b840f3646dcedebe3365cca1f74a50db2e580fa26668898f20588cca1c945c",
@@ -70777,6 +71913,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "9743c593d48301291974e4cc81d14111038cfdd11a1249624e75077c6b6820d1",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/97/summoner_남_9743c593.png",
+            "Source": "sprite/로브/c_ribbon_r_bag/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "97446ac6a523b60ef71f76568b19fa81a1a53d20e398ee0b4d36c6a8bfcb8dff",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/97/남_쌍자궁왕관_97446ac6.png",
             "Source": "sprite/악세사리/남/남_쌍자궁왕관.spr",
@@ -70961,6 +72105,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "97a735a34be2c98e974599049ce6f577f285f4d689b42114fa55a114e55d22da",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/97/summoner_남_97a735a3.png",
+            "Source": "sprite/로브/c_key_to_happiness/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "97b20bfbbd7355d460eb5d9e4eb25127ec582958c56747f2660513fb1319afc8",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/97/c골드샤워_97b20bfb.png",
             "Source": "sprite/아이템/c골드샤워.spr",
@@ -71017,6 +72169,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "97bcc52b118f352975c9b4241fd3a61221e369c3b93c6dd57ea762a2088192ad",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/97/summoner_남_97bcc52b.png",
+            "Source": "sprite/로브/c_clock_rod/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "97bf38f0025856d06681a16c6a8bc16d6d56d829bfe2010799deee2d91d19f3b",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/97/만능약_97bf38f0.png",
             "Source": "sprite/아이템/만능약.spr",
@@ -71047,6 +72207,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "97c4f1a5d61dd47d92fb0cb946b47a3ecb79398d964f6dfeebc5c6b3105ea1fe",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/97/summoner_남_97c4f1a5.png",
+            "Source": "sprite/로브/halloween_poring_bag/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "97cff6bb10287ab3cc0e2dd8bb83dd2a7f0920f10c021c61628e97a6c3b4fbae",
@@ -71455,6 +72623,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "985d9286208d7efe79dd48c73d82ffe4970c1feabd368b38161b0656bb11e596",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/98/프리스트_여_985d9286.png",
+            "Source": "sprite/로브/천사날개/여/프리스트_여.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "985fcc784f5cfe8856286525463dd0ce3adca719daf3e20f9c3e5634872c9f85",
@@ -72257,6 +73433,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "9a105d88cc0f750d80016ad69bfad8b3d46121e10d3a2502140d9968ad5d9023",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/9a/c_giant_white_rabbit_9a105d88.png",
+            "Source": "sprite/로브/c_giant_white_rabbit/c_giant_white_rabbit.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "9a1849c445add8e3c1690e83bbc389a4fdee9b71c853e58a18ad4adde37d8d53",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/9a/여_토끼머리띠_9a1849c4.png",
             "Source": "sprite/악세사리/여/여_토끼머리띠.spr",
@@ -72401,6 +73585,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "9a555ecf0e704c0bc1a79f5ceea1bfe2bd88dc24556bb4c1107dc09514faee85",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/9a/summoner_남_9a555ecf.png",
+            "Source": "sprite/로브/c_moonlight_bell/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "9a59274ddec42d3d3c622144c13c1623a6592969311c81c8fe5c7ca387e002c8",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/9a/저택의열쇠_9a59274d.png",
             "Source": "sprite/아이템/저택의열쇠.spr",
@@ -72487,6 +73679,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 26
+        },
+        {
+            "Hash": "9a83daae26a3fdfba267b9338d1329bcca25f93bc8aee68f7005657d266f153e",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/9a/summoner_남_9a83daae.png",
+            "Source": "sprite/로브/c_back_ribbon_bell_bu/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "9a87be637ee55160d75998dcd1232ce4d42d4ba124fe36ba9a4edde5b3afe2d3",
@@ -73209,6 +74409,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "9c27e2c62a6abb3779492692b5a3f9f18e9ba36863527ee2ee75f525f8ce962a",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/9c/summoner_남_9c27e2c6.png",
+            "Source": "sprite/로브/ru_bear_bag/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "9c2b8a6e13b8270351267fc7069acb02f3f168513a7f902b2acb21e9dabc7ac8",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/9c/winter_cookie_9c2b8a6e.png",
             "Source": "sprite/아이템/winter_cookie.spr",
@@ -73303,6 +74511,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 24
+        },
+        {
+            "Hash": "9c59ae7b67c999b3e357b630a67f83d7c4b84a4754433bf843c891922ac17e6a",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/9c/wing_of_angel_move_dg_doram_9c59ae7b.png",
+            "Source": "sprite/로브/wing_of_angel_move_dg/wing_of_angel_move_dg_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 154
         },
         {
             "Hash": "9c5babf7244e2443821d7a2d7e559b20f3e55dc3bfa689c362d10bdaeb23eed5",
@@ -73489,6 +74705,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "9cccd6f28fa1f2988dce731727bf13833134d0ba7dbbc02d860b73ccab365dc6",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/9c/summoner_남_9cccd6f2.png",
+            "Source": "sprite/로브/exe_backpack/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "9cce17d8232498aa6f626320b083e5e75853e78c395c01f3d8fd038f3a0864c8",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/9c/ra_clusterbomb_9cce17d8.png",
             "Source": "sprite/아이템/ra_clusterbomb.spr",
@@ -73671,6 +74895,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "9d2f29fdd53c8defec8686889768a71fdb9e6093aaa43ffe49b59136c4b39340",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/9d/summoner_남_9d2f29fd.png",
+            "Source": "sprite/로브/c_kings_twin_sword/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "9d2f9868e0b88efe3e115bd4850476267c3b45f21776acede1723831220c5c2e",
@@ -73865,6 +75097,14 @@
             "IndexedCount": 15
         },
         {
+            "Hash": "9d8c98d018eda6c46234bc984d5c712e329d152bf3081b78b412dc92e23e1a67",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/9d/가드_남_9d8c98d0.png",
+            "Source": "sprite/로브/천사날개/남/가드_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "9d8cddfb2a7511a133d8e31c565fafdefacc392d67ee0c12bbcc63dd234729ea",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/9d/아크비숍_남_1472_9d8cddfb.png",
             "Source": "sprite/인간족/아크비숍/아크비숍_남_1472.spr",
@@ -73951,6 +75191,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "9dc5c1b9a34f05c9cd6fbf670983e3405cf6d9d4f32e8c20bc59b6a189a1fc85",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/9d/summoner_남_9dc5c1b9.png",
+            "Source": "sprite/로브/우리엘의날개/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "9dc6a67a77a047bfeeb329e229d92b9b18136837374e28b0e6ae4af562351a72",
@@ -74849,6 +76097,14 @@
             "IndexedCount": 30
         },
         {
+            "Hash": "9f654e7097fb48e1662cf23f11218d0802f61287943076b4c7f8ce56fdccfaec",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/9f/summoner_남_9f654e70.png",
+            "Source": "sprite/로브/c_big_shuriken/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "9f68adc8e91587bffa2504f92d56b224e3a894617a955ef86583388edac3904f",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/9f/로자리_9f68adc8.png",
             "Source": "sprite/아이템/로자리.spr",
@@ -74871,6 +76127,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "9f6d68f2bc8442d629dd5494ced017ff26e2a4deb079f844357423434b65d2d4",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/9f/엔젤페더_doram_9f6d68f2.png",
+            "Source": "sprite/로브/엔젤페더/엔젤페더_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "9f79b2c54e8b97b40c300b7da538ad3e37a8d13d2f73b12c4cbb5e4abed9d756",
@@ -75993,6 +77257,14 @@
             "IndexedCount": 2
         },
         {
+            "Hash": "a1e4fe55922e206edc527751ab039b33f42e99311e070a98de8e276e38ef9ca8",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/a1/summoner_남_a1e4fe55.png",
+            "Source": "sprite/로브/c_qualifier_3rd/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "a1e87208f0adffa756ac0eb3d03323fb1d95a3524867344d8d0d8e1cbb84d9c0",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/a1/filir_h2_a1e87208.png",
             "Source": "sprite/homun/filir_h2.spr",
@@ -76167,6 +77439,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "a24d6dc4c07579daa76359314ccf024a20083d2853a984bc0083a26722371293",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/a2/summoner_남_a24d6dc4.png",
+            "Source": "sprite/로브/c_ninetail_tail/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "a24e332687d3ef9511f89e03ca772d8ac0ac9c89606b77bc256db2799679fe57",
@@ -76767,6 +78047,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 57
+        },
+        {
+            "Hash": "a3a648e18d02923413a10ca0839e6127859cdbd1841afc3f46cc4008d31a9d75",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/a3/집시_여_a3a648e1.png",
+            "Source": "sprite/로브/천사날개/여/집시_여.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "a3a87786039a2a2b268b8b94e9b38a5c00b116361482ee11a99765a76d9dc569",
@@ -77487,6 +78775,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 60
+        },
+        {
+            "Hash": "a50a501031658f504c30634d6ae2dc9dfe2c7cec2f37684e47a027993c8895a5",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/a5/summoner_남_a50a5010.png",
+            "Source": "sprite/로브/분홍큐피트날개/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "a5152a4461b8686b3fdb82c2e8cd48c766d7524248b74cc300d0ad13a3d7c3e7",
@@ -78617,6 +79913,14 @@
             "IndexedCount": 28
         },
         {
+            "Hash": "a7e02750ae2456c64c3971200402e4722df0042e62a2ad936fdbc17d18f252e5",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/a7/summoner_남_a7e02750.png",
+            "Source": "sprite/로브/c_big_ribbon_cloak/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "a7e05238a358b426f33929613608d144a4e5df01ad3b167b21a6a46f39f4153a",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/a7/anacondaq_a7e05238.png",
             "Source": "sprite/몬스터/anacondaq.spr",
@@ -78663,6 +79967,14 @@
             "HasIndex": true,
             "Rules": 1,
             "IndexedCount": 15
+        },
+        {
+            "Hash": "a802fd9218064e238702cc3b6755f6f92d91b47be090ff93fc50b81f5345bdbf",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/a8/kagerou_여_a802fd92.png",
+            "Source": "sprite/로브/blackcatbag/여/kagerou_여.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 7
         },
         {
             "Hash": "a8038293ee39826e7511b5d9fcc7e842bd8982aa25365f07c05a10a19a884360",
@@ -79249,6 +80561,14 @@
             "IndexedCount": 8
         },
         {
+            "Hash": "a956a1b67a0e52b1b93044c64a44389766aa50e017f87b123554c96ac19c2a73",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/a9/summoner_남_a956a1b6.png",
+            "Source": "sprite/로브/wingofheart/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "a957b875bc9a47af0583c3db35327a50f7671bd059b1cf3f0e8c5faf5a92ba8b",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/a9/geffen_mage_4_a957b875.png",
             "Source": "sprite/몬스터/geffen_mage_4.spr",
@@ -79553,6 +80873,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "a9f20cb619cf7a6441024c8662b58e8fe9acd564f978e0f3d129dea969eda6fc",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/a9/summoner_남_a9f20cb6.png",
+            "Source": "sprite/로브/c_leaf_umbrella/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "a9f455bd748e950eae1b2026632913aef8872a89b532370d8e28c6641b8b6337",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/a9/요리용쇠꼬챙이_a9f455bd.png",
             "Source": "sprite/아이템/요리용쇠꼬챙이.spr",
@@ -79583,6 +80911,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "aa0b96eb0f204ce5669c309b90fa7179e023517c98af0a48b1a890676b18ada9",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/aa/summoner_남_aa0b96eb.png",
+            "Source": "sprite/로브/c_demi_freyja_wing/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 154
         },
         {
             "Hash": "aa1266f29ecc0a0647514492f815086aee0c8620bc44d9897139cca13e6d7c4e",
@@ -80415,6 +81751,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 11
+        },
+        {
+            "Hash": "abd4ca7992e5b836928c644bc684b1ddc1fa5cba092db23c11e633553809e24d",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/ab/c_evil_druid_cross_doram_abd4ca79.png",
+            "Source": "sprite/로브/c_evil_druid_cross/c_evil_druid_cross_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "abd9ade55596da580efc90b9758509c704036e12bc68229d32e44e5de7c2b5b9",
@@ -81265,6 +82609,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "ad90d7fbfad50b5ee1e4697651263bd0be4129faf3b51d2157f4bf12a96c64c2",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/ad/summoner_남_ad90d7fb.png",
+            "Source": "sprite/로브/c_forest_s_vacation/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "ad92c4da94d23502363365593f762d7a9ef8e4adc30d74b0dcefa13794936b57",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/ad/c_ancient_dragon_spear_ad92c4da.png",
             "Source": "sprite/아이템/c_ancient_dragon_spear.spr",
@@ -81521,6 +82873,14 @@
             "IndexedCount": 54
         },
         {
+            "Hash": "ae154659c14d1f09ec957b3a636207450c2d8cd79cd377375bd8245db1aae25e",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/ae/summoner_남_ae154659.png",
+            "Source": "sprite/로브/c_nifl_bloom/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "ae197a5e39733686e0e39c94156ba77086be6f1a5de17e2c1fc1ebc711d9ccc1",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/ae/남_비기너마크_ae197a5e.png",
             "Source": "sprite/악세사리/남/남_비기너마크.spr",
@@ -81705,6 +83065,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "ae776e57ad74d9085cc62fd7d0c3c988b2e30a40074ac2b5e8a1aae55537ea68",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/ae/summoner_남_ae776e57.png",
+            "Source": "sprite/로브/c_dark_lord_cloak/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "ae79f5085270c511476a66fa171425d2cded1c10b2a3d464b49e91709880c863",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/ae/devil_ring_ae79f508.png",
             "Source": "sprite/아이템/devil_ring.spr",
@@ -81855,6 +83223,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 34
+        },
+        {
+            "Hash": "aeb6c8e8d726bf97a47e8a561867a2c021e6f6a90a8ea9b18ea04429e2014e1a",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/ae/summoner_남_aeb6c8e8.png",
+            "Source": "sprite/로브/c_cyber_rifle/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "aec432d37bf141e8c078551939f02edd344223f9b349614e34ca2062f807f66d",
@@ -82255,6 +83631,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "afb0af6a4bf305d1b65ebe09ff64fcf1e7bae12be72746f99712a3531e16b4a0",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/af/summoner_남_afb0af6a.png",
+            "Source": "sprite/로브/소악마날개/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "afb108c32bc1d262ecb7f756b61d5bf29b7658a0e63f3ac6d2125962029779e1",
@@ -83633,6 +85017,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "b2749cd3aa5310f1733ec4be3bf1506db6eb5427f4c5c121317d62400a09d45f",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/b2/summoner_남_b2749cd3.png",
+            "Source": "sprite/로브/c_traveller_bag/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "b2796a2880292d9d7df152c001b5700167f4f44cd3ce0ee458fdeb93951d3ced",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/b2/4_ep19_rgan_sr1_b2796a28.png",
             "Source": "sprite/npc/4_ep19_rgan_sr1.spr",
@@ -83825,6 +85217,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "b2d8443072db54264b64f6d0a6034df96307e0deccd71e59fef80c96a6b8fcb2",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/b2/summoner_남_b2d84430.png",
+            "Source": "sprite/로브/lop_bunny_cloak/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "b2d9ab3b059af2b3e12adba68a2f12ace21acc8ac9fe7079ace293f3734f4fc1",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/b2/nw_hasty_fire_in_the_hole_b2d9ab3b.png",
             "Source": "sprite/아이템/nw_hasty_fire_in_the_hole.spr",
@@ -83919,6 +85319,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 4
+        },
+        {
+            "Hash": "b3084a0ca2618506b27823151fdcc47efca52d5eb32fb20f699c75b383a98796",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/b3/소서러_남_b3084a0c.png",
+            "Source": "sprite/로브/천사날개/남/소서러_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "b3085be1d8aa95bc1b29459505ffeed23125f07c4f5d8edff2fcdfc7c8ce91da",
@@ -85489,6 +86897,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "b68075cf861f8d4424b9c434b03fbb06cca1f0979a39df8a5cda7cf055298ad6",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/b6/c_clb_bs_bag_gm_doram_b68075cf.png",
+            "Source": "sprite/로브/c_clb_bs_bag_gm/c_clb_bs_bag_gm_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "b680b7a2c67d57b6c9d87e45dd08d20b0e1b0945e93538e8647ce80a20923994",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/b6/ra_firingtrap_b680b7a2.png",
             "Source": "sprite/아이템/ra_firingtrap.spr",
@@ -86521,6 +87937,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "b89806baceceadee29874db339dead90d09ecde7946159e3c8c9226d287fa8f8",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/b8/wing_of_angel_move_bk_doram_b89806ba.png",
+            "Source": "sprite/로브/wing_of_angel_move_bk/wing_of_angel_move_bk_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 154
+        },
+        {
             "Hash": "b89870fe85cadb4afea4ad069ce78759ea9582a5586f082b18e84beccd2fb364",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/b8/불꽃얼음_b89870fe.png",
             "Source": "sprite/아이템/불꽃얼음.spr",
@@ -86564,6 +87988,14 @@
             "Hash": "b8b2397b9fa76eabe564b5e7d205c9b28027ec20b03d9c3bb7179d66197627b4",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/b8/남_세비지베베모자_b8b2397b.png",
             "Source": "sprite/악세사리/남/남_세비지베베모자.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
+            "Hash": "b8b9301b52822294e1bad6ed3daced97a6b68b0a7b9223413443b50b5cff44bb",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/b8/c_big_b_rabbit_doram_b8b9301b.png",
+            "Source": "sprite/로브/c_big_b_rabbit/c_big_b_rabbit_doram.spr",
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 9
@@ -86745,6 +88177,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "b92cb44cc407c938bacd43c3fc28389b0120c889175b171d7d55c36a9e4fa266",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/b9/summoner_남_b92cb44c.png",
+            "Source": "sprite/로브/c_elec_guitar_of_phen/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "b92dd624333fe7f8e8f7eb7f27dff2c08c1ed9a275e56b5e361495615c44d037",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/b9/원숭이인형_b92dd624.png",
             "Source": "sprite/아이템/원숭이인형.spr",
@@ -86839,6 +88279,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "b954dca890a9de2fac745d0d1fdc7b9b7af99d303db64c65115ad69a5b3a2a7e",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/b9/summoner_남_b954dca8.png",
+            "Source": "sprite/로브/stellar_gratia/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "b95d691ee588678848ed5ce324f9306ff2a0ae0fa233d24068ac1f11353d740a",
@@ -87977,6 +89425,14 @@
             "IndexedCount": 11
         },
         {
+            "Hash": "bbd45d7186ff2443abd6660c46aa048747ba34a9f00a3d5f6abbc1986968edc8",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/bb/summoner_남_bbd45d71.png",
+            "Source": "sprite/로브/striking_mikoshi/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "bbd764b584d1c0873a6882b2b8ba7d2a42df8c41da6e89d25e6b06d1a93e3db9",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/bb/신페코크루세이더_남_1531_bbd764b5.png",
             "Source": "sprite/인간족/신페코크루세이더/신페코크루세이더_남_1531.spr",
@@ -88415,6 +89871,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "bca8d211d3e43537d6d3190fe93d0ca1c0fb61963b0cecda463f91c4bda4ed32",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/bc/c_songkran_watergun_doram_bca8d211.png",
+            "Source": "sprite/로브/c_songkran_watergun/c_songkran_watergun_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "bcaa24bcf50359c03f11024fc48eeb150bc831921557b2c24d51db5698bd4b42",
@@ -89097,6 +90561,14 @@
             "IndexedCount": 48
         },
         {
+            "Hash": "be03ae04965a9dbfd8325ead2d5b4204f8bf21b2bc3d428e8326743bdf521298",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/be/summoner_남_be03ae04.png",
+            "Source": "sprite/로브/타락천사의날개/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "be044a30e911522bda633542f96fdd130090b35a8d31e20edf61c80574935c9f",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/be/cwhiteknight_be044a30.png",
             "Source": "sprite/몬스터/cwhiteknight.spr",
@@ -89295,6 +90767,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "be59688677b36e65c06935dc56bcfafdda23fbf72e7481572909c0eafddcffac",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/be/bow_on_the_back_doram_be596886.png",
+            "Source": "sprite/로브/bow_on_the_back/bow_on_the_back_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "be628ea6a996c8869eaef09dfb86458ea4cdbffdbf49b10bb36c08c0209cc1b0",
@@ -90209,6 +91689,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "c04fe9d4d6e39905ff50f024d094043b7525ebbcfbd57eec610a7a83379cb8b8",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/c0/c_guardian_wingdeco_doram_c04fe9d4.png",
+            "Source": "sprite/로브/c_guardian_wingdeco/c_guardian_wingdeco_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "c059d0eb72669f80111659b2c67f627131d8d35069305b16fba1663e9cd924ab",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/c0/영혼의숨소리_c059d0eb.png",
             "Source": "sprite/아이템/영혼의숨소리.spr",
@@ -90463,6 +91951,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "c0e6cc029b969af20cdfb767af30b7bb049b3d3586f1a8d025855dca91572319",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/c0/summoner_남_c0e6cc02.png",
+            "Source": "sprite/로브/c_20th_anniversary_wing/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 154
         },
         {
             "Hash": "c0e8ad98bed409eebb4f6e09429c24ca9c4d06e445a7aef82c8130acf21fce59",
@@ -90889,6 +92385,14 @@
             "IndexedCount": 12
         },
         {
+            "Hash": "c1dcb2147b51780a2533a0fe77757acf41d2fab2c6d99f43c81bf8e3ba551a8d",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/c1/summoner_남_c1dcb214.png",
+            "Source": "sprite/로브/c_bloody_wing/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "c1e61bcebcfee7b522ff225568eeaca4137052013603f1daef89b39c4d465b14",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/c1/immotal_corps_c1e61bce.png",
             "Source": "sprite/몬스터/immotal_corps.spr",
@@ -91071,6 +92575,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "c251136de4172106012ae9d4b18d17ee6ce7f7072d37a4c716503071e33fc5d4",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/c2/summoner_남_c251136d.png",
+            "Source": "sprite/로브/c_poring_swim_ring/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "c25216d8c1d7130bb9fa0d7b0312f0a9a6e5c397e8865b51cc4e2f9daf2038a3",
@@ -92337,6 +93849,14 @@
             "IndexedCount": 46
         },
         {
+            "Hash": "c4b229f8fbeb5334ff2194a379e4250594507382a33eacf9d1c077bb7e1efdd5",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/c4/summoner_남_c4b229f8.png",
+            "Source": "sprite/로브/c_flower_wing/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "c4b25b89fc163165dc67d8bb3ea47c7fa05f5d53789f8106578d1285780b1dd5",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/c4/evt_20th_bronze_c4b25b89.png",
             "Source": "sprite/아이템/evt_20th_bronze.spr",
@@ -92561,6 +94081,14 @@
             "IndexedCount": 42
         },
         {
+            "Hash": "c529f3bc7553c5cc35f500ddad093bc2a49e9fb22da4c558f140cc5124fc934f",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/c5/summoner_남_c529f3bc.png",
+            "Source": "sprite/로브/c_vietnam_flag_hood/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "c530fde331f15f342f5b247ced51f7713ff0a0ed3968bbf794c6545f3a23248f",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/c5/sp_souldivision_c530fde3.png",
             "Source": "sprite/아이템/sp_souldivision.spr",
@@ -92719,6 +94247,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 38
+        },
+        {
+            "Hash": "c58b397777b22ea9ccf4f6f73425e6d03d414131da296bb6fe6faf3a7365ac8d",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/c5/summoner_남_c58b3977.png",
+            "Source": "sprite/로브/c_katana_tengumaster/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "c58d598c2a1eaa9b138e957e7d8f94d3a27971ed31358984548159ad3e62fd27",
@@ -94441,6 +95977,14 @@
             "IndexedCount": 41
         },
         {
+            "Hash": "c8f429a2109113e3fb41f71829e7bde7ff68bac682ac896f5051e55154ca7835",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/c8/c_fh_lostwing_doram_c8f429a2.png",
+            "Source": "sprite/로브/c_fh_lostwing/c_fh_lostwing_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "c8f47140c42708761c6d0809952d5298a47977086946a2b720054e4ace1645b7",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/c8/상인_여_검_검광_c8f47140.png",
             "Source": "sprite/인간족/상인/상인_여_검_검광.spr",
@@ -95527,6 +97071,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "cb40654449def0fd81fcd128beee5cf1c5f465374edd522eb1f61b659deb6263",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/cb/kagerou_남_cb406544.png",
+            "Source": "sprite/로브/c_clb_kp_dms/남/kagerou_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "cb40658b703c00f40127b2db9277c13c6f07b1af58e4cb2cde846327624c5adc",
@@ -96999,6 +98551,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 12
+        },
+        {
+            "Hash": "ce970070e5f4ba7574efb414dbcb431feb236c826ced97a8ce7821702170755a",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/ce/summoner_남_ce970070.png",
+            "Source": "sprite/로브/c_mechanical_butterfly/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "ce9c1de579fbfed489d305c41dae680dc6eaf8cf9defd2811603f72a250adce6",
@@ -98769,6 +100329,14 @@
             "IndexedCount": 5
         },
         {
+            "Hash": "d28cbb0f5aec6c4eb5290404966c811b54e27a5fc77172ef9aa93616bdd9cc71",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/d2/summoner_남_d28cbb0f.png",
+            "Source": "sprite/로브/c_giantcatbag_jp_bl/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "d28f501dd69d20aea13e579c86bb5cf7e40bffc8ea08fe5e7e8e14b0d7190f30",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/d2/sh_howling_of_chul_ho_d28f501d.png",
             "Source": "sprite/아이템/sh_howling_of_chul_ho.spr",
@@ -99817,6 +101385,14 @@
             "IndexedCount": 15
         },
         {
+            "Hash": "d4cb0d61b46293283afcf4289ee2f5ee030825ae16f49cbdeb11ae26f838ea0f",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/d4/summoner_남_d4cb0d61.png",
+            "Source": "sprite/로브/c_mainspring_screw/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "d4cc7bf720270af3e98865f331890248d18764c573fc7f5529e63889b42c044b",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/d4/white_bird_rose_d4cc7bf7.png",
             "Source": "sprite/아이템/white_bird_rose.spr",
@@ -100185,6 +101761,14 @@
             "IndexedCount": 49
         },
         {
+            "Hash": "d59c0d5a1a1a4117e1a97642ad6174cd68c3c495beedf5c31273d22a7f887551",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/d5/summoner_남_d59c0d5a.png",
+            "Source": "sprite/로브/c_giant_white_rabbit/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "d59ca8277b888f76a2b116dad38b16627148cc542814ebcb5ba9426389379d18",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/d5/만능카탈로그골드_d59ca827.png",
             "Source": "sprite/아이템/만능카탈로그골드.spr",
@@ -100391,6 +101975,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "d622f7232ee232a4110d336d427a1cbb5687fb33198eca9b3080760fcec00160",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/d6/c_school_bag_pu_doram_d622f723.png",
+            "Source": "sprite/로브/c_school_bag_pu/c_school_bag_pu_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "d62b9b307530a39bc906f76f579ced47234fe7b62c291c451360771acae91725",
@@ -101441,6 +103033,14 @@
             "IndexedCount": 17
         },
         {
+            "Hash": "d847353149bf01057cbd460e225d3b6de6a73f86ac9f86df46c5e749124b461b",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/d8/summoner_남_d8473531.png",
+            "Source": "sprite/로브/c_baphomet_scythe/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "d84a17498ed00743e25137dc7c1f0bba87916ae2973babaade37d4e63c285e5d",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/d8/4_f_dogtraveler_d84a1749.png",
             "Source": "sprite/npc/4_f_dogtraveler.spr",
@@ -101471,6 +103071,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "d85caa854d913e512af4b209532b0c4d19d9554dff7e1ed21522ff3218372e0a",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/d8/summoner_남_d85caa85.png",
+            "Source": "sprite/로브/c_blue_rose_garden/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "d861e8be2c5010ff2228deae1a14fcf73e59de180d994489ea60140a7d8f3e5b",
@@ -102721,6 +104329,14 @@
             "IndexedCount": 4
         },
         {
+            "Hash": "db1a1e39ddbbbaf19d922885ecb2fa7649747ce4e8ed1012ffcbbf424132d710",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/db/summoner_남_db1a1e39.png",
+            "Source": "sprite/로브/c_lapine_wing/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "db1a29a9a837308bbefe3d1d9ff2d0b350aa067eb8614f69194f6e460c62db1d",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/db/guild_skill_flag_db1a29a9.png",
             "Source": "sprite/몬스터/guild_skill_flag.spr",
@@ -102823,6 +104439,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "db53cd7c78f4aaa25f37c9e3d4018084c8eb6db56c07bba1792581c70d72a0ec",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/db/summoner_남_db53cd7c.png",
+            "Source": "sprite/로브/c_heart_stick_choco/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "db549297af2e9508489c89309a56bbc557f1d99520d26e9ddb0dadcfbce5d0b0",
@@ -103121,6 +104745,14 @@
             "IndexedCount": 32
         },
         {
+            "Hash": "dc0dea1823fa58bbaa2f816dd4988bddbf41e92b897470976ade2ea88abecac2",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/dc/summoner_남_dc0dea18.png",
+            "Source": "sprite/로브/c_stylish_arch_quiver/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "dc0df97e4e33470c8e97824c807dcb94a1adb2874b2368272e3c4fe4b71f0e6e",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/dc/so_summon_tera_dc0df97e.png",
             "Source": "sprite/아이템/so_summon_tera.spr",
@@ -103281,6 +104913,14 @@
             "IndexedCount": 71
         },
         {
+            "Hash": "dc9321c09d63592bda792a140fce3a815fd4bbe85e251ef56912e4fd4184d713",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/dc/summoner_남_dc9321c0.png",
+            "Source": "sprite/로브/c_i_samurai_sword/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "dc9604bbfa53eb0558822d9156b5efc2a482b9bc275178206e1ec8ea65ed48cc",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/dc/남_놀라운가발_dc9604bb.png",
             "Source": "sprite/악세사리/남/남_놀라운가발.spr",
@@ -103431,6 +105071,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "dccc8bd38f4761bd843ce9811e00dae45564af53ad9636b4f9e9035753627cc7",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/dc/summoner_남_dccc8bd3.png",
+            "Source": "sprite/로브/c_blueangeling_wing/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "dccd33092ae122d869d25082730219ba8b4afb6dead88f2f414a21c6e24da422",
@@ -103761,12 +105409,28 @@
             "IndexedCount": 12
         },
         {
+            "Hash": "dd82c72b3b92c00be99630680b7f17c0a377372cbded209cbf127d98dc2ed27d",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/dd/summoner_남_dd82c72b.png",
+            "Source": "sprite/로브/giantcatbag/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "dd85b650d4c952128a8832f7eaa4313364d0eb7e103bc681737146fb0dbd0fca",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/dd/여_belka_strelka_dd85b650.png",
             "Source": "sprite/악세사리/여/여_belka_strelka.spr",
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 81
+        },
+        {
+            "Hash": "dd9807ce79d6a8521f406313171e3099ad04ded703d3fa505d6f478979905863",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/dd/summoner_남_dd9807ce.png",
+            "Source": "sprite/로브/c_giant_teddy_bear/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "dd98b0bfe81513150ceee7a82e2b7af8e72d26c45cea7c552ba225ecc0ff8d21",
@@ -103945,6 +105609,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "dddbd0222b663c4aa93cf31733dca9360db8663e847397740ef32038d3d7ecaf",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/dd/wing_of_angel_move_dddbd022.png",
+            "Source": "sprite/로브/wing_of_angel_move/wing_of_angel_move.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 154
+        },
+        {
             "Hash": "dde0c9b25c99daaac18bc7dda7a0bd5cbe6fa76b5c5a515c161ff3a042a56da4",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/dd/loli_ruri_dde0c9b2.png",
             "Source": "sprite/몬스터/loli_ruri.spr",
@@ -103967,6 +105639,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "dde85216b39578ac4116cd679ef55cfbf299b3becd96a16f4d2ee6472bf3a4c0",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/dd/민스트럴_남_dde85216.png",
+            "Source": "sprite/로브/c_surf_board/남/민스트럴_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "dded90554ddc58841be3a8d749311a113483d613a07de0f675f1f3d56809220c",
@@ -105137,6 +106817,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "e0b31dac27b19da918412a0c98e8683347b837099ab0e3f00dba6c4bbd440de9",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/e0/wing_of_angel_move_gr_doram_e0b31dac.png",
+            "Source": "sprite/로브/wing_of_angel_move_gr/wing_of_angel_move_gr_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 154
+        },
+        {
             "Hash": "e0b4243eb869b09e7de799cfb189b3d1f9e74a44abdcbc91173ce862e11d47b5",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/e0/cardinal_riding_여_1_e0b4243e.png",
             "Source": "sprite/인간족/몸통/여/costume_1/cardinal_riding_여_1.spr",
@@ -105609,6 +107297,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "e16da58be1d6f73f7eee964d649e76afd4150cf51d5ce8e4e588c05c085138fb",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/e1/kagerou_남_e16da58b.png",
+            "Source": "sprite/로브/천사날개/남/kagerou_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "e16dce9e847453ccff8f5319fa18e63b3a5630835d3b7a1b1e0f47121fe96757",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/e1/c_poring_swim_ring_e16dce9e.png",
             "Source": "sprite/아이템/c_poring_swim_ring.spr",
@@ -105647,6 +107343,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "e17c61e226fcfb0882286b2e3cd5bf8c9b144f9867ecf67a5047c76390a3efe2",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/e1/클라운_남_e17c61e2.png",
+            "Source": "sprite/로브/c_pitaya_g_bag/남/클라운_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "e17d326b9fd13e26622ea5daa874bc4786f57d14fa6f974910187f8271409280",
@@ -105911,6 +107615,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "e214d3badb01196396fb398d3e10ac299d5d4fa0e97a0022bebdd1015fb735b8",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/e2/프로페서_남_e214d3ba.png",
+            "Source": "sprite/로브/기린의날개/남/프로페서_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "e216f3b356b7c554d058cb5a25d0165424b4a74b6e71cdccba3e558ad9c314a0",
@@ -106673,6 +108385,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "e37bb4af1b975563b9a3c3fb1a56ba99327c2c5d611f3fe99d56ec014d2408d9",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/e3/summoner_남_e37bb4af.png",
+            "Source": "sprite/로브/c_hooked_straw_hat/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "e37eb2905dd2710fbedda26302eba738eae0babd3cb30ddfdc0acf0006011f8c",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/e3/여_임프모자_e37eb290.png",
             "Source": "sprite/악세사리/여/여_임프모자.spr",
@@ -106943,6 +108663,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "e40535e0f8fe9540cb35f446c921956eac23b67134e38403715c4b2ee3ae61c7",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/e4/summoner_남_e40535e0.png",
+            "Source": "sprite/로브/c_jp_ev19/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "e40fd77645203cb6fda2f434bc82bf66e7cf30092d9d2c4a4cf58c9caf46353a",
@@ -107545,6 +109273,14 @@
             "IndexedCount": 3
         },
         {
+            "Hash": "e54abdeb798796da3e02e4a4382c025f325d493adf9ad8a78ddb8848a56f98f4",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/e5/summoner_남_e54abdeb.png",
+            "Source": "sprite/로브/요정의파란날개/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "e54c8af60f88cbd32f8237a89445a981214af36eae4765d8d04f53278fb73984",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/e5/강력접착제_e54c8af6.png",
             "Source": "sprite/아이템/강력접착제.spr",
@@ -107831,6 +109567,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "e5ee273e35854c13187712f6e89b694208160a464de0b8c4a0e2477d7a3b2b53",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/e5/summoner_남_e5ee273e.png",
+            "Source": "sprite/로브/c_blessed_veil/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "e5fd61550dbff2204a04dd585c7383e04b9fcfffff657c68041cc3ba9dbaae64",
@@ -108193,6 +109937,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "e6be037ab608ce56f9e22c1803a75d18fc275a38a540e10459e8055f873823a2",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/e6/summoner_남_e6be037a.png",
+            "Source": "sprite/로브/c_valkyrie_wing/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "e6c1b2ca618de90012c9d7c2f15034bd5e6e825ec68554872a578c92159021bb",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/e6/생선의꼬리_e6c1b2ca.png",
             "Source": "sprite/아이템/생선의꼬리.spr",
@@ -108207,6 +109959,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "e6cffae477c9a8af6b0aa4f85d414d89d360822b86f79ad10cfe7072e9932b7b",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/e6/kagerou_남_e6cffae4.png",
+            "Source": "sprite/로브/c_qualifier_2nd/남/kagerou_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 154
         },
         {
             "Hash": "e6d1eb71bae03a439426337b12f0bf9c34cf1cd494c922930208a9aa95635c76",
@@ -108239,6 +109999,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 16
+        },
+        {
+            "Hash": "e6e180a3205426ffb835c533d3acc451048a4bf2dc67801575f19bb6c0fcfc91",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/e6/summoner_남_e6e180a3.png",
+            "Source": "sprite/로브/c_g_daehyon_sword_tw/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "e6e443d62e142d36f8228ae5611fc7ab4e1dc4ca81acfc978c58ea8294888da5",
@@ -108831,6 +110599,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "e835bb89e80dd1a80013b90f4fcad4f3306dbc464a065b15cb6076b297afe25d",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/e8/summoner_남_e835bb89.png",
+            "Source": "sprite/로브/c_phaya_ploeng_suriyan/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 154
         },
         {
             "Hash": "e83a441368dec6e88b4c14e5b239048131a76aad6a70b7b628f3b9c11c8fbf25",
@@ -109825,6 +111601,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "e9eb36c453f40da9704cc69f8076389f07520245bd4aa7775fcba6262fa88eb9",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/e9/summoner_남_e9eb36c4.png",
+            "Source": "sprite/로브/c_hemel_sword/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "e9edf1f1118bfc7c654e9e71ac77e70ed0bbe47b9c47af5dd5daa43e38de936a",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/e9/pitman_e9edf1f1.png",
             "Source": "sprite/몬스터/pitman.spr",
@@ -110025,6 +111809,14 @@
             "IndexedCount": 3
         },
         {
+            "Hash": "ea445e8fe6be1fd45588e9e5b8385de3ffd3e28557201674dd6a814398e03918",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/ea/summoner_남_ea445e8f.png",
+            "Source": "sprite/로브/wings_of_raguel/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "ea4c118033ef791abb12dc3055c25ed82ed8149d3462f2510e050ca91d7fd785",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/ea/남_s_circlet_of_time_ea4c1180.png",
             "Source": "sprite/악세사리/남/남_s_circlet_of_time.spr",
@@ -110055,6 +111847,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "ea5be24ec0d13f8a0f334ebefebd8daab86d83812bf57ff21d808eb0f441600b",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/ea/summoner_남_ea5be24e.png",
+            "Source": "sprite/로브/c_nydhog_rumor/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "ea61022354cc7e6934eda7f2b2a2abd0b606e15ad20ba73a0abd9630b380c663",
@@ -111201,6 +113001,14 @@
             "IndexedCount": 159
         },
         {
+            "Hash": "ec9dbc77337f7708e2aba08f0bc81729d20277dfe113a7fb9d1b85b87ec398d8",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/ec/c_pitaya_b_bag_doram_ec9dbc77.png",
+            "Source": "sprite/로브/c_pitaya_b_bag/c_pitaya_b_bag_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "eca194c915189afc58a38ab109ae5640448a49b6649a651edf37825936dfd964",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/ec/디바로브_eca194c9.png",
             "Source": "sprite/아이템/디바로브.spr",
@@ -111841,6 +113649,14 @@
             "IndexedCount": 5
         },
         {
+            "Hash": "edfe212f829fdcb83d6eb81e61c9516566b3754a891775e7da5672198fc3b167",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/ed/c_loli_ruri_moon_b_doram_edfe212f.png",
+            "Source": "sprite/로브/c_loli_ruri_moon_b/c_loli_ruri_moon_b_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "edff1b8c750c68bda1e5ad0d2f79d682f8a92289296960c97651e12effb73ae5",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/ed/강화파츠포신_edff1b8c.png",
             "Source": "sprite/아이템/강화파츠포신.spr",
@@ -111903,6 +113719,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "ee1cafe6bdde5b2477f47aa9d10d4e33284abbafd4a7d91c0670f8a5470a7466",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/ee/summoner_남_ee1cafe6.png",
+            "Source": "sprite/로브/천사날개/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "ee24476bf5931bc65c4b11666002757e6da45c8f8245f51f5b29023cd3805bee",
@@ -112745,6 +114569,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "eff26777d8072332059570f8a0661073ce74e53c98b007bb3e0e83e288b93dc2",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/ef/kagerou_남_eff26777.png",
+            "Source": "sprite/로브/c_big_ribbon_cloak_wh/남/kagerou_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "eff5c9ec929b295e7469ea844d61ed5d0c4bac399f5d5f1ed1953af31767a6f1",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/ef/남_보이타타모자_eff5c9ec.png",
             "Source": "sprite/악세사리/남/남_보이타타모자.spr",
@@ -113161,6 +114993,14 @@
             "IndexedCount": 58
         },
         {
+            "Hash": "f108a967e4800e161587a6130322d04700748984ea035597eef533a2a72c499a",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/f1/summoner_남_f108a967.png",
+            "Source": "sprite/로브/c_big_lollipop/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "f10f52f63ecf5dcd5a43703be66068a08ffb8c1c0e18b6853f81bb20f88a1e7e",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/f1/강화부츠_f10f52f6.png",
             "Source": "sprite/아이템/강화부츠.spr",
@@ -113471,6 +115311,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "f1d9e9d0c3e973d71bcfe36e90c7cea488bb16dc492863d2cc38134575f1fe8c",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/f1/summoner_남_f1d9e9d0.png",
+            "Source": "sprite/로브/행복의날개/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "f1da39b81d17cc61a8fd8b59a5dbc6b480967b302f3e798047b2be7b5249291b",
@@ -113959,6 +115807,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "f32aeac43ac6f05d72cd8410f7a2023e74f10f32d87af4d3cd896b7a4a201e52",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/f3/summoner_남_f32aeac4.png",
+            "Source": "sprite/로브/c_soldier_backpack/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "f32febc10f8df9e41928e2a44f36874807c751ef2936eac5ce75936000b1fdf7",
@@ -115145,6 +117001,14 @@
             "IndexedCount": 2
         },
         {
+            "Hash": "f5c4e1b99b86b7be42b032949beacf3b15351a3415aeab75f4e31ee289e7cd8e",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/f5/summoner_남_f5c4e1b9.png",
+            "Source": "sprite/로브/c_samba_carnival/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "f5c50d2271451126a57f51195143a31c402f81daf240d4348ade7bff1f4c873d",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/f5/grace_knuckle_suit_f5c50d22.png",
             "Source": "sprite/아이템/grace_knuckle_suit.spr",
@@ -115785,6 +117649,14 @@
             "IndexedCount": 38
         },
         {
+            "Hash": "f70db30b42abf21f2a2b13e93bba8c1a3aca285683da5c1bb338a54f997aea13",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/f7/summoner_남_f70db30b.png",
+            "Source": "sprite/로브/c_clutch_bouquet/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "f7107c9378799f5d873dd031c3efb5133bf1ce76a252e05be692b4b3e2282c9d",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/f7/남_c_muka_sombrero_f7107c93.png",
             "Source": "sprite/악세사리/남/남_c_muka_sombrero.spr",
@@ -115911,6 +117783,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "f73fb596d6e51fc27748ccca8b379558d5ade1c1cdac3d19729d00a95ae83856",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/f7/summoner_남_f73fb596.png",
+            "Source": "sprite/로브/backside_ribbon_bell/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "f743f29bdf71ad180aecf0bfad6c5139be4f23d6b1b02d294d9db09286041690",
@@ -116553,6 +118433,14 @@
             "IndexedCount": 50
         },
         {
+            "Hash": "f867e27329d3abcf1ef5668ca4c0773977a9d2b73b86bcd61aceda5151a2123d",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/f8/summoner_남_f867e273.png",
+            "Source": "sprite/로브/c_lunatic_bag/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "f873e15e941304ddbb7baa70594f1bbf5a4ad97f084a187145551fe6dd8a0744",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/f8/ht_sandman_f873e15e.png",
             "Source": "sprite/아이템/ht_sandman.spr",
@@ -117057,6 +118945,14 @@
             "IndexedCount": 2
         },
         {
+            "Hash": "f95a6adb1b8fac8fadfa0bdc2661689b1fa92ce0ba4b1e59558ec1758dbb099f",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/f9/summoner_남_f95a6adb.png",
+            "Source": "sprite/로브/c_melody_wing/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "f95caf6cb0ff58a5f98e1b981debe88d17f5c5f2b08cd33b1e70d7bd2a630eaf",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/f9/연금술사_남_1216_f95caf6c.png",
             "Source": "sprite/인간족/연금술사/연금술사_남_1216.spr",
@@ -117111,6 +119007,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "f988c4ddf1b9b68430915cd718663513fd0a03d0706efac608e23e7a4ecd2882",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/f9/summoner_남_f988c4dd.png",
+            "Source": "sprite/로브/thanatos_sword/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "f989f33ae588cfed25deb01a49b1e51c661a59f73203d810c1e10f9e5b40808c",
@@ -117577,6 +119481,14 @@
             "IndexedCount": 14
         },
         {
+            "Hash": "fa788d3b0f2591d08b1de90d1f4106c9543d6c9dfbca6dc7429491bcbf029326",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/fa/summoner_남_fa788d3b.png",
+            "Source": "sprite/로브/c_jp_ev17/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
+        },
+        {
             "Hash": "fa795f8188e2ae82912268b2e221453f1d62255985028acf0594dd001e8652b4",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/fa/adulter_f_knuckle_fa795f81.png",
             "Source": "sprite/아이템/adulter_f_knuckle.spr",
@@ -117951,6 +119863,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 5
+        },
+        {
+            "Hash": "fb82ba0c4170255dd6e4a2f9fe8b42dd627470b47b04dfe26d812f1f91b3c60c",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/fb/summoner_남_fb82ba0c.png",
+            "Source": "sprite/로브/c_muranyasa/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "fb83b2af6e0bedecf8ee0ba7ebf609baf544bf4e565b2463935a946b42d7e960",
@@ -119721,6 +121641,14 @@
             "IndexedCount": 10
         },
         {
+            "Hash": "ff38ed59dd82c8b816111e5f109d4b56bb4995b9e5118d73352f80a26918ee4a",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/ff/c_galapago_aquarium_doram_ff38ed59.png",
+            "Source": "sprite/로브/c_galapago_aquarium/c_galapago_aquarium_doram.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 154
+        },
+        {
             "Hash": "ff3a865c9e7177372740a6b595da8e4733bf215d5d520ab4414ae33865a651e5",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/ff/39_남_ff3a865c.png",
             "Source": "sprite/인간족/머리통/남/39_남.spr",
@@ -120031,6 +121959,14 @@
             "HasIndex": false,
             "Rules": 1,
             "IndexedCount": 1
+        },
+        {
+            "Hash": "fffa38dc3566abe18f6ccfcb7cb437f7f84564f2096a7e18a81e182700b89577",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/ff/summoner_남_fffa38dc.png",
+            "Source": "sprite/로브/c_triple_ice_cream/남/summoner_남.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 9
         },
         {
             "Hash": "fffa4a8e6238f26efa9ee429203e59a516fd0ae1e58c76fe4835805fd12df659",
