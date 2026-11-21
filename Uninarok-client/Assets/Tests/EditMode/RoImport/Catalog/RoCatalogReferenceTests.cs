@@ -104,19 +104,22 @@ namespace Uninarok.RoImport.Tests.Catalog
 
         // ---- T7.3: bodies, heads, palettes, weapons ----
 
-        [Test, Category(CatalogTestFiles.Category), Ignore("blocked T7.3: cloth palette names differ from body names (summoner = 묘족), awaiting the owner's palette-name table")]
+        // D23 (owner, T7.3): the summoner's cloth palettes are named 묘족 in the client, not after its body file, so for now it
+        // has none; the novice and the knight on peco keep theirs.
+        [Test, Category(CatalogTestFiles.Category)]
         public void NoviceMale_KnightOnPecoFemale_SummonerMale_ReturnTheirBodies_WithPalettes()
         {
-            foreach (var (job, sex, file) in new[]
+            foreach (var (job, sex, file, palettes) in new[]
                      {
-                         (PlayerJob.JOB_NOVICE, M, "sprite/인간족/몸통/남/초보자_남.asset"),
-                         (PlayerJob.JOB_KNIGHT2, F, "sprite/인간족/몸통/여/페코페코_기사_여.asset"),
-                         (PlayerJob.JOB_SUMMONER, M, "sprite/도람족/몸통/남/summoner_남.asset"),
+                         (PlayerJob.JOB_NOVICE, M, "sprite/인간족/몸통/남/초보자_남.asset", true),
+                         (PlayerJob.JOB_KNIGHT2, F, "sprite/인간족/몸통/여/페코페코_기사_여.asset", true),
+                         (PlayerJob.JOB_SUMMONER, M, "sprite/도람족/몸통/남/summoner_남.asset", false),
                      })
             {
                 var body = Lookup(new RoCatalogLookupRequest { Mode = RoCatalogLookupMode.BodyClass, Job = job, Sex = sex });
                 Assert.That(AssetDatabase.GetAssetPath(body.Animation), Is.EqualTo(Art + file), job.ToString());
-                Assert.That(body.Description, Does.Not.Contain(" 0 palettes"), $"{job}: a cloth palette applies");
+                if (palettes) Assert.That(body.Description, Does.Not.Contain(" 0 palettes"), $"{job}: a cloth palette applies");
+                else Assert.That(body.Description, Does.Contain(" 0 palettes"), $"{job}: no palette for now (D23)");
             }
         }
 
