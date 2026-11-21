@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Approved |
+| **Status** | Implemented (2026-11-21) |
 | **Created** | 2026-11-19 |
 | **Owner** | Jhonnatan |
 | **Depends on** | [SPEC-0007](../0007-spr-act-pal-sprites/spec.md) (converting one sprite) |

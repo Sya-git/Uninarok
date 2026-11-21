@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Approved (owner, 2026-11-20) |
+| **Status** | Implemented (2026-11-21; approved by the owner 2026-11-20) |
 
 **How to use this file**
 - Start only when SPEC-0007 is implemented (it is) and its converter entry points are available (`RoImportContext.Sprite(act, spr, options)`, `RoPaletteConverter`). Work on branch `feature/0008-sprite-catalog`.
@@ -181,5 +181,6 @@ Chosen in T0.4 (2026-11-20, from the data set and the decompiled tables):
 - [x] **T7.5** Manual checks (plan §6): each acceptance lookup through `RoCatalogLookupWindow` compared by the owner with the reference viewer (poring, the three bodies, hair 1 with a palette, a garment on a knight and a summoner, the weapon of item 1201 with its trail, a hidden weapon while walking, item 501, emote 0, cart 1, skill 5, item 2220); the project window shows one folder per category. Save images or recordings as evidence; update the Candidate marks in `sprite-catalog.md` (emote index, item-id order) to Confirmed or Open. (FR-1 to FR-8, FR-11)
   *Done when:* the owner confirms each lookup (or each difference is recorded in `plan.md` Decisions or `BACKLOG.md`).
   *Result (T7.5, 2026-11-21):* the owner confirmed all 15 checks against the reference viewer: `evidence/t7.5-review.md` (each lookup, the file it resolves to, its image) and `evidence/t7.5-contact-sheet.png`. The black border the owner saw around the red potion and the Bash icon came from the first evidence images, not the import: the transparent pixels of the SPR (palette index 0) are exactly the alpha-0 pixels of the imported sheets, 0 mismatches. `sprite-catalog.md`: the emote index is Confirmed; the item-id order is Confirmed for the files and Open against the server's look packets (R6). The project window shows one folder per category under `catalog/`.
-- [ ] **T7.6** Close: verify the success criteria of spec §5 (lookups resolve to the files the original client uses; full import with per-category numbers recorded; texture memory target set by the owner), fill the traceability table of `plan.md` §10 with the passing tests and recorded evidence, set the statuses (spec and plan `Implemented`, this file `Implemented`), move leftovers to `docs/specs/BACKLOG.md`. (FR-1 to FR-12)
+- [x] **T7.6** Close: verify the success criteria of spec §5 (lookups resolve to the files the original client uses; full import with per-category numbers recorded; texture memory target set by the owner), fill the traceability table of `plan.md` §10 with the passing tests and recorded evidence, set the statuses (spec and plan `Implemented`, this file `Implemented`), move leftovers to `docs/specs/BACKLOG.md`. (FR-1 to FR-12)
   *Done when:* the full test groups pass (reported), every FR has evidence in `plan.md` §10, and the statuses are set.
+  *Result (T7.6, 2026-11-21):* spec §5: the reference lookups resolve to the client's files (12 `RoCatalogReferenceTests` pass; the owner confirmed all 15 checks, T7.5); the full import is done with per-category numbers in `plan.md` §9; the texture-memory target is set by the owner (D24: as imported, the run-time budget belongs to SPEC-0009). 348 EditMode tests pass, 0 failed, 0 skipped, and the PlayMode test passes. Traceability filled (`plan.md` §10), statuses `Implemented`, leftovers in `BACKLOG.md`.

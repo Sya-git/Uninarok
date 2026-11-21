@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [spec.md](spec.md) (SPEC-0008, approved 2026-11-20) |
-| **Status** | Approved (owner, 2026-11-20) |
+| **Status** | Implemented (2026-11-21; approved by the owner 2026-11-20) |
 | **Audience** | Architects, senior developers, AI agents |
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. Where each table, folder and file pattern lives comes from [sprite-catalog.md](sprite-catalog.md) (normative for its topic; updated in the same commit as the code that uses it). Converting one sprite (sheets, animations, palettes, the player) is [PLAN-0007](../0007-spr-act-pal-sprites/plan.md); shared import rules (paths, source, ledger, results, batch, menu) are [PLAN-0002](../0002-ro-import-foundation/plan.md). This plan adds the layer above them: **ids and names → game objects → the sprites SPEC-0007 already converts**.
@@ -533,6 +533,7 @@ Satisfies every FR. EditMode NUnit. Data-dependent tests are `[Category("NeedsDa
 | D16 (owner, 2026-11-20) | Lookups are O(1) at run time: dictionaries built once when an index is loaded and lazily when an equipment entry first resolves; equipment slots hold `SpriteAnimationReference` only (no `Still`), the weapon trail is a parallel array that is empty for other kinds | Binary search and linear scans (cheap but not O(1)); `SpriteRef` in every slot (two reference objects per slot, about 300 bytes, half unused); a dense array by id (only `PlayerJob` is dense enough) |
 | D17 (T2.2, 2026-11-20) | A bare unknown name in a value is `nil` and a positional `nil` leaves a hole, the Lua semantics the client runs with: `monster_size_effect_new.lub` line 3253 has `MonsterEff = { EF_LEVEL99_RED }` (no `EFFECT.` prefix), which the client reads as an empty effect list. A field of an unknown name (`jobtbl.JT_X` without `jobtbl`) is still rejected with its line | Rejecting the file (one slip in the client's data would drop the whole monster scale table); resolving the name against other tables (guessing) |
 | D18 (T2.8, 2026-11-20) | `PlayerJob` takes its values from all three headers of Hercules' `e_class` (`class.h`, `class_hidden.h`, `class_special.h`): 172 members. The plan named only the first two (154), which left out the sex-specific classes (`BARD`, `DANCER`, `CLOWN`, `GYPSY`, `MINSTREL`, `WANDERER`, `KAGEROU`, `OBORO` and their baby and `_T` forms) that bodies need. Hercules 2026.09 has no 4th classes, so the client's 4th-class bodies have no `PlayerJob` and are listed as unmatched by the class table | Keeping 154 (bodies of bard, dancer and others would have no class); adding the 4th classes from the client's `JTtbl` (not Hercules ids, D14) |
+| D24 (owner, T7.6, 2026-11-21) | The texture-memory target of spec §5 is the catalog **as imported**: RGBA32 sheets, at most one 4096 sheet a sprite (32 MB), 6.8 GB for all 15,247 sheets on disk (§9). The budget of what is resident at run time (the sprites on screen) is measured and set by SPEC-0009 (unit display) | A per-sheet cap now with compression later (656 sheets over 4 MB); a compressed GPU format before closing (a spec change and a full re-import) |
 | D23 (owner, T7.3, 2026-11-21) | A body whose cloth palettes the client names differently from its file (`summoner` → `묘족`, `크루세이더` → `크루`, …; 90 of 370 variants) has **no palette** for now: §4.3.2 keeps matching palette name = body name, and the unmatched palettes stay in the Palettes category | A hand-made palette-name table now (the mapping is in the client executable, several pairs are uncertain and need the owner's review: BACKLOG) |
 | D22 (T7.2, 2026-11-21) | An SPR without its ACT (skill icons `bs_skintemper` 109 and `ht_falcon` 127, effect `bluemsg`) is a `CatalogOrphanSpr` warning and gives **no record**, as §4.3.8 and FR-10 say; the skill-icon and effect planners had planned it as a still record that the entry converter then failed (T5.6 note), which broke "no failure" on the real data. The converter keeps its check as a guard | Converting a lone SPR into a `Still` (SPEC-0007 converts ACT/SPR pairs only: a new conversion path for three files); keeping the failure (contradicts FR-10) |
 | D21 (owner, T5.8, 2026-11-20) | The **kind** of an item (`ItemSpriteTable.Kinds`) comes from the server's item database, Hercules `db/re/item_db.conf` (`Type`, `Loc`): `IT_WEAPON` → weapon; `IT_ARMOR` with `EQP_SHIELD` → shield, else with a head location (`EQP_HEAD_TOP/MID/LOW`, `EQP_HELM`, `EQP_COSTUME_HEAD_*`) → headgear, else with `EQP_GARMENT`/`EQP_COSTUME_GARMENT` → garment; anything else (shadow gear, cards, usables) → none. The client's item table has no type and a view id alone is ambiguous (view id 1 is a weapon and a headgear). The file is read by a small libconfig-subset reader in Core (`RoItemDb`, only `Id`, `Type`, `Loc`); its path is a project setting (`RoImportSettings.ItemDbPath`, default `../Hercules-2026.09/db/re/item_db.conf` from the Unity project, the checkout in this repository), overridable per run (`RoImportOptions.ItemDbPath`). A missing file is one `SourceMissing` warning and every item's kind is none | An own id-range CSV (ranges have exceptions); kinds only for item-id files (item 2220 → hat would fail, FR-4); the view id alone (ambiguous) |
@@ -578,19 +579,40 @@ Satisfies every FR. EditMode NUnit. Data-dependent tests are `[Category("NeedsDa
 - A run that creates thousands of textures in one editor session can lose the GPU device: the first headgear run ended in `d3d12: Device removed (887a0005)` while uploading a 128 × 128 sheet, and Unity closed. The ledger made the rerun resume (the headgears already written were `Skipped`). Garments (R1) are the biggest such run: if it recurs, run them in parts or start the editor with `-force-d3d11`.
 - The ground-item ledger save once failed with `IOException` 1224 (`spritesheets.json` mapped by another process); the rerun passed. Not reproduced since.
 
+- **Texture memory (T7.6, spec §5).** Every sheet counted once by the folder of its first SPR; RGBA32 (4 bytes a pixel, no mipmaps) plus the 8-bit index of the 566 palette-ready sheets:
+
+| Category | Sheets | Texture memory |
+|---|---|---|
+| Monsters | 1,274 | 3,546 MB |
+| Bodies | 489 | 1,664 MB |
+| Headgears | 2,766 | 818 MB |
+| NPCs | 940 | 223 MB |
+| Effects | 172 | 191 MB |
+| Garments | 242 | 147 MB |
+| Weapons | 1,186 | 120 MB |
+| Homunculi | 19 | 46 MB |
+| Ground items and skill icons | 8,031 | 34 MB |
+| Heads | 104 | 13 MB |
+| Shields | 24 | 0.4 MB |
+| **Total** | **15,247** | **6,801 MB** |
+
+  Per sheet: median 4 KB, 90 % ≤ 1 MB, 99 % ≤ 8 MB; 34 sheets of 16 MB or more, the largest 32 MB (2048 × 4096, big monsters such as `knight_of_abyss2`, `firepit`). Only the sheets of the sprites shown are loaded. Target set by the owner: D24.
+
 ## 10. Traceability
 
-| FR | Plan sections |
-|---|---|
-| FR-1 | 4.1, 4.2, 4.3.1, 4.4, 4.5, 6 |
-| FR-2 | 4.2, 4.3.2, 4.4, 4.5, 6 |
-| FR-3 | 4.3.3, 4.4, 4.5, 6 |
-| FR-4 | 4.3.4, 4.3.5, 4.3.6, 4.3.7, 4.4, 4.5, 6 |
-| FR-5 | 4.3.8, 4.5, 6 |
-| FR-6 | 4.3.9, 4.5, 6 |
-| FR-7 | 4.3.8, 4.5, 6 |
-| FR-8 | 3, 4.6, 6 |
-| FR-9 | 2, 4.7, 5, 6 |
-| FR-10 | 4.3, 4.7, 6 |
-| FR-11 | 4.9, 6 |
-| FR-12 | 4.2, 4.8, 6 |
+All tests pass on 2026-11-21 (T7.6): 348 EditMode tests of the catalog, the sprite import and the runtime catalog, 0 failed, 0 skipped (the real-data `NeedsData` ones included), and the PlayMode `SpriteCatalogPlayTests`. Evidence of the owner's checks: `evidence/t7.5-review.md`.
+
+| FR | Plan sections | Tests | Evidence |
+|---|---|---|---|
+| FR-1 | 4.1, 4.2, 4.3.1, 4.4, 4.5, 6 | `RoUnitPlannerTests`, `RoJobTablesTests`, `SpriteCatalogTests`, `SpriteCatalogPlayTests`, `RoCatalogReferenceTests` (Poring, a name in both folders) | T7.5 rows 1; §9 monsters, NPCs, homunculi |
+| FR-2 | 4.2, 4.3.2, 4.4, 4.5, 6 | `RoBodyPlannerTests`, `BodyEntryTests`, `PlayerJobTests`, `RoCatalogReferenceTests` (three bodies) | T7.5 rows 2–4; D23 |
+| FR-3 | 4.3.3, 4.4, 4.5, 6 | `RoHeadPlannerTests` (in `RoBodyPlannerTests.cs`), `HeadEntryTests`, `RoCatalogReferenceTests` (hair 1) | T7.5 row 5 |
+| FR-4 | 4.3.4, 4.3.5, 4.3.6, 4.3.7, 4.4, 4.5, 6 | `RoEquipmentPlannerTests`, `RoViewIdTablesTests`, `RoItemDbTests`, `EquipmentEntryTests`, `RoCatalogReferenceTests` (2220, 2189, 1201, angel wings) | T7.5 rows 6–9, 14 |
+| FR-5 | 4.3.8, 4.5, 6 | `RoStaticPlannerTests`, `RoItemTableTests`, `RoCatalogReferenceTests` (501) | T7.5 row 10 |
+| FR-6 | 4.3.9, 4.5, 6 | `RoStaticPlannerTests` (effects, emotes), `RoCatalogReferenceTests` (emote 0, cart 1) | T7.5 rows 11–12; emote index Confirmed |
+| FR-7 | 4.3.8, 4.5, 6 | `RoStaticPlannerTests` (skill icons), `RoCatalogReferenceTests` (skill 5) | T7.5 row 13 |
+| FR-8 | 3, 4.6, 6 | `RoCatalogOutputPathsTests`, `RoCatalogAddressablesTests`, `RoCatalogReferenceTests` (distinct sheets = distinct SPR hashes) | T7.5 row 15; §9 garments |
+| FR-9 | 2, 4.7, 5, 6 | `RoCatalogPipelineTests`, `RoCatalogEntryConverterTests`, `RoCatalogImporterTests`, `RoSpriteConverterTests` | §9: every second run all `Skipped` |
+| FR-10 | 4.3, 4.7, 6 | `RoCatalogPlanTests`, the planner tests, `RoCatalogReferenceTests` (each gap once, by category) | §9 warnings per category; D22 |
+| FR-11 | 4.9, 6 | `RoCatalogImporterTests` (lookup window) | T7.5 (every row through `RoCatalogLookupWindow`) |
+| FR-12 | 4.2, 4.8, 6 | `RoImportSettingsTests`, `RoCatalogTablesTests`, `RoLuaReaderTests`, `RoLubReaderTests`, `RoSmallTablesTests`, `RoOwnTablesTests` | T5.8 item table language setting |
