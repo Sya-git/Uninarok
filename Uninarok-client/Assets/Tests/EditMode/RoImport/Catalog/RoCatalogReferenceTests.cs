@@ -15,7 +15,7 @@ using Uninarok.Sprites;
 namespace Uninarok.RoImport.Tests.Catalog
 {
     // TASKS-0008 T7.1 (FR-1 to FR-7, FR-10; spec §4 acceptance, plan §6): the reference lookups on the catalog imported into the
-    // project from the real data (T7.2 to T7.4). Each is ignored until its category is imported.
+    // project from the real data (T7.2 to T7.4). Each is ignored until its category is imported (T7.2: enabled).
     public class RoCatalogReferenceTests
     {
         const string Art = "Assets/Art/Imported/";
@@ -42,7 +42,7 @@ namespace Uninarok.RoImport.Tests.Catalog
 
         // ---- T7.2: units, ground items, skill icons, effects, headgears, shields ----
 
-        [Test, Category(CatalogTestFiles.Category), Ignore("pending T7.2")]
+        [Test, Category(CatalogTestFiles.Category)]
         public void Poring1002_IsItsSpriteAtScale1()
         {
             Assert.That(Catalog().TryGetUnit(1002, out var poring), Is.True);
@@ -50,7 +50,7 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(PathOf(poring.Sprite.Animation), Is.EqualTo(Art + "sprite/몬스터/poring.asset"));
         }
 
-        [Test, Category(CatalogTestFiles.Category), Ignore("pending T7.2")]
+        [Test, Category(CatalogTestFiles.Category)]
         public void ANameInBothFolders_IsTheOneItsIdRangeSelects()
         {
             var catalog = Catalog();
@@ -60,7 +60,7 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(PathOf(monster.Sprite.Animation), Is.EqualTo(Art + "sprite/몬스터/8w_soldier.asset"));
         }
 
-        [Test, Category(CatalogTestFiles.Category), Ignore("pending T7.2")]
+        [Test, Category(CatalogTestFiles.Category)]
         public void Item501_ShowsTheRedPotionOnTheGround()
         {
             Assert.That(Catalog().TryGetGroundItem(501, true, out var potion), Is.True);
@@ -68,7 +68,7 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(sheet, Does.Contain("빨간포션"), "the red potion's sheet");
         }
 
-        [Test, Category(CatalogTestFiles.Category), Ignore("pending T7.2")]
+        [Test, Category(CatalogTestFiles.Category)]
         public void Skill5_Bash_ShowsItsIcon()
         {
             Assert.That(Catalog().TryGetSkillIcon(5, out var bash), Is.True);
@@ -77,7 +77,7 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(path, Does.Contain("sm_bash"));
         }
 
-        [Test, Category(CatalogTestFiles.Category), Ignore("pending T7.2")]
+        [Test, Category(CatalogTestFiles.Category)]
         public void Emote0_IsTheSurpriseActionOfTheEmoteSet_AndCart1IsFoundByName()
         {
             var catalog = Catalog();
@@ -87,7 +87,7 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(catalog.TryGetEffect("손수레1", out var cart) && !cart.IsEmpty, Is.True, "cart 1");
         }
 
-        [Test, Category(CatalogTestFiles.Category), Ignore("pending T7.2")]
+        [Test, Category(CatalogTestFiles.Category)]
         public void Item2220_ForAMaleKnight_IsTheHatOnItsOwn()
         {
             var hat = Lookup(new RoCatalogLookupRequest { Mode = RoCatalogLookupMode.ItemId, Id = 2220, Job = PlayerJob.JOB_KNIGHT, Sex = M });
@@ -95,7 +95,7 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(hat.Trail, Is.Null);
         }
 
-        [Test, Category(CatalogTestFiles.Category), Ignore("pending T7.2")]
+        [Test, Category(CatalogTestFiles.Category)]
         public void TheShieldOfItem2189_ForAMaleSwordman_IsItsItemIdFile()
         {
             var shield = Lookup(new RoCatalogLookupRequest { Mode = RoCatalogLookupMode.ItemId, Id = 2189, Job = PlayerJob.JOB_SWORDMAN, Sex = M });

@@ -553,6 +553,22 @@ Satisfies every FR. EditMode NUnit. Data-dependent tests are `[Category("NeedsDa
 | R7 Time and memory of a full run (~95,000 sprite files, 14 MB item text) | Per-category runs; item table parsed with `SkipField`; 200-job checkpoints; the report records time per category; the owner sets the texture target from the numbers (spec §5) |
 | R8 Gaps are numerous (319 unit names without files, 593 headgear ids, orphans) and drown real problems | One warning per gap, grouped by category in the summary, and the category counts in the report |
 
+**Measured, T7.2 (R7; real Portuguese client data, 2026-11-20/21, Unity 6000.7.0b7).** One category per run; time is the first run (all `Created`), the second run is all `Skipped` with 0 failed.
+
+| Category | Entries | Distinct sheets | Stored actions | Warnings | First run | Second run |
+|---|---|---|---|---|---|---|
+| Monsters | 3,856 | 1,274 | 27,532 | 211 | 926.6 s (with the T7.2 memo bug; 52.2 s to finish) | 48.3 s |
+| NPCs | 1,097 | 1,031 | 4,838 | 130 | 811.7 s | 9.2 s |
+| Homunculi | 21 | 21 | 633 | 3 | 25.4 s | 0.7 s |
+| Ground items | 7,196 | 6,802 | 23 | 463 | 4,083.7 s | 56.5 s |
+| Skill icons | 1,293 | 1,233 | 5 | 308 | 432.3 s | 3.5 s |
+| Effects | 224 | 177 | 794 | 11 | 112.2 s | 1.1 s |
+| Headgears | 2,266 | 2,769 | 259,462 | 747 | 994.9 s (resumed after the GPU loss below: 400 already `Skipped`) | 24.8 s |
+| Shields | 11 | 24 | 8,583 | 471 | 83.2 s | 1.7 s |
+
+- A run that creates thousands of textures in one editor session can lose the GPU device: the first headgear run ended in `d3d12: Device removed (887a0005)` while uploading a 128 × 128 sheet, and Unity closed. The ledger made the rerun resume (the headgears already written were `Skipped`). Garments (R1) are the biggest such run: if it recurs, run them in parts or start the editor with `-force-d3d11`.
+- The ground-item ledger save once failed with `IOException` 1224 (`spritesheets.json` mapped by another process); the rerun passed. Not reproduced since.
+
 ## 10. Traceability
 
 | FR | Plan sections |
