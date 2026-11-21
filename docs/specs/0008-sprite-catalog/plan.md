@@ -565,6 +565,10 @@ Satisfies every FR. EditMode NUnit. Data-dependent tests are `[Category("NeedsDa
 | Effects | 224 | 177 | 794 | 11 | 112.2 s | 1.1 s |
 | Headgears | 2,266 | 2,769 | 259,462 | 747 | 994.9 s (resumed after the GPU loss below: 400 already `Skipped`) | 24.8 s |
 | Shields | 11 | 24 | 8,583 | 471 | 83.2 s | 1.7 s |
+| Bodies (T7.3) | 61 | 347 | 21,857 | 192 | 302.0 s | 2.0 s |
+| Heads (T7.3) | 42 | 104 | 6,007 | 1 | 168.6 s | 1.9 s |
+| Palettes (T7.3) | 4,464 | – | – | 0 | 324.9 s | 16.5 s |
+| Weapons (T7.3) | 184 | 1,173 | 38,978 | 2,406 | 510.3 s | 2.2 s |
 
 - A run that creates thousands of textures in one editor session can lose the GPU device: the first headgear run ended in `d3d12: Device removed (887a0005)` while uploading a 128 × 128 sheet, and Unity closed. The ledger made the rerun resume (the headgears already written were `Skipped`). Garments (R1) are the biggest such run: if it recurs, run them in parts or start the editor with `-force-d3d11`.
 - The ground-item ledger save once failed with `IOException` 1224 (`spritesheets.json` mapped by another process); the rerun passed. Not reproduced since.

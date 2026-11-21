@@ -15,7 +15,7 @@ using Uninarok.Sprites;
 namespace Uninarok.RoImport.Tests.Catalog
 {
     // TASKS-0008 T7.1 (FR-1 to FR-7, FR-10; spec §4 acceptance, plan §6): the reference lookups on the catalog imported into the
-    // project from the real data (T7.2 to T7.4). Each is ignored until its category is imported (T7.2: enabled).
+    // project from the real data (T7.2 to T7.4). Each is ignored until its category is imported (T7.2, T7.3: enabled).
     public class RoCatalogReferenceTests
     {
         const string Art = "Assets/Art/Imported/";
@@ -104,7 +104,7 @@ namespace Uninarok.RoImport.Tests.Catalog
 
         // ---- T7.3: bodies, heads, palettes, weapons ----
 
-        [Test, Category(CatalogTestFiles.Category), Ignore("pending T7.3")]
+        [Test, Category(CatalogTestFiles.Category), Ignore("blocked T7.3: cloth palette names differ from body names (summoner = 묘족), awaiting the owner's palette-name table")]
         public void NoviceMale_KnightOnPecoFemale_SummonerMale_ReturnTheirBodies_WithPalettes()
         {
             foreach (var (job, sex, file) in new[]
@@ -120,7 +120,7 @@ namespace Uninarok.RoImport.Tests.Catalog
             }
         }
 
-        [Test, Category(CatalogTestFiles.Category), Ignore("pending T7.3")]
+        [Test, Category(CatalogTestFiles.Category)]
         public void HairStyle1Male_ReturnsItsHead_WithAHairPalette()
         {
             var head = Lookup(new RoCatalogLookupRequest { Mode = RoCatalogLookupMode.HeadStyle, Id = 1, Sex = M, Race = SpriteRace.Human });
@@ -128,7 +128,7 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(head.Description, Does.Not.Contain(" 0 palettes"));
         }
 
-        [Test, Category(CatalogTestFiles.Category), Ignore("pending T7.3")]
+        [Test, Category(CatalogTestFiles.Category)]
         public void Item1201_ForAMaleSwordman_IsTheShortSword()
         {
             var knife = Lookup(new RoCatalogLookupRequest { Mode = RoCatalogLookupMode.ItemId, Id = 1201, Job = PlayerJob.JOB_SWORDMAN, Sex = M });
