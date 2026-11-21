@@ -29,24 +29,28 @@ namespace Uninarok.Catalog
         public int StoredActions;
         public int SheetCount;
 
-        /// <summary>The variant of <paramref name="job"/> (mount, outfit) for <paramref name="sex"/>, else the base variant for that sex.</summary>
+        /// <summary>
+        /// The variant of <paramref name="job"/> (mount, outfit) for <paramref name="sex"/>, else the base variant for that sex.
+        /// When several variants carry the job (the novice's base body, its poring mount and its costume all are
+        /// <c>JOB_NOVICE</c>), the one of the lowest kind wins: the base one.
+        /// </summary>
         public bool TryGetVariant(PlayerJob job, AccountSex sex, out BodyVariant variant)
         {
             // A few dozen variants at most: a linear scan (D16).
-            int fallback = -1;
+            int own = -1, fallback = -1;
             var variants = Variants ?? Array.Empty<BodyVariant>();
             for (int i = 0; i < variants.Length; i++)
             {
                 if (variants[i].Sex != sex) continue;
                 if (variants[i].Job == job)
                 {
-                    variant = variants[i];
-                    return true;
+                    if (own < 0 || variants[i].Kind < variants[own].Kind) own = i;
                 }
-                if (fallback < 0 && variants[i].Kind == BodyVariantKind.Base) fallback = i;
+                else if (fallback < 0 && variants[i].Kind == BodyVariantKind.Base) fallback = i;
             }
-            variant = fallback >= 0 ? variants[fallback] : default;
-            return fallback >= 0;
+            int chosen = own >= 0 ? own : fallback;
+            variant = chosen >= 0 ? variants[chosen] : default;
+            return chosen >= 0;
         }
 
         [Serializable]

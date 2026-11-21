@@ -49,6 +49,25 @@ namespace Uninarok.Catalog.Tests
             Assert.That(mounted.Sprite.Animation.AssetGUID, Is.EqualTo(Guid(1)));
         }
 
+        // T7.3 (FR-2): the novice's poring mount and costume share JOB_NOVICE with its base body and sort first in the real
+        // entry; the job's base variant wins over them, whatever the order.
+        [Test]
+        public void SeveralVariantsOfTheSameJob_TheBaseOneWins()
+        {
+            var e = Make<BodyEntry>(_created);
+            e.BaseJob = PlayerJob.JOB_NOVICE;
+            e.Variants = new[]
+            {
+                Variant("노비스포링", PlayerJob.JOB_NOVICE, BodyVariantKind.Mount, AccountSex.SEX_MALE, 1),
+                Variant("초보자", PlayerJob.JOB_NOVICE, BodyVariantKind.Costume1, AccountSex.SEX_MALE, 2),
+                Variant("초보자", PlayerJob.JOB_NOVICE, BodyVariantKind.Base, AccountSex.SEX_MALE, 3),
+            };
+
+            Assert.That(e.TryGetVariant(PlayerJob.JOB_NOVICE, AccountSex.SEX_MALE, out var v), Is.True);
+            Assert.That(v.Kind, Is.EqualTo(BodyVariantKind.Base));
+            Assert.That(v.Sprite.Animation.AssetGUID, Is.EqualTo(Guid(3)));
+        }
+
         [Test]
         public void NoVariantForTheSex_IsAMiss()
         {
