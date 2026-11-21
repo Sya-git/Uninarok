@@ -60,7 +60,9 @@ namespace Uninarok.RoImport.Editor.Sprites
             if (ctx == null) throw new ArgumentNullException(nameof(ctx));
             options = options ?? new RoSpriteOptions { Palettes = ctx.SpritePalettes };
             string memoKey = "sprite:" + act.Canonical + "|" + spr.Canonical + (options.Palettes ? "|p" : "");
-            if (ctx.TryGetMemo(memoKey, out RoResult<Object> known))
+            // A remembered success whose asset was unloaded (RoBatch unloads unused assets between chunks) is looked up again:
+            // the ledger says it is current, so that is a cheap reload, not a conversion (found by the catalog, TASKS-0008 T7.2).
+            if (ctx.TryGetMemo(memoKey, out RoResult<Object> known) && (known.Status == RoStatus.Failed || known.Value != null))
                 return known.Status == RoStatus.Failed ? known : RoResult<Object>.Skipped(known.Value);
 
             var result = Run(ctx, act, spr, options);

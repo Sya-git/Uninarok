@@ -279,5 +279,23 @@ namespace Uninarok.RoImport.Tests.Sprites
             Assert.AreEqual(RoStatus.Updated, result.Status);
             Assert.AreEqual(SheetPath(Monster), AssetDatabase.GetAssetPath(((SpriteAnimation)result.Value).Sprites[0]), "the new content's sheet");
         }
+
+        // TASKS-0008 T7.2: a repeat request after the batch unloaded unused assets still returns the asset (it was null, and the
+        // catalog failed every record that shares a sprite with an earlier one).
+        [Test]
+        public void ARepeatRequest_AfterUnusedAssetsWereUnloaded_StillReturnsTheAsset()
+        {
+            var ctx = Context();
+            var first = ctx.Sprite(P(Monster + ".act"), P(Monster + ".spr"));
+            Assume.That(first.Value, Is.Not.Null);
+            first = default;
+
+            EditorUtility.UnloadUnusedAssetsImmediate();
+            var again = ctx.Sprite(P(Monster + ".act"), P(Monster + ".spr"));
+
+            Assert.AreEqual(RoStatus.Skipped, again.Status);
+            Assert.IsTrue(again.Value != null, "reloaded, not the destroyed object");
+            Assert.AreEqual(AnimationPath(Monster), AssetDatabase.GetAssetPath(again.Value));
+        }
     }
 }
