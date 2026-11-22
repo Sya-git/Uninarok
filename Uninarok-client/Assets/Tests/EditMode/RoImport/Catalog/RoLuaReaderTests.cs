@@ -41,6 +41,53 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(Text(t.Fields["NAME"]), Is.EqualTo("x"));
         }
 
+        // TASKS-0009 T1.1 (SPEC-0009 FR-4; PLAN-0009 D4)
+        [Test]
+        public void RoLuaReader_Calls_CapturedWithArguments()
+        {
+            var chunk = Read("ids = { A = 5 }\nf(ids.A, -2, \"s\", nil, {y = -15})\na.b.c(1)\ng()\nh{1, 2}\nm:go(true)\nskipped(x() + 1)\nafter = 1\nlast(2)\nif a then inner(1) end\nfunction d() inner(2) end");
+            CollectionAssert.AreEqual(new[] { "f", "a.b.c", "g", "h", "m:go", "last" }, System.Linq.Enumerable.Select(chunk.Calls, c => c.Name));
+            var f = chunk.Calls[0];
+            Assert.That(f.Arguments.Count, Is.EqualTo(5));
+            Assert.That(f.TryGetInteger(0, out int a) && a == 5, Is.True, "a reference is resolved");
+            Assert.That(f.TryGetInteger(1, out int b) && b == -2, Is.True);
+            Assert.That(Text(f.Arguments[2]), Is.EqualTo("s"));
+            Assert.That(f.Arguments[3], Is.Null);
+            Assert.That(Number(((RoLuaTable)f.Arguments[4]).Fields["y"]), Is.EqualTo(-15));
+            Assert.That(chunk.Calls[2].Arguments, Is.Empty);
+            Assert.That(((RoLuaTable)chunk.Calls[3].Arguments[0]).Items.Count, Is.EqualTo(2));
+            Assert.That(Number(chunk.Globals["after"]), Is.EqualTo(1), "reading goes on after a skipped call");
+            Assert.That(f.TryGetInteger(2, out _), Is.False);
+            Assert.That(f.TryGetInteger(9, out _), Is.False);
+        }
+
+        // Copied from ridingspreditinfo.lub (decompiled).
+        [Test]
+        public void RoLuaReader_Calls_RidingSprEditInfoFixture()
+        {
+            var jobs = Read("pcJobTbl = { JT_NOVICE = 0, JT_STAR = 4047, JT_ARCHER_H = 4005 }");
+            var chunk = Read("SetHeadSprEditInfo(pcJobTbl.JT_NOVICE, 4, 4, 0, 2, 0, 35)\nSetHeadSprEditInfo(4124, 4, 4, 0, 2, 0, 35)\n"
+                             + "SetHeadSprEditInfo(pcJobTbl.JT_STAR, 99, 99, 1, 1, -6, 15)\nSetBodySprEditInfo_THIEFS()\nSetBodySprEditInfo_ACOLYTES()\n"
+                             + "SetBodySprEditInfo(pcJobTbl.JT_ARCHER_H, 12, 12, 0, 7, 0, 5)", null, jobs.Globals);
+            Assert.That(chunk.Calls.Count, Is.EqualTo(6));
+            Assert.That(chunk.Calls[2].TryGetInteger(0, out int star) && star == 4047, Is.True);
+            Assert.That(chunk.Calls[2].TryGetInteger(5, out int x) && x == -6, Is.True);
+        }
+
+        // Copied from offsetitempos_f.lub and offsetitempos.lub (decompiled), loaded one after the other as the client does.
+        [Test]
+        public void RoLuaReader_Calls_OffsetItemPosFixture()
+        {
+            var chunk = Read("OffsetItemPos = {}\nOffsetItemPos.Doram = {}\nOffsetItemPos.AddOffsetForDoram = function(in_classNum, in_direction, in_offset, in_sex)\n\tlocal tbl = {\n\t\tClassNum = in_classNum\n\t}\n\tOffsetItemPos.Doram[#OffsetItemPos.Doram + 1] = tbl\nend\n"
+                             + "OffsetItemPos.Direction = {\n\tFRONT = 0,\n\tFRONTLEFT = 1\n}\nOffsetItemPos.Sex = {\n\tMALE = 1,\n\tFEMALE = 2\n}\n"
+                             + "OffsetItemPos.AddOffsetForDoram(1717, OffsetItemPos.Direction.FRONTLEFT, {\n\ty = -15\n})\n"
+                             + "OffsetItemPos.AddOffsetForDoram(54, OffsetItemPos.Direction.FRONT, {\n\tx = -3,\n\ty = 1\n}, OffsetItemPos.Sex.FEMALE)\nOffsetItemPos.AddUppingBottomItem(1081)");
+            Assert.That(chunk.Calls.Count, Is.EqualTo(3));
+            Assert.That(chunk.Calls[0].Name, Is.EqualTo("OffsetItemPos.AddOffsetForDoram"));
+            Assert.That(chunk.Calls[0].TryGetInteger(1, out int d) && d == 1, Is.True);
+            Assert.That(chunk.Calls[1].TryGetInteger(3, out int sex) && sex == 2, Is.True);
+        }
+
         [Test]
         public void ReadsNestedTablesAndPositionalItems()
         {

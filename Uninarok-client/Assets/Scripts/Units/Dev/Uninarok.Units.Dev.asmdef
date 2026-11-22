@@ -1,0 +1,27 @@
+{
+    "name": "Uninarok.Units.Dev",
+    "rootNamespace": "Uninarok.Units.Dev",
+    "references": [
+        "Uninarok.Sprites",
+        "Uninarok.SpriteCatalog",
+        "Uninarok.Networking",
+        "Uninarok.Map",
+        "Unity.Addressables",
+        "Unity.ResourceManager",
+        "Uninarok.Units",
+        "Uninarok.CameraRig",
+        "Unity.InputSystem",
+        "Unity.Cinemachine"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_EDITOR || DEVELOPMENT_BUILD"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

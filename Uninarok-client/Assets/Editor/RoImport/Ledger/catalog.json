@@ -10517,6 +10517,15 @@
             "Dependencies": []
         },
         {
+            "Source": "catalog/composition",
+            "SourceHash": "900e337fe33b5223aca897e30cfbc783f0410929089583e30053fba8eff0e811",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/catalog/composition.asset"
+            ],
+            "Dependencies": []
+        },
+        {
             "Source": "catalog/effects/05vallentine",
             "SourceHash": "404836f733bfa210dcb95b82bed9abf82aa4e1cf7d706a3b9ec8501487aea295",
             "Rules": 1,

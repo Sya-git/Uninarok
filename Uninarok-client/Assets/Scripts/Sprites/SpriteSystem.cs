@@ -64,6 +64,7 @@ namespace Uninarok.Sprites
             for (int i = 0; i < s_count; i++)
             {
                 var actor = s_actors[i];
+                if (actor.Driven) continue; // its owner shows frames and turns it (PLAN-0009 4.4)
                 actor.Advance(deltaMs);
                 if (camera != null && actor.Billboard && (turned || actor.BillboardDirty))
                 {

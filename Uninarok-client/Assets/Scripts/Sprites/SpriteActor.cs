@@ -28,8 +28,25 @@ namespace Uninarok.Sprites
         public float Speed = 1f;
         /// <summary>Turn to the camera's yaw every time the camera turns.</summary>
         public bool Billboard = true;
+        /// <summary>
+        /// Something else decides the frame with <see cref="ShowFrame"/> (PLAN-0009 4.4, SPEC-0009 FR-5): <see cref="SpriteSystem"/>
+        /// neither advances nor turns a driven actor.
+        /// </summary>
+        public bool Driven;
+
+        /// <summary>What a layer renderer holds, so unchanged properties are not written again (SPEC-0009 FR-14).</summary>
+        struct Written
+        {
+            public bool Enabled, Mirror;
+            public short Slot;
+            public Color32 Tint;
+            public Vector3 Position;
+            public float Rotation, ScaleX, ScaleY;
+            public SpriteAnimation Data;
+        }
 
         SpriteRenderer[] _renderers = Array.Empty<SpriteRenderer>();
+        Written[] _written = Array.Empty<Written>();
         int _animation, _direction;
         bool _hasAction;
         int _unique = -1;
@@ -38,6 +55,12 @@ namespace Uninarok.Sprites
         int _frame = -1;      // frame shown, −1 when nothing is
         bool _dirty = true;   // renderers must be written on the next tick
         int _applyCount;
+        // Driven mode: what the last ShowFrame resolved.
+        SpriteAnimation _shownData;
+        bool _shownValid;     // Data was alive when it was set: the hot path does not ask again
+        int _shownAnimation = -1, _shownDirection = -1;
+        int _sortingBase;
+        Color32 _tint = new Color32(255, 255, 255, 255);
 
         internal int SystemIndex = -1;
         internal bool BillboardDirty = true;
@@ -118,6 +141,94 @@ namespace Uninarok.Sprites
             return true;
         }
 
+        /// <summary>
+        /// Driven mode (PLAN-0009 4.4; SPEC-0009 FR-5, FR-14): shows <paramref name="frame"/> (wrapped to the action's count) of an
+        /// action. Renderers are written only when the (unique action, frame) changes, and the frame's event fires when a frame
+        /// is entered; turning keeps the frame and fires nothing. False when the action is missing (nothing is drawn). No allocation
+        /// once the renderers exist.
+        /// </summary>
+        public bool ShowFrame(int animation, int direction, int frame)
+        {
+            direction &= SpriteAnimation.Directions - 1;
+            bool dataChanged = !ReferenceEquals(_shownData, Data);
+            if (dataChanged)
+            {
+                _shownData = Data;
+                _shownValid = Data != null;
+                EnsureRenderers();
+                _dirty = true;
+            }
+            bool restarted = dataChanged || animation != _shownAnimation;
+            if (restarted || direction != _shownDirection)
+            {
+                _shownAnimation = _animation = animation;
+                _shownDirection = _direction = direction;
+                int before = _unique;
+                _hasAction = _shownValid && Data.TryGetAction(animation, direction, Missing, out _unique);
+                if (!_hasAction) _unique = -1;
+                if (_unique != before) _dirty = true;
+            }
+
+            if (!_hasAction || Data.Actions[_unique].FrameCount <= 0)
+            {
+                _frame = -1;
+                if (_dirty) HideFrom(0);
+                return false;
+            }
+
+            var action = Data.Actions[_unique];
+            frame %= action.FrameCount;
+            if (frame < 0) frame += action.FrameCount;
+            bool entered = restarted || frame != _frame;
+            if (frame != _frame || _dirty)
+            {
+                _frame = frame;
+                Apply(action);
+            }
+            if (entered) Raise(action, frame);
+            return true;
+        }
+
+        /// <summary>The frames of the action <see cref="ShowFrame"/> would show, 0 when it is missing.</summary>
+        public int FrameCountOf(int animation, int direction) =>
+            Data != null && Data.TryGetAction(animation, direction & (SpriteAnimation.Directions - 1), Missing, out int unique) ? Data.Actions[unique].FrameCount : 0;
+
+        /// <summary>The sorting order of the first layer; the others follow. Written only when it changes.</summary>
+        public int SortingBase
+        {
+            get => _sortingBase;
+            set
+            {
+                if (value == _sortingBase) return;
+                _sortingBase = value;
+                for (int i = 0; i < _renderers.Length; i++) _renderers[i].sortingOrder = value + i;
+            }
+        }
+
+        /// <summary>Multiplies every layer's own tint.</summary>
+        public Color32 Tint
+        {
+            get => _tint;
+            set
+            {
+                if (value.r == _tint.r && value.g == _tint.g && value.b == _tint.b && value.a == _tint.a) return;
+                _tint = value;
+                _dirty = true;
+            }
+        }
+
+        /// <summary>Hides every layer until the next <see cref="ShowFrame"/> (driven mode).</summary>
+        public void Hide()
+        {
+            _shownData = null;
+            _shownValid = false;
+            _shownAnimation = _shownDirection = -1;
+            _hasAction = false;
+            _unique = -1;
+            _frame = -1;
+            HideFrom(0);
+        }
+
         float FrameMs(in SpriteAnimation.ActionData action)
         {
             float ms = action.FrameMs * Speed;
@@ -188,28 +299,54 @@ namespace Uninarok.Sprites
             {
                 var layer = Data.Layers[frame.FirstLayer + i];
                 var r = _renderers[i];
-                if (layer.Slot < 0 || layer.Slot >= sprites.Length || sprites[layer.Slot] == null)
+                ref var w = ref _written[i];
+                if (layer.Slot < 0 || layer.Slot >= sprites.Length || ReferenceEquals(sprites[layer.Slot], null))
                 {
-                    r.enabled = false;   // −1: draws nothing (FR-5)
+                    if (w.Enabled) r.enabled = w.Enabled = false;   // −1: draws nothing (FR-5)
                     continue;
                 }
-                r.sprite = sprites[layer.Slot];
-                r.flipX = layer.Mirror;
-                r.color = layer.Tint;
-                var t = r.transform;
-                t.localPosition = new Vector3(layer.OffsetX / ppu, -layer.OffsetY / ppu, -i * LayerDepthStep);
-                t.localRotation = Quaternion.Euler(0f, 0f, -layer.Rotation);
-                t.localScale = new Vector3(layer.ScaleX, layer.ScaleY, 1f);
-                r.enabled = true;
+                if (w.Slot != layer.Slot || !ReferenceEquals(w.Data, Data))
+                {
+                    w.Slot = layer.Slot;
+                    w.Data = Data;
+                    r.sprite = sprites[layer.Slot];
+                }
+                if (w.Mirror != layer.Mirror) r.flipX = w.Mirror = layer.Mirror;
+                var tint = Multiply(layer.Tint, _tint);
+                if (tint.r != w.Tint.r || tint.g != w.Tint.g || tint.b != w.Tint.b || tint.a != w.Tint.a) r.color = w.Tint = tint;
+                var position = new Vector3(layer.OffsetX / ppu, -layer.OffsetY / ppu, -i * LayerDepthStep);
+                bool moved = !position.Equals(w.Position), turned = layer.Rotation != w.Rotation, scaled = layer.ScaleX != w.ScaleX || layer.ScaleY != w.ScaleY;
+                if (moved || turned || scaled)
+                {
+                    var t = r.transform;
+                    if (moved) t.localPosition = w.Position = position;
+                    if (turned)
+                    {
+                        w.Rotation = layer.Rotation;
+                        t.localRotation = Quaternion.Euler(0f, 0f, -layer.Rotation);
+                    }
+                    if (scaled)
+                    {
+                        w.ScaleX = layer.ScaleX;
+                        w.ScaleY = layer.ScaleY;
+                        t.localScale = new Vector3(layer.ScaleX, layer.ScaleY, 1f);
+                    }
+                }
+                if (!w.Enabled) r.enabled = w.Enabled = true;
             }
             HideFrom(used);
         }
+
+        static Color32 Multiply(Color32 a, Color32 b) =>
+            b.r == 255 && b.g == 255 && b.b == 255 && b.a == 255
+                ? a
+                : new Color32((byte)(a.r * b.r / 255), (byte)(a.g * b.g / 255), (byte)(a.b * b.b / 255), (byte)(a.a * b.a / 255));
 
         void HideFrom(int first)
         {
             _dirty = false;
             for (int i = first; i < _renderers.Length; i++)
-                if (_renderers[i].enabled) _renderers[i].enabled = false;
+                if (_written[i].Enabled) _renderers[i].enabled = _written[i].Enabled = false;
         }
 
         /// <summary>Creates (or finds again after a reload) one renderer per layer slot the data needs.</summary>
@@ -230,14 +367,19 @@ namespace Uninarok.Sprites
                 }
                 var r = child.GetComponent<SpriteRenderer>();
                 if (r == null) r = child.gameObject.AddComponent<SpriteRenderer>();
-                r.sortingOrder = i;
+                r.sortingOrder = _sortingBase + i;
                 r.shadowCastingMode = ShadowCastingMode.Off;
                 r.receiveShadows = false;
                 if (Material != null) r.sharedMaterial = Material;
+                r.flipX = false;
+                r.color = Color.white;
                 r.enabled = false;
                 renderers[i] = r;
             }
             _renderers = renderers;
+            // What the renderers hold is not known (new, or found again after a reload): everything is written once.
+            _written = new Written[renderers.Length];
+            for (int i = 0; i < _written.Length; i++) _written[i] = new Written { Slot = -2, Tint = new Color32(255, 255, 255, 255), Rotation = float.NaN, ScaleX = float.NaN, Position = new Vector3(float.NaN, 0f, 0f) };
             if (Palette != null) SpritePalette.Write(this);
         }
     }

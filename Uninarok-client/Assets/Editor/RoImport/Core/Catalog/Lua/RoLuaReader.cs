@@ -9,7 +9,8 @@ namespace Uninarok.RoImport.Core.Catalog.Lua
     /// numbers (also negative and hexadecimal), strings with escapes, <c>true</c>/<c>false</c>/<c>nil</c>, and references
     /// (<c>jobtbl.JT_PORING</c>) resolved against the earlier globals of the chunk, then <paramref name="imports"/>; a
     /// bare unknown name is <c>nil</c> and a positional <c>nil</c> leaves a hole, as in Lua (D17).
-    /// Function definitions, calls and control blocks are skipped by balanced keyword counting, never evaluated. Anything
+    /// Function definitions and control blocks are skipped by balanced keyword counting, never evaluated; a top-level call
+    /// whose arguments are data is recorded in <see cref="RoLuaChunk.Calls"/> (PLAN-0009 D4), any other is skipped. Anything
     /// else (an operator, a call inside a value, an unknown name) rejects the file with its line number. Never throws.
     /// </summary>
     public static class RoLuaReader
@@ -42,7 +43,7 @@ namespace Uninarok.RoImport.Core.Catalog.Lua
                 return false;
             }
 
-            chunk = new RoLuaChunk(parser.Globals);
+            chunk = new RoLuaChunk(parser.Globals, parser.Calls);
             reason = null;
             return true;
         }
@@ -61,7 +62,10 @@ namespace Uninarok.RoImport.Core.Catalog.Lua
                 _imports = imports;
             }
 
+            readonly List<RoLuaCall> _calls = new List<RoLuaCall>();
+
             public IReadOnlyDictionary<string, RoLuaValue> Globals => _globals;
+            public IReadOnlyList<RoLuaCall> Calls => _calls;
 
             public void Chunk()
             {
@@ -115,7 +119,7 @@ namespace Uninarok.RoImport.Core.Catalog.Lua
                 }
             }
 
-            // Name { .Name | [expr] } followed by '=' (assignment) or call arguments (skipped).
+            // Name { .Name | [expr] } followed by '=' (assignment) or call arguments (recorded when they are data).
             void Statement()
             {
                 if (_lx.Kind != RoLuaToken.Name || _lx.IsKeyword()) throw _lx.Error($"unexpected {_lx.Describe()}");
@@ -152,13 +156,51 @@ namespace Uninarok.RoImport.Core.Catalog.Lua
                     return;
                 }
 
+                string method = null;
                 if (_lx.IsSymbol(":"))
                 {
                     _lx.Next();
-                    ExpectName();
+                    method = ExpectName();
                 }
                 if (!IsCallArguments()) throw _lx.Error($"unexpected {_lx.Describe()} after '{root}'");
+                if (TryCallArguments(out var arguments))
+                    _calls.Add(new RoLuaCall(root + (path == null ? "" : "." + string.Join(".", path)) + (method == null ? "" : ":" + method), arguments));
                 while (IsCallArguments()) SkipCallArguments();
+            }
+
+            // The arguments of a call statement when all of them are data; otherwise the call is skipped and false.
+            bool TryCallArguments(out List<RoLuaValue> arguments)
+            {
+                int open = _lx.Start;
+                arguments = new List<RoLuaValue>();
+                try
+                {
+                    if (!_lx.IsSymbol("("))
+                    {
+                        arguments.Add(Value()); // f{...} or f"..."
+                        return true;
+                    }
+                    _lx.Next();
+                    while (!_lx.IsSymbol(")"))
+                    {
+                        arguments.Add(Value());
+                        if (_lx.IsSymbol(","))
+                        {
+                            _lx.Next();
+                            if (_lx.IsSymbol(")")) throw _lx.Error("a trailing ','");
+                        }
+                        else if (!_lx.IsSymbol(")")) throw _lx.Error("not data");
+                    }
+                    _lx.Next();
+                    return true;
+                }
+                catch (RoLuaException)
+                {
+                    _lx.Restore(open);
+                    SkipCallArguments();
+                    arguments = null;
+                    return false;
+                }
             }
 
             void Assign(string root, List<object> path, RoLuaValue value, int at)

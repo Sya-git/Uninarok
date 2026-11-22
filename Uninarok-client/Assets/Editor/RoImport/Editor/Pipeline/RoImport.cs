@@ -48,6 +48,9 @@ namespace Uninarok.RoImport.Editor.Pipeline
         /// <summary>Test hook: the folder of the own catalog CSV tables; null: the project's (PLAN-0008 4.2).</summary>
         internal string CatalogOwnTablesFolder;
 
+        /// <summary>Also import the composition tables in a catalog run (PLAN-0009 4.1); bodies and equipment always do.</summary>
+        public bool Composition;
+
         /// <summary>The catalog run the catalog converters work from (PLAN-0008 4.7); set by the catalog importer.</summary>
         internal Uninarok.RoImport.Editor.Catalog.RoCatalogRun CatalogPlan;
 
@@ -172,6 +175,14 @@ namespace Uninarok.RoImport.Editor.Pipeline
         /// </summary>
         public static global::Uninarok.RoImport.Editor.Catalog.RoCatalogReport Catalog(Uninarok.Catalog.SpriteCatalogCategory[] categories, RoImportOptions options = null) =>
             global::Uninarok.RoImport.Editor.Catalog.RoCatalogImporter.Run(categories, options);
+
+        /// <summary>Imports the composition tables of the units alone (PLAN-0009 4.1; SPEC-0009 FR-3, FR-4, FR-11).</summary>
+        public static global::Uninarok.RoImport.Editor.Catalog.RoCatalogReport Composition(RoImportOptions options = null)
+        {
+            options = (options ?? new RoImportOptions()).Clone();
+            options.Composition = true;
+            return Catalog(Array.Empty<Uninarok.Catalog.SpriteCatalogCategory>(), options);
+        }
 
         /// <summary>Every category of the catalog (PLAN-0008 4.7).</summary>
         public static global::Uninarok.RoImport.Editor.Catalog.RoCatalogReport CatalogAll(RoImportOptions options = null) =>

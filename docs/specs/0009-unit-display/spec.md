@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Approved (owner, 2026-11-21) |
+| **Status** | Implemented (2026-11-22; approved by the owner 2026-11-21) |
 | **Created** | 2026-11-21 |
 | **Owner** | Jhonnatan |
 | **Depends on** | [SPEC-0006](../0006-rsw-map-scene/spec.md) (map scene), [SPEC-0007](../0007-spr-act-pal-sprites/spec.md) (one sprite), [SPEC-0008](../0008-sprite-catalog/spec.md) (catalog by id) |
@@ -35,7 +35,7 @@ Priority: **M** = must, **S** = should.
 
 | ID | Pri | Requirement | Acceptance (observable) |
 |---|---|---|---|
-| FR-1 | M | Player appearance: a player is shown from class, sex, hair style, hair colour, cloth colour, top/mid/low headgear, garment, weapon (with its trail) and shield, all looked up in the catalog with its fallbacks. A missing or unknown part is left out with one warning; the rest shows. | A swordsman male with a hair colour, a top and a low headgear, a garment, a sword and a shield shows every part as the reference viewer does; an unknown headgear id shows the player without it. |
+| FR-1 | M | Player appearance: a player is shown from class, sex, hair style, hair colour, cloth colour, top/mid/low headgear, garment, weapon (with its trail) and shield, all looked up in the catalog with its fallbacks. A missing or unknown part is left out with one warning; the rest shows. A class without sprites of its own (baby, high, transcendent) shows its base class's; a baby class is drawn smaller (0.8). | A swordsman male with a hair colour, a top and a low headgear, a garment, a sword and a shield shows every part as the reference viewer does; an unknown headgear id shows the player without it; a baby swordsman shows the swordsman's parts at 0.8 of the size. |
 | FR-2 | M | Other units: monsters, NPCs, homunculi and mercenaries are shown from their job id at their catalog display scale. Job ids the client draws as nothing (hidden NPCs, warp markers) show nothing. Player-class job ids used by NPCs show as players. | Poring, a town NPC and an invisible-NPC job id show as in the client (the last as nothing). |
 | FR-3 | M | Draw order: parts are layered as the client does, per direction and per frame: headgear priorities, garments drawn above the body, and the per-class, per-action swaps that put weapon or garment behind or in front. | Facing front, the sword is in front of the head (BACKLOG); a garment is behind the body facing front and in front facing back; a top headgear stays above the hair in every direction. |
 | FR-4 | M | Attachment: head and headgears follow the body's anchor in every frame, with the client's offset corrections (per headgear and direction, riding head corrections). | Through a full walk cycle in 8 directions, the head of a novice and of a knight on peco never leaves the neck; a corrected headgear sits where the reference viewer puts it. |

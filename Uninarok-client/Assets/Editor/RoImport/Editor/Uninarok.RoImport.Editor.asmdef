@@ -10,7 +10,8 @@
         "Unity.Addressables",
         "Unity.Addressables.Editor",
         "Unity.ResourceManager",
-        "Uninarok.Networking"
+        "Uninarok.Networking",
+        "Uninarok.Units"
     ],
     "includePlatforms": [
         "Editor"

@@ -20,7 +20,25 @@
 
 `UninarokDirection`: `0` North, `1` NorthWest, `2` West, `3` SouthWest, `4` South, `5` SouthEast, `6` East, `7` NorthEast. Values 8–15 are legal on the wire; they are kept as-is, not rejected.
 
-The same enum is the **sprite direction**: an ACT action index is `animation × 8 + direction` with these values (owner decision, SPEC-0007, 2026-11-19; there is no separate sprite direction enum). Camera rotation, if any, is applied to the value before the lookup by the display spec.
+The **sprite direction** (the ACT's, action index = `animation × 8 + direction`) is **not** this value: the ACT counts clockwise from the front (0 front/south, 1 south-west, 2 west, 3 north-west, 4 north, 5 north-east, 6 east, 7 south-east), the network counter-clockwise from north. At the default camera (looking north, turn 0):
+
+```
+shown = (4 - network) mod 8                      offset 4, turning sign -1
+shown = (4 - network - cameraSector) mod 8       with the camera turned (SPEC-0009 FR-6)
+cameraSector = floor((turn + 22.5) / 45) mod 8   turn in degrees, Unity yaw (90 = looking east)
+```
+
+Evidence (SPEC-0009 T0.3, 2026-11-22):
+
+| Direction | Network (Hercules) | Sprite (client table and images) | `(4 - network) mod 8` |
+|---|---|---|---|
+| South | 4 (`dirx[4] = 0, diry[4] = -1`) | 0 `FRONT` | 0 |
+| South-west | 3 (`-1, -1`) | 1 `FRONTLEFT` | 1 |
+| West | 2 (`-1, 0`) | 2 `LEFT` | 2 |
+| North | 0 (`0, 1`) | 4 `BACK` | 4 |
+| East | 6 (`1, 0`) | 6 `RIGHT` | 6 |
+
+Sources: Hercules 2026.09 `src/map/unit.cpp` (`dirx`, `diry`: the server's own meaning of the value it puts in the packet) and the client's `offsetitempos.lub` (`OffsetItemPos.Direction`), plus the imported body images. A live capture beside the original client was not made (no client on the implementer's side); the owner sees it in SPEC-0009 T6.4/T8.1.
 
 ## Wire layout (bit-packed, 3 bytes)
 
