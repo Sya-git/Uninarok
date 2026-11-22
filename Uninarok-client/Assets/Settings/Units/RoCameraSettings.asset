@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2331be3caed59e2449dd5d0526d9e7ee, type: 3}
+  m_Name: RoCameraSettings
+  m_EditorClassIdentifier: Uninarok.CameraRig::Uninarok.CameraRig.RoCameraSettings
+  FieldOfView: 15
+  NearClip: 1
+  FarClip: 150
+  MinDistance: 23
+  MaxDistance: 40
+  MinPitch: 50
+  MaxPitch: 65
+  DefaultDistance: 40
+  DefaultPitch: 50
+  DefaultYaw: 0
+  TurnDampTime: 0.384
+  TiltDampTime: 0.384
+  ZoomDampTime: 0.384
+  FollowDampTime: 0.768
+  TurnDegreesPerScreenWidth: 720
+  PitchDegreesPerScreenHeight: 300
+  WheelStep: 2.5
+  CtrlDragZoomPerScreenHeight: 34
+  DoubleClickSeconds: 0.5
+  DoubleClickPixels: 10

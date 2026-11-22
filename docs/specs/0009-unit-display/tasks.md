@@ -141,9 +141,10 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
   *Done when:* `RoCamera_Clamps_Eases_Resets`, `RoCamera_DampingMatchesRoBrowser_At30_60_144Fps`, `RoCamera_TiltOrbitsVertically_CameraHeightGrowsWithTilt_WithinLimits` pass.
   *Result (2026-11-22):* `RoCameraTests` pass (clamps, easing, resets, orbit height, free turn, follow without swinging, 0 B). Damping: D22, D23. The prefab comes with T6.2 (it holds the input component).
 
-- [ ] **T6.2** `RoCameraInput` and the `Camera` action map. (FR-12)
+- [x] **T6.2** `RoCameraInput` and the `Camera` action map. (FR-12)
   Right-drag turn, shift tilt, wheel and ctrl zoom, double right-click resets with modifiers.
   *Done when:* `RoCamera_DoubleClickVariants` and an input test per control pass (Input System test fixture).
+  *Result (2026-11-22):* one input test per control and `RoCamera_DoubleClickVariants` pass (7, Input System test fixture); `RoCameraRig.prefab` and `RoCameraSettings.asset` saved.
 
 - [ ] **T6.3** `UnitSystem` reads the sector from the brain's output camera. (FR-6)
   *Done when:* `UnitSystem_AllPartsSwitchSectorSameFrame` passes, and a test shows the sector read in a frame equals the one of the rendered camera that frame.
