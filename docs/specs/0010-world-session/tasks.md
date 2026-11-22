@@ -182,9 +182,9 @@
   *Done when:* the menu adds prontera, izlude (with its additive scene) and prt_fild08 under `map/<name>` keys; running it twice changes nothing; the group asset is committed.
   *Result (2026-11-22):* the menu item added prontera, izlude (with its additive scene) and prt_fild08 under `map/<name>`; `RoMapSceneAddressablesTests` (3) pass: a second run changes nothing, a wrong address is corrected, the project's group holds the four entries; the group asset is committed.
 
-- [ ] **T6.2** `MapSceneLoader` and `WorldBootstrap` map entry, with the missing-scene case (plan §4.7). (FR-1)
+- [x] **T6.2** `MapSceneLoader` and `WorldBootstrap` map entry, with the missing-scene case (plan §4.7). (FR-1)
   *Done when:* from Bootstrap with the dev auto-login, a character saved on prontera enters (the own unit on its saved cell and facing, then `MAP_LOADED` sent, then the area arrives); a PlayMode test with a fake flow shows one warning naming a missing map, the session kept and `MapLoaded` still called.
-  *Open (2026-11-22):* code done, commit "T6.2 load maps and enter them"; 4 play mode tests pass (missing scene, entry, map change, disconnect). Waits for the local server check.
+  *Result (2026-11-22):* 4 play mode tests pass (missing scene, entry, map change, disconnect). On the local server, from Bootstrap with the dev auto-login: DevHero enters iz_int and prontera on the saved cell, facing North, and the entity list then equals the server's view.
 
 - [ ] **T6.3** `EntityLookMapping` and `WorldPresenter` for units (plan §4.9). (FR-3 to FR-8)
   *Done when:* `WorldPresenter_ReadsOnly` and `_ZeroAllocationSteadyState` pass (PlayMode); on the local server, players, NPCs and monsters near the own character show with their looks, walk, turn and sit; a vanishing unit disappears as FR-5 says.
