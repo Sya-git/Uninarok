@@ -172,12 +172,14 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
   *Done when:* the stress mode starts with one action; `UnitSystem_ZeroGcAllocPerFrame_300Units` passes; the first timing on the owner's PC is recorded here. If it is over 2 ms, stop and update the plan (R4) before going on.
   *Result (2026-11-22):* stress mode starts with one action (300 units loaded, no part missing); `UnitSystem_ZeroGcAllocPerFrame_300Units` passes (0 B per tick). First timing, editor, i5-14600KF: 0.555 ms mean, 1.66 ms max over 300 frames (readout in a longer editor run before the last write saving: mean 0.66 to 0.75, worst spike 2.5); evidence/t7.2-stress.png. Under 2 ms; unchanged renderer properties are no longer rewritten in `SpriteActor`.
 
-- [ ] **T7.3** `RoUnitComposerWindow`: inputs, playback and preview. (FR-15)
+- [x] **T7.3** `RoUnitComposerWindow`: inputs, playback and preview. (FR-15)
   Unit or player look (view id or item id per equipment), animation, play mode, facing, head facing, play/pause/step/restart/scrub/speed, preview camera with yaw and tilt.
   *Done when:* a swordsman with a full set plays Attack3; stepping advances one body frame; turning the preview 180° shows the back of a unit facing South.
+  *Result (2026-11-22):* window opens; `Swordsman_PlaysAttack3_SteppingAdvancesOneBodyFrame` and `TurningThePreview180_ShowsTheBackOfAUnitFacingSouth` pass on its stage. In this client the sword is drawn in Attack2 (action 80) and Standby, its Attack3 frames are empty: the file says so, not the composer. Committed with T7.4.
 
-- [ ] **T7.4** Composer: 8-direction grid, parts list and evidence. (FR-15)
+- [x] **T7.4** Composer: 8-direction grid, parts list and evidence. (FR-15)
   *Done when:* the 8-direction grid shows the reference swordsman; the parts list shows body and weapon frame numbers in lock-step while stepping; hiding the garment removes only it; an unknown headgear id is listed as missing with its reason; "Save image" writes a PNG.
+  *Result (2026-11-22):* grid, parts list in lock-step, hidden garment, missing headgear with its reason and saved PNG are covered by `UnitPreviewStageTests` (8 pass); images in evidence/t8.1-*.png come from it.
 
 ## Phase 8: Close
 

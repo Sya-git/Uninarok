@@ -71,7 +71,17 @@ namespace Uninarok.Units
         /// <summary>Show the unit's shadow when it has one.</summary>
         public bool ShadowEnabled { get; set; } = true;
         /// <summary>Apply the riding edits of the composition tables (PLAN-0009 D17).</summary>
-        public bool RidingEdits { get; set; }
+        public bool RidingEdits
+        {
+            get => _ridingEdits;
+            set
+            {
+                if (value == _ridingEdits) return;
+                _ridingEdits = value;
+                _shownVersion = -1; // composed again on the next step
+            }
+        }
+        bool _ridingEdits;
 
         /// <summary>The animation number played, in the look's family.</summary>
         public int AnimationNumber => _clock.Animation;
@@ -386,6 +396,8 @@ namespace Uninarok.Units
             if (hidden) _hiddenSlots |= 1 << (int)slot;
             else _hiddenSlots &= ~(1 << (int)slot);
         }
+
+        internal bool IsPartHidden(PartSlot slot) => (_hiddenSlots & (1 << (int)slot)) != 0;
 
         internal UnitClock Clock => _clock;
 
