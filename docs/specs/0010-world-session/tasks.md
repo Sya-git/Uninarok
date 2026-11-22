@@ -191,9 +191,9 @@
   *Done when:* `WorldPresenter_ReadsOnly` and `_ZeroAllocationSteadyState` pass (PlayMode); on the local server, players, NPCs and monsters near the own character show with their looks, walk, turn and sit; a vanishing unit disappears as FR-5 says.
   *Result (2026-11-22):* `WorldPresenter_ReadsOnly` and `_ZeroAllocationSteadyState` pass with the other play mode tests. On the local server the NPCs and monsters near the own character show with their looks, walk, chase and vanish; with a second client (two Multiplayer Play Mode players) each sees the other's look, walk, turns, head and sitting. The head of hair style 0 was missing: D27.
 
-- [ ] **T6.4** `GroundItemView` (plan §4.9). (FR-16)
+- [x] **T6.4** `GroundItemView` (plan §4.9). (FR-16)
   *Done when:* a red potion dropped on the local server shows its ground sprite on the server's cell and sub-cell (T0.3 rule) and disappears when another client picks it up (screenshots in `evidence/`).
-  *Open (2026-11-22):* play mode test passes (sprite, sub-cell, release). On the local server a red potion shows its ground sprite at 155.5,190 (`evidence/t6.4-item-on-the-ground.png`) and disappears when the own client picks it up (`t6.4-item-picked-up.png`; the same `ITEM_DISAPPEAR` packet). Left: picked up by another client: the owner, with T9.1.
+  *Result (2026-11-22):* play mode test passes (sprite, sub-cell, release). On the local server a red potion shows its ground sprite at its sub-cell and disappears when the other client picks it up (`evidence/t6.4-before-the-other-client-picks-up.png`, `t6.4-after-the-other-client-picked-up.png`).
 
 - [x] **T6.5** Camera follow and snap on entry and map change (plan §4.10). (FR-12)
   *Done when:* walking across prontera keeps the own character centred; after a warp, the first rendered frame shows the character (frame capture in `evidence/`).
