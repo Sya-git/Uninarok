@@ -94,8 +94,9 @@
 
 ## Phase 3: Time and pathfinding
 
-- [ ] **T3.1** Create the `Uninarok.World`, `Uninarok.World.View` and `Uninarok.World.Dev` assemblies, their test assemblies, and `WorldSettings` with its asset (plan §3). (FR-18)
+- [x] **T3.1** Create the `Uninarok.World`, `Uninarok.World.View` and `Uninarok.World.Dev` assemblies, their test assemblies, and `WorldSettings` with its asset (plan §3). (FR-18)
   *Done when:* the project compiles with no new warnings; an empty EditMode test in `Tests/EditMode/World/` runs; `Settings/World/WorldSettings.asset` holds the plan's defaults (17, 14, 500 ms, 5,000 ms, 200 ms, walk animation 150).
+  *Result (2026-11-22):* compiles with no new warnings (Editor.log); `WorldSettings_Asset_HoldsThePlanDefaults` runs and passes in `Uninarok.World.Tests`. Dev assembly excluded by its define constraint (D17).
 
 - [ ] **T3.2** Tests, then implementation: `ServerClock` (plan §4.2). (FR-2)
   *Done when:* `ServerClock_Offset5s_Rtt50To200_WithinHalfRttPlus10`, `_MonotonicOver10Minutes`, `_LowerCorrectionSlews`, `_Wraps` pass; `Sample` allocates 0 B.
