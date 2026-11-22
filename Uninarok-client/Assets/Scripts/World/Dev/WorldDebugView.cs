@@ -216,11 +216,13 @@ namespace Uninarok.World.Dev
             var go = world.gameObject;
             if (!go.TryGetComponent<DevCommandLine>(out var line)) line = go.AddComponent<DevCommandLine>();
             line.Use(world, go.GetComponent<OwnInput>());
-            // Before the connection: the items are listed at entry.
-            var client = NetworkClient.Instance != null ? NetworkClient.Instance : Object.FindAnyObjectByType<NetworkClient>();
-            if (client != null) line.UseInventory(new DevInventory(client));
             if (!go.TryGetComponent<WorldDebugView>(out var view)) view = go.AddComponent<WorldDebugView>();
             view.Use(world);
+            // Before the connection: the items are listed at entry.
+            var client = NetworkClient.Instance != null ? NetworkClient.Instance : Object.FindAnyObjectByType<NetworkClient>();
+            if (client == null) return;
+            line.UseInventory(new DevInventory(client));
+            line.UseMessages(new DevMessages(client, line.Show));
         }
     }
 }

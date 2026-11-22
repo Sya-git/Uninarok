@@ -382,6 +382,18 @@ namespace Uninarok.Networking.Tests
             Assert.AreEqual((0x0B41, 70, 0x0B09, -1), ((int)PacketIds.ITEM_PICKUP_ACK, ITEM_PICKUP_ACK.Size, (int)PacketIds.INVENTORY_LIST_NORMAL, INVENTORY_LIST_NORMAL.Size));
         }
 
+        [Test]
+        public void ChatPackets_GoldenBytes_SizesAndIds()
+        {
+            Assert.AreEqual(Hex("F300" + "0E00" + "41203A2040676F2030" + "00"), Serialized(new GLOBAL_CHAT("A", "@go 0")));
+            Assert.AreEqual(259, new GLOBAL_CHAT("A", new string('x', 400)).WireSize, "cut");
+            Assert.AreEqual((byte)'?', Serialized(new GLOBAL_CHAT("A", "\u00e9"))[8]);
+            Assert.AreEqual("done", new OWN_MESSAGE(Hex("646F6E65" + "00")).Text);
+            Assert.AreEqual("", new OWN_MESSAGE(new byte[1]).Text);
+            Assert.AreEqual("", new OWN_MESSAGE(new byte[0]).Text);
+            Assert.AreEqual((0x00F3, 0x008E), ((int)PacketIds.GLOBAL_CHAT, (int)PacketIds.OWN_MESSAGE));
+        }
+
         // ---- map change (T1.5) ----
 
         [Test]

@@ -87,6 +87,27 @@ namespace Uninarok.World.Tests
             Assert.AreEqual("no items", line.Execute("/drop"), "another session");
         }
 
+        // FR-20
+        [Test]
+        public void ServerCommands_AreChatLines_AndTheirAnswersAreShown()
+        {
+            var line = _go.AddComponent<DevCommandLine>();
+            line.Register(() => _rig.Session.Own);
+            line.UseMessages(new DevMessages(_rig.Client, line.Show));
+            Assert.IsNull(line.Execute("@item 501 5"));
+            string sent = System.Text.Encoding.ASCII.GetString(_rig.Client.Sent[0].Bytes, 4, _rig.Client.Sent[0].Bytes.Length - 5);
+            StringAssert.EndsWith(" : @item 501 5", sent);
+            Assert.AreEqual(1, _rig.Client.SentCount(PacketIds.GLOBAL_CHAT));
+
+            _rig.Client.Deliver(new OWN_MESSAGE(System.Text.Encoding.ASCII.GetBytes("Item created.\0")));
+            Assert.AreEqual("Item created.", line.Message);
+            _rig.Client.Deliver(new OWN_MESSAGE(System.Text.Encoding.ASCII.GetBytes(sent + "\0")));
+            StringAssert.Contains("this account has no such command", line.Message);
+
+            line.Register(() => null);
+            Assert.AreEqual("not in game", line.Execute("@item 501"));
+        }
+
         [Test]
         public void UnknownCommands_AndEmptyLines()
         {

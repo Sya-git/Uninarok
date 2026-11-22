@@ -99,6 +99,7 @@ namespace Uninarok.Networking.Tests
                 PacketIds.ITEM_ENTRY, PacketIds.ITEM_FALL_ENTRY, PacketIds.ITEM_DISAPPEAR,
                 PacketIds.MAP_CHANGE, PacketIds.MAP_SERVER_CHANGE,
                 PacketIds.INVENTORY_LIST_NORMAL, PacketIds.INVENTORY_LIST_EQUIP, PacketIds.ITEM_PICKUP_ACK, PacketIds.DROP_ITEM_ACK,
+                PacketIds.OWN_MESSAGE,
             };
             var handled = GeneratedPacketRouter.HandledIds.ToArray();
             CollectionAssert.AreEquivalent(expected, handled);

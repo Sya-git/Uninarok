@@ -194,6 +194,19 @@ namespace Uninarok.World
         public bool DropItem(ushort inventoryIndex, ushort amount) =>
             amount > 0 && CanAct && _client.Send(new DROP_ITEM(inventoryIndex, amount));
 
+        /// <summary>Sends a command of the server (<c>@item 501</c>) as the chat line it is; the line sent, null when it was not.</summary>
+        public string Command(string command)
+        {
+            if (!TryGet(out _, out _)) return null;
+            foreach (var c in _flow.Context.Characters)
+            {
+                if (c.CharId != _flow.Context.CharacterId) continue;
+                var chat = new GLOBAL_CHAT(c.Name.ToString(), command);
+                return _client.Send(chat) ? chat.Text : null;
+            }
+            return null;
+        }
+
         // ---- sit (FR-19): the state changes on the server's answer, which a refusal never gives (D9) ----
 
         /// <summary>Asks to stand when sitting, else to sit. False when nothing was sent.</summary>

@@ -31,7 +31,7 @@ One row per documented packet (SPEC-0001, PACKETVER 20220406). Generated from th
 | Client to map server | `0x007D` | [MAP_LOADED](Out/MapServer/MAP_LOADED.md) | 2 | verified | cold |
 | Client to map server | `0x0090` | [NPC_CLICK](Out/MapServer/NPC_CLICK.md) | 7 | documented | cold |
 | Client to map server | `0x00B2` | [RESTART](Out/MapServer/RESTART.md) | 3 | documented | cold |
-| Client to map server | `0x00F3` | [GLOBAL_CHAT](Out/MapServer/GLOBAL_CHAT.md) | variable | documented | warm |
+| Client to map server | `0x00F3` | [GLOBAL_CHAT](Out/MapServer/GLOBAL_CHAT.md) | variable | implemented | warm |
 | Client to map server | `0x018A` | [QUIT_GAME](Out/MapServer/QUIT_GAME.md) | 4 | documented | cold |
 | Client to map server | `0x035F` | [REQUEST_MOVE](Out/MapServer/REQUEST_MOVE.md) | 5 | implemented | warm |
 | Client to map server | `0x0360` | [HEARTBEAT_REQUEST](Out/MapServer/HEARTBEAT_REQUEST.md) | 6 | verified | warm |
@@ -60,6 +60,7 @@ One row per documented packet (SPEC-0001, PACKETVER 20220406). Generated from th
 | Map server to client | `0x0088` | [UNIT_STOP_MOVE](In/MapServer/UNIT_STOP_MOVE.md) | 10 | implemented | hot |
 | Map server to client | `0x008A` | [UNIT_ACT](In/MapServer/UNIT_ACT.md) | 29 | implemented | hot |
 | Map server to client | `0x008D` | [GLOBAL_MESSAGE](In/MapServer/GLOBAL_MESSAGE.md) | variable | documented | warm |
+| Map server to client | `0x008E` | [OWN_MESSAGE](In/MapServer/OWN_MESSAGE.md) | variable | implemented | cold |
 | Map server to client | `0x0091` | [MAP_CHANGE](In/MapServer/MAP_CHANGE.md) | 22 | verified | cold |
 | Map server to client | `0x009C` | [UNIT_DIRECTION](In/MapServer/UNIT_DIRECTION.md) | 9 | implemented | warm |
 | Map server to client | `0x009D` | [ITEM_ENTRY](In/MapServer/ITEM_ENTRY.md) | 19 | implemented | hot |
@@ -86,4 +87,4 @@ One row per documented packet (SPEC-0001, PACKETVER 20220406). Generated from th
 | Map server to client | `0x0B39` | [INVENTORY_LIST_EQUIP](In/MapServer/INVENTORY_LIST_EQUIP.md) | variable | implemented | cold |
 | Map server to client | `0x0B41` | [ITEM_PICKUP_ACK](In/MapServer/ITEM_PICKUP_ACK.md) | 70 | implemented | warm |
 
-72 packets documented. Data shared by several packets is documented in `docs/data/` (`AccountSex`, `CharInfo`, `UninarokPosition`, `UninarokMoveData`).
+73 packets documented. Data shared by several packets is documented in `docs/data/` (`AccountSex`, `CharInfo`, `UninarokPosition`, `UninarokMoveData`).

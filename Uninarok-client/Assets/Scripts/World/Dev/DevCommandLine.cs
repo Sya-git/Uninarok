@@ -18,6 +18,8 @@ namespace Uninarok.World.Dev
 
         readonly Dictionary<string, Func<string, string>> _commands = new Dictionary<string, Func<string, string>>(StringComparer.OrdinalIgnoreCase);
         DevInventory _inventory;
+        DevMessages _messages;
+        Func<OwnCharacter> _own;
         WorldBootstrap _world;
         OwnInput _input;
         string _text = string.Empty;
@@ -37,6 +39,7 @@ namespace Uninarok.World.Dev
         /// <summary>The commands of SPEC-0010, on the own character.</summary>
         internal void Register(Func<OwnCharacter> own)
         {
+            _own = own;
             Add("/doridori", () => Ask(own, c => c.Doridori()));
             Add("/bangbang", () => Ask(own, c => c.Bangbang()));
             Add("/sit", () => Ask(own, c => c.Sit()));
@@ -49,6 +52,31 @@ namespace Uninarok.World.Dev
         {
             _inventory?.Dispose();
             _inventory = inventory;
+        }
+
+        /// <summary>Where the server's answers come from; replaces (and ends) those of before.</summary>
+        internal void UseMessages(DevMessages messages)
+        {
+            _messages?.Dispose();
+            _messages = messages;
+        }
+
+        internal void Show(string message)
+        {
+            _message = message;
+            _messageUntil = Time.unscaledTime + MessageSeconds;
+        }
+
+        /// <summary>The message shown last.</summary>
+        internal string Message => _message;
+
+        // FR-20: a command of the server, "@item 501 5", is a chat line.
+        string Command(string line)
+        {
+            string sent = _own?.Invoke()?.Command(line);
+            if (sent == null) return "not in game";
+            if (_messages != null) _messages.Sent = sent;
+            return null;
         }
 
         // FR-20: "/drop item [amount]" is dragging an item out of the inventory; alone it lists the items.
@@ -85,6 +113,7 @@ namespace Uninarok.World.Dev
         {
             line = (line ?? string.Empty).Trim();
             if (line.Length == 0) return null;
+            if (line[0] == '@' || line[0] == '#') return Command(line);
             int space = line.IndexOf(' ');
             string name = space < 0 ? line : line.Substring(0, space);
             return _commands.TryGetValue(name, out var run) ? run(space < 0 ? string.Empty : line.Substring(space + 1).Trim()) : $"unknown command: {name}";
@@ -106,12 +135,15 @@ namespace Uninarok.World.Dev
 
         void Submit()
         {
-            _message = Execute(_text);
-            _messageUntil = Time.unscaledTime + MessageSeconds;
+            Show(Execute(_text));
             Close();
         }
 
-        void OnDestroy() => UseInventory(null);
+        void OnDestroy()
+        {
+            UseInventory(null);
+            UseMessages(null);
+        }
 
         void OnDisable()
         {
