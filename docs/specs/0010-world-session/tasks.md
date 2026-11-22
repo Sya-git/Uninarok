@@ -200,6 +200,7 @@
 
 - [ ] **T6.6** Map change end to end (plan §4.6–§4.8). (FR-15)
   *Done when:* walking into prontera's south warp loads prt_fild08 with the character on the server's cell and only that map's units (debug view list), prontera's scene unloaded; with two map servers on the local machine, a map-server move ends in game on the new server (evidence: log and screenshot).
+  *Open (2026-11-22):* walking into prontera's south warp loads prt_fild08 with the character on 170,375 (the server's cell), only that map's units, prontera's scene unloaded (`evidence/t6.6-after-south-warp.png`). Left: the two map servers part cannot be run on this Hercules (D25), tested only through the simulated connection: the owner decides.
 
 ## Phase 7: Input
 
