@@ -106,9 +106,10 @@
   *Done when:* `WalkTiming_200Straight5_Is1000ms`, `_OneDiagonal_Is1080ms` pass; `MapDataWalkGrid` agrees with `MapData.IsWalkable` on every cell of prontera (`NeedsData`), with `y = z`.
   *Result (2026-11-22):* the timing tests pass; `MapDataWalkGrid` agrees with `MapData.IsWalkable` on every cell of prontera. `UnknownWalkGrid` is the grid of a map with no data (plan §4.7).
 
-- [ ] **T3.4** Hercules plugin `uninarok_pathdump`, pair mode, and the reference fixtures (plan §4.4, D3). (FR-10)
+- [x] **T3.4** Hercules plugin `uninarok_pathdump`, pair mode, and the reference fixtures (plan §4.4, D3). (FR-10)
   Built with the server's build; seed and pair count from its command line; both A* (flag 0) and easy path (flag 1) results, plus `path_search_long`.
   *Done when:* the plugin builds with no new warnings in the Hercules build, a normal server start does not load it, and `fixtures/paths-prontera.bin`, `paths-izlude.bin`, `paths-prt_fild08.bin` (10,000 pairs each, including "no path" and "too long" cases) are committed with seed and server commit in the fixtures `README.md`. (Fallback of plan §9 if the plugin cannot be built: record it under Decisions first.)
+  *Result (2026-11-22):* the plugin builds with no warnings (`ninja plugin.uninarok_pathdump`), is not in `conf/plugins.conf`, and wrote 10,000 pairs for each map (counts in the fixtures README).
 
 - [ ] **T3.5** Tests for `HerculesPathfinder` (plan §4.4, §6). (FR-10, FR-17)
   `HerculesPathfinder_MatchesServer_<map>` and `_EasyPath_MatchesServer_<map>` over the T3.4 fixtures (`NeedsData`), and synthetic `_CornerRule`, `_SameCell`, `_NodeCollisionAborts`, `_Limits17And14`, `_ZeroAllocation1000Searches`.

@@ -139,6 +139,8 @@ Thumbs.db
 !/src/plugins/script_mapquit/*
 !/src/plugins/test_equippos/
 !/src/plugins/test_equippos/*
+!/src/plugins/uninarok_pathdump/
+!/src/plugins/uninarok_pathdump/*
 
 # /tools/
 /tools/convert
