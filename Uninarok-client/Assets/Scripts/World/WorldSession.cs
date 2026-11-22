@@ -17,12 +17,19 @@ namespace Uninarok.World
     {
         const byte ActSit = 2, ActStand = 3;
         const ushort VarSpeed = 0; // SP_SPEED
+        const int DefaultSpeed = 150; // DEFAULT_WALK_SPEED
 
         readonly NetworkFlow _flow;
         readonly ServerClock _clock;
         readonly WorldSettings _settings;
         readonly Subscriptions _subscriptions;
         bool _disposed;
+
+        // The own character between maps: what the server last said of it. Nothing before the first entry of a character.
+        bool _entered;
+        EntityLook _ownLook;
+        UninarokDirection _ownFacing;
+        short _ownSpeed;
 
         readonly PacketHandler<UNIT_STAND_ENTRY> _onStand;
         readonly PacketHandler<UNIT_NEW_ENTRY> _onNew;
@@ -63,6 +70,7 @@ namespace Uninarok.World
             _onItemFall = OnItemFall;
             _onItemGone = OnItemGone;
             _onParameter = OnParameter;
+            Own = new OwnCharacter(this, client, _flow);
 
             _flow.StateChanged += OnStateChanged;
             _flow.MapLoadRequested += OnMapLoadRequested;
@@ -72,6 +80,9 @@ namespace Uninarok.World
 
         /// <summary>The world of the current map; null until <see cref="BeginMap"/> and after <see cref="EndMap"/>.</summary>
         public WorldModel Model { get; private set; }
+
+        /// <summary>The rules of the own character.</summary>
+        public OwnCharacter Own { get; }
 
         public ServerClock Clock => _clock;
         public WorldSettings Settings => _settings;
@@ -83,14 +94,69 @@ namespace Uninarok.World
         {
             EndMap();
             Model = new WorldModel(grid, _settings);
+            AddOwn();
         }
+
+        // FR-1: the selected character on the cell and facing the server gave. The character server's data are from before the first
+        // map: after that the look and the speed are what the server last said, and nobody enters a map dead.
+        void AddOwn()
+        {
+            var context = _flow.Context;
+            if (context.AccountId == 0) return;
+            var entry = context.Entry;
+            var facing = entry.Position.Direction;
+            var state = EntityState.Standing;
+            if (!_entered)
+            {
+                _entered = true;
+                var character = Selected(context);
+                _ownLook = LookOf(character);
+                if (_ownSpeed == 0) _ownSpeed = character.DefaultWalkSpeed > 0 ? character.DefaultWalkSpeed : (short)DefaultSpeed;
+                if (character.CharId != 0 && character.Hp == 0) state = EntityState.Dead;
+            }
+            else if (entry.StartTick == 0 && _settings.WarpKeepsDirection) facing = _ownFacing; // D14
+            Model.Upsert(context.AccountId, EntityKind.Player, _ownLook, _ownSpeed, entry.Position.X, entry.Position.Y, facing, HeadDirection.Straight, state);
+            Model.OwnId = context.AccountId;
+        }
+
+        // The character server lists them; the selected slot, else the selected id.
+        static CharInfo Selected(SessionContext context)
+        {
+            foreach (var c in context.Characters)
+                if (c.CharId == context.CharacterId) return c;
+            foreach (var c in context.Characters)
+                if (c.Slot == context.SelectedSlot) return c;
+            return default;
+        }
+
+        internal static EntityLook LookOf(in CharInfo c) => new EntityLook
+        {
+            Job = c.Class,
+            HairStyle = unchecked((ushort)c.Hair),
+            HairColour = unchecked((ushort)c.HairColor),
+            ClothColour = unchecked((ushort)c.ClothesColor),
+            BodyStyle = unchecked((ushort)c.Body),
+            Weapon = c.Weapon,
+            Shield = c.LookShield,
+            HeadTop = unchecked((ushort)c.LookHeadTop),
+            HeadMid = unchecked((ushort)c.LookHeadMid),
+            HeadBottom = unchecked((ushort)c.LookHeadBottom),
+            Robe = unchecked((ushort)c.LookRobe),
+            Sex = (byte)c.Sex,
+        };
 
         /// <summary>Empties the world: map change, disconnect (FR-3). The handlers stay.</summary>
         public void EndMap()
         {
             var model = Model;
+            if (model == null) return;
+            if (model.TryGetSlot(model.OwnId, out int slot))
+            {
+                _ownLook = model[slot].Look;
+                _ownFacing = model[slot].Facing;
+            }
             Model = null;
-            model?.Clear();
+            model.Clear();
         }
 
         public void Dispose()
@@ -113,6 +179,12 @@ namespace Uninarok.World
             {
                 _subscriptions.Clear();
                 EndMap(); // left the map server, or moves to another one
+                // Another character or login: nothing of the old one counts. A move to another map server keeps it.
+                if (state != FlowState.ConnectingToMap)
+                {
+                    _entered = false;
+                    _ownSpeed = 0;
+                }
             }
         }
 
@@ -201,7 +273,8 @@ namespace Uninarok.World
         void OnParameter(in PARAMETER_CHANGE p)
         {
             if (p.VarId != VarSpeed) return;
-            Model?.SetSpeed(Model.OwnId, (short)Math.Clamp(p.Value, 1, short.MaxValue));
+            _ownSpeed = (short)Math.Clamp(p.Value, 1, short.MaxValue); // also before the map is loaded
+            Model?.SetSpeed(Model.OwnId, _ownSpeed);
         }
 
         // ---- wire to model ----

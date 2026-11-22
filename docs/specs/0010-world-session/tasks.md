@@ -154,8 +154,9 @@
   *Done when:* one test per packet with the simulated connection shows the model change it causes; `WorldSession_ViewlessEntitiesStillUpdate` passes; handlers of hot packets allocate 0 B; handlers are released on `Dispose` (subscriber count back to zero).
   *Result (2026-11-22):* 15 `WorldSessionTests` pass: one test per packet, `WorldSession_ViewlessEntitiesStillUpdate`, handlers released on `Dispose` and on disconnect (count back to 0), 0 B over 1,400 deliveries of the hot packets.
 
-- [ ] **T5.2** Own character at entry from `CharInfo` and `Context.Entry`, dead on entry, speed from `PARAMETER_CHANGE` (plan §4.6). (FR-1)
+- [x] **T5.2** Own character at entry from `CharInfo` and `Context.Entry`, dead on entry, speed from `PARAMETER_CHANGE` (plan §4.6). (FR-1)
   *Done when:* tests show the own entity with the selected character's look, cell, facing and speed; `OwnCharacter_DeadOnEntry_NoInput` passes (HP 0: state dead, every request refused, nothing sent).
+  *Result (2026-11-22):* 8 `OwnCharacterTests` pass: look, cell, facing and speed at entry; `OwnCharacter_DeadOnEntry_NoInput` (extended by T5.3 to T5.5 as the requests come); after a map change the look and speed are what the server last said and the facing is north (D14).
 
 - [ ] **T5.3** Tests, then implementation: `OwnCharacter.RequestWalk` and its dry run (plan §4.6). (FR-9)
   *Done when:* `OwnCharacter_RequestWalk_<Result>` pass for every result, and only `Sent` sends a packet; the walk starts only on `PLAYER_MOVE`.
