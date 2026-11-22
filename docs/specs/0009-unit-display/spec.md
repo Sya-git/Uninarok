@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Approved (owner, 2026-11-21) |
+| **Status** | Implementing (approved by the owner, 2026-11-21) |
 | **Created** | 2026-11-21 |
 | **Owner** | Jhonnatan |
 | **Depends on** | [SPEC-0006](../0006-rsw-map-scene/spec.md) (map scene), [SPEC-0007](../0007-spr-act-pal-sprites/spec.md) (one sprite), [SPEC-0008](../0008-sprite-catalog/spec.md) (catalog by id) |

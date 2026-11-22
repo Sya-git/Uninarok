@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Approved (owner, 2026-11-21) |
+| **Status** | Implementing (approved by the owner, 2026-11-21) |
 
 **How to use this file**
 - Start only when SPEC-0008 is implemented and merged into `main` (its catalog facade, entries and editor lookup are what this spec builds on). Work on branch `feature/0009-unit-display`.
@@ -24,9 +24,10 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
 
 ## Phase 0: Prepare
 
-- [ ] **T0.1** Add `com.unity.cinemachine` (newest 3.x the registry offers for 6000.7.0b7) and check the plan's assumptions about it. (FR-12)
+- [x] **T0.1** Add `com.unity.cinemachine` (newest 3.x the registry offers for 6000.7.0b7) and check the plan's assumptions about it. (FR-12)
   Record in plan §1 the version; in §4.7 the `Damper.Damp` signature and constant read from the installed source (expected `remaining × (1 − e^(−4.605 × dt / dampTime))`); in §5 the `CinemachineBrain` execution order and update method.
   *Done when:* the package resolves and the project compiles with no new warnings (Editor.log); the three facts are written in the plan (with a Decisions note if any differs from the plan, and the damp times recomputed).
+  *Result (2026-11-22):* 6.7.0 (Cinemachine 3 API, D14); `Damper.Damp` as assumed, damp times unchanged; brain order 100, `LateUpdate`; no `warning CS/UA` in Editor.log.
 
 - [ ] **T0.2** Decode the composition tables and write `composition-reference.md`. (FR-2, FR-3, FR-4, FR-5, FR-8, FR-11)
   For each table of plan §1 (`tb_layer_priority`, `spriterobename` `RobeTopLayer`, `*layerdir_*` old and new, `_2dlayer_headtobody`, `ridingspreditinfo` head and body calls, `offsetitempos` with Doram, `transparentitem`, `shadowtable`): file, shape, every column's meaning, counts, Confirmed/Candidate, as sprite-catalog.md does. Also settle, against the reference viewer on the reference set: the default part order per direction (weapon/shield front or back), the idle/sit 3-frame head rule (D9, R3), what a part with fewer frames than the body shows (R2), the job ids drawn as nothing, and pick the open members of the reference set.
