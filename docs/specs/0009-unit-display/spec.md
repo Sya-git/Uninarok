@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Implementing (FR-16, approved by the owner 2026-11-22). FR-1 to FR-15 Implemented (2026-11-22; approved by the owner 2026-11-21) |
+| **Status** | Implemented (2026-11-22; approved by the owner 2026-11-21; FR-16 added and approved 2026-11-22) |
 | **Created** | 2026-11-21 |
 | **Owner** | Jhonnatan |
 | **Depends on** | [SPEC-0006](../0006-rsw-map-scene/spec.md) (map scene), [SPEC-0007](../0007-spr-act-pal-sprites/spec.md) (one sprite), [SPEC-0008](../0008-sprite-catalog/spec.md) (catalog by id) |

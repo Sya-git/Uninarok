@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Implementing (Phase 9, FR-16, approved by the owner 2026-11-22). Phases 0 to 8 Implemented (2026-11-22; approved by the owner 2026-11-21) |
+| **Status** | Implemented (2026-11-22; approved by the owner 2026-11-21; Phase 9, FR-16, approved 2026-11-22) |
 
 **How to use this file**
 - Start only when SPEC-0008 is implemented and merged into `main` (its catalog facade, entries and editor lookup are what this spec builds on). Work on branch `feature/0009-unit-display`.
@@ -235,6 +235,6 @@ Works on the branch `feature/0010-world-session` (the owner reported it while re
   *Done when:* unit update 2 ms or less and 0 B per frame at 100 players and 200 monsters on prontera; batches, set passes and frame time of both are recorded here.
   *Result (2026-11-22):* stress mode, prontera, 300 units, in the editor: unit update 0.52 ms mean, 1.20 ms max over 600 frames (T8.5: 0.73 and 1.97). 0 B per frame: `UnitSystem_ZeroGcAllocPerFrame_300Units` passes (T9.4 run). Units frozen, heights and z scale 1 in turn, 3 times 200 frames each (982 layers enabled of 2,378): set passes 371 and 369 to 371, draw calls 1,703 and 1,682 to 1,697 (a little less is culled), frame 16.67 ms both (vsync), render 14.63 to 14.70 and 14.62 to 14.71 ms. `UnityStats` has no batch count in this version. The sandbox readout of garbage (67 KB per frame) is the whole editor frame, not the unit update.
 
-- [ ] **T9.6** Evidence and close. (FR-16)
+- [x] **T9.6** Evidence and close. (FR-16)
   *Done when:* screenshots on prontera next to a wall and indoors on iz_int are in `evidence/` (before and after, both tilts); the Sprites, Units and World tests pass; the owner checked the images; statuses are `Implemented`.
-  *So far (2026-11-22):* evidence/t9.6-prontera-turn90.png, t9.6-prontera-turn180.png, t9.6-iz_int-turn0.png, t9.6-iz_int-turn270.png (left before, right after; tilt 50° above, 65° below; game view angle, nearest zoom, preview scenes). Sprites EditMode 38 of 38, Units EditMode 98 of 98, Units PlayMode 22 of 22, World EditMode 160 of 160, World PlayMode 44 of 44. Open: the owner's check.
+  *Result (2026-11-22):* evidence/t9.6-prontera-turn90.png, t9.6-prontera-turn180.png, t9.6-iz_int-turn0.png, t9.6-iz_int-turn270.png (left before, right after; tilt 50° above, 65° below; game view angle, nearest zoom, preview scenes). Sprites EditMode 38 of 38, Units EditMode 98 of 98, Units PlayMode 22 of 22, World EditMode 160 of 160, World PlayMode 44 of 44. The owner checked the images and approved them (2026-11-22). Not seen in play against a server.
