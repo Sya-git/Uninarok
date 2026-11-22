@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Implementing (approved by the owner, 2026-11-21) |
+| **Status** | Implemented (2026-11-22; approved by the owner 2026-11-21) |
 
 **How to use this file**
 - Start only when SPEC-0008 is implemented and merged into `main` (its catalog facade, entries and editor lookup are what this spec builds on). Work on branch `feature/0009-unit-display`.
@@ -204,6 +204,6 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
   *Done when:* acolyte male, Attack2, facing front: the garment is behind the body in frames 0 to 4, and above the body but under the head in frames 5 to 8; the views from behind do not change.
   *Result (2026-11-22):* `UnitComposer_AcolyteAttack2_GarmentNeverCoversTheHeadFromTheFront` and `_GarmentInFrontWhileTheFaceShows_StaysUnderTheHead` pass (Units EditMode 97 of 97); evidence/t8.6-acolyte-garment.png (frames left to right; Attack2 then Attack3, directions 0, 7, 6, 2, 4).
 
-- [ ] **T8.3** Close the spec. (all)
+- [x] **T8.3** Close the spec. (all)
   *Done when:* spec success criteria checked and reported; sprite-catalog.md §1 points the composition rows to SPEC-0009; the two BACKLOG items of plan §7 are removed (closed) and leftovers added; spec, plan and tasks status `Implemented`.
-  *Open (2026-11-22):* waits for T6.4 and T8.1. Done already: sprite-catalog.md §1 points to SPEC-0009, leftovers are in BACKLOG.
+  *Result (2026-11-22):* success criteria: reference set compared by the owner (T8.1); FR-14 met in the stress mode, in the editor (T8.2, T8.5: 1.97 ms max in the last run); camera matches the original client (T6.4, owner's word, no screenshot pairs). sprite-catalog.md §1 points to SPEC-0009; the two BACKLOG items are removed and the leftovers added. Not done: a full player build (the release scripts were compiled). Tests: Units PlayMode 16 of 16; Units, CameraRig, Sprites, SpriteCatalog, Map and Networking EditMode 665 of 666 (the one failure is the line endings of a SPEC-0001 fixture, BACKLOG); the full RoImport suite, 1,146 tests: two failed on MCP noise or load and pass alone, three model and map batch tests run past their 180 s timeout on this PC, alone too (214 to 485 s; BACKLOG), the rest pass.
