@@ -111,9 +111,10 @@
   *Done when:* the plugin builds with no new warnings in the Hercules build, a normal server start does not load it, and `fixtures/paths-prontera.bin`, `paths-izlude.bin`, `paths-prt_fild08.bin` (10,000 pairs each, including "no path" and "too long" cases) are committed with seed and server commit in the fixtures `README.md`. (Fallback of plan §9 if the plugin cannot be built: record it under Decisions first.)
   *Result (2026-11-22):* the plugin builds with no warnings (`ninja plugin.uninarok_pathdump`), is not in `conf/plugins.conf`, and wrote 10,000 pairs for each map (counts in the fixtures README).
 
-- [ ] **T3.5** Tests for `HerculesPathfinder` (plan §4.4, §6). (FR-10, FR-17)
+- [x] **T3.5** Tests for `HerculesPathfinder` (plan §4.4, §6). (FR-10, FR-17)
   `HerculesPathfinder_MatchesServer_<map>` and `_EasyPath_MatchesServer_<map>` over the T3.4 fixtures (`NeedsData`), and synthetic `_CornerRule`, `_SameCell`, `_NodeCollisionAborts`, `_Limits17And14`, `_ZeroAllocation1000Searches`.
   *Done when:* the tests compile and are ignored pending T3.6/T3.7.
+  *Result (2026-11-22):* the 18 test cases compile and are ignored pending T3.6/T3.7; the fixture loader also checks that the client's cells hash to the server's.
 
 - [ ] **T3.6** Implement the A* port `Search` (plan §4.4). (FR-10, FR-17)
   *Done when:* `HerculesPathfinder_MatchesServer_*` pass for all 30,000 pairs step by step (result codes included), the synthetic A* tests pass, and 1,000 searches allocate 0 B; the mean search time on prontera is recorded in the report.
