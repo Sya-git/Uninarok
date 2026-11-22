@@ -36,6 +36,7 @@ namespace Uninarok.RoImport.Editor.Map
         public RoResult<Object> Convert(RoImportContext ctx, RoPath path)
         {
             var result = ConvertMap(ctx, path);
+            if (result.Status != RoStatus.Failed) ctx.MapsConverted = true;
             return new RoResult<Object>(result.Status, result.Value, result.Failure);
         }
 

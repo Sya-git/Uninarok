@@ -6,7 +6,11 @@ using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 using Uninarok.Map;
 using Uninarok.RoImport.Core.Output;
+using Uninarok.RoImport.Core.Results;
+using Uninarok.RoImport.Core.Source;
 using Uninarok.RoImport.Editor.Map;
+using Uninarok.RoImport.Editor.Ui;
+using ImportApi = Uninarok.RoImport.Editor.Pipeline.RoImport;
 
 namespace Uninarok.RoImport.Tests.Rsw
 {
@@ -52,6 +56,28 @@ namespace Uninarok.RoImport.Tests.Rsw
             entries.First(e => e.address == "map/one").SetAddress("wrong", false);
             Assert.AreEqual(1, RoMapSceneAddressables.Ensure(_settings, _roots), "a wrong address is corrected");
             Assert.IsTrue(entries.Any(e => e.address == MapSceneKeys.Scene("one")));
+        }
+
+        // D33: an imported map is loadable without another step, also one that was current already.
+        [Test]
+        public void AnImport_RegistersItsMaps_OnlyInTheProjectsFolder()
+        {
+            using (var bed = new RoMapTestBed("sample"))
+            {
+                var settings = AddressableAssetSettings.Create(RoImportTestRoot.Folder + "/aa", "TestAddressables", false, true);
+                var options = bed.Options();
+                options.CatalogAddressables = settings;
+                Assert.AreNotEqual(RoStatus.Failed, ImportApi.Map("sample", options).Status);
+                CollectionAssert.AreEquivalent(new[] { "map/sample" }, settings.FindGroup(RoMapSceneAddressables.Group).entries.Select(e => e.address));
+
+                settings.RemoveAssetEntry(UnityEditor.AssetDatabase.AssetPathToGUID(bed.Paths.Scene));
+                Assert.AreEqual(1, ImportApi.Run(RoImportMenu.MapJobs(new RoFolderSource(bed.Data)), options).Skipped);
+                CollectionAssert.AreEquivalent(new[] { "map/sample" }, settings.FindGroup(RoMapSceneAddressables.Group).entries.Select(e => e.address));
+
+                bed.Convert(force: true);
+                string guid = UnityEditor.AssetDatabase.AssetPathToGUID(bed.Paths.Scene);
+                Assert.IsNull(AddressableAssetSettingsDefaultObject.Settings.FindAssetEntry(guid), "a test's output is not the game's");
+            }
         }
 
         [Test]

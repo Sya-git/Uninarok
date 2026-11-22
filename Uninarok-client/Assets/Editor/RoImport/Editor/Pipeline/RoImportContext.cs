@@ -55,6 +55,9 @@ namespace Uninarok.RoImport.Editor.Pipeline
         /// <summary>Give converted sprites their index texture, so palettes can recolour them (PLAN-0007 4.4, FR-7).</summary>
         public bool SpritePalettes { get; set; }
 
+        /// <summary>A map scene was converted in this run, or is current.</summary>
+        internal bool MapsConverted { get; set; }
+
         /// <summary>Where the ledgers (and the sprite sheet index, PLAN-0007 4.2) live.</summary>
         public string LedgerFolder => _ledgerFolder;
 

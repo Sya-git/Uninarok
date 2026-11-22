@@ -62,7 +62,7 @@ Satisfies FR-14, FR-18 (placement), and the dev-only rule.
 Data and scenes:
 
 - `docs/specs/0010-world-session/fixtures/paths-<map>.bin` (reference paths from the plugin, §4.4) and `fixtures/world-*.bin` (recorded sessions for replay, §6), with a `README.md` saying how each was made.
-- Addressables group `maps` (new): each `Scenes/Maps/<map>.unity` with key `map/<map>`, and `<map>.additive.unity` with key `map/<map>.additive` when it exists (D5). The converter of PLAN-0006 is not changed; one editor menu item `Tools/Ragnarok/Register Map Scenes` adds every converted map scene to the group (idempotent).
+- Addressables group `maps` (new): each `Scenes/Maps/<map>.unity` with key `map/<map>`, and `<map>.additive.unity` with key `map/<map>.additive` when it exists (D5). `RoMapSceneAddressables.Ensure` adds every converted map scene to the group (idempotent): at the end of each import that converted a map into the project's folders (D33), and from the menu item `Tools/Ragnarok/Register Map Scenes`.
 - `Assets/Settings/World/WorldSettings.asset` (server rule values, §4.2).
 - Packet docs: new docs in `docs/specs/0001-networking-core/Packets/In/MapServer/` and `Out/MapServer/`, `INDEX.md` regenerated, existing docs moved to `implemented`/`verified` (normative reference, same commit as the code).
 
@@ -470,6 +470,7 @@ Manual checks on a local Hercules (evidence in `docs/specs/0010-world-session/ev
 | D30 | (T8.4) In the editor, a Multiplayer Play Mode player with a tag `login:<account>` logs in as that account with the stored password | One `EditorPrefs` account for every player; a second credentials window | Two clients in one editor for T9.1. `CurrentPlayer` is in the engine's multiplayer module, so no package is needed to compile |
 | D31 | (T5.4, T0.4) Shift + click two or three steps from the body turns the head to the cell and the body one step short of it; only the opposite direction (four steps) turns both (FR-13 as amended) | The body to the cell and the head straight (first rule) | The owner compared with the original client: body south, a click on the east gives the body south-east and the head east; body west, head south-west, a click on the east gives both east |
 | D32 | (T5.4, T0.4) `/doridori` is one head turn for each command, left and right by turns, and the head stays; it goes on from the head's own state, so nothing is kept between commands (`Tick` and `DoridoriStepMs` are gone) | The three steps 200 ms apart for one command (first rule); Straight → Left → Right → Straight, one for each command (second) | The owner compared with the original client, twice |
+| D33 | (T6.1) An import that converts a map (or finds it current) registers the map scenes when it ends; a run into other folders (tests) does not | The menu item alone (first version); an `AssetPostprocessor` (the import architecture forbids them, SPEC-0002) | The owner imported int_land and the client did not find it: the second step was not known. `SaveAssets` already runs there; the scan is once for each run, not for each map |
 
 ## 9. Risks
 

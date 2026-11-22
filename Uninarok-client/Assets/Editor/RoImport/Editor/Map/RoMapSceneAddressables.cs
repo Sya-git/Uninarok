@@ -14,7 +14,7 @@ namespace Uninarok.RoImport.Editor.Map
     /// <summary>
     /// Makes every converted map scene loadable at run time (SPEC-0010 FR-1, FR-15; PLAN-0010 3, D5): the Addressables group
     /// <c>maps</c> with one entry per generated scene and per additive scene beside it, addressed by <see cref="MapSceneKeys"/>.
-    /// Idempotent; the converter itself is not changed.
+    /// Idempotent; run at the end of every import that converts a map (D33), and from the menu.
     /// </summary>
     public static class RoMapSceneAddressables
     {

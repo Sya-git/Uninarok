@@ -110,7 +110,7 @@ namespace Uninarok.World.View
             _scenes.Load(MapName, (result, root) =>
             {
                 if (this == null || load != _loads || _flow.State != FlowState.LoadingMap) return;
-                if (result == MapSceneLoader.Result.MissingScene) Debug.LogWarning($"[World] map '{MapName}' has no converted scene: it is tracked but not shown");
+                if (result == MapSceneLoader.Result.MissingScene) Debug.LogWarning($"[World] map '{MapName}' has no converted scene, or it is not registered (Tools/Ragnarok/Register Map Scenes): it is tracked but not shown");
                 else if (result == MapSceneLoader.Result.Failed) Debug.LogWarning($"[World] the scene of map '{MapName}' could not be loaded: it is tracked but not shown");
 
                 _map = result == MapSceneLoader.Result.Loaded ? root.Data : null;
