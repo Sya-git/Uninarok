@@ -41,6 +41,9 @@ namespace Uninarok.World
         /// <summary>The own character's id; 0 when it is not in the world.</summary>
         public uint OwnId { get; internal set; }
 
+        /// <summary>Slots there are.</summary>
+        public int Capacity => _entities.Length;
+
         /// <summary>Entities in the world.</summary>
         public int Count => _slots.Count;
 

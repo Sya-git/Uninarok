@@ -4,6 +4,7 @@
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
+        "Uninarok.Networking.Tests",
         "Uninarok.World",
         "Uninarok.Units",
         "Uninarok.CameraRig",
@@ -17,7 +18,8 @@
         "Unity.Addressables",
         "Unity.ResourceManager",
         "Uninarok.World.View",
-        "Uninarok.World.Dev"
+        "Uninarok.World.Dev",
+        "Unity.Addressables.Editor"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

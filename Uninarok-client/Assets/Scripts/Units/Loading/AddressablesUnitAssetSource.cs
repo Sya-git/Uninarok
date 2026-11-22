@@ -45,11 +45,14 @@ namespace Uninarok.Units
 
         /// <summary>
         /// Loads the catalog and the composition tables, then calls <paramref name="done"/> with the source, or with null and a
-        /// reason when there is no catalog. Missing tables are one warning: the composer's defaults apply.
+        /// reason when there is no catalog. Missing tables are one warning: the composer's defaults apply. The catalog also holds
+        /// <paramref name="more"/> categories (PLAN-0010 D12: ground items).
         /// </summary>
-        public static void LoadAsync(Action<AddressablesUnitAssetSource, string> done)
+        public static void LoadAsync(Action<AddressablesUnitAssetSource, string> done, params SpriteCatalogCategory[] more)
         {
-            var catalog = SpriteCatalog.LoadAsync(Categories);
+            var categories = new List<SpriteCatalogCategory>(Categories);
+            if (more != null) categories.AddRange(more);
+            var catalog = SpriteCatalog.LoadAsync(categories.ToArray());
             catalog.Completed += c =>
             {
                 if (c.Status != AsyncOperationStatus.Succeeded)

@@ -5,3 +5,4 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Uninarok.Units.PlayTests")]
 [assembly: InternalsVisibleTo("Uninarok.Units.Editor")]
 [assembly: InternalsVisibleTo("Uninarok.Units.Dev")]
+[assembly: InternalsVisibleTo("Uninarok.World.PlayTests")]
