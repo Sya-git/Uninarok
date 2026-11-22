@@ -122,8 +122,9 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
   *Done when:* a PlayMode test spawns the reference set and plays each animation of FR-7; the pivot rotation equals the camera rotation after a turn and a tilt and is not written when the camera did not move; `UnitView_HeadAndBodyTurnEveryFrame_Doridori` passes.
   *Result (2026-11-22):* play tests pass: every animation on the reference set, pivot rotation, doridori, parts in step (8/8 in `Uninarok.Units.PlayTests`). The shadow (T5.4) is in the same view code.
 
-- [ ] **T5.2** Live changes: `SetLook` diff. (FR-9)
+- [x] **T5.2** Live changes: `SetLook` diff. (FR-9)
   *Done when:* `UnitView_SetLook_KeepsFrameAndPosition` passes (weapon and hair colour swapped mid-walk keep the frame; a job change replaces the look in place); old assets are released.
+  *Result (2026-11-22):* `UnitView_SetLook_KeepsFrameAndPosition` and `_ReleasesTheOldAssets` pass.
 
 - [ ] **T5.3** Ground placement: `PlaceOn` and the unit material's depth bias. (FR-10)
   *Done when:* `UnitView_FeetOnGround_SlopeOfPrtFild08_MinMaxTilt` passes; evidence images of a poring and a swordsman on a slope at 50° and 65° tilt.
