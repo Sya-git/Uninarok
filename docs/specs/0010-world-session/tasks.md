@@ -116,8 +116,9 @@
   *Done when:* the tests compile and are ignored pending T3.6/T3.7.
   *Result (2026-11-22):* the 18 test cases compile and are ignored pending T3.6/T3.7; the fixture loader also checks that the client's cells hash to the server's.
 
-- [ ] **T3.6** Implement the A* port `Search` (plan §4.4). (FR-10, FR-17)
+- [x] **T3.6** Implement the A* port `Search` (plan §4.4). (FR-10, FR-17)
   *Done when:* `HerculesPathfinder_MatchesServer_*` pass for all 30,000 pairs step by step (result codes included), the synthetic A* tests pass, and 1,000 searches allocate 0 B; the mean search time on prontera is recorded in the report.
+  *Result (2026-11-22):* `HerculesPathfinder_MatchesServer` passes for the 30,000 pairs of the three maps, step by step, with the result codes; the synthetic tests pass; 1,000 searches 0 B. Mean 4.3 µs per search over the prontera pairs (worst 162 µs, editor).
 
 - [ ] **T3.7** Implement `SearchEasy`, `StraightLine` and `SearchWalk` with the server's limits (plan §4.4). (FR-9, FR-10)
   *Done when:* `_EasyPath_MatchesServer_*` and `_Limits17And14` pass.

@@ -83,7 +83,7 @@ namespace Uninarok.World.Tests
 
         static readonly string[] Maps = { "prontera", "izlude", "prt_fild08" };
 
-        [Test, Category("NeedsData"), Ignore("pending T3.6")]
+        [Test, Category("NeedsData")]
         public void HerculesPathfinder_MatchesServer([ValueSource(nameof(Maps))] string map)
         {
             var (grid, pairs) = Load(map);
@@ -168,7 +168,7 @@ namespace Uninarok.World.Tests
             public bool IsPassable(int x, int y) => x >= 0 && y >= 0 && x < Width && y < Height && !Wall(x, y);
         }
 
-        [Test, Ignore("pending T3.6")]
+        [Test]
         public void HerculesPathfinder_CornerRule()
         {
             // the diagonal from (1,1) to (2,2) would cut the corner of the wall at (2,1)
@@ -185,7 +185,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual("1", Steps(path), "north-west, free");
         }
 
-        [Test, Ignore("pending T3.6")]
+        [Test]
         public void HerculesPathfinder_SameCell()
         {
             var finder = new HerculesPathfinder(new OpenGrid());
@@ -195,7 +195,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual((10, 10), (path.StartX, path.StartY));
         }
 
-        [Test, Ignore("pending T3.6")]
+        [Test]
         public void HerculesPathfinder_BlockedDestination_AndOutside()
         {
             var finder = new HerculesPathfinder(new OpenGrid { Wall = (x, y) => x == 12 && y == 10 });
@@ -206,7 +206,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(PathResult.NoPath, finder.Search(-1, 10, 5, 10, ref path), "a start outside the map");
         }
 
-        [Test, Ignore("pending T3.6")]
+        [Test]
         public void HerculesPathfinder_TheStartCellIsNotChecked()
         {
             var finder = new HerculesPathfinder(new OpenGrid { Wall = (x, y) => x == 10 && y == 10 });
@@ -215,17 +215,42 @@ namespace Uninarok.World.Tests
             Assert.AreEqual("66", Steps(path));
         }
 
-        [Test, Ignore("pending T3.6")]
+        [Test]
         public void HerculesPathfinder_NodeCollisionAborts()
         {
-            // A wall south to north with one gap far away: the search spreads over more than 32 rows of one column group and two
-            // cells ask for the same node (x + y * 32) & 1023, so the server gives up although a path of 32 steps may exist.
-            var finder = new HerculesPathfinder(new OpenGrid { Wall = (x, y) => x == 52 && y != 190 });
+            // A wall south to north with one gap 15 rows south: a path of 32 steps exists (counted by a plain search), but on the
+            // way two cells ask for the same node (x + y * 32) & 1023, and the server gives up.
+            var grid = new OpenGrid { Wall = (x, y) => x == 52 && y != 85 };
             var path = new WalkPath();
-            Assert.AreEqual(PathResult.NoPath, finder.Search(50, 100, 54, 100, ref path));
+            Assert.AreEqual(32, ShortestSteps(grid, 50, 100, 54, 100));
+            Assert.AreEqual(PathResult.NoPath, new HerculesPathfinder(grid).Search(50, 100, 54, 100, ref path));
+            var nearer = new OpenGrid { Wall = (x, y) => x == 52 && y != 88 };
+            Assert.AreEqual(PathResult.Found, new HerculesPathfinder(nearer).Search(50, 100, 54, 100, ref path), "a gap three rows nearer is found");
         }
 
-        [Test, Ignore("pending T3.6")]
+        // Breadth first with the corner rule.
+        static int ShortestSteps(IWalkGrid g, int x0, int y0, int x1, int y1)
+        {
+            var steps = new Dictionary<(int, int), int> { { (x0, y0), 0 } };
+            var queue = new Queue<(int X, int Y)>();
+            queue.Enqueue((x0, y0));
+            while (queue.Count > 0)
+            {
+                var (x, y) = queue.Dequeue();
+                int n = steps[(x, y)];
+                if (x == x1 && y == y1) return n;
+                for (int d = 0; d < 8; d++)
+                {
+                    int dx = HerculesPathfinder.Dx(d), dy = HerculesPathfinder.Dy(d);
+                    if (!g.IsPassable(x + dx, y + dy) || !g.IsPassable(x + dx, y) || !g.IsPassable(x, y + dy) || steps.ContainsKey((x + dx, y + dy))) continue;
+                    steps[(x + dx, y + dy)] = n + 1;
+                    queue.Enqueue((x + dx, y + dy));
+                }
+            }
+            return -1;
+        }
+
+        [Test]
         public void HerculesPathfinder_LongerThan32Steps_IsNoPath()
         {
             var finder = new HerculesPathfinder(new OpenGrid { Height = 4, Wall = (x, y) => y != 1 });
@@ -266,7 +291,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(PathResult.NoPath, post.SearchEasy(50, 50, 55, 50, ref path));
         }
 
-        [Test, Ignore("pending T3.6")]
+        [Test]
         public void HerculesPathfinder_ZeroAllocation1000Searches()
         {
             var finder = new HerculesPathfinder(new OpenGrid { Wall = (x, y) => x % 7 == 3 && y % 5 != 1 });
