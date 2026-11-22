@@ -68,9 +68,10 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
 
 ## Phase 2: Sprite changes
 
-- [ ] **T2.1** Tests, then implementation: `SpriteActor` driven mode. (FR-5, FR-14)
+- [x] **T2.1** Tests, then implementation: `SpriteActor` driven mode. (FR-5, FR-14)
   `Driven` and `ShowFrame(animation, direction, frame)`; `SpriteSystem.Tick` skips driven actors; renderers written only when (unique action, frame) changes; body events still fire.
   *Done when:* `SpriteActor_Driven_NotAdvancedBySystem_WritesOnlyOnChange` passes and every existing Sprites test still passes.
+  *Result (2026-11-22):* 6 `SpriteActor_Driven_*` tests and every existing Sprites test pass (87/87 with the unit tests); 0 B per ShowFrame.
 
 - [ ] **T2.2** `_DepthBias` in `Uninarok/RoSprite` and the unit material. (FR-10)
   Clip-space depth-only bias toward the camera in world units (default 0); `Art/Materials/sprite_unit.mat` with 0.5.

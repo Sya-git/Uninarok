@@ -28,6 +28,11 @@ namespace Uninarok.Sprites
         public float Speed = 1f;
         /// <summary>Turn to the camera's yaw every time the camera turns.</summary>
         public bool Billboard = true;
+        /// <summary>
+        /// Something else decides the frame with <see cref="ShowFrame"/> (PLAN-0009 4.4, SPEC-0009 FR-5): <see cref="SpriteSystem"/>
+        /// neither advances nor turns a driven actor.
+        /// </summary>
+        public bool Driven;
 
         SpriteRenderer[] _renderers = Array.Empty<SpriteRenderer>();
         int _animation, _direction;
@@ -38,6 +43,11 @@ namespace Uninarok.Sprites
         int _frame = -1;      // frame shown, −1 when nothing is
         bool _dirty = true;   // renderers must be written on the next tick
         int _applyCount;
+        // Driven mode: what the last ShowFrame resolved.
+        SpriteAnimation _shownData;
+        int _shownAnimation = -1, _shownDirection = -1;
+        int _sortingBase;
+        Color32 _tint = new Color32(255, 255, 255, 255);
 
         internal int SystemIndex = -1;
         internal bool BillboardDirty = true;
@@ -118,6 +128,92 @@ namespace Uninarok.Sprites
             return true;
         }
 
+        /// <summary>
+        /// Driven mode (PLAN-0009 4.4; SPEC-0009 FR-5, FR-14): shows <paramref name="frame"/> (wrapped to the action's count) of an
+        /// action. Renderers are written only when the (unique action, frame) changes, and the frame's event fires when a frame
+        /// is entered; turning keeps the frame and fires nothing. False when the action is missing (nothing is drawn). No allocation
+        /// once the renderers exist.
+        /// </summary>
+        public bool ShowFrame(int animation, int direction, int frame)
+        {
+            direction &= SpriteAnimation.Directions - 1;
+            bool dataChanged = !ReferenceEquals(_shownData, Data);
+            if (dataChanged)
+            {
+                _shownData = Data;
+                EnsureRenderers();
+                _dirty = true;
+            }
+            bool restarted = dataChanged || animation != _shownAnimation;
+            if (restarted || direction != _shownDirection)
+            {
+                _shownAnimation = _animation = animation;
+                _shownDirection = _direction = direction;
+                int before = _unique;
+                _hasAction = Data != null && Data.TryGetAction(animation, direction, Missing, out _unique);
+                if (!_hasAction) _unique = -1;
+                if (_unique != before) _dirty = true;
+            }
+
+            if (!_hasAction || Data.Actions[_unique].FrameCount <= 0)
+            {
+                _frame = -1;
+                if (_dirty) HideFrom(0);
+                return false;
+            }
+
+            var action = Data.Actions[_unique];
+            frame %= action.FrameCount;
+            if (frame < 0) frame += action.FrameCount;
+            bool entered = restarted || frame != _frame;
+            if (frame != _frame || _dirty)
+            {
+                _frame = frame;
+                Apply(action);
+            }
+            if (entered) Raise(action, frame);
+            return true;
+        }
+
+        /// <summary>The frames of the action <see cref="ShowFrame"/> would show, 0 when it is missing.</summary>
+        public int FrameCountOf(int animation, int direction) =>
+            Data != null && Data.TryGetAction(animation, direction & (SpriteAnimation.Directions - 1), Missing, out int unique) ? Data.Actions[unique].FrameCount : 0;
+
+        /// <summary>The sorting order of the first layer; the others follow. Written only when it changes.</summary>
+        public int SortingBase
+        {
+            get => _sortingBase;
+            set
+            {
+                if (value == _sortingBase) return;
+                _sortingBase = value;
+                for (int i = 0; i < _renderers.Length; i++) _renderers[i].sortingOrder = value + i;
+            }
+        }
+
+        /// <summary>Multiplies every layer's own tint.</summary>
+        public Color32 Tint
+        {
+            get => _tint;
+            set
+            {
+                if (value.r == _tint.r && value.g == _tint.g && value.b == _tint.b && value.a == _tint.a) return;
+                _tint = value;
+                _dirty = true;
+            }
+        }
+
+        /// <summary>Hides every layer until the next <see cref="ShowFrame"/> (driven mode).</summary>
+        public void Hide()
+        {
+            _shownData = null;
+            _shownAnimation = _shownDirection = -1;
+            _hasAction = false;
+            _unique = -1;
+            _frame = -1;
+            HideFrom(0);
+        }
+
         float FrameMs(in SpriteAnimation.ActionData action)
         {
             float ms = action.FrameMs * Speed;
@@ -195,7 +291,7 @@ namespace Uninarok.Sprites
                 }
                 r.sprite = sprites[layer.Slot];
                 r.flipX = layer.Mirror;
-                r.color = layer.Tint;
+                r.color = Multiply(layer.Tint, _tint);
                 var t = r.transform;
                 t.localPosition = new Vector3(layer.OffsetX / ppu, -layer.OffsetY / ppu, -i * LayerDepthStep);
                 t.localRotation = Quaternion.Euler(0f, 0f, -layer.Rotation);
@@ -204,6 +300,11 @@ namespace Uninarok.Sprites
             }
             HideFrom(used);
         }
+
+        static Color32 Multiply(Color32 a, Color32 b) =>
+            b.r == 255 && b.g == 255 && b.b == 255 && b.a == 255
+                ? a
+                : new Color32((byte)(a.r * b.r / 255), (byte)(a.g * b.g / 255), (byte)(a.b * b.b / 255), (byte)(a.a * b.a / 255));
 
         void HideFrom(int first)
         {
@@ -230,7 +331,7 @@ namespace Uninarok.Sprites
                 }
                 var r = child.GetComponent<SpriteRenderer>();
                 if (r == null) r = child.gameObject.AddComponent<SpriteRenderer>();
-                r.sortingOrder = i;
+                r.sortingOrder = _sortingBase + i;
                 r.shadowCastingMode = ShadowCastingMode.Off;
                 r.receiveShadows = false;
                 if (Material != null) r.sharedMaterial = Material;
