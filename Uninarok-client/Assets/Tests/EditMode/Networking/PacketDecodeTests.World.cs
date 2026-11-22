@@ -270,5 +270,63 @@ namespace Uninarok.Networking.Tests
             Assert.That(() => run(), UnityEngine.TestTools.Constraints.Is.Not.AllocatingGCMemory());
             Assert.AreNotEqual(0u, sum);
         }
+
+        // ---- ground items (T1.4) ----
+
+        [Test]
+        public void ITEM_ENTRY_Decodes_AndRejectsWrongLengths()
+        {
+            // amount before the sub-cell
+            var p = new ITEM_ENTRY(Hex("11000000" + "F5010000" + "01" + "9600" + "C800" + "0300" + "06" + "0C"));
+            Assert.AreEqual((17u, 501u, true), (p.ItemObjectId, p.ItemId, p.Identified));
+            Assert.AreEqual((150, 200, 3, 6, 12), ((int)p.X, (int)p.Y, (int)p.Amount, (int)p.SubX, (int)p.SubY));
+            Assert.Throws<PacketFormatException>(() => new ITEM_ENTRY(new byte[16]));
+            Assert.Throws<PacketFormatException>(() => new ITEM_ENTRY(new byte[18]));
+        }
+
+        [Test]
+        public void ITEM_FALL_ENTRY_Decodes_AndRejectsWrongLengths()
+        {
+            // the sub-cell before the amount
+            var p = new ITEM_FALL_ENTRY(Hex("11000000" + "F5010000" + "0200" + "00" + "9600" + "C800" + "06" + "0C" + "0300" + "01" + "0400"));
+            Assert.AreEqual((17u, 501u, false), (p.ItemObjectId, p.ItemId, p.Identified));
+            Assert.AreEqual((2, 150, 200, 6, 12, 3), ((int)p.ItemType, (int)p.X, (int)p.Y, (int)p.SubX, (int)p.SubY, (int)p.Amount));
+            Assert.AreEqual((1, 4), ((int)p.ShowDropEffect, (int)p.DropEffectMode));
+            Assert.Throws<PacketFormatException>(() => new ITEM_FALL_ENTRY(new byte[21]));
+            Assert.Throws<PacketFormatException>(() => new ITEM_FALL_ENTRY(new byte[23]));
+        }
+
+        [Test]
+        public void ITEM_DISAPPEAR_Decodes_AndRejectsWrongLengths()
+        {
+            Assert.AreEqual(17u, new ITEM_DISAPPEAR(Hex("11000000")).ItemObjectId);
+            Assert.Throws<PacketFormatException>(() => new ITEM_DISAPPEAR(new byte[3]));
+            Assert.Throws<PacketFormatException>(() => new ITEM_DISAPPEAR(new byte[5]));
+        }
+
+        [Test]
+        public void ItemPackets_SizesAndIds()
+        {
+            Assert.AreEqual((0x009D, 19), ((int)PacketIds.ITEM_ENTRY, ITEM_ENTRY.Size));
+            Assert.AreEqual((0x00A1, 6), ((int)PacketIds.ITEM_DISAPPEAR, ITEM_DISAPPEAR.Size));
+            Assert.AreEqual((0x0ADD, 24), ((int)PacketIds.ITEM_FALL_ENTRY, ITEM_FALL_ENTRY.Size));
+        }
+
+        [Test]
+        public void ItemPackets_ThousandDecodes_AllocateNothing()
+        {
+            var entry = Hex("11000000" + "F5010000" + "01" + "9600" + "C800" + "0300" + "06" + "0C");
+            var fall = Hex("11000000" + "F5010000" + "0200" + "00" + "9600" + "C800" + "06" + "0C" + "0300" + "01" + "0400");
+            var gone = Hex("11000000");
+            uint sum = 0;
+            Action run = () =>
+            {
+                for (int i = 0; i < Decodes; i++)
+                    sum += new ITEM_ENTRY(entry).ItemId + new ITEM_FALL_ENTRY(fall).ItemId + new ITEM_DISAPPEAR(gone).ItemObjectId;
+            };
+            run();
+            Assert.That(() => run(), UnityEngine.TestTools.Constraints.Is.Not.AllocatingGCMemory());
+            Assert.AreNotEqual(0u, sum);
+        }
     }
 }

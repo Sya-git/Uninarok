@@ -62,8 +62,8 @@ One row per documented packet (SPEC-0001, PACKETVER 20220406). Generated from th
 | Map server to client | `0x008D` | [GLOBAL_MESSAGE](In/MapServer/GLOBAL_MESSAGE.md) | variable | documented | warm |
 | Map server to client | `0x0091` | [MAP_CHANGE](In/MapServer/MAP_CHANGE.md) | 22 | documented | cold |
 | Map server to client | `0x009C` | [UNIT_DIRECTION](In/MapServer/UNIT_DIRECTION.md) | 9 | implemented | warm |
-| Map server to client | `0x009D` | [ITEM_ENTRY](In/MapServer/ITEM_ENTRY.md) | 19 | documented | hot |
-| Map server to client | `0x00A1` | [ITEM_DISAPPEAR](In/MapServer/ITEM_DISAPPEAR.md) | 6 | documented | hot |
+| Map server to client | `0x009D` | [ITEM_ENTRY](In/MapServer/ITEM_ENTRY.md) | 19 | implemented | hot |
+| Map server to client | `0x00A1` | [ITEM_DISAPPEAR](In/MapServer/ITEM_DISAPPEAR.md) | 6 | implemented | hot |
 | Map server to client | `0x00B0` | [PARAMETER_CHANGE](In/MapServer/PARAMETER_CHANGE.md) | 8 | verified | warm |
 | Map server to client | `0x01D7` | [UNIT_LOOK_CHANGE](In/MapServer/UNIT_LOOK_CHANGE.md) | 15 | verified | warm |
 | Map server to client | `0x01FF` | [UNIT_SLIDE](In/MapServer/UNIT_SLIDE.md) | 10 | implemented | warm |
@@ -78,7 +78,7 @@ One row per documented packet (SPEC-0001, PACKETVER 20220406). Generated from th
 | Map server to client | `0x09FF` | [UNIT_STAND_ENTRY](In/MapServer/UNIT_STAND_ENTRY.md) | variable | verified | hot |
 | Map server to client | `0x0A30` | [UNIT_NAME_ACK](In/MapServer/UNIT_NAME_ACK.md) | 106 | documented | warm |
 | Map server to client | `0x0AC7` | [MAP_SERVER_CHANGE](In/MapServer/MAP_SERVER_CHANGE.md) | 156 | documented | cold |
-| Map server to client | `0x0ADD` | [ITEM_FALL_ENTRY](In/MapServer/ITEM_FALL_ENTRY.md) | 24 | documented | hot |
+| Map server to client | `0x0ADD` | [ITEM_FALL_ENTRY](In/MapServer/ITEM_FALL_ENTRY.md) | 24 | implemented | hot |
 | Map server to client | `0x0ADE` | [OVERWEIGHT_PERCENT_INFO](In/MapServer/OVERWEIGHT_PERCENT_INFO.md) | 6 | documented | warm |
 | Map server to client | `0x0B18` | [INVENTORY_EXPANSION_INFO](In/MapServer/INVENTORY_EXPANSION_INFO.md) | 4 | documented | cold |
 | Map server to client | `0x0B41` | [ITEM_PICKUP_ACK](In/MapServer/ITEM_PICKUP_ACK.md) | 70 | documented | warm |

@@ -6,7 +6,7 @@
 | **Hercules packet name** | `ZC_ITEM_FALL_ENTRY` (struct `packet_dropflooritem`) |
 | **Packet ID** | `0x0ADD` |
 | **Declared size** | 24 bytes total, including the 2-byte packet ID |
-| **Status** | documented |
+| **Status** | implemented |
 | **Frequency** | hot |
 | **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no; layout from `packets_struct.h` (`packet_dropflooritem`) |
 | **Allocates** | no |

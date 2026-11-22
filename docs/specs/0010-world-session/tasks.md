@@ -62,8 +62,9 @@
   *Done when:* as T1.2.
   *Result (2026-11-22):* 466 of 467 networking tests pass (the known line-ending one fails): decode tests (look and parameter bytes from the real capture), sizes, 1,000 decodes at 0 B; `UNIT_ACT` ignores the uninitialised bytes.
 
-- [ ] **T1.4** Tests, then structs: ground items (`0x009D`, `0x0ADD`, `0x00A1`). (FR-16)
+- [x] **T1.4** Tests, then structs: ground items (`0x009D`, `0x0ADD`, `0x00A1`). (FR-16)
   *Done when:* as T1.2.
+  *Result (2026-11-22):* 471 of 472 networking tests pass (the known line-ending one fails): decode, size and 1,000 decodes at 0 B; docs implemented.
 
 - [ ] **T1.5** Tests, then structs: map change and map-server change (`0x0091`, `0x0AC7`, with the IP and port byte orders of plan §4.1). (FR-15)
   *Done when:* as T1.2, plus a decode test of `0x0AC7` giving host `127.0.0.1` and a port above 32767 from bytes built as `clif_changemapserver` writes them.
