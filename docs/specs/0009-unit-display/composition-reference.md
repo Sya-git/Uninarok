@@ -7,7 +7,7 @@
 | **Data set** | `Uninarok-client/Assets/Editor/GRF Resources~/data/luafiles514/lua files/` (LATAM client), decompiled with GRF `Lub.Decompile()` through `RoLubReader` |
 | **Other evidence** | the client's own accessor functions (`*_f.lub`, quoted below), the imported ACT data, roBrowserLegacy `EntityRender.js` (another client, named **roBrowser** here), Hercules `unit.cpp` |
 
-**Confirmed**: read in the data or in the client's own function. **Candidate**: consistent with the data, not yet compared with the reference viewer (owner, T8.1). Nothing here was compared with the original client or the reference viewer in T0.2: neither runs on the implementer's side.
+**Confirmed**: read in the data or in the client's own function. **Candidate**: consistent with the data, not yet compared with the reference viewer (owner, T8.1). Nothing here was compared with the original client or the reference viewer in T0.2: neither runs on the implementer's side. The owner compared the reference set (§7) in T8.1 (2026-11-22): all right. A rule still marked Candidate is one that set does not show.
 
 Naming: *file action* = animation × 8 + shown direction; *frame* = the client's "motion"; *shown direction* 0 to 7 = the ACT's direction.
 
@@ -83,7 +83,7 @@ Baby classes: the **body** scale is 0.8 (roBrowser `EntityView`: size 4 where ot
 
 ## 3. Default order (no table needed)
 
-Back to front. **Candidate** (roBrowser; the client hard-codes it).
+Back to front. **Confirmed** by the owner on the reference set (T8.1); from roBrowser (the client hard-codes it).
 
 | Facing | Order |
 |---|---|
@@ -102,7 +102,7 @@ Head: placed at `bodyAnchor − headAnchor` (anchor 0 of the frame shown of each
 
 | Rule | Status | Evidence |
 |---|---|---|
-| In idle and sit the body, head, weapons and shields have 3 frames, one per head facing (straight, right, left): the frame **is** the head facing | Confirmed for the counts (61 of 61 bodies, 42 of 42 heads, every weapon and shield sampled); Candidate for which of frames 1 and 2 is right | anchors; roBrowser returns `headDir` |
+| In idle and sit the body, head, weapons and shields have 3 frames, one per head facing (straight, right, left): the frame **is** the head facing | Confirmed for the counts (61 of 61 bodies, 42 of 42 heads, every weapon and shield sampled); which of frames 1 and 2 is right: owner, T8.1 | anchors; roBrowser returns `headDir` |
 | Animated headgears and garments have 24 or 48 idle frames: three groups, one per head facing, played inside the group | Candidate | 28 of 189 headgears and 1 of 28 garments sampled; roBrowser divides the count by 3 |
 | Inside a group the frame follows the body's idle frame time | Decision (FR-5: the body's clock) | — |
 | Every other animation: frame of the body, modulo the part's own frame count | Candidate (R2) | roBrowser wraps; walk counts agree in every sampled file |

@@ -183,10 +183,10 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
 
 ## Phase 8: Close
 
-- [ ] **T8.1** Verify the reference set against the reference viewer in the composer. (FR-1, FR-2, FR-3, FR-4, FR-5, FR-8; success criteria)
+- [x] **T8.1** Verify the reference set against the reference viewer in the composer. (FR-1, FR-2, FR-3, FR-4, FR-5, FR-8; success criteria)
   8 directions and 4 camera turns per member.
   *Done when:* evidence images for every member are in `evidence/`, each matches the reference viewer in parts, order, offsets and timing; any mismatch is fixed in its table task or recorded in BACKLOG with the owner's agreement.
-  *Open (2026-11-22):* images of every member in 8 directions and 4 camera turns are in evidence/t8.1-*.png; comparing them with the reference viewer is the owner's. Candidate rules to look at: composition-reference.md §2.1 (negative priority), §2.2, §2.4, §2.5, §3 (default order), §5 (which head frame is right).
+  *Result (2026-11-22):* images of every member in 8 directions and 4 camera turns are in evidence/t8.1-*.png; the owner compared the reference set: all right. Mismatches reported on the way were fixed in T8.4 to T8.6. Candidate rules the owner was pointed to (those the set does not show stay Candidate): composition-reference.md §2.1 (negative priority), §2.2, §2.4, §2.5, §3 (default order), §5 (which head frame is right).
 
 - [x] **T8.2** Final budget and release check. (FR-13, FR-14)
   *Done when:* the stress mode on the owner's PC shows a unit update of 2 ms or less and 0 B GC per frame (profiler capture in `evidence/`); a release build contains no Entity Sandbox scene and no `Uninarok.Units.Dev` type.
