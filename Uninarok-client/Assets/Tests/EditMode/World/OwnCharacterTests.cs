@@ -276,6 +276,22 @@ namespace Uninarok.World.Tests
             Assert.AreEqual((body, head), (Own.Facing, Own.Head), "applied when it was sent: the server does not echo it (PLAN-0010 D9)");
         }
 
+        [TestCase(1, HeadDirection.Left, UninarokDirection.SouthEast)]
+        [TestCase(-1, HeadDirection.Right, UninarokDirection.SouthWest)]
+        public void OwnCharacter_TurnTowards_TheHeadsSideAgain_TurnsTheBody(int dx, HeadDirection head, UninarokDirection body)
+        {
+            _rig.ToInGame(Character());
+            Assert.IsTrue(_rig.Session.Own.TurnTowards(150 + dx, 199));
+            Assert.AreEqual((UninarokDirection.South, head), (Own.Facing, Own.Head));
+            Assert.IsTrue(_rig.Session.Own.TurnTowards(150 - dx, 199), "the other side");
+            Assert.AreEqual(UninarokDirection.South, Own.Facing, "turns the head over");
+            Assert.IsTrue(_rig.Session.Own.TurnTowards(150 + dx, 199));
+            Assert.AreEqual((UninarokDirection.South, head), (Own.Facing, Own.Head));
+            Assert.IsTrue(_rig.Session.Own.TurnTowards(150 + dx, 199));
+            Assert.AreEqual(ChangeDirection(HeadDirection.Straight, body), _rig.Client.Sent[3].Bytes);
+            Assert.AreEqual((body, HeadDirection.Straight), (Own.Facing, Own.Head));
+        }
+
         [Test]
         public void OwnCharacter_TurnTowards_FarCells_OwnCell_AndWhileWalking()
         {

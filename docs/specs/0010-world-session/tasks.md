@@ -41,6 +41,7 @@
 - [ ] **T0.4** Owner: compare the own-character turn controls with the original client. (FR-9, FR-13)
   Shift + click on each of the 8 neighbours; `/doridori` (order and timing); `/bangbang` (direction); the repeat rate when the left button is held.
   *Done when:* the results are written into plan §4.6/§4.11 (Decisions note for any difference from the spec's rule, which then goes to the owner as a spec change, CLAUDE.md §1.4 rule 6).
+  *Open (2026-11-22):* the owner compared (2026-11-22): `/bangbang` is right; shift + click was not: the second click on the head's side turns the body (fixed, D28, FR-13 amended); `/doridori` could not be seen, the character had no head (fixed, D27). Left: `/doridori`, the fixed shift + click and the repeat rate of a held button.
 
 - [x] **T0.5** Record real sessions for replay tests. (FR-3, FR-18)
   With the SPEC-0001 capture tee and the dev auto-login on the local server: (a) enter prontera, stand 60 s near NPCs and players; (b) walk among monsters on prt_fild08 for 3 minutes, including monster deaths and a dropped item; (c) walk into prontera's south warp. Save the server's "who is here" state at the end of each (GM `@who`-style dump or the walk log of T3.8 once available).

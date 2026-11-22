@@ -121,8 +121,9 @@ namespace Uninarok.World
         // ---- turn (FR-13): the server does not echo a turn to who turned, so it is applied when it was sent (D9) ----
 
         /// <summary>
-        /// Shift + click: a cell one direction step beside the body's turns the head, the body's own the head straight, any other
-        /// the body. False when nothing was sent: not able to act, walking, or the own cell.
+        /// Shift + click: a cell one direction step beside the body's turns the head, and the body when the head is turned there
+        /// already; the body's own direction turns the head straight, any other the body. False when nothing was sent: not able to
+        /// act, walking, or the own cell.
         /// </summary>
         public bool TurnTowards(int x, int y)
         {
@@ -130,13 +131,11 @@ namespace Uninarok.World
             ref readonly var own = ref model[slot];
             if (x == own.CellX && y == own.CellY) return false;
             int target = DirectionTo(own.CellX, own.CellY, x, y), body = (int)own.Facing;
-            switch ((target - body) & 7)
-            {
-                case 0: return Turn(model, own.Facing, HeadDirection.Straight);
-                case 1: return Turn(model, own.Facing, HeadDirection.Left); // the directions go counter-clockwise
-                case 7: return Turn(model, own.Facing, HeadDirection.Right);
-                default: return Turn(model, (UninarokDirection)target, HeadDirection.Straight);
-            }
+            int step = (target - body) & 7;
+            if (step == 0) return Turn(model, own.Facing, HeadDirection.Straight);
+            if (step == 1 && own.Head != HeadDirection.Left) return Turn(model, own.Facing, HeadDirection.Left); // counter-clockwise
+            if (step == 7 && own.Head != HeadDirection.Right) return Turn(model, own.Facing, HeadDirection.Right);
+            return Turn(model, (UninarokDirection)target, HeadDirection.Straight);
         }
 
         /// <summary><c>/doridori</c>: the head left, right, straight; a new command starts over.</summary>
