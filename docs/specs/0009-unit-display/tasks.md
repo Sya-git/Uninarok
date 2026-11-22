@@ -222,9 +222,10 @@ Works on the branch `feature/0010-world-session` (the owner reported it while re
   *Done when:* the tests of T9.1 pass, the Sprites and Units EditMode tests pass, and a unit's picture is the same as before (the shader does not read the height yet).
   *Result (2026-11-22):* Sprites EditMode 38 of 38, Units EditMode 98 of 98; no new warnings. Swordsman at the wall of prontera 128,86 (tilt 65°): 0 pixels differ between the heights (z scale up to 17.04) and z scale 1. `GroundScaleZ` is public, for the ground item still (plan §4.10).
 
-- [ ] **T9.3** Add the render tests, pending T9.4. (FR-16, FR-10)
+- [x] **T9.3** Add the render tests, pending T9.4. (FR-16, FR-10)
   `UnitDepth_BackToAWall_IsWhole_4Turns_MinMaxTilt` (prontera; iz_int when imported), `_BehindABox_IsHiddenAsAnUprightPlane`, `_TwoUnits_SameOrderAsBefore`, `_TallUnitAtTheNearestZoom_IsNotClipped`, `_Shadow_IsUnchanged`, `_GroundItemAtAWall_IsWhole`.
   *Done when:* run without the ignore mark, the cut cases (wall, box, ground item) fail with today's shader; they are committed as ignored.
+  *Result (2026-11-22):* run without the ignore mark on the shader of T9.2: both wall tests (prontera 221,221: 3,111 of 3,871 pixels; iz_int 61,45: 2,949), the box (1,989 of 3,871) and the ground item (1,376 of 4,000) fail; order, clipping and shadow pass, as they must before and after. The clipping test is `UnitDepth_TallUnitNearTheCamera_IsNotClipped`: 2.5, 4 and 23 u away, tilts 20° to 90°.
 
 - [ ] **T9.4** Compute the upright depth in `Uninarok/RoSprite`. (FR-16, FR-10)
   *Done when:* the tests of T9.3 and `UnitView_FeetOnGround_SlopeOfPrtFild08_MinMaxTilt` pass; no new warnings; materials without a bias render as before.
