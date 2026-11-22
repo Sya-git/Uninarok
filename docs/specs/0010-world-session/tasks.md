@@ -76,8 +76,9 @@
 
 ## Phase 2: Networking flow
 
-- [ ] **T2.1** Tests, then implementation: `ZoneManager.HeartbeatAnswered` and the extra heartbeat right after `MAP_LOADED` (plan §4.2, D6). (FR-2)
+- [x] **T2.1** Tests, then implementation: `ZoneManager.HeartbeatAnswered` and the extra heartbeat right after `MAP_LOADED` (plan §4.2, D6). (FR-2)
   *Done when:* `ZoneManager_HeartbeatAnswered_RttFromSendTime` passes; an answer with no outstanding request raises nothing; the SPEC-0001 keepalive tests are updated for the one extra heartbeat and pass (interval still 10 s).
+  *Result (2026-11-22):* `ZoneManager_HeartbeatAnswered_RttFromSendTime` and two more pass; an answer with no outstanding request raises nothing; the keepalive tests count the extra heartbeat (481 of 482, the known line-ending one fails). The loopback journey test reads it too.
 
 - [ ] **T2.2** Tests, then implementation: `MAP_CHANGE` in `ZoneManager` and the `InGame → LoadingMap → InGame` edge of `NetworkFlow` (plan §4.8). (FR-15)
   *Done when:* `NetworkFlow_MapChange_LoadingMapThenInGame` passes with the simulated connection (`Context.Map` name and `Context.Entry` updated, `MAP_LOADED` sent again, deadline armed); disconnect in the new `LoadingMap` still fails the flow.

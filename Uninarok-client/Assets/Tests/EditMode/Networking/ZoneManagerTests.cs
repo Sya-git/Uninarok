@@ -93,13 +93,69 @@ namespace Uninarok.Networking.Tests
         }
 
         [Test]
-        public void HeartbeatResponse_IsHandled_WithoutSideEffects()
+        public void HeartbeatResponse_WithNoOutstandingRequest_RaisesNothing()
         {
+            int answered = 0;
+            _zone.HeartbeatAnswered += (tick, sent, received) => answered++;
             _zone.Enter();
-            Assert.AreEqual(1, _client.Dispatcher.HandlerCount<SERVER_HEARTBEAT_RESPONSE>(), "subscribed, but only traced");
+            Assert.AreEqual(1, _client.Dispatcher.HandlerCount<SERVER_HEARTBEAT_RESPONSE>());
             _client.Deliver(new SERVER_HEARTBEAT_RESPONSE(new byte[] { 1, 0, 0, 0 }));
+            Assert.AreEqual(0, answered);
             Assert.AreEqual(0, _client.HandlerErrors.Count);
             Assert.AreEqual(0, _client.Sent.Count);
+        }
+
+        // ---- the server clock's samples (SPEC-0010 FR-2, PLAN-0010 4.2) ----
+
+        [Test]
+        public void ZoneManager_HeartbeatAnswered_RttFromSendTime()
+        {
+            var answers = new List<(uint Tick, long Sent, long Received)>();
+            _zone.HeartbeatAnswered += (tick, sent, received) => answers.Add((tick, sent, received));
+            _clock.NowMs = 5_000;
+            EnterAndConnect();
+            _zone.SendMapLoaded();
+            _clock.NowMs = 5_080;
+            _client.Deliver(new SERVER_HEARTBEAT_RESPONSE(new byte[] { 0x10, 0x27, 0, 0 }));
+            _client.Deliver(new SERVER_HEARTBEAT_RESPONSE(new byte[] { 0x11, 0x27, 0, 0 })); // a second answer to the same request
+
+            _clock.NowMs = 15_001;
+            _zone.Tick(15_001);
+            _clock.NowMs = 15_151;
+            _client.Deliver(new SERVER_HEARTBEAT_RESPONSE(new byte[] { 0x20, 0x4E, 0, 0 }));
+
+            CollectionAssert.AreEqual(new[] { (10_000u, 5_000L, 5_080L), (20_000u, 15_001L, 15_151L) }, answers);
+        }
+
+        [Test]
+        public void HeartbeatAnswered_AfterAnUnansweredRequest_CountsFromTheOlderOne()
+        {
+            long sentAt = 0;
+            _zone.HeartbeatAnswered += (tick, sent, received) => sentAt = sent;
+            _clock.NowMs = 5_000;
+            EnterAndConnect();
+            _zone.SendMapLoaded();
+            _clock.NowMs = 15_000;
+            _zone.Tick(15_000);
+            _clock.NowMs = 15_010;
+            _client.Deliver(new SERVER_HEARTBEAT_RESPONSE(new byte[] { 1, 0, 0, 0 }));
+            Assert.AreEqual(5_000L, sentAt);
+        }
+
+        [Test]
+        public void HeartbeatAnswered_IsForgottenOnExit_AndAFailedSendIsNotOutstanding()
+        {
+            int answered = 0;
+            _zone.HeartbeatAnswered += (tick, sent, received) => answered++;
+            EnterAndConnect();
+            _zone.SendMapLoaded();
+            _zone.Exit();
+            _zone.Enter();
+            _client.Deliver(new SERVER_HEARTBEAT_RESPONSE(new byte[] { 1, 0, 0, 0 }));
+            _client.AcceptSends = false;
+            _zone.SendMapLoaded();
+            _client.Deliver(new SERVER_HEARTBEAT_RESPONSE(new byte[] { 1, 0, 0, 0 }));
+            Assert.AreEqual(0, answered);
         }
 
         // ---- MAP_LOADED and the keepalive (FR-14) ----
@@ -114,14 +170,15 @@ namespace Uninarok.Networking.Tests
         }
 
         [Test]
-        public void SendMapLoaded_SendsTheHeaderOnlyPacket()
+        public void SendMapLoaded_SendsTheHeaderOnlyPacket_ThenOneHeartbeatAtOnce()
         {
             EnterAndConnect();
             _client.ClearRecords();
             _zone.SendMapLoaded();
 
-            Assert.AreEqual(1, _client.Sent.Count);
+            Assert.AreEqual(2, _client.Sent.Count);
             Assert.AreEqual(new byte[] { 0x7D, 0x00 }, _client.Sent[0].Bytes);
+            Assert.AreEqual(new byte[] { 0x60, 0x03, 0x4E, 0x61, 0xBC, 0x00 }, _client.Sent[1].Bytes, "PLAN-0010 D6: the first heartbeat, with the clock");
         }
 
         [Test]
@@ -130,7 +187,7 @@ namespace Uninarok.Networking.Tests
             _clock.NowMs = 5_000;
             EnterAndConnect();
             _client.ClearRecords();
-            _zone.SendMapLoaded();                       // keepalive starts here: first heartbeat due at 15 000
+            _zone.SendMapLoaded();                       // the first heartbeat goes now, the next is due at 15 000
             _client.ClearRecords();
 
             _zone.Tick(14_999);

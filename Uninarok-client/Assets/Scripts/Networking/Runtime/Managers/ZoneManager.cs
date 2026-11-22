@@ -28,6 +28,10 @@ namespace Uninarok.Networking.Managers
         private bool _heartbeatActive;
         private long _nextHeartbeatAt;
 
+        // The one outstanding heartbeat: its local send time gives the round trip (SPEC-0010 FR-2).
+        private bool _heartbeatOutstanding;
+        private long _heartbeatSentAt;
+
         public ZoneManager(INetworkClient client, SessionContext context, IClock clock, NetworkSettings settings)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
@@ -46,9 +50,16 @@ namespace Uninarok.Networking.Managers
         /// <summary>The map server refused the entry (MAP_ENTRY_REFUSAL), with its reason code.</summary>
         public event Action<byte> EnterRefused;
 
+        /// <summary>
+        /// The server answered the outstanding heartbeat: its tick, and the local times the request was sent and the answer was
+        /// handled (SPEC-0010 FR-2). An answer to nothing raises nothing.
+        /// </summary>
+        public event Action<uint, long, long> HeartbeatAnswered;
+
         public void Enter()
         {
             _heartbeatActive = false;
+            _heartbeatOutstanding = false;
             _subscriptions.Add(_onAuthenticated);
             _subscriptions.Add(_onRefusal);
             _subscriptions.Add(_onHeartbeatResponse);
@@ -58,6 +69,7 @@ namespace Uninarok.Networking.Managers
         {
             _subscriptions.Clear();
             _heartbeatActive = false;
+            _heartbeatOutstanding = false;
         }
 
         /// <summary>The connection is up: request entry with the session values and the client tick.</summary>
@@ -67,12 +79,17 @@ namespace Uninarok.Networking.Managers
                                                (uint)_clock.NowMs, _context.Sex));
         }
 
-        /// <summary>The game finished loading the map: send <c>MAP_LOADED</c> and start the heartbeat.</summary>
+        /// <summary>
+        /// The game finished loading the map: send <c>MAP_LOADED</c> and start the heartbeat, with a first one at once so the
+        /// server clock is measured before the first walks arrive (PLAN-0010 D6).
+        /// </summary>
         public void SendMapLoaded()
         {
             _client.Send(new MAP_LOADED());
             _heartbeatActive = true;
-            _nextHeartbeatAt = _clock.NowMs + IntervalMs();
+            long now = _clock.NowMs;
+            SendHeartbeat(now);
+            _nextHeartbeatAt = now + IntervalMs();
         }
 
         /// <summary>
@@ -83,10 +100,20 @@ namespace Uninarok.Networking.Managers
         {
             if (!_heartbeatActive || nowMs < _nextHeartbeatAt) return;
 
-            _client.Send(new HEARTBEAT_REQUEST((uint)nowMs));
+            SendHeartbeat(nowMs);
             long interval = IntervalMs();
             _nextHeartbeatAt += interval;
             if (_nextHeartbeatAt <= nowMs) _nextHeartbeatAt = nowMs + interval;
+        }
+
+        // The answer carries no id. A request while one is unanswered (an answer later than the interval) is counted from the
+        // older one, so a round trip can only look longer than it was, and the clock prefers the shortest (PLAN-0010 4.2).
+        private void SendHeartbeat(long nowMs)
+        {
+            if (!_client.Send(new HEARTBEAT_REQUEST((uint)nowMs))) return;
+            if (_heartbeatOutstanding) return;
+            _heartbeatOutstanding = true;
+            _heartbeatSentAt = nowMs;
         }
 
         private long IntervalMs()
@@ -105,8 +132,12 @@ namespace Uninarok.Networking.Managers
 
         private void OnRefusal(in MAP_ENTRY_REFUSAL p) => EnterRefused?.Invoke(p.ErrorCode);
 
-        // The reply to HEARTBEAT_REQUEST carries the server tick; nothing consumes it yet, so it is only traced.
-        private void OnHeartbeatResponse(in SERVER_HEARTBEAT_RESPONSE p) =>
-            NetLog.Trace("heartbeat response " + p.ServerTimestamp);
+        // The reply to HEARTBEAT_REQUEST carries the server tick.
+        private void OnHeartbeatResponse(in SERVER_HEARTBEAT_RESPONSE p)
+        {
+            if (!_heartbeatOutstanding) return;
+            _heartbeatOutstanding = false;
+            HeartbeatAnswered?.Invoke(p.ServerTimestamp, _heartbeatSentAt, _clock.NowMs);
+        }
     }
 }
