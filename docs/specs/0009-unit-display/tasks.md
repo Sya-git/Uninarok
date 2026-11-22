@@ -231,8 +231,9 @@ Works on the branch `feature/0010-world-session` (the owner reported it while re
   *Done when:* the tests of T9.3 and `UnitView_FeetOnGround_SlopeOfPrtFild08_MinMaxTilt` pass; no new warnings; materials without a bias render as before.
   *Result (2026-11-22):* Units PlayMode 22 of 22 (with `UnitView_FeetOnGround_SlopeOfPrtFild08_MinMaxTilt` and `UnitSystem_ZeroGcAllocPerFrame_300Units`), `UnitDepth_GroundItemAtAWall_IsWhole` passes; no compiler or shader warnings. Without a bias the shader takes the same path as before. Preview scenes, 160 cells per turn beside something not walkable (fewer on iz_int), tilts 50° and 65°, pixels visible before and after: prontera 2,590,638 → 3,000,963 of 4,441,390, iz_int 1,252,821 → 1,573,093 of 1,928,594; no sample worse.
 
-- [ ] **T9.5** Measure the cost in the stress mode, with and without the heights. (FR-14, FR-16)
+- [x] **T9.5** Measure the cost in the stress mode, with and without the heights. (FR-14, FR-16)
   *Done when:* unit update 2 ms or less and 0 B per frame at 100 players and 200 monsters on prontera; batches, set passes and frame time of both are recorded here.
+  *Result (2026-11-22):* stress mode, prontera, 300 units, in the editor: unit update 0.52 ms mean, 1.20 ms max over 600 frames (T8.5: 0.73 and 1.97). 0 B per frame: `UnitSystem_ZeroGcAllocPerFrame_300Units` passes (T9.4 run). Units frozen, heights and z scale 1 in turn, 3 times 200 frames each (982 layers enabled of 2,378): set passes 371 and 369 to 371, draw calls 1,703 and 1,682 to 1,697 (a little less is culled), frame 16.67 ms both (vsync), render 14.63 to 14.70 and 14.62 to 14.71 ms. `UnityStats` has no batch count in this version. The sandbox readout of garbage (67 KB per frame) is the whole editor frame, not the unit update.
 
 - [ ] **T9.6** Evidence and close. (FR-16)
   *Done when:* screenshots on prontera next to a wall and indoors on iz_int are in `evidence/` (before and after, both tilts); the Sprites, Units and World tests pass; the owner checked the images; statuses are `Implemented`.
