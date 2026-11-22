@@ -15261,6 +15261,18 @@
             ]
         },
         {
+            "Source": "sprite/shadow.act",
+            "SourceHash": "87ec393360e9aba9b1b07ed416e305586675c8feec055446923b322826ce1062",
+            "Rules": 1001,
+            "Outputs": [],
+            "Dependencies": [
+                {
+                    "Source": "sprite/shadow.spr",
+                    "Hash": "0dbb900969eda93bc64989fff90094513759b00eb75f5325dcbe1f8854c76acf"
+                }
+            ]
+        },
+        {
             "Source": "sprite/도람족/summoner/summoner_남_강아지풀_갈색.act",
             "SourceHash": "66a14a611ec18480a295645de36f97697a9e8d3396b5b491c8bafb3c5722ce6a",
             "Rules": 1001,

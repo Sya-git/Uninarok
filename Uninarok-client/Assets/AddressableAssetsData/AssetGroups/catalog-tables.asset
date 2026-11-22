@@ -21,6 +21,12 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
     m_FolderGuid: 
+  - m_GUID: d367ca8033bf1a440a67eee10a598952
+    m_Address: catalog/composition
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+    m_FolderGuid: 
   - m_GUID: fdaac183ecd68dc43be399a0e273d123
     m_Address: Assets/Art/Imported/catalog/items
     m_ReadOnly: 0

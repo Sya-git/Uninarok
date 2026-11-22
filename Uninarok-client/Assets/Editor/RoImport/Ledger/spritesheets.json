@@ -6409,6 +6409,14 @@
             "IndexedCount": 32
         },
         {
+            "Hash": "0dbb900969eda93bc64989fff90094513759b00eb75f5325dcbe1f8854c76acf",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/0d/shadow_0dbb9009.png",
+            "Source": "sprite/shadow.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 1
+        },
+        {
             "Hash": "0dbe23256ddbbd172feb72b68061b17cdb4c6155224a6a59d9a1a24d4dbdd1c7",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/0d/long_twin_gn_0dbe2325.png",
             "Source": "sprite/아이템/long_twin_gn.spr",
