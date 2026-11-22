@@ -33,9 +33,10 @@
   *Done when:* a table of the results is written into plan §4.1 (a Decisions note for any difference); D9 says "echo" or "local on send".
   *Result (2026-11-22):* table in plan §4.1, from the sources and the real capture of SPEC-0001 (0x0091, 0x01D7, 0x09FF, 0x00B0 seen; the rest come with T0.5). Differences: no echo of turns (D9 is now "local on send" for turns, "echo" for sitting), north after a warp (D14), no `state` in 0x09FE/0x09FD (107 and 114 bytes), weapon values may be item ids, uninitialised bytes in 0x008A.
 
-- [ ] **T0.3** Read the display facts from roBrowser's source and the original client. (FR-5, FR-6, FR-16)
+- [x] **T0.3** Read the display facts from roBrowser's source and the original client. (FR-5, FR-6, FR-16)
   Item sub-cell to position formula; walk animation speed as a function of walk speed; how long a dead monster stays before it disappears.
   *Done when:* the three rules are in plan §4.5/§4.9 with their source (file and line, or screenshot), `WorldSettings` defaults updated if they differ (Decisions note), and the item rule is in `ITEM_FALL_ENTRY.md`.
+  *Result (2026-11-22):* from roBrowserLegacy's source (rules and file names in plan §4.5, §4.9, D8, and `ITEM_FALL_ENTRY.md`); the dead monster time changed from 1,500 to 5,000 ms. The original client is not available here: the owner sees the three in T9.1.
 
 - [ ] **T0.4** Owner: compare the own-character turn controls with the original client. (FR-9, FR-13)
   Shift + click on each of the 8 neighbours; `/doridori` (order and timing); `/bangbang` (direction); the repeat rate when the left button is held.
@@ -83,7 +84,7 @@
 ## Phase 3: Time and pathfinding
 
 - [ ] **T3.1** Create the `Uninarok.World`, `Uninarok.World.View` and `Uninarok.World.Dev` assemblies, their test assemblies, and `WorldSettings` with its asset (plan §3). (FR-18)
-  *Done when:* the project compiles with no new warnings; an empty EditMode test in `Tests/EditMode/World/` runs; `Settings/World/WorldSettings.asset` holds the plan's defaults (17, 14, 500 ms, 1,500 ms, 200 ms).
+  *Done when:* the project compiles with no new warnings; an empty EditMode test in `Tests/EditMode/World/` runs; `Settings/World/WorldSettings.asset` holds the plan's defaults (17, 14, 500 ms, 5,000 ms, 200 ms, walk animation 150).
 
 - [ ] **T3.2** Tests, then implementation: `ServerClock` (plan §4.2). (FR-2)
   *Done when:* `ServerClock_Offset5s_Rtt50To200_WithinHalfRttPlus10`, `_MonotonicOver10Minutes`, `_LowerCorrectionSlews`, `_Wraps` pass; `Sample` allocates 0 B.
