@@ -378,12 +378,13 @@ public sealed class CellPicker
     public CellPicker(MapData map);
     public bool TryPick(Ray ray, out int x, out int y);     // ground cell under the ray, heights included
 }
-public sealed class CellCursor : MonoBehaviour { public void Show(int x, int y, bool canWalk); public void Hide(); }
+public sealed class CellCursor : MonoBehaviour { public void Show(int x, int y); public void Hide(); }
+public sealed class MouseCursor : MonoBehaviour { public SpriteAnimation Animation; public MouseCursorKind Kind { get; set; } }
 public sealed class OwnInput : MonoBehaviour { /* Input System actions: Walk (left button), Turn (shift + left), Sit (Insert) */ }
 ```
 
 - **Picking** (FR-11): march the ray across the cell grid in its xz projection (DDA over cells, nearest first); for each cell, intersect the ray with the cell's two triangles (corner heights, diagonal rule of PLAN-0005 D11); the first hit is the cell. A ray that hits nothing returns false. Only `MapData` is used, no colliders (models such as bridges are not walkable cells unless the GAT says so). Allocates nothing.
-- **Cursor**: a quad mesh built once with the four corner heights of the hovered cell, lifted 0.01 u; colour from `CanWalk` = `OwnCharacter` walk rules without sending (`RequestWalk` has a `dryRun` overload). Hidden when the pointer is over no cell.
+- **Cursor**: a quad mesh built once with the four corner heights of the hovered cell, lifted 0.01 u, with the client's `grid.tga` (D29). Shown on a walkable cell only (`IWalkGrid.IsPassable`); hidden when the pointer is over no cell. **Mouse cursor**: `MouseCursor` plays the client's `sprite/cursors` (action 0; action 13 over a cell that is not walkable), each frame a cursor texture built once with the ACT's origin as its hotspot, at the ACT's frame times.
 - **Walk** (FR-9): press → `RequestWalk(cell)`; while held, again every `WorldSettings.HoldRepeatMs` (500) and when the hovered cell changes. **Turn**: shift + press → `TurnTowards(cell)`, no walk. **Sit**: Insert → `ToggleSit`. The camera keeps the right button and wheel (PLAN-0009), so the maps do not collide; when the dev command line has focus, game input is off.
 
 ### 4.12 Dev tools: `WorldDebugView`, `DevCommandLine`
@@ -466,6 +467,7 @@ Manual checks on a local Hercules (evidence in `docs/specs/0010-world-session/ev
 | D26 | (T8.2) `WorldDebugView` writes its text in a uGUI overlay, refreshed four times a second | IMGUI (`OnGUI`) | Seen live: IMGUI allocated 2.7 KB per frame and could not be read over the map |
 | D27 | (T6.3) The server's hair style is the client's id, not the head file's number: `EntityLookMapping` maps ids 0 to 12 by sex with the client's table (roBrowserLegacy `HairIndexTable`); the rest, and a doram's, are the file number (a doram's 0 is 1) | Style = file number, as the catalog is keyed (SPEC-0008 FR-3) | Seen by the owner: a character with style 0 had no head. The table comes from roBrowser only, so ids 1 to 12 are to be compared with the original client (T9.1) |
 | D28 | (T5.4, T0.4) A second shift + click on the head's side turns the body there (FR-13 as amended) | The head only, at any number of clicks | The owner compared with the original client |
+| D29 | (T8.3) The cell cursor is the client's `grid.tga` on walkable cells only, tinted 50,240,160 at 0.6 (roBrowserLegacy `GridSelector`; the file is white); `sprite/cursors` is converted with the importer as it is and referenced by the Bootstrap scene | Vertex colours saying whether a walk is possible (first version); drawing the cursor in a canvas | The owner compared with the original client (FR-11 as amended). A hardware cursor does not lag a frame behind the mouse |
 
 ## 9. Risks
 

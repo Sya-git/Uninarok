@@ -253,6 +253,7 @@ GameObject:
   - component: {fileID: 1746140161}
   - component: {fileID: 1746140163}
   - component: {fileID: 1746140162}
+  - component: {fileID: 1746140164}
   m_Layer: 0
   m_Name: Bootstrap
   m_TagString: Untagged
@@ -349,6 +350,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Uninarok.World.View::Uninarok.World.View.OwnInput
   World: {fileID: 1746140161}
   Cursor: {fileID: 1746140163}
+  Mouse: {fileID: 1746140164}
   Actions: {fileID: -944628639613478452, guid: 7f707d7dbcb9f88408c8cab198029f8f, type: 3}
 --- !u!114 &1746140163
 MonoBehaviour:
@@ -363,8 +365,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Uninarok.World.View::Uninarok.World.View.CellCursor
   Material: {fileID: 2100000, guid: e47c3fb2fce8aef4fb8dc81110c5da0b, type: 2}
-  CanWalkColour: {r: 0.3, g: 1, b: 0.4, a: 0.45}
-  CanNotWalkColour: {r: 1, g: 0.25, b: 0.2, a: 0.45}
+--- !u!114 &1746140164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1746140156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 739f35e64f69dc540996e1ce1b19731d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Uninarok.World.View::Uninarok.World.View.MouseCursor
+  Animation: {fileID: 11400000, guid: e8491cf275c58b949ab7c9932b597291, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

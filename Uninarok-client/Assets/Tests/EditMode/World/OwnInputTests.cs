@@ -4,7 +4,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Uninarok.Map;
 using Uninarok.Networking.Packets;
+using Uninarok.Sprites;
 using Uninarok.World.View;
+using MouseCursor = Uninarok.World.View.MouseCursor;
 
 namespace Uninarok.World.Tests
 {
@@ -151,8 +153,9 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(0, _rig.Client.Sent.Count);
         }
 
+        // FR-11 as the owner corrected it (2026-11-22): a walkable cell is marked, over another the mouse cursor says it.
         [Test]
-        public void TheCursor_MarksTheCell_AndSaysWhetherAWalkIsPossible()
+        public void TheCursor_MarksWalkableCells_AndTheMouseSaysTheOthers()
         {
             const int n = 200;
             var map = ScriptableObject.CreateInstance<MapData>();
@@ -160,25 +163,53 @@ namespace Uninarok.World.Tests
             var cursor = _go.AddComponent<CellCursor>();
             cursor.Map = map;
             _input.Cursor = cursor;
+            var mouse = _go.AddComponent<MouseCursor>();
+            _input.Mouse = mouse;
             _rig.Grid.Wall = (x, y) => x == 156;
             Frame();
-            Assert.AreEqual((true, 155, 200, true), (cursor.Visible, cursor.CellX, cursor.CellY, cursor.CanWalk));
+            Assert.AreEqual((true, 155, 200, MouseCursorKind.Default), (cursor.Visible, cursor.CellX, cursor.CellY, mouse.Kind));
             _x = 156;
             Frame();
-            Assert.IsFalse(cursor.CanWalk, "a wall");
+            Assert.AreEqual((false, MouseCursorKind.NoWalk), (cursor.Visible, mouse.Kind), "a wall");
             (_x, _y) = (150, 230);
             Frame();
-            Assert.IsFalse(cursor.CanWalk, "too far");
-            (_x, _y) = (150, 217);
+            Assert.AreEqual((true, MouseCursorKind.Default), (cursor.Visible, mouse.Kind), "walkable, though too far for one walk");
+            _x = 156;
             Frame();
-            Assert.IsTrue(cursor.CanWalk);
-            _rig.Client.Deliver(WorldSessionTests.Act(_rig.Flow.Context.AccountId, 2));
-            Frame();
-            Assert.IsFalse(cursor.CanWalk, "sitting");
             _over = false;
             Frame();
-            Assert.IsFalse(cursor.Visible);
+            Assert.AreEqual((false, MouseCursorKind.Default), (cursor.Visible, mouse.Kind), "over no cell");
+            (_x, _over) = (156, true);
+            Frame();
+            _input.InputEnabled = false;
+            Frame();
+            Assert.AreEqual((false, MouseCursorKind.Default), (cursor.Visible, mouse.Kind), "typing");
             Object.DestroyImmediate(map);
+        }
+
+        [Test, Category("NeedsData")]
+        public void TheMouseCursor_PlaysTheClientsCursors()
+        {
+            var animation = AssetDatabase.LoadAssetAtPath<SpriteAnimation>("Assets/Art/Imported/sprite/cursors.asset");
+            if (animation == null) Assert.Ignore("no converted cursors");
+            var mouse = _go.AddComponent<MouseCursor>();
+            mouse.Animation = animation;
+            var shown = new System.Collections.Generic.List<(Texture2D texture, Vector2 hotspot)>();
+            mouse.Apply = (texture, hotspot) => shown.Add((texture, hotspot));
+            mouse.Step(10.0);
+            mouse.Step(10.01);
+            Assert.AreEqual(1, shown.Count, "only when the frame changes");
+            Assert.AreEqual((new Vector2Int(22, 32), Vector2.zero), (new Vector2Int(shown[0].texture.width, shown[0].texture.height), shown[0].hotspot));
+            int opaque = 0;
+            foreach (var p in shown[0].texture.GetPixels32()) if (p.a > 0) opaque++;
+            Assert.Greater(opaque, 100);
+
+            mouse.Kind = MouseCursorKind.NoWalk;
+            for (double t = 20.0; t < 22.2; t += 0.01) mouse.Step(t);
+            Assert.AreEqual(new Vector2(13f, 6f), shown[1].hotspot, "the arrow's tip stays where it was");
+            int distinct = new System.Collections.Generic.HashSet<Texture2D>(shown.ConvertAll(s => s.texture)).Count;
+            Assert.AreEqual(1 + 22, distinct, "22 frames in 2.2 s");
+            mouse.Apply = (_, _) => { };
         }
 
         [Test]
@@ -189,7 +220,7 @@ namespace Uninarok.World.Tests
                        new byte[4], new byte[4], new byte[4]);
             var cursor = _go.AddComponent<CellCursor>();
             cursor.Map = map;
-            cursor.Show(0, 0, true);
+            cursor.Show(0, 0);
             var v = cursor.Mesh.vertices;
             Assert.AreEqual(new Vector3(10f, 0.01f, 20f), v[0]);
             Assert.AreEqual(new Vector3(10.5f, 1.01f, 20f), v[1]);
@@ -198,7 +229,7 @@ namespace Uninarok.World.Tests
             var t = cursor.Mesh.triangles;
             for (int i = 0; i < 6; i += 3)
                 Assert.Greater(Vector3.Cross(v[t[i + 1]] - v[t[i]], v[t[i + 2]] - v[t[i]]).y, 0f, "both triangles face up");
-            cursor.Show(5, 5, true);
+            cursor.Show(5, 5);
             Assert.IsFalse(cursor.Visible, "outside the map");
             Object.DestroyImmediate(map);
         }

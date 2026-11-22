@@ -18,6 +18,7 @@ namespace Uninarok.World.View
 
         public WorldBootstrap World;
         public CellCursor Cursor;
+        public MouseCursor Mouse;
         /// <summary><c>WorldInputActions</c>.</summary>
         public InputActionAsset Actions;
 
@@ -28,11 +29,6 @@ namespace Uninarok.World.View
         bool _holding;
         double _askedAt;
         int _askedX, _askedY;
-
-        // What the cursor says is asked again only when something it depends on changed.
-        int _checkedX = -1, _checkedY = -1, _checkedOwnX, _checkedOwnY;
-        EntityState _checkedState;
-        bool _canWalk;
 
         /// <summary>Off while something else has the keyboard (a text field): nothing is sent and no cell is marked.</summary>
         public bool InputEnabled { get; set; } = true;
@@ -80,7 +76,6 @@ namespace Uninarok.World.View
             _picker = map != null ? new CellPicker(map) : null;
             if (Cursor != null) Cursor.Map = map;
             _holding = false;
-            _checkedX = _checkedY = -1;
         }
 
         void Update()
@@ -107,7 +102,7 @@ namespace Uninarok.World.View
             if (_actions == null || own == null || !InputEnabled)
             {
                 _holding = false;
-                if (Cursor != null) Cursor.Hide();
+                Mark(false, false, x, y);
                 return;
             }
 
@@ -126,7 +121,8 @@ namespace Uninarok.World.View
             else if (!_walk.IsPressed()) _holding = false;
             else if (_holding && over && (x != _askedX || y != _askedY || (now - _askedAt) * 1000.0 >= RepeatMs)) Ask(own, now, x, y);
 
-            Mark(own, over, x, y);
+            if (over && own.TryGet(out var model, out _)) Mark(true, model.Grid.IsPassable(x, y), x, y);
+            else Mark(false, false, x, y);
         }
 
         int RepeatMs => World != null && World.Settings != null ? World.Settings.HoldRepeatMs : 500;
@@ -139,27 +135,15 @@ namespace Uninarok.World.View
             own.RequestWalk(x, y);
         }
 
-        void Mark(OwnCharacter own, bool over, int x, int y)
+        // The cell when it is walkable, the forbidden cursor when it is not (FR-11); nothing when the mouse is over no cell.
+        void Mark(bool over, bool walkable, int x, int y)
         {
-            if (Cursor == null) return;
-            if (!over || !own.TryGet(out var model, out int slot))
+            if (Cursor != null)
             {
-                Cursor.Hide();
-                _checkedX = _checkedY = -1;
-                return;
+                if (over && walkable) Cursor.Show(x, y);
+                else Cursor.Hide();
             }
-            ref readonly var e = ref model[slot];
-            if (x != _checkedX || y != _checkedY || e.CellX != _checkedOwnX || e.CellY != _checkedOwnY || e.State != _checkedState)
-            {
-                _checkedX = x;
-                _checkedY = y;
-                _checkedOwnX = e.CellX;
-                _checkedOwnY = e.CellY;
-                _checkedState = e.State;
-                var result = own.CheckWalk(x, y);
-                _canWalk = result == WalkRequestResult.Sent || result == WalkRequestResult.SameCell;
-            }
-            Cursor.Show(x, y, _canWalk);
+            if (Mouse != null) Mouse.Kind = over && !walkable ? MouseCursorKind.NoWalk : MouseCursorKind.Default;
         }
     }
 }

@@ -1,6 +1,20 @@
 {
     "entries": [
         {
+            "Source": "sprite/cursors.act",
+            "SourceHash": "6b8ccda1939f47930044d349c5e6e42ebf1b25ee64f42b45edbacfb9f62fd743",
+            "Rules": 1001,
+            "Outputs": [
+                "Assets/Art/Imported/sprite/cursors.asset"
+            ],
+            "Dependencies": [
+                {
+                    "Source": "sprite/cursors.spr",
+                    "Hash": "e7ef9996db5f46acf6e9ebea9c35e8cb3ca72ce05df15148e20ea20532d63d3b"
+                }
+            ]
+        },
+        {
             "Source": "sprite/homun/amistr.act",
             "SourceHash": "a7081c13ca90ab832c18c2b9b030883483856ca7589de1af2c2d1ba7c2565478",
             "Rules": 1001,

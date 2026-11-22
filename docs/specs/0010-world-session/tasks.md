@@ -231,6 +231,10 @@
   *Done when:* a non-development player build contains no `Uninarok.World.Dev` type and no dev command line (checked by reflection over the built assemblies, command and result in the report).
   *Result (2026-11-22):* `PlayerBuildInterface.CompilePlayerScripts` for StandaloneWindows64 without the development option writes 9 `Uninarok.*` assemblies and no `Uninarok.World.Dev.dll`; by reflection none of them has a type in a `.Dev` namespace (the same compile with the development option has `Uninarok.World.Dev.dll` with `DevCommandLine`, `WorldDebugView`, `WorldDevTools`). The dev tools are added at run time, so the scene holds no component that a release lacks. No full player was built (7 GB of Addressables content).
 
+- [x] **T8.3** The client's cell cursor and mouse cursors (plan §4.11, D29). (FR-11)
+  *Done when:* `TheCursor_MarksWalkableCells_AndTheMouseSaysTheOthers` and `TheMouseCursor_PlaysTheClientsCursors` pass; in game the grid shows on a walkable cell and not on another (screenshot).
+  *Result (2026-11-22):* added after the owner compared T7.2 with the original client. Both tests pass; `evidence/t8.3-cell-cursor.png` (iz_int). The frames of the two mouse cursors were checked as pictures in the running game; a screenshot does not hold a hardware cursor, so the owner sees it in T9.1.
+
 ## Phase 9: Verify and close
 
 - [ ] **T9.1** Owner: second-client and side-by-side checks. (FR-1, FR-9, FR-13, FR-19)

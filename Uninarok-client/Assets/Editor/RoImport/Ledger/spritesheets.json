@@ -110465,6 +110465,14 @@
             "IndexedCount": 1
         },
         {
+            "Hash": "e7ef9996db5f46acf6e9ebea9c35e8cb3ca72ce05df15148e20ea20532d63d3b",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/e7/cursors_e7ef9996.png",
+            "Source": "sprite/cursors.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 31
+        },
+        {
             "Hash": "e7f502280cb8098478f97929a58fe4759fddd95fc2b1a5e043c1b551acc05021",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/e7/남_c_wh_cat_eyes_e7f50228.png",
             "Source": "sprite/악세사리/남/남_c_wh_cat_eyes.spr",

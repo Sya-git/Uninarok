@@ -10,6 +10,7 @@
         "Uninarok.Map",
         "Uninarok.World",
         "Uninarok.World.View",
+        "Uninarok.Sprites",
         "Uninarok.World.Dev",
         "Uninarok.Units",
         "Uninarok.CameraRig",

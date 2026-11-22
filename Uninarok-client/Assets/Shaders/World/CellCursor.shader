@@ -1,10 +1,12 @@
-// Uninarok/CellCursor (PLAN-0010 4.11, D21): the marked cell, vertex colours only. _DepthBias moves the depth the pixel is
+// Uninarok/CellCursor (PLAN-0010 4.11, D21, D29): the marked cell, a texture and its colour. _DepthBias moves the depth the pixel is
 // tested with toward the camera, in world units along the view axis (as Uninarok/RoSprite, PLAN-0009 D7): the cell's triangles
 // and the ground mesh's are split differently, so parts of a sloping cell lie under the ground.
 Shader "Uninarok/CellCursor"
 {
     Properties
     {
+        _MainTex ("Texture", 2D) = "white" {}
+        _Color ("Colour", Color) = (1, 1, 1, 1)
         _DepthBias ("Depth Bias (world units toward the camera)", Float) = 0.4
     }
 
@@ -27,16 +29,20 @@ Shader "Uninarok/CellCursor"
             struct Attributes
             {
                 float3 positionOS : POSITION;
-                half4 color : COLOR;
+                float2 uv : TEXCOORD0;
             };
 
             struct Varyings
             {
                 float4 positionCS : SV_POSITION;
-                half4 color : COLOR;
+                float2 uv : TEXCOORD0;
             };
 
+            TEXTURE2D(_MainTex);
+            SAMPLER(sampler_MainTex);
+
             CBUFFER_START(UnityPerMaterial)
+                half4 _Color;
                 float _DepthBias;
             CBUFFER_END
 
@@ -49,13 +55,13 @@ Shader "Uninarok/CellCursor"
                 positionVS.z += _DepthBias; // the view looks along -z
                 float4 biased = TransformWViewToHClip(positionVS);
                 o.positionCS.z = biased.z / biased.w * o.positionCS.w;
-                o.color = input.color;
+                o.uv = input.uv;
                 return o;
             }
 
             half4 Fragment(Varyings input) : SV_Target
             {
-                return input.color;
+                return SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv) * _Color;
             }
             ENDHLSL
         }

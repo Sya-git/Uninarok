@@ -5,8 +5,8 @@ using Uninarok.Map;
 namespace Uninarok.World.View
 {
     /// <summary>
-    /// Marks the cell under the mouse on its slope, in a colour that says whether a walk there is possible (SPEC-0010 FR-11;
-    /// PLAN-0010 4.11). One quad mesh, rewritten when the cell changes; no allocation.
+    /// Marks the walkable cell under the mouse on its slope with the client's <c>grid.tga</c> (SPEC-0010 FR-11; PLAN-0010 4.11,
+    /// D29). One quad mesh, rewritten when the cell changes; no allocation.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class CellCursor : MonoBehaviour
@@ -14,25 +14,20 @@ namespace Uninarok.World.View
         /// <summary>Above the ground, so the two do not fight for depth.</summary>
         const float Lift = 0.01f;
 
-        /// <summary><c>cell_cursor.mat</c>: transparent, vertex colours.</summary>
+        /// <summary><c>cell_cursor.mat</c>: the grid texture and its colour.</summary>
         public Material Material;
-        public Color CanWalkColour = new Color(0.3f, 1f, 0.4f, 0.45f);
-        public Color CanNotWalkColour = new Color(1f, 0.25f, 0.2f, 0.45f);
 
         readonly Vector3[] _vertices = new Vector3[4];
-        readonly Color32[] _colours = new Color32[4];
         // The two triangles of the cell, seen from above, by the map's row sign and diagonal.
         readonly int[] _triangles = new int[6];
         MapData _map;
         Mesh _mesh;
         MeshRenderer _renderer;
         int _x = -1, _y = -1;
-        bool _canWalk;
 
         public bool Visible => _renderer != null && _renderer.enabled;
         public int CellX => _x;
         public int CellY => _y;
-        public bool CanWalk => _canWalk;
         internal Mesh Mesh => _mesh;
 
         /// <summary>The map whose cells are marked; null hides the cursor.</summary>
@@ -47,7 +42,7 @@ namespace Uninarok.World.View
             }
         }
 
-        public void Show(int x, int y, bool canWalk)
+        public void Show(int x, int y)
         {
             if (_map == null || !_map.InBounds(x, y))
             {
@@ -56,7 +51,6 @@ namespace Uninarok.World.View
             }
             Ensure();
             if (x != _x || y != _y) WriteCell(x, y);
-            if (canWalk != _canWalk || !_renderer.enabled) WriteColour(canWalk);
             _renderer.enabled = true;
         }
 
@@ -96,14 +90,6 @@ namespace Uninarok.World.View
             _triangles[5] = up ? f : e;
         }
 
-        void WriteColour(bool canWalk)
-        {
-            _canWalk = canWalk;
-            Color32 colour = canWalk ? CanWalkColour : CanNotWalkColour;
-            for (int i = 0; i < 4; i++) _colours[i] = colour;
-            _mesh.SetColors(_colours);
-        }
-
         void Ensure()
         {
             if (_mesh != null) return;
@@ -120,11 +106,9 @@ namespace Uninarok.World.View
             _renderer.sortingOrder = -2; // under the units' shadows (-1) and the units
             _renderer.enabled = false;
             _x = _y = -1;
-            WriteVerticesOnce();
+            _mesh.SetVertices(_vertices); // the corners need as many vertices as the mesh has
+            _mesh.SetUVs(0, new[] { Vector2.zero, Vector2.right, Vector2.up, Vector2.one });
         }
-
-        // The colours need as many vertices as the mesh has.
-        void WriteVerticesOnce() => _mesh.SetVertices(_vertices);
 
         void OnDestroy()
         {
