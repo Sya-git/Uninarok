@@ -1,6 +1,7 @@
 using System.Text;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using Uninarok.Map;
 using Uninarok.World.View;
 
@@ -23,19 +24,27 @@ namespace Uninarok.World.Dev
         static readonly Color s_cell = new Color(0.2f, 0.8f, 1f, 1f);
 
         readonly StringBuilder _builder = new StringBuilder(8192);
-        readonly GUIContent _text = new GUIContent(string.Empty);
-        GUIStyle _style;
+        string _text = string.Empty;
+        // A canvas is drawn again only when its text changes; IMGUI allocates every frame.
+        GameObject _canvas;
+        Text _label;
         Material _lines;
         WorldBootstrap _world;
         float _refreshAt;
 
-        public bool Shown { get; set; }
-        /// <summary>The text shown (tests).</summary>
-        internal string Text => _text.text;
+        public bool Shown
+        {
+            get => _shown;
+            set
+            {
+                _shown = value;
+                _refreshAt = 0f;
+                if (_canvas != null) _canvas.SetActive(value);
+            }
+        }
+        bool _shown;
 
         internal void Use(WorldBootstrap world) => _world = world;
-
-        void Awake() => useGUILayout = false; // absolute rectangles: no layout pass, no garbage
 
         void Update()
         {
@@ -52,7 +61,38 @@ namespace Uninarok.World.Dev
             var session = _world != null ? _world.Session : null;
             if (session == null) _builder.Append("no session");
             else Write(_builder, session, _world.MapName);
-            _text.text = _builder.ToString();
+            _text = _builder.ToString();
+            EnsureCanvas();
+            _label.text = _text;
+        }
+
+        void EnsureCanvas()
+        {
+            if (_canvas != null) return;
+            _canvas = new GameObject("World Debug View");
+            _canvas.transform.SetParent(transform, false);
+            var canvas = _canvas.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 1000;
+            var panel = new GameObject("Panel");
+            panel.transform.SetParent(_canvas.transform, false);
+            var back = panel.AddComponent<Image>();
+            back.color = new Color(0f, 0f, 0f, 0.6f);
+            back.raycastTarget = false;
+            var group = panel.AddComponent<VerticalLayoutGroup>();
+            group.padding = new RectOffset(8, 8, 6, 6);
+            var fit = panel.AddComponent<ContentSizeFitter>();
+            fit.horizontalFit = fit.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            var rect = (RectTransform)panel.transform;
+            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0f, 1f);
+            rect.anchoredPosition = new Vector2(10f, -10f);
+            var text = new GameObject("Text");
+            text.transform.SetParent(panel.transform, false);
+            _label = text.AddComponent<Text>();
+            _label.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            _label.fontSize = 14;
+            _label.color = Color.white;
+            _label.raycastTarget = false;
         }
 
         /// <summary>The whole readout of a session.</summary>
@@ -88,13 +128,6 @@ namespace Uninarok.World.Dev
                 if (e.Walking) b.Append(" walking");
                 b.Append('\n');
             }
-        }
-
-        void OnGUI()
-        {
-            if (!Shown || Event.current.type != EventType.Repaint) return;
-            _style ??= new GUIStyle(GUI.skin.label) { fontSize = 12, wordWrap = false, richText = false };
-            _style.Draw(new Rect(10f, 10f, 700f, Screen.height - 60f), _text, false, false, false, false);
         }
 
         // ---- on the map ----
