@@ -253,7 +253,7 @@ namespace Uninarok.World.Tests
 
         static byte[] ChangeDirection(HeadDirection head, UninarokDirection body) => WorldSessionTests.Hex($"6103{(int)head:X2}00{(int)body:X2}");
 
-        static readonly object[][] Neighbours =
+        static object[][] Neighbours() => new[]
         {
             // facing south (4): one step beside is the head, the rest the body
             new object[] { 0, -1, UninarokDirection.South, HeadDirection.Straight },
