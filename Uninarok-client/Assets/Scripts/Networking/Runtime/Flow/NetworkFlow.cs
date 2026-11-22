@@ -53,6 +53,7 @@ namespace Uninarok.Networking.Flow
             Zone.Authenticated += OnAuthenticated;
             Zone.EnterRefused += OnEnterRefused;
             Zone.MapChangeOrdered += OnMapChangeOrdered;
+            Zone.MapServerChangeOrdered += OnMapServerChangeOrdered;
         }
 
         public FlowState State { get; private set; } = FlowState.Idle;
@@ -156,6 +157,7 @@ namespace Uninarok.Networking.Flow
             Zone.Authenticated -= OnAuthenticated;
             Zone.EnterRefused -= OnEnterRefused;
             Zone.MapChangeOrdered -= OnMapChangeOrdered;
+            Zone.MapServerChangeOrdered -= OnMapServerChangeOrdered;
 
             DeactivateManager();
         }
@@ -290,6 +292,18 @@ namespace Uninarok.Networking.Flow
             StartDeadline(_settings.MapLoadSeconds);
             SetState(FlowState.LoadingMap);
             RequestMapLoad();
+        }
+
+        // The server moved the player to another map server (SPEC-0010 FR-15): the character server handed the session over, so
+        // the entry is the first one again, with the same account, character and auth code.
+        private void OnMapServerChangeOrdered()
+        {
+            if (State != FlowState.InGame && !(State == FlowState.LoadingMap && _authenticated)) return;
+            _client.Disconnect();                                   // silent: the old server is done with us
+            Activate(Zone, ConnectionRole.Map);
+            _authenticated = false;
+            BeginConnecting(FlowState.ConnectingToMap);
+            _client.Connect(Context.Map.Host, Context.Map.Port, ConnectionRole.Map);
         }
 
         private void RequestMapLoad()

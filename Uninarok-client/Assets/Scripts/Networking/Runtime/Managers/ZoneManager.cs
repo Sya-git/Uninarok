@@ -25,6 +25,7 @@ namespace Uninarok.Networking.Managers
         private readonly PacketHandler<MAP_ENTRY_REFUSAL> _onRefusal;
         private readonly PacketHandler<SERVER_HEARTBEAT_RESPONSE> _onHeartbeatResponse;
         private readonly PacketHandler<MAP_CHANGE> _onMapChange;
+        private readonly PacketHandler<MAP_SERVER_CHANGE> _onMapServerChange;
 
         // The keepalive starts at SendMapLoaded (the session is InGame, spec section 6) and stops at Exit.
         private bool _heartbeatActive;
@@ -45,6 +46,7 @@ namespace Uninarok.Networking.Managers
             _onRefusal = OnRefusal;
             _onHeartbeatResponse = OnHeartbeatResponse;
             _onMapChange = OnMapChange;
+            _onMapServerChange = OnMapServerChange;
         }
 
         /// <summary>AUTHENTICATION_ACCEPTED was stored in <c>Context.Entry</c>.</summary>
@@ -66,6 +68,12 @@ namespace Uninarok.Networking.Managers
         /// </summary>
         public event Action MapChangeOrdered;
 
+        /// <summary>
+        /// The server moved the player to another map server: <c>Context.Map</c> has its address and the map, <c>Context.Entry</c>
+        /// the cell (SPEC-0010 FR-15). The flow reconnects.
+        /// </summary>
+        public event Action MapServerChangeOrdered;
+
         public void Enter()
         {
             _heartbeatActive = false;
@@ -74,6 +82,7 @@ namespace Uninarok.Networking.Managers
             _subscriptions.Add(_onRefusal);
             _subscriptions.Add(_onHeartbeatResponse);
             _subscriptions.Add(_onMapChange);
+            _subscriptions.Add(_onMapServerChange);
         }
 
         public void Exit()
@@ -149,6 +158,14 @@ namespace Uninarok.Networking.Managers
             _context.Map = new MapEndpoint(_context.Map.Host, _context.Map.Port, in p.MapName, in _context.Map.DnsHost);
             MoveEntry(p.X, p.Y);
             MapChangeOrdered?.Invoke();
+        }
+
+        private void OnMapServerChange(in MAP_SERVER_CHANGE p)
+        {
+            _heartbeatActive = false;
+            _context.Map = new MapEndpoint(p.FormatIpAddress(), p.Port, in p.MapName, in p.DnsHost);
+            MoveEntry(p.X, p.Y);
+            MapServerChangeOrdered?.Invoke();
         }
 
         // The move packets carry no tick and no facing.
