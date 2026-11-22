@@ -153,10 +153,12 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
 - [ ] **T6.4** Owner: measure the camera against the original client, side by side. (FR-12)
   Same window size, prontera: default view on entering, nearest and farthest zoom, lowest and highest tilt, wheel step. Fill `Settings/Units/RoCameraSettings.asset`.
   *Done when:* screenshot pairs for each case are in `evidence/` and show the same map area; the settings hold the measured values; plan §4.7 records them (a Decisions note if the limits differ from `viewpointtable.txt`).
+  *Open (2026-11-22):* owner task. Until then `RoCameraSettings.asset` holds the research values (default 40 u, 50°; wheel 2.5 u) and FR-12's side-by-side acceptance is not checked.
 
-- [ ] **T6.5** Tests, then implementation: `RoCamera.SnapToTarget` (plan §4.7, D13). (FR-12)
+- [x] **T6.5** Tests, then implementation: `RoCamera.SnapToTarget` (plan §4.7, D13). (FR-12)
   Choose `OnTargetObjectWarped` or `ForceCameraPosition` from the installed Cinemachine and record it in D13.
   *Done when:* `RoCamera_SnapToTarget_FirstFrameAtTarget_KeepsTurnTiltZoom` passes (target moved 200 u, snap, the next rendered frame is centred on it with unchanged yaw, pitch and distance).
+  *Result (2026-11-22):* `RoCamera_SnapToTarget_FirstFrameAtTarget_KeepsTurnTiltZoom` passes with the real brain; `OnTargetObjectWarped` chosen (D22).
 
 ## Phase 7: Tools
 
