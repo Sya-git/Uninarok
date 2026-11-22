@@ -20,7 +20,7 @@ namespace Uninarok.Units
         public UnitLook Look;
         public SpriteRace Race;
         public bool Riding;
-        /// <summary>The unit's display scale (catalog, 1 for players).</summary>
+        /// <summary>The unit's display scale (catalog; players 1, baby classes <see cref="UnitLook.BabyScale"/>).</summary>
         public float Scale = 1f;
         /// <summary>A job id the client draws as nothing (FR-2): no parts, no shadow.</summary>
         public bool Hidden;

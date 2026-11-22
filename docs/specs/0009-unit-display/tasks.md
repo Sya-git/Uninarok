@@ -192,6 +192,10 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
   *Done when:* the stress mode on the owner's PC shows a unit update of 2 ms or less and 0 B GC per frame (profiler capture in `evidence/`); a release build contains no Entity Sandbox scene and no `Uninarok.Units.Dev` type.
   *Result (2026-11-22):* this PC (i5-14600KF), in the editor: readout over 10 s 0.50 ms mean, 0.97 ms max; with the profiler on, 300 frames, 0.91 ms mean, 1.66 ms max, 0 B GC in `UnitSystem.Tick` (evidence/t8.2-stress-profiler.csv, per frame). The stress starts its units spread over 2 s instead of all in one frame (in step they peaked at 2.3 to 2.7 ms under the profiler, 2 of 300 frames over 2 ms). Release: compiled release player scripts contain no `Uninarok.Units.Dev` (the development ones do) and the build list is Bootstrap only; no full player build was made.
 
+- [x] **T8.4** Show the classes without sprites of their own: base class sprites, baby classes at 0.8 (added 2026-11-22, owner report). (FR-1, FR-11)
+  *Done when:* every `JOB_BABY_*` loads a body and a head at scale 0.8 with the adult's parts; the high first classes and the `_T` classes load their base sprites at scale 1; seen in the Entity Sandbox.
+  *Result (2026-11-22):* `UnitLoader_BabyJobs_AreTheirAdultClassAt08`, `_BabySwordsman_HasTheSwordsmansParts`, `_HighAndTranscendentJobs_UseTheirBaseSprites` pass (Units EditMode 95 of 95); baby swordsman and baby acolyte seen beside the adults on prontera. Hercules' placeholders `JOB_DUMMY4230` to `4237` still have no body: their base jobs are not in `PlayerJob`.
+
 - [ ] **T8.3** Close the spec. (all)
   *Done when:* spec success criteria checked and reported; sprite-catalog.md §1 points the composition rows to SPEC-0009; the two BACKLOG items of plan §7 are removed (closed) and leftovers added; spec, plan and tasks status `Implemented`.
   *Open (2026-11-22):* waits for T6.4 and T8.1. Done already: sprite-catalog.md §1 points to SPEC-0009, leftovers are in BACKLOG.

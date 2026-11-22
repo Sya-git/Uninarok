@@ -45,6 +45,23 @@ namespace Uninarok.Units
         /// <summary>True for a job id outside the unit ranges (PLAN-0008 §3.1: NPCs from 45, monsters, homunculi): 0–44 and 4001–5999.</summary>
         public static bool IsPlayerJob(int jobId) => (jobId >= 0 && jobId < 45) || (jobId > 4000 && jobId < 6000);
 
+        /// <summary>Display scale of baby classes (PLAN-0009 D24): roBrowser draws them at size 4 where others are 5.</summary>
+        public const float BabyScale = 0.8f;
+
+        /// <summary>True for the baby classes: the same sprites as their adult class, smaller.</summary>
+        public static bool IsBabyJob(int jobId)
+        {
+            var job = (PlayerJob)jobId;
+            return (job >= PlayerJob.JOB_BABY && job <= PlayerJob.JOB_SUPER_BABY)
+                || (job >= PlayerJob.JOB_BABY_RUNE && job <= PlayerJob.JOB_BABY_MECHANIC2)
+                || job == PlayerJob.JOB_SUPER_BABY_E
+                || job == PlayerJob.JOB_BABY_SUMMONER
+                || (job >= PlayerJob.JOB_BABY_NINJA && job <= PlayerJob.JOB_BABY_REBELLION)
+                || job == PlayerJob.JOB_BABY_STAR_GLADIATOR2
+                || job == PlayerJob.JOB_BABY_STAR_EMPEROR
+                || job == PlayerJob.JOB_BABY_SOUL_REAPER;
+        }
+
         public bool Equals(UnitLook o) =>
             Kind == o.Kind && JobId == o.JobId && Sex == o.Sex && BodyStyle == o.BodyStyle && HairStyle == o.HairStyle && HairColour == o.HairColour
             && ClothColour == o.ClothColour && HeadTop == o.HeadTop && HeadMid == o.HeadMid && HeadBottom == o.HeadBottom && Garment == o.Garment

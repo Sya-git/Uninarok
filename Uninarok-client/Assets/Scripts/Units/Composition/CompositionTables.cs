@@ -122,6 +122,17 @@ namespace Uninarok.Units
         /// <summary>True for a job id the client draws as nothing (FR-2).</summary>
         public bool IsHidden(int jobId) => Find(HiddenJobIds, jobId) >= 0;
 
+        /// <summary>
+        /// The job whose sprites and layers <paramref name="job"/> uses (baby, high, transcendent and outfit jobs; the client's
+        /// <c>LAYER_ALL_TABLE_LIST</c>); false when it stands for itself.
+        /// </summary>
+        public bool TryGetBaseJob(int job, out int baseJob)
+        {
+            int i = Find(LayerJobs, job);
+            baseJob = i >= 0 ? LayerJobBases[i] : job;
+            return i >= 0;
+        }
+
         /// <summary>The draw priority of a headgear: its direction's, else its own, else <paramref name="defaultForSlot"/>.</summary>
         public int PriorityOf(int viewId, int shownDirection, bool riding, int defaultForSlot)
         {
@@ -156,8 +167,7 @@ namespace Uninarok.Units
         public bool TryGetLayerSwap(int job, AccountSex sex, int fileAction, int frame, out bool behind)
         {
             behind = false;
-            int inherit = Find(LayerJobs, job);
-            if (inherit >= 0) job = LayerJobBases[inherit];
+            if (TryGetBaseJob(job, out int baseJob)) job = baseJob;
             if (Find(LayerSwapJobs, (job << 1) | ((int)sex & 1)) < 0) return false;
 
             int key = LayerSwap.KeyOf(job, sex, fileAction);

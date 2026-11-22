@@ -56,6 +56,8 @@ namespace Uninarok.Units
             readonly SpriteAnimation[] _animations = new SpriteAnimation[UnitParts.SlotCount];
             readonly Texture2D[] _palettes = new Texture2D[UnitParts.SlotCount];
             readonly int _id;
+            /// <summary>The job whose sprites are used: the look's, or the one it inherits from (D24).</summary>
+            PlayerJob _job;
             SpriteRace _race;
             bool _riding, _hidden;
             float _scale = 1f, _shadowScale;
@@ -113,7 +115,8 @@ namespace Uninarok.Units
 
             void Player()
             {
-                var job = _look.PlayerJob;
+                var job = _job = SpriteJob();
+                if (UnitLook.IsBabyJob(_look.JobId)) _scale = UnitLook.BabyScale;
                 var classes = _source.Catalog.Classes;
                 var baseJob = job;
                 if (classes != null)
@@ -136,6 +139,16 @@ namespace Uninarok.Units
                 Equipment(PartSlot.Shield, EquipmentKind.Shield, _look.Shield, _look.ShieldItem, baseJob);
             }
 
+            // A job without a body of its own (baby, high, transcendent) uses its base job's sprites, as the client does.
+            PlayerJob SpriteJob()
+            {
+                var job = _look.PlayerJob;
+                if (!_source.Catalog.TryFindBody(job, out _) && _source.Tables != null && _source.Tables.TryGetBaseJob(_look.JobId, out int baseJob)
+                    && _source.Catalog.TryFindBody((PlayerJob)baseJob, out _))
+                    return (PlayerJob)baseJob;
+                return job;
+            }
+
             void Body(BodyEntry entry, PlayerJob job)
             {
                 if (entry == null || !TryBodyVariant(entry, job, out var v))
@@ -149,7 +162,9 @@ namespace Uninarok.Units
                     _report.Missing(PartSlot.Body, $"{v.Name}: no animation");
                     return;
                 }
-                string how = $"{job} {_look.Sex}: {v.Name} ({v.Kind})";
+                string how = $"{_look.PlayerJob} {_look.Sex}: {v.Name} ({v.Kind})";
+                if (job != _look.PlayerJob) how += $", as {job}";
+                if (_scale != 1f) how += $", scale {_scale}";
                 how += Palette(PartSlot.Body, v.Palettes, _look.ClothColour, "cloth colour");
                 Animation(PartSlot.Body, v.Sprite.Animation, how);
             }
@@ -220,7 +235,7 @@ namespace Uninarok.Units
 
             void Equipment(PartSlot slot, EquipmentEntry entry, string what, PlayerJob baseJob)
             {
-                var job = _look.PlayerJob;
+                var job = _job;
                 if (entry == null)
                 {
                     _report.Missing(slot, $"{what}: its entry could not be loaded");

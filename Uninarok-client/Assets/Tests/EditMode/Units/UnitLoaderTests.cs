@@ -133,6 +133,53 @@ namespace Uninarok.Units.Tests
         }
 
         [Test]
+        public void UnitLoader_BabyJobs_AreTheirAdultClassAt08()
+        {
+            foreach (PlayerJob job in System.Enum.GetValues(typeof(PlayerJob)))
+            {
+                bool baby = job.ToString().Contains("BABY");
+                Assert.That(UnitLook.IsBabyJob((int)job), Is.EqualTo(baby), job.ToString());
+                if (!baby) continue;
+                bool female = job == PlayerJob.JOB_BABY_DANCER || job == PlayerJob.JOB_BABY_WANDERER || job == PlayerJob.JOB_BABY_OBORO;
+                var (parts, report) = Load(UnitLook.ForJob((int)job, female ? AccountSex.SEX_FEMALE : AccountSex.SEX_MALE));
+                Assert.That(parts.Has(PartSlot.Body) && parts.Has(PartSlot.Head), Is.True, $"{job}\n{report}");
+                Assert.That(parts.Scale, Is.EqualTo(0.8f), job.ToString());
+                _loader.Release(parts);
+            }
+        }
+
+        [Test]
+        public void UnitLoader_BabySwordsman_HasTheSwordsmansParts()
+        {
+            var look = UnitTestData.Swordsman();
+            var adult = Load(look).parts;
+            look.JobId = (int)PlayerJob.JOB_BABY_SWORDMAN;
+            var (baby, report) = Load(look);
+            Assert.That(report.MissingCount, Is.EqualTo(0), report.ToString());
+            Assert.That(baby.Animations, Is.EqualTo(adult.Animations));
+            Assert.That(baby.ShadowScale, Is.EqualTo(0.75f));
+            Assert.That(adult.Scale, Is.EqualTo(1f));
+
+            Assert.That(Load(UnitLook.ForJob((int)PlayerJob.JOB_BABY_KNIGHT2)).parts.Riding, Is.True);
+            Assert.That(Load(UnitLook.ForJob((int)PlayerJob.JOB_BABY_SUMMONER)).parts.Race, Is.EqualTo(SpriteRace.Doram));
+        }
+
+        [Test]
+        public void UnitLoader_HighAndTranscendentJobs_UseTheirBaseSprites()
+        {
+            foreach (var job in new[]
+                     {
+                         PlayerJob.JOB_NOVICE_HIGH, PlayerJob.JOB_SWORDMAN_HIGH, PlayerJob.JOB_THIEF_HIGH, PlayerJob.JOB_RUNE_KNIGHT_T,
+                         PlayerJob.JOB_RUNE_KNIGHT_T2, PlayerJob.JOB_SUPER_NOVICE_E,
+                     })
+            {
+                var (parts, report) = Load(UnitLook.ForJob((int)job));
+                Assert.That(parts.Has(PartSlot.Body) && parts.Has(PartSlot.Head), Is.True, $"{job}\n{report}");
+                Assert.That(parts.Scale, Is.EqualTo(1f), job.ToString());
+            }
+        }
+
+        [Test]
         public void UnitLoader_HiddenJob_ShowsNothing()
         {
             foreach (int job in new[] { 45, 111, 139, 2337 })

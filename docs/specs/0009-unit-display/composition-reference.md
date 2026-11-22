@@ -74,6 +74,8 @@ Calls `SetHeadSprEditInfo(job, firstAction, lastAction, firstMotion, lastMotion,
 
 `ShadowFactorTable[jobtbl.X | JTtbl.X] = scale`; 987 rows, 67 zeros, others 0.2 to 5; `ReqshadowFactor` returns −1 for a job not listed = default 1. **Confirmed**. First baby classes have 0.75, second and third baby classes **0.82**; mounts 1.5 to 2; fabre 0.5; warp NPC 0; red plant 0.
 
+Baby classes: the **body** scale is 0.8 (roBrowser `EntityView`: size 4 where other classes have 5; **Candidate**), and the shadow's is this table's times that (roBrowser draws the shadow at the entity's size). The table's 0.75 and 0.82 are shadow factors only. Baby, high and transcendent classes take their sprites from the base job of `LAYER_ALL_TABLE_LIST` (§2.3).
+
 ### 2.9 Shadow sprite
 
 `sprite/shadow.spr` + `.act` at the root of the sprite folder, **not** in `이팩트/`, so the catalog has no effect of that name (D12 corrected, D20). The Composition import converts it and stores its reference. roBrowser hides it while sitting or dead (**Candidate**, followed).
