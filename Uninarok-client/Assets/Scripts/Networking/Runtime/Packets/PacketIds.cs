@@ -34,6 +34,10 @@ namespace Uninarok.Networking.Packets
         public const ushort UNIT_MOVE = 0x0086;                      // in
         public const ushort PLAYER_MOVE = 0x0087;                    // in
         public const ushort UNIT_STOP_MOVE = 0x0088;                 // in
+        public const ushort UNIT_ACT = 0x008A;                       // in
+        public const ushort UNIT_DIRECTION = 0x009C;                 // in
+        public const ushort PARAMETER_CHANGE = 0x00B0;               // in
+        public const ushort UNIT_LOOK_CHANGE = 0x01D7;               // in
         public const ushort UNIT_SLIDE = 0x01FF;                     // in
         public const ushort MAP_ENTRY_ACCEPTANCE = 0x0283;           // in
         public const ushort AUTHENTICATION_ACCEPTED = 0x02EB;        // in

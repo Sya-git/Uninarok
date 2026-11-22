@@ -58,8 +58,9 @@
   *Done when:* size tests against the Hercules table and decode tests (real samples from T0.5 where present, else hand-built from the doc) pass, each leaves no unread byte, and the hot ones pass an allocation test of 1,000 decodes at 0 B; docs moved to `implemented`/`verified`.
   *Result (2026-11-22):* the 8 structs; `Uninarok.Networking.Tests` 460 of 461 pass (the failing one is the line-ending fixture of the BACKLOG), with size tests (`PacketSizeTests`), 9 decode tests (`UNIT_STAND_ENTRY` also from the real capture) and 1,000 decodes of each at 0 B; docs implemented, `UNIT_STAND_ENTRY` verified. No new warnings.
 
-- [ ] **T1.3** Tests, then structs: direction, look change, act, parameter change (`0x009C`, `0x01D7`, `0x008A`, `0x00B0`). (FR-8, FR-13, FR-19)
+- [x] **T1.3** Tests, then structs: direction, look change, act, parameter change (`0x009C`, `0x01D7`, `0x008A`, `0x00B0`). (FR-8, FR-13, FR-19)
   *Done when:* as T1.2.
+  *Result (2026-11-22):* 466 of 467 networking tests pass (the known line-ending one fails): decode tests (look and parameter bytes from the real capture), sizes, 1,000 decodes at 0 B; `UNIT_ACT` ignores the uninitialised bytes.
 
 - [ ] **T1.4** Tests, then structs: ground items (`0x009D`, `0x0ADD`, `0x00A1`). (FR-16)
   *Done when:* as T1.2.

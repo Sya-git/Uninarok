@@ -6,7 +6,7 @@
 | **Hercules packet name** | `ZC_SPRITE_CHANGE2` (struct `PACKET_ZC_SPRITE_CHANGE`) |
 | **Packet ID** | `0x01D7` |
 | **Declared size** | 15 bytes total, including the 2-byte packet ID |
-| **Status** | documented |
+| **Status** | verified |
 | **Frequency** | warm |
 | **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406; layout read in `src/map/clif.cpp` `clif_sendlook`, `clif_changelook`; `packets_struct.h` (checked 2026-11-22, SPEC-0010 T0.2). Capture: yes (`Map-20261117-124252.bin`: weapon 1201) |
 | **Allocates** | no |

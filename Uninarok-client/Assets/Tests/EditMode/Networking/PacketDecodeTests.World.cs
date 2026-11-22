@@ -202,5 +202,73 @@ namespace Uninarok.Networking.Tests
             Assert.That(() => run(), UnityEngine.TestTools.Constraints.Is.Not.AllocatingGCMemory());
             Assert.AreNotEqual(0u, sum);
         }
+
+        // ---- direction, look, act, parameter (T1.3) ----
+
+        [Test]
+        public void UNIT_DIRECTION_Decodes_AndRejectsWrongLengths()
+        {
+            var p = new UNIT_DIRECTION(Hex("ECB58E06" + "0200" + "05"));
+            Assert.AreEqual((0x068EB5ECu, 2, 5), (p.UnitId, (int)p.HeadDirection, (int)p.Direction));
+            Assert.Throws<PacketFormatException>(() => new UNIT_DIRECTION(new byte[6]));
+            Assert.Throws<PacketFormatException>(() => new UNIT_DIRECTION(new byte[8]));
+        }
+
+        [Test]
+        public void UNIT_LOOK_CHANGE_DecodesTheRealCapture_AndRejectsWrongLengths()
+        {
+            // Map-20261117-124252.bin: the own weapon (Knife, item 1201); the shield is set here to check the order
+            var p = new UNIT_LOOK_CHANGE(Hex("80841e00" + "02" + "b1040000" + "35080000"));
+            Assert.AreEqual((0x001E8480u, 2, 1201u, 2101u), (p.UnitId, (int)p.Type, p.Value, p.Value2));
+            Assert.Throws<PacketFormatException>(() => new UNIT_LOOK_CHANGE(new byte[12]));
+            Assert.Throws<PacketFormatException>(() => new UNIT_LOOK_CHANGE(new byte[14]));
+        }
+
+        [Test]
+        public void UNIT_ACT_Decodes_WhateverTheUnusedBytesHold()
+        {
+            var zero = new UNIT_ACT(Hex("ECB58E06" + new string('0', 40) + "02" + "0000"));
+            var dirty = new UNIT_ACT(Hex("ECB58E06" + new string('F', 40) + "03" + "FFFF"));
+            Assert.AreEqual((0x068EB5ECu, 2), (zero.UnitId, (int)zero.Action));
+            Assert.AreEqual((0x068EB5ECu, 3), (dirty.UnitId, (int)dirty.Action));
+            Assert.Throws<PacketFormatException>(() => new UNIT_ACT(new byte[26]));
+            Assert.Throws<PacketFormatException>(() => new UNIT_ACT(new byte[28]));
+        }
+
+        [Test]
+        public void PARAMETER_CHANGE_Decodes_AndRejectsWrongLengths()
+        {
+            var p = new PARAMETER_CHANGE(Hex("0000" + "96000000"));
+            Assert.AreEqual((0, 150), ((int)p.VarId, p.Value));
+            Assert.Throws<PacketFormatException>(() => new PARAMETER_CHANGE(new byte[5]));
+            Assert.Throws<PacketFormatException>(() => new PARAMETER_CHANGE(new byte[7]));
+        }
+
+        [Test]
+        public void StatePackets_SizesAndIds()
+        {
+            Assert.AreEqual((0x008A, 29), ((int)PacketIds.UNIT_ACT, UNIT_ACT.Size));
+            Assert.AreEqual((0x009C, 9), ((int)PacketIds.UNIT_DIRECTION, UNIT_DIRECTION.Size));
+            Assert.AreEqual((0x00B0, 8), ((int)PacketIds.PARAMETER_CHANGE, PARAMETER_CHANGE.Size));
+            Assert.AreEqual((0x01D7, 15), ((int)PacketIds.UNIT_LOOK_CHANGE, UNIT_LOOK_CHANGE.Size));
+        }
+
+        [Test]
+        public void StatePackets_ThousandDecodes_AllocateNothing()
+        {
+            var direction = Hex("ECB58E06" + "0200" + "05");
+            var look = Hex("80841e00" + "02" + "b1040000" + "35080000");
+            var act = new byte[27];
+            var parameter = Hex("0000" + "96000000");
+            uint sum = 0;
+            Action run = () =>
+            {
+                for (int i = 0; i < Decodes; i++)
+                    sum += new UNIT_DIRECTION(direction).UnitId + new UNIT_LOOK_CHANGE(look).UnitId + new UNIT_ACT(act).UnitId + (uint)new PARAMETER_CHANGE(parameter).Value;
+            };
+            run();
+            Assert.That(() => run(), UnityEngine.TestTools.Constraints.Is.Not.AllocatingGCMemory());
+            Assert.AreNotEqual(0u, sum);
+        }
     }
 }
