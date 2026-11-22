@@ -219,9 +219,9 @@
 
 ## Phase 8: Dev tools
 
-- [ ] **T8.1** `DevCommandLine` with `/doridori`, `/bangbang`, `/sit`, `/stand` (plan §4.12). (FR-13, FR-19)
+- [x] **T8.1** `DevCommandLine` with `/doridori`, `/bangbang`, `/sit`, `/stand` (plan §4.12). (FR-13, FR-19)
   *Done when:* each command does what FR-13/FR-19 say on the local server and a second client sees it; game input is off while the field has focus.
-  *Open (2026-11-22):* tests pass (commands, game input off while the field is open). On the local server `/bangbang`, `/doridori`, `/sit` and `/stand` act on the own character and an unknown command is reported. Left: seen by a second client: the owner, with T9.1.
+  *Result (2026-11-22):* tests pass (commands, game input off while the field is open). On the local server each command acts on the own character and a second client sees it: `/bangbang` one step clockwise, `/doridori` left, right, straight 200 ms apart, sitting and standing (`evidence/t8.1-sitting-seen-by-second-client.png`), both ways between two players (the turns and `/doridori`) and from the own character (sitting).
 
 - [x] **T8.2** `WorldDebugView` (plan §4.12). (FR-14)
   *Done when:* F9 shows the entity list, clock estimate and round trip, and draws the own path and server cell during a walk (screenshot); drawing allocates 0 B per frame.
