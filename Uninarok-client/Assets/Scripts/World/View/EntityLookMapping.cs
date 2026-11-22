@@ -9,6 +9,10 @@ namespace Uninarok.World.View
         /// <summary>Job ids that no sprite belongs to (<c>FAKE_NPC</c>, <c>INVISIBLE_CLASS</c>): nothing is drawn, and nothing is missing.</summary>
         public static bool IsInvisible(in EntityLook look) => look.Job < 0 || look.Job == 32767;
 
+        // The server sends the view id, or the item id of an item without one (T0.2). Weapon and shield views end at 102 and 4, items
+        // start at 501; by item, the catalog also finds the sprite of its type (D22).
+        static bool IsItem(int value) => value >= 500;
+
         /// <summary>
         /// A player's parts when the job id is a player class (players, and any kind that looks like one), else one sprite by job id:
         /// monsters, NPCs, pets, and players disguised as one.
@@ -29,11 +33,10 @@ namespace Uninarok.World.View
                 HeadMid = look.HeadMid,
                 HeadBottom = look.HeadBottom,
                 Garment = look.Robe,
-                // The server sends the view id, or the item id of an item without one (T0.2): the catalog tries both.
-                Weapon = look.Weapon,
-                WeaponItem = look.Weapon,
-                Shield = look.Shield,
-                ShieldItem = look.Shield,
+                Weapon = IsItem(look.Weapon) ? 0 : look.Weapon,
+                WeaponItem = IsItem(look.Weapon) ? look.Weapon : 0,
+                Shield = IsItem(look.Shield) ? 0 : look.Shield,
+                ShieldItem = IsItem(look.Shield) ? look.Shield : 0,
             };
         }
     }

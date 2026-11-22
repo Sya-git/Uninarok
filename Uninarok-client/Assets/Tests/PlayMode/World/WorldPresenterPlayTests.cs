@@ -109,6 +109,16 @@ namespace Uninarok.World.PlayTests
         }
 
         [UnityTest, Category("NeedsData")]
+        public IEnumerator AKnifeSentAsItsItemId_IsFound()
+        {
+            // a novice's Knife on the local server: 1201 is an item id, its sprite is the dagger's
+            _model.Upsert(2, EntityKind.Player, new EntityLook { Job = 0, HairStyle = 1, Sex = 1, Weapon = 1201 }, 150, 12, 20, UninarokDirection.South, HeadDirection.Straight, EntityState.Standing);
+            _presenter.Sync(_model);
+            yield return Loaded(2);
+            Assert.IsTrue(_presenter.ViewOf(2).Report.TryGet(PartSlot.Weapon, out var line) && line.Found, _presenter.ViewOf(2).Report.ToString());
+        }
+
+        [UnityTest, Category("NeedsData")]
         public IEnumerator AWalk_MovesTheView_AndPlaysWalkAtItsSpeed()
         {
             Poring(1, 10, 20);
@@ -277,7 +287,11 @@ namespace Uninarok.World.PlayTests
             };
             var u = EntityLookMapping.ToUnitLook(EntityKind.Player, look);
             Assert.AreEqual((UnitKind.Player, 4008, AccountSex.SEX_FEMALE, 5, 3, 2, 1), (u.Kind, u.JobId, u.Sex, u.HairStyle, u.HairColour, u.ClothColour, u.BodyStyle));
-            Assert.AreEqual((1201, 1201, 2101, 2101, 16, 10, 8, 1), (u.Weapon, u.WeaponItem, u.Shield, u.ShieldItem, u.HeadTop, u.HeadMid, u.HeadBottom, u.Garment));
+            Assert.AreEqual((0, 1201, 0, 2101, 16, 10, 8, 1), (u.Weapon, u.WeaponItem, u.Shield, u.ShieldItem, u.HeadTop, u.HeadMid, u.HeadBottom, u.Garment));
+            look.Weapon = 2;
+            look.Shield = 1;
+            u = EntityLookMapping.ToUnitLook(EntityKind.Player, look);
+            Assert.AreEqual((2, 0, 1, 0), (u.Weapon, u.WeaponItem, u.Shield, u.ShieldItem), "view ids");
             Assert.AreEqual(UnitKind.Player, EntityLookMapping.ToUnitLook(EntityKind.Monster, look).Kind, "a monster that looks like a player class");
             Assert.AreEqual((UnitKind.Unit, 117), (EntityLookMapping.ToUnitLook(EntityKind.Npc, new EntityLook { Job = 117 }).Kind, EntityLookMapping.ToUnitLook(EntityKind.Npc, new EntityLook { Job = 117 }).JobId));
             Assert.AreEqual(UnitKind.Unit, EntityLookMapping.ToUnitLook(EntityKind.Player, new EntityLook { Job = 1002 }).Kind, "a disguised player");
