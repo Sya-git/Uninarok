@@ -56,12 +56,23 @@ namespace Uninarok.Networking.Dev
         private bool _finished;
         private NetworkClient _client;
 
+        /// <summary>The player was started as a probe: <c>-uninarok-probe &lt;mode&gt;</c>.</summary>
+        internal static bool IsRequested
+        {
+            get
+            {
+                string[] args = Environment.GetCommandLineArgs();
+                int at = Array.IndexOf(args, "-uninarok-probe");
+                return at >= 0 && at + 1 < args.Length;
+            }
+        }
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Boot()
         {
+            if (!IsRequested) return;
             string[] args = Environment.GetCommandLineArgs();
             int at = Array.IndexOf(args, "-uninarok-probe");
-            if (at < 0 || at + 1 >= args.Length) return;
 
             var go = new GameObject("NetworkProbe");
             DontDestroyOnLoad(go);

@@ -8,8 +8,8 @@ using Uninarok.Networking.Flow;
 namespace Uninarok.Networking.Dev
 {
     /// <summary>
-    /// Development auto-login (SPEC-0001 FR-15; plan 7.1): on start it logs in, picks a server, creates or picks a character
-    /// and finishes the map load, so the flow can be exercised against a local Hercules without a UI. The whole type is
+    /// Development auto-login (SPEC-0001 FR-15; plan 7.1): on start it logs in, picks a server and creates or picks a character,
+    /// so the flow can be exercised against a local Hercules without a UI. The whole type is
     /// compiled only in the editor and in development builds. Credentials are NOT serialized here: they come from
     /// <see cref="DevCredentialsSource"/> (EditorPrefs, or a dev-login.json outside the repository).
     /// </summary>
@@ -25,6 +25,9 @@ namespace Uninarok.Networking.Dev
 
         [Tooltip("Logins to try in total. 1 means no retry after a failure.")]
         [SerializeField, Min(1)] private int maxLoginAttempts = 1;
+
+        [Tooltip("Finish the map load at once, without a world (PLAN-0010 section 7). Also on when the player runs the network probe.")]
+        [SerializeField] private bool completeMapLoadWithoutWorld;
 
         [Header("New character (used only when the account has none)")]
         [SerializeField] private string characterName = "DevHero";
@@ -53,6 +56,7 @@ namespace Uninarok.Networking.Dev
                 ServerIndex = serverIndex,
                 CharacterSlot = (byte)characterSlot,
                 MaxLoginAttempts = maxLoginAttempts,
+                CompleteMapLoadWithoutWorld = completeMapLoadWithoutWorld || NetworkProbe.IsRequested,
                 Draft = new CharacterDraft(in name, (byte)createSlot, hairColor, hairStyle, jobClass, sex),
             };
 

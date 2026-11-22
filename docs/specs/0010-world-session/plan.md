@@ -453,6 +453,7 @@ Manual checks on a local Hercules (evidence in `docs/specs/0010-world-session/ev
 | D13 | (T0.1) `UnitView.Clear()` is added to SPEC-0009's component: it releases the parts, forgets the look and shows nothing | Pooling a view as it is; destroying and creating views | A pooled view keeps its old look until the next one is loaded (`SetLook`), so a reused view would show the previous unit for a moment, and the pool would keep its assets held |
 | D14 | (T0.2) After a map change the own character faces north (`WorldSettings.WarpKeepsDirection` false, Hercules `player_warp_keep_direction` default) | Keeping the facing (§4.6 as first written) | `pc_setpos` sets `UNIT_DIR_NORTH`, and the move packet has no facing: the others see north |
 | D15 | (T2.2) `NetworkFlow.MapLoadRequested`: one event that means "load `Context.Map`, then call `MapLoaded`", raised after `AUTHENTICATION_ACCEPTED` and for every map change (also one arriving in `LoadingMap`) | `WorldBootstrap` joining `StateChanged(LoadingMap)` with `Zone.Authenticated` (§4.7) | At first entry the state changes before the server accepts, at a map change after; a second change while loading changes no state at all. One event covers the three |
+| D16 | (T2.4) `completeMapLoadWithoutWorld` is also on when the player is started as a probe (`NetworkProbe.IsRequested`) | Setting it on the probe's scene object (§7) | The probe has no scene object: it creates itself at run time in Bootstrap, where the flag must be off for a normal run |
 
 ## 9. Risks
 

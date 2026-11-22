@@ -15,11 +15,13 @@ namespace Uninarok.Networking.Dev
         public byte CharacterSlot;
         public CharacterDraft Draft;
         public int MaxLoginAttempts;
+        /// <summary>Finish the map load at once, for runs with no world to load it (PLAN-0010 §7): the network probe.</summary>
+        public bool CompleteMapLoadWithoutWorld;
     }
 
     /// <summary>
     /// Drives the flow for local testing (SPEC-0001 FR-15; plan 7.1): login, pick a server, create or pick a character,
-    /// finish the map load. Each action is issued once per state entry; a failed creation or a refused map entry is not
+    /// and, only where there is no world, finish the map load. Each action is issued once per state entry; a failed creation or a refused map entry is not
     /// retried in a loop; a failed login is retried only while attempts remain. Plain C# so it runs in tests with the real flow.
     /// </summary>
     public sealed class DevAutoLoginDriver : IDisposable
@@ -43,7 +45,7 @@ namespace Uninarok.Networking.Dev
 
             _flow.StateChanged += OnStateChanged;
             _flow.Character.PinStateChanged += OnPinStateChanged;
-            _flow.Zone.Authenticated += OnAuthenticated;
+            _flow.MapLoadRequested += OnMapLoadRequested;
         }
 
         /// <summary>Starts the first login. Does nothing (with a warning) when no credentials are set.</summary>
@@ -60,7 +62,7 @@ namespace Uninarok.Networking.Dev
             _disposed = true;
             _flow.StateChanged -= OnStateChanged;
             _flow.Character.PinStateChanged -= OnPinStateChanged;
-            _flow.Zone.Authenticated -= OnAuthenticated;
+            _flow.MapLoadRequested -= OnMapLoadRequested;
         }
 
         private void BeginLogin()
@@ -114,10 +116,10 @@ namespace Uninarok.Networking.Dev
             if (_flow.State == FlowState.CharSelection) DecideInCharSelection();   // the PIN may arrive after the character list
         }
 
-        private void OnAuthenticated()
+        private void OnMapLoadRequested()
         {
-            if (_disposed || !_started) return;
-            Act(FlowState.LoadingMap, () => _flow.MapLoaded());         // there is no scene to load in the bootstrap run
+            if (_disposed || !_started || !_settings.CompleteMapLoadWithoutWorld) return;
+            Act(FlowState.LoadingMap, () => _flow.MapLoaded());
         }
 
         private void DecideInCharSelection()

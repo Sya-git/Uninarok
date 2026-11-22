@@ -88,8 +88,9 @@
   *Done when:* `NetworkFlow_MapServerChange_Reconnects` passes (old connection dropped silently, connect to the new endpoint, `REQUEST_ENTER_MAP` with the same account, character and auth code, then the first-entry path).
   *Result (2026-11-22):* `NetworkFlow_MapServerChange_Reconnects` and the failure test pass (487 of 488, the known line-ending one fails).
 
-- [ ] **T2.4** `DevAutoLoginDriver`: remove the automatic `Flow.MapLoaded()` and add `completeMapLoadWithoutWorld` for the network probe (plan §7). (FR-1)
+- [x] **T2.4** `DevAutoLoginDriver`: remove the automatic `Flow.MapLoaded()` and add `completeMapLoadWithoutWorld` for the network probe (plan §7). (FR-1)
   *Done when:* with the flag off, the flow stays in `LoadingMap` until something calls `MapLoaded`; with it on (probe scene), the `network` probe reaches `InGame` as before.
+  *Result (2026-11-22):* 27 `DevAutoLoginTests` pass. Live (editor, local server): flag off, the flow stays in `LoadingMap`; flag on, `InGame`, also through the server's warp right after `MAP_LOADED` (the driver follows `MapLoadRequested`); the `network` probe, run in the editor, reports outcome=ok. The flag is also on when the player is started as a probe (D16). Not run in a built player.
 
 ## Phase 3: Time and pathfinding
 
