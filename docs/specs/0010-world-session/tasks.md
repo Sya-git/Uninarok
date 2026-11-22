@@ -172,8 +172,9 @@
   *Done when:* `OwnCharacter_Sit_TogglesOnConfirmOnly` passes (no state change without the server's `UNIT_ACT`; a walk request while sitting returns `Sitting` and sends nothing).
   *Result (2026-11-22):* `OwnCharacter_Sit_TogglesOnConfirmOnly` passes: no state change without `UNIT_ACT`, a walk request while sitting returns `Sitting` and sends nothing.
 
-- [ ] **T5.6** Replay tests over the T0.5 captures (plan §6). (FR-3, FR-4, FR-6, FR-18)
+- [x] **T5.6** Replay tests over the T0.5 captures (plan §6). (FR-3, FR-4, FR-6, FR-18)
   *Done when:* `WorldSession_Replay_<capture>` pass for the three captures: the final entity set and cells equal the recorded state, no id appears twice, and every later stop or move finds its unit within one cell.
+  *Result (2026-11-22):* `WorldSession_Replay` passes for the three captures, through the real framer and router: the final entity set and cells equal the server's last view (walkers within a cell), no decode error; on prt_fild08 1,466 later moves and stops, all within one cell of where the server had the unit.
 
 ## Phase 6: Map and views
 
