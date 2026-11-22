@@ -56,9 +56,10 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
   *Done when:* `CompositionTables_ShadowScaleOf_Default1_Zero_Baby075` and the lookup tests on synthetic data pass; a lookup allocates 0 B (test with `GC.GetAllocatedBytesForCurrentThread`).
   *Result (2026-11-22):* 8 tests pass (`CompositionTablesTests`), lookups allocate 0 B. The layer swaps are keyed without the size (always big, D16) and hold a frame bit mask.
 
-- [ ] **T1.3** Tests, then implementation: `RoCompositionTablesBuilder`. (FR-3, FR-4, FR-11)
+- [x] **T1.3** Tests, then implementation: `RoCompositionTablesBuilder`. (FR-3, FR-4, FR-11)
   Pure, from `RoCatalogTables` and the read chunks; a missing or unreadable table gives one gap and an empty table.
   *Done when:* `RoCompositionTablesBuilder_*` pass on small text fixtures of each table; a missing file gives exactly one warning.
+  *Result (2026-11-22):* 7 `RoCompositionTablesBuilder_*` tests pass; a missing file gives one gap. `JOBID` comes from `skillinfoz/jobinheritlist.lub`, `pcJobTbl` from `admin/pcidentity.lub`.
 
 - [ ] **T1.4** `RoCompositionTablesConverter` and the **Composition** category in the catalog import menu. (FR-3, FR-4, FR-11)
   Runs also with Bodies or any equipment category (plan §4.1, D1); writes `Art/Imported/catalog/composition.asset`, addressable key `catalog/composition`, through the ledger.

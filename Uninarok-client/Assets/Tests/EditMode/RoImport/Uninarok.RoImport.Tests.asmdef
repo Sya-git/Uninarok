@@ -12,7 +12,8 @@
         "Uninarok.SpriteCatalog",
         "Unity.Addressables",
         "Unity.Addressables.Editor",
-        "Unity.ResourceManager"
+        "Unity.ResourceManager",
+        "Uninarok.Units"
     ],
     "includePlatforms": [
         "Editor"
