@@ -35,6 +35,11 @@ namespace Uninarok.Networking.Managers
         private bool _heartbeatOutstanding;
         private long _heartbeatSentAt;
 
+        // After it accepted an entry from the character server, Hercules sends one MAP_CHANGE to the very same place (pc_authok):
+        // nothing moves and no second MAP_LOADED is answered, so it is dropped (PLAN-0010 D23). Not after a map-server change.
+        private bool _entryEchoDue;
+        private bool _changingServer;
+
         public ZoneManager(INetworkClient client, SessionContext context, IClock clock, NetworkSettings settings)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
@@ -147,6 +152,8 @@ namespace Uninarok.Networking.Managers
         private void OnAuthenticated(in AUTHENTICATION_ACCEPTED p)
         {
             _context.Entry = new MapEntry(p.StartTimestamp, in p.Position, p.XSize, p.YSize);
+            _entryEchoDue = !_changingServer;
+            _changingServer = false;
             Authenticated?.Invoke();
         }
 
@@ -154,6 +161,10 @@ namespace Uninarok.Networking.Managers
 
         private void OnMapChange(in MAP_CHANGE p)
         {
+            bool echo = _entryEchoDue && p.MapName.Equals(_context.Map.MapName)
+                        && p.X == _context.Entry.Position.X && p.Y == _context.Entry.Position.Y;
+            _entryEchoDue = false;
+            if (echo) return;
             _heartbeatActive = false;
             _context.Map = new MapEndpoint(_context.Map.Host, _context.Map.Port, in p.MapName, in _context.Map.DnsHost);
             MoveEntry(p.X, p.Y);
@@ -163,6 +174,7 @@ namespace Uninarok.Networking.Managers
         private void OnMapServerChange(in MAP_SERVER_CHANGE p)
         {
             _heartbeatActive = false;
+            _changingServer = true;
             _context.Map = new MapEndpoint(p.FormatIpAddress(), p.Port, in p.MapName, in p.DnsHost);
             MoveEntry(p.X, p.Y);
             MapServerChangeOrdered?.Invoke();

@@ -384,9 +384,15 @@ namespace Uninarok.World.Tests
         [Test]
         public void WorldModel_Vanish_UnknownId_Ignored()
         {
+            int aboveInfo = 0;
+            void Count(string text, string stack, LogType type)
+            {
+                if (type != LogType.Log) aboveInfo++;
+            }
+            Application.logMessageReceived += Count;
             _world.Vanish(4711, VanishReason.Died, 0);
-            Assert.AreEqual((0, 0), (_vanished.Count, _world.Count));
-            LogAssert.NoUnexpectedReceived();
+            Application.logMessageReceived -= Count;
+            Assert.AreEqual((0, 0, 0), (_vanished.Count, _world.Count, aboveInfo));
         }
 
         [Test]

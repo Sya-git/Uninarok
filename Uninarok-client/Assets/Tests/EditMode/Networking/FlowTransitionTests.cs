@@ -701,6 +701,59 @@ namespace Uninarok.Networking.Tests
             Assert.AreEqual(1, requests);
         }
 
+        private static MAP_CHANGE MapChange(string map, int x, int y)
+        {
+            var b = new byte[MAP_CHANGE.Size - 2];
+            System.Text.Encoding.ASCII.GetBytes(map).CopyTo(b, 0);
+            b[16] = (byte)x; b[17] = (byte)(x >> 8);
+            b[18] = (byte)y; b[19] = (byte)(y >> 8);
+            return new MAP_CHANGE(b);
+        }
+
+        [Test]
+        public void MapChange_ToTheVeryEntry_RightAfterIt_IsDropped_Once([Values(false, true)] bool afterMapLoaded)
+        {
+            // Hercules pc_authok: the real captures hold it after every AUTHENTICATION_ACCEPTED (PLAN-0010 D23)
+            int requests = 0;
+            _flow.MapLoadRequested += () => requests++;
+            ToAuthenticated();
+            var entry = _flow.Context.Entry;
+            string map = _flow.Context.Map.MapName.ToString();
+            Assert.AreEqual(1, requests);
+            if (afterMapLoaded) _flow.MapLoaded();
+            var state = _flow.State;
+            _client.Deliver(MapChange(map, entry.Position.X, entry.Position.Y));
+            Assert.AreEqual((1, state), (requests, _flow.State), "nothing to load");
+            Assert.AreEqual((entry.StartTick, entry.Position.Direction), (_flow.Context.Entry.StartTick, _flow.Context.Entry.Position.Direction));
+            if (!afterMapLoaded) _flow.MapLoaded();
+
+            _client.Deliver(MapChange(map, entry.Position.X, entry.Position.Y));
+            Assert.AreEqual((2, FlowState.LoadingMap), (requests, _flow.State), "a second one is a warp to the same cell");
+        }
+
+        [Test]
+        public void MapChange_Elsewhere_RightAfterTheEntry_IsAMapChange()
+        {
+            int requests = 0;
+            _flow.MapLoadRequested += () => requests++;
+            ToAuthenticated();
+            _client.Deliver(MapChange("prt_fild08.gat", 1, 2));
+            Assert.AreEqual(2, requests);
+            Assert.AreEqual("prt_fild08.gat", _flow.Context.Map.MapName.ToString());
+        }
+
+        [Test]
+        public void MapChange_AfterAMapServerChange_IsNeverTheEcho()
+        {
+            ToInGame();
+            _client.Deliver(MapServerChange());
+            _client.RaiseConnected();
+            _client.Deliver(new AUTHENTICATION_ACCEPTED(new byte[] { 0x04, 0x03, 0x02, 0x01, 0x25, 0x8C, 0x84, 0x05, 0x05, 0x00, 0x00 }));
+            _flow.MapLoaded();
+            _client.Deliver(MapChange("prt_fild08.gat", 150, 200));
+            Assert.AreEqual(FlowState.LoadingMap, _flow.State);
+        }
+
         // ---- move to another map server (SPEC-0010 FR-15, PLAN-0010 4.8) ----
 
         private static MAP_SERVER_CHANGE MapServerChange()
