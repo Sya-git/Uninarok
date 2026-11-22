@@ -92,13 +92,15 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
   *Done when:* the enums match `docs/data/SpriteAction.md` (which now names the namespace `Uninarok.Units`); a mapping test covers Attack1/2/3 → Attack, Dead → Die, Hurt → Hurt, others → Idle.
   *Result (2026-11-22):* enums and mapping in `UnitAnimations.cs`; 11 `UnitAnimationsTests` pass; `SpriteAction.md` names the namespace.
 
-- [ ] **T3.4** Tests, then implementation: `UnitComposer` default order and attachment. (FR-3, FR-4)
+- [x] **T3.4** Tests, then implementation: `UnitComposer` default order and attachment. (FR-3, FR-4)
   Default order per direction (T0.2), head on the body's anchor, headgears on the head's.
   *Done when:* `UnitComposer_DefaultOrder_PerDirection`, `_HeadAttachesToBodyAnchor`, `_EmptyTables_StillSane` pass; `Compose` allocates 0 B.
+  *Result (2026-11-22):* default order, attachment and empty-table tests pass; `Compose` allocates 0 B. Committed together with T3.5 (one file).
 
-- [ ] **T3.5** Tests, then implementation: `UnitComposer` table rules. (FR-3, FR-4)
+- [x] **T3.5** Tests, then implementation: `UnitComposer` table rules. (FR-3, FR-4)
   Headgear priorities (per direction, riding), `RobeTopLayer`, frame layer swaps, head-to-body rows, item offsets (Doram), riding/body edits, transparency.
   *Done when:* `_RobeTopLayerAboveBody`, `_LayerSwapOnlyListedFrames`, `_HeadgearPriority_PerDirection_IgnoreRiding`, `_ItemOffset_DoramVariant` and the riding-edit test pass on synthetic tables.
+  *Result (2026-11-22):* the 7 table-rule tests pass on synthetic tables (65/65 in `Uninarok.Units.Tests`).
 
 ## Phase 4: Loading
 
