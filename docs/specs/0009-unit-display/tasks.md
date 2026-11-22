@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Implemented (2026-11-22; approved by the owner 2026-11-21) |
+| **Status** | Implementing (Phase 9, FR-16, approved by the owner 2026-11-22). Phases 0 to 8 Implemented (2026-11-22; approved by the owner 2026-11-21) |
 
 **How to use this file**
 - Start only when SPEC-0008 is implemented and merged into `main` (its catalog facade, entries and editor lookup are what this spec builds on). Work on branch `feature/0009-unit-display`.
@@ -207,3 +207,28 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
 - [x] **T8.3** Close the spec. (all)
   *Done when:* spec success criteria checked and reported; sprite-catalog.md §1 points the composition rows to SPEC-0009; the two BACKLOG items of plan §7 are removed (closed) and leftovers added; spec, plan and tasks status `Implemented`.
   *Result (2026-11-22):* success criteria: reference set compared by the owner (T8.1); FR-14 met in the stress mode, in the editor (T8.2, T8.5: 1.97 ms max in the last run); camera matches the original client (T6.4, owner's word, no screenshot pairs). sprite-catalog.md §1 points to SPEC-0009; the two BACKLOG items are removed and the leftovers added. Not done: a full player build (the release scripts were compiled). Tests: Units PlayMode 16 of 16; Units, CameraRig, Sprites, SpriteCatalog, Map and Networking EditMode 665 of 666 (the one failure is the line endings of a SPEC-0001 fixture, BACKLOG); the full RoImport suite, 1,146 tests: two failed on MCP noise or load and pass alone, three model and map batch tests run past their 180 s timeout on this PC, alone too (214 to 485 s; BACKLOG), the rest pass.
+
+## Phase 9: Depth by height (added 2026-11-22)
+
+Works on the branch `feature/0010-world-session` (the owner reported it while reviewing SPEC-0010).
+
+- [ ] **T9.1** Add the tests of the heights, pending T9.2. (FR-16, FR-14)
+  `SpriteActor_SetGround_WritesTheHeightInZScale`, `_SameValue_WritesNothing`, `_Off_KeepsZScale1`; `UnitView_LayerHeights_AreFromThePivot_AtTheDisplayScale`.
+  *Done when:* they compile and are listed as ignored.
+
+- [ ] **T9.2** Write each layer's height in its z scale (plan §4.10). (FR-16, FR-14)
+  `SpriteActor.SetGround`, `UnitView.Write`, `GroundItemView`.
+  *Done when:* the tests of T9.1 pass, the Sprites and Units EditMode tests pass, and a unit's picture is the same as before (the shader does not read the height yet).
+
+- [ ] **T9.3** Add the render tests, pending T9.4. (FR-16, FR-10)
+  `UnitDepth_BackToAWall_IsWhole_4Turns_MinMaxTilt` (prontera; iz_int when imported), `_BehindABox_IsHiddenAsAnUprightPlane`, `_TwoUnits_SameOrderAsBefore`, `_TallUnitAtTheNearestZoom_IsNotClipped`, `_Shadow_IsUnchanged`, `_GroundItemAtAWall_IsWhole`.
+  *Done when:* run without the ignore mark, the cut cases (wall, box, ground item) fail with today's shader; they are committed as ignored.
+
+- [ ] **T9.4** Compute the upright depth in `Uninarok/RoSprite`. (FR-16, FR-10)
+  *Done when:* the tests of T9.3 and `UnitView_FeetOnGround_SlopeOfPrtFild08_MinMaxTilt` pass; no new warnings; materials without a bias render as before.
+
+- [ ] **T9.5** Measure the cost in the stress mode, with and without the heights. (FR-14, FR-16)
+  *Done when:* unit update 2 ms or less and 0 B per frame at 100 players and 200 monsters on prontera; batches, set passes and frame time of both are recorded here.
+
+- [ ] **T9.6** Evidence and close. (FR-16)
+  *Done when:* screenshots on prontera next to a wall and indoors on iz_int are in `evidence/` (before and after, both tilts); the Sprites, Units and World tests pass; the owner checked the images; statuses are `Implemented`.
