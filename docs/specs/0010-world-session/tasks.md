@@ -166,8 +166,9 @@
   *Done when:* `OwnCharacter_TurnTowards_8Neighbours`, `_Doridori_Sequence`, `_Bangbang_Clockwise` pass with the `CHANGE_DIRECTION` bytes checked; the model follows the echo (or the send, per T0.2's D9).
   *Result (2026-11-22):* `OwnCharacter_TurnTowards_8Neighbours`, `_Doridori_Sequence`, `_Bangbang_Clockwise` pass with the `CHANGE_DIRECTION` bytes; the model turns when the packet was queued (D9). The rules are the spec's: T0.4 (the original client) is the owner's.
 
-- [ ] **T5.5** Tests, then implementation: `Sit`, `Stand`, `ToggleSit` (plan §4.6, D9). (FR-19)
+- [x] **T5.5** Tests, then implementation: `Sit`, `Stand`, `ToggleSit` (plan §4.6, D9). (FR-19)
   *Done when:* `OwnCharacter_Sit_TogglesOnConfirmOnly` passes (no state change without the server's `UNIT_ACT`; a walk request while sitting returns `Sitting` and sends nothing).
+  *Result (2026-11-22):* `OwnCharacter_Sit_TogglesOnConfirmOnly` passes: no state change without `UNIT_ACT`, a walk request while sitting returns `Sitting` and sends nothing.
 
 - [ ] **T5.6** Replay tests over the T0.5 captures (plan §6). (FR-3, FR-4, FR-6, FR-18)
   *Done when:* `WorldSession_Replay_<capture>` pass for the three captures: the final entity set and cells equal the recorded state, no id appears twice, and every later stop or move finds its unit within one cell.

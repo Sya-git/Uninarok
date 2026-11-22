@@ -200,5 +200,19 @@ namespace Uninarok.World
             if (-dx * 2 < dy || dx == 0) return 0;
             return -dx > dy * 2 + 1 || dy == 0 ? 2 : 1;
         }
+
+        // ---- sit (FR-19): the state changes on the server's answer, which a refusal never gives (D9) ----
+
+        /// <summary>Asks to stand when sitting, else to sit. False when nothing was sent.</summary>
+        public bool ToggleSit() => TryGet(out var model, out int slot) && (model[slot].State == EntityState.Sitting ? Stand() : Sit());
+
+        /// <summary>Asks to sit; nothing while sitting already.</summary>
+        public bool Sit() => Act(EntityState.Standing, REQUEST_ACT.Sit);
+
+        /// <summary>Asks to stand up; nothing while standing already.</summary>
+        public bool Stand() => Act(EntityState.Sitting, REQUEST_ACT.Stand);
+
+        bool Act(EntityState from, byte action) =>
+            TryGet(out var model, out int slot) && model[slot].State == from && _client.Send(new REQUEST_ACT(0, action));
     }
 }

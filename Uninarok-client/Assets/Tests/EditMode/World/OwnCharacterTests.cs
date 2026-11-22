@@ -110,6 +110,7 @@ namespace Uninarok.World.Tests
             Assert.IsFalse(_rig.Session.Own.CanAct);
             Assert.AreEqual(WalkRequestResult.Dead, _rig.Session.Own.RequestWalk(155, 200));
             Assert.IsFalse(_rig.Session.Own.TurnTowards(155, 200) || _rig.Session.Own.Doridori() || _rig.Session.Own.Bangbang());
+            Assert.IsFalse(_rig.Session.Own.Sit() || _rig.Session.Own.Stand() || _rig.Session.Own.ToggleSit());
             Assert.AreEqual(0, _rig.Client.Sent.Count);
         }
 
@@ -358,6 +359,41 @@ namespace Uninarok.World.Tests
                 UninarokDirection.NorthEast, UninarokDirection.East, UninarokDirection.SouthEast, UninarokDirection.South,
             }, seen, "south, west, north, east: clockwise from above");
             Assert.AreEqual(ChangeDirection(HeadDirection.Straight, UninarokDirection.SouthWest), _rig.Client.Sent[0].Bytes);
+        }
+
+        // ---- sit (FR-19, T5.5) ----
+
+        [Test]
+        public void OwnCharacter_Sit_TogglesOnConfirmOnly()
+        {
+            _rig.ToInGame(Character());
+            var own = _rig.Session.Own;
+            Assert.IsTrue(own.ToggleSit());
+            Assert.AreEqual(WorldSessionTests.Hex("37040000000002"), _rig.Client.Sent[0].Bytes);
+            Assert.AreEqual(EntityState.Standing, Own.State, "not before the server says so: a refused one stays standing");
+
+            _rig.Client.Deliver(WorldSessionTests.Act(Id, 2));
+            Assert.AreEqual(EntityState.Sitting, Own.State);
+            _rig.Client.ClearRecords();
+            Assert.AreEqual(WalkRequestResult.Sitting, own.RequestWalk(155, 200));
+            Assert.AreEqual(0, _rig.Client.Sent.Count);
+            Assert.IsTrue(own.TurnTowards(150, 201), "turning works as standing");
+            Assert.IsFalse(own.Sit(), "it sits already");
+
+            _rig.Client.ClearRecords();
+            Assert.IsTrue(own.ToggleSit());
+            Assert.AreEqual(WorldSessionTests.Hex("37040000000003"), _rig.Client.Sent[0].Bytes);
+            Assert.AreEqual(EntityState.Sitting, Own.State);
+            _rig.Client.Deliver(WorldSessionTests.Act(Id, 3));
+            Assert.AreEqual(EntityState.Standing, Own.State);
+            Assert.IsFalse(own.Stand());
+        }
+
+        [Test]
+        public void OwnCharacter_Sit_BeforeTheMap_SendsNothing()
+        {
+            Assert.IsFalse(_rig.Session.Own.ToggleSit() || _rig.Session.Own.Sit() || _rig.Session.Own.Stand());
+            Assert.AreEqual(0, _rig.Client.Sent.Count);
         }
     }
 }
