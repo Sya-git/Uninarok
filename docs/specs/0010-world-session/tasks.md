@@ -188,7 +188,7 @@
 
 - [ ] **T6.3** `EntityLookMapping` and `WorldPresenter` for units (plan §4.9). (FR-3 to FR-8)
   *Done when:* `WorldPresenter_ReadsOnly` and `_ZeroAllocationSteadyState` pass (PlayMode); on the local server, players, NPCs and monsters near the own character show with their looks, walk, turn and sit; a vanishing unit disappears as FR-5 says.
-  *Open (2026-11-22):* code done; 8 play mode tests pass (`WorldPresenter_ReadsOnly`, `_ZeroAllocationSteadyState`, views, pool, releases). Waits for the local server check.
+  *Open (2026-11-22):* 8 play mode tests pass (`WorldPresenter_ReadsOnly`, `_ZeroAllocationSteadyState`, views, pool, releases). On the local server the NPCs and monsters near the own character show with their looks, walk, chase and vanish, and the own character walks, turns and sits. Left: another player (looks, turn, sit), which needs a second client: the owner, with T9.1.
 
 - [ ] **T6.4** `GroundItemView` (plan §4.9). (FR-16)
   *Done when:* a red potion dropped on the local server shows its ground sprite on the server's cell and sub-cell (T0.3 rule) and disappears when another client picks it up (screenshots in `evidence/`).
