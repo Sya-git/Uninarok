@@ -140,8 +140,9 @@
   *Done when:* the upsert, walk, step-end, mid-walk and new-order tests pass.
   *Result (2026-11-22):* the upsert, walk, step-end, mid-walk, new-order, wrap and full-model tests pass (16 cases). `SearchForUnit` is in with the default rule of D11, measured in T3.8.
 
-- [ ] **T4.3** Implement `Stop`, `Slide`, `Turn`, `SetLook`, `SetState`, `SetSpeed`, `AddItem`, `Vanish` and the `Vanished` event (plan §4.5, D8). (FR-5, FR-7, FR-8, FR-16, FR-19)
+- [x] **T4.3** Implement `Stop`, `Slide`, `Turn`, `SetLook`, `SetState`, `SetSpeed`, `AddItem`, `Vanish` and the `Vanished` event (plan §4.5, D8). (FR-5, FR-7, FR-8, FR-16, FR-19)
   *Done when:* the remaining `WorldModel_*` tests except allocation pass.
+  *Result (2026-11-22):* every `WorldModel_*` test but the allocation one passes (51 cases).
 
 - [ ] **T4.4** Allocation-free `Advance` and drains at 300 walkers (plan §4.5). (FR-17)
   *Done when:* `WorldModel_ZeroAllocation_300Walkers` passes (600 frames after warm-up, 0 B), and the mean `Advance` time for 300 walkers is recorded in the report.

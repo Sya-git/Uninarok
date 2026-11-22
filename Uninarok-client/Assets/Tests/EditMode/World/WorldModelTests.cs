@@ -279,7 +279,7 @@ namespace Uninarok.World.Tests
 
         // ---- stop and slide (FR-7) ----
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void WorldModel_Stop_SnapsAndIdles()
         {
             Monster();
@@ -296,7 +296,7 @@ namespace Uninarok.World.Tests
             _world.Stop(999, 1, 1);
         }
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void WorldModel_Slide_KeepsFacing()
         {
             Monster();
@@ -317,7 +317,7 @@ namespace Uninarok.World.Tests
 
         // ---- vanish (FR-5) ----
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void WorldModel_Vanish_RemovesAtOnce([Values(VanishReason.OutOfSight, VanishReason.LoggedOut, VanishReason.Teleported)] VanishReason reason,
                                                     [Values(EntityKind.Monster, EntityKind.Player)] EntityKind kind)
         {
@@ -329,7 +329,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual((id, kind, reason, 50, 50), (_vanished[0].Id, _vanished[0].Kind, _vanished[0].Reason, _vanished[0].X, _vanished[0].Y));
         }
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void WorldModel_Vanish_Died_Monster_LiesDead_ThenIsRemoved()
         {
             Monster();
@@ -348,7 +348,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(1, _vanished.Count, "the removal is not another disappearance");
         }
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void WorldModel_Vanish_Died_Player_StaysDead()
         {
             Human();
@@ -360,7 +360,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(EntityState.Standing, Get(Player).State);
         }
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void WorldModel_Vanish_FeignedDeath_KeepsTheUnit([Values(EntityKind.Monster, EntityKind.Player)] EntityKind kind)
         {
             uint id = kind == EntityKind.Monster ? Poring : Player;
@@ -371,7 +371,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(VanishReason.FeignedDeath, _vanished[0].Reason);
         }
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void WorldModel_Vanish_AMonsterThatRespawns_IsAlive_AndNotRemoved()
         {
             Monster();
@@ -381,7 +381,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual((EntityState.Standing, 70), (Get(Poring).State, Get(Poring).CellX));
         }
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void WorldModel_Vanish_UnknownId_Ignored()
         {
             _world.Vanish(4711, VanishReason.Died, 0);
@@ -389,7 +389,7 @@ namespace Uninarok.World.Tests
             LogAssert.NoUnexpectedReceived();
         }
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void WorldModel_Vanish_RaisesVanishedOnce_BeforeTheRemoval()
         {
             Monster();
@@ -401,7 +401,7 @@ namespace Uninarok.World.Tests
             Assert.IsTrue(known);
         }
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void WorldModel_Vanish_TheOwnCharacterIsNeverRemoved()
         {
             Human();
@@ -434,7 +434,7 @@ namespace Uninarok.World.Tests
             yield return Case((LookType)200, 5, 0, l => l);
         }
 
-        [TestCaseSource(nameof(LookCases)), Ignore("pending T4.3")]
+        [TestCaseSource(nameof(LookCases))]
         public void WorldModel_SetLook_EachLookType(LookType type, int value, int value2, EntityLook expected)
         {
             Human();
@@ -447,7 +447,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(version, Get(Player).Version, "the same value again changes nothing");
         }
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void WorldModel_SetLook_MidWalk_GoesOnWalking()
         {
             Human();
@@ -458,7 +458,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(animation, Get(Player).AnimationVersion);
         }
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void WorldModel_Turn()
         {
             Human();
@@ -470,7 +470,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual((UninarokDirection.West, HeadDirection.Straight), (Get(Player).Facing, Get(Player).Head), "10 is 2; an unknown head is straight");
         }
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void WorldModel_SitStand()
         {
             Human();
@@ -488,7 +488,7 @@ namespace Uninarok.World.Tests
             Assert.IsFalse(Get(Player).Walking, "sitting ends a walk");
         }
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void WorldModel_SetSpeed_CountsFromTheNextStep()
         {
             Monster();
@@ -503,7 +503,7 @@ namespace Uninarok.World.Tests
 
         // ---- items (FR-16) ----
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void WorldModel_Item_AddedAtItsSubCell_AndRemoved()
         {
             _world.AddItem(501, 909, true, 50, 60, 3, 12, 2);
@@ -519,7 +519,7 @@ namespace Uninarok.World.Tests
 
         // ---- the whole ----
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void WorldModel_Clear_EmptiesEverything()
         {
             Monster();

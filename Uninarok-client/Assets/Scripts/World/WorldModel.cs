@@ -71,11 +71,7 @@ namespace Uninarok.World
             int slot = Update(id, kind, look, speed, head, state, out _);
             if (slot < 0) return -1;
             ref var e = ref _entities[slot];
-            if (e.Walking)
-            {
-                e.Walking = false;
-                e.AnimationVersion++;
-            }
+            EndWalk(ref e);
             e.Facing = Wrap(dir);
             Place(ref e, x, y);
             return slot;
@@ -115,11 +111,7 @@ namespace Uninarok.World
             {
                 // The server got there, so the client must too.
                 if (result != PathResult.SameCell) NetLog.Trace($"no path for unit {e.Id} from {sx},{sy} to {dx},{dy}: {result}");
-                if (e.Walking)
-                {
-                    e.Walking = false;
-                    e.AnimationVersion++;
-                }
+                EndWalk(ref e);
                 Place(ref e, dx, dy);
                 return;
             }
@@ -148,28 +140,129 @@ namespace Uninarok.World
         }
 
         /// <summary>A unit stops on a cell (FR-7).</summary>
-        public void Stop(uint id, int x, int y) => throw new NotImplementedException();
+        public void Stop(uint id, int x, int y)
+        {
+            if (!_slots.TryGetValue(id, out int slot)) return;
+            ref var e = ref _entities[slot];
+            EndWalk(ref e);
+            Place(ref e, x, y);
+            e.Version++;
+        }
 
         /// <summary>A unit moves to a cell at once, without walking, and keeps its facing (FR-7).</summary>
-        public void Slide(uint id, int x, int y) => throw new NotImplementedException();
+        public void Slide(uint id, int x, int y) => Stop(id, x, y);
 
-        public void Turn(uint id, UninarokDirection body, HeadDirection head) => throw new NotImplementedException();
+        /// <summary>A unit turned its body and head (FR-8).</summary>
+        public void Turn(uint id, UninarokDirection body, HeadDirection head)
+        {
+            if (!_slots.TryGetValue(id, out int slot)) return;
+            ref var e = ref _entities[slot];
+            body = Wrap(body);
+            head = Valid(head);
+            if (e.Facing == body && e.Head == head) return;
+            e.Facing = body;
+            e.Head = head;
+            e.Version++;
+        }
 
         /// <summary>One part of a look changed (FR-8); unknown types are ignored.</summary>
-        public void SetLook(uint id, LookType type, int value, int value2) => throw new NotImplementedException();
+        public void SetLook(uint id, LookType type, int value, int value2)
+        {
+            if (!_slots.TryGetValue(id, out int slot)) return;
+            ref var e = ref _entities[slot];
+            var look = e.Look;
+            switch (type)
+            {
+                case LookType.Base: look.Job = unchecked((short)value); break;
+                case LookType.Hair: look.HairStyle = unchecked((ushort)value); break;
+                case LookType.Weapon:
+                    look.Weapon = value;
+                    look.Shield = value2;
+                    break;
+                case LookType.HeadBottom: look.HeadBottom = unchecked((ushort)value); break;
+                case LookType.HeadTop: look.HeadTop = unchecked((ushort)value); break;
+                case LookType.HeadMid: look.HeadMid = unchecked((ushort)value); break;
+                case LookType.HairColour: look.HairColour = unchecked((ushort)value); break;
+                case LookType.ClothColour: look.ClothColour = unchecked((ushort)value); break;
+                case LookType.Shield: look.Shield = value; break;
+                case LookType.Robe: look.Robe = unchecked((ushort)value); break;
+                case LookType.BodyStyle: look.BodyStyle = unchecked((ushort)value); break;
+                default:
+                    NetLog.Trace($"look change of unknown type {(int)type} for unit {id}");
+                    return;
+            }
+            if (look.Equals(e.Look)) return;
+            e.Look = look;
+            e.Version++;
+        }
 
-        public void SetState(uint id, EntityState state) => throw new NotImplementedException();
+        /// <summary>A unit sits, stands or lies dead (FR-8, FR-19); it stops walking unless it stands.</summary>
+        public void SetState(uint id, EntityState state)
+        {
+            if (!_slots.TryGetValue(id, out int slot)) return;
+            ref var e = ref _entities[slot];
+            if (state != EntityState.Standing) EndWalk(ref e);
+            SetState(ref e, state);
+        }
 
-        public void SetSpeed(uint id, short speed) => throw new NotImplementedException();
+        /// <summary>A walk speed in ms per straight cell; it counts from the next step, as on the server.</summary>
+        public void SetSpeed(uint id, short speed)
+        {
+            if (!_slots.TryGetValue(id, out int slot) || _entities[slot].Speed == speed) return;
+            _entities[slot].Speed = speed;
+            _entities[slot].Version++;
+        }
 
         /// <summary>An item on the ground, at its cell and sub-cell (FR-16).</summary>
-        public void AddItem(uint id, int itemId, bool identified, int x, int y, byte subX, byte subY, int amount) => throw new NotImplementedException();
+        public void AddItem(uint id, int itemId, bool identified, int x, int y, byte subX, byte subY, int amount)
+        {
+            int slot = Update(id, EntityKind.Item, default, 0, HeadDirection.Straight, EntityState.Standing, out _);
+            if (slot < 0) return;
+            ref var e = ref _entities[slot];
+            e.Walking = false;
+            e.ItemId = itemId;
+            e.ItemAmount = amount;
+            e.Identified = identified;
+            Place(ref e, x, y);
+            // Twelfths from the cell's south-west corner (ITEM_FALL_ENTRY.md); the centre is the whole number.
+            e.PosX = x - 0.5f + subX / 12f;
+            e.PosY = y - 0.5f + subY / 12f;
+        }
 
         /// <summary>An item leaves the ground (FR-5). An unknown id is ignored.</summary>
-        public void RemoveItem(uint id) => throw new NotImplementedException();
+        public void RemoveItem(uint id)
+        {
+            if (_slots.TryGetValue(id, out int slot) && _entities[slot].IsItem) Remove(slot);
+        }
 
         /// <summary>A unit disappears, by reason (FR-5). An unknown id is ignored.</summary>
-        public void Vanish(uint id, VanishReason reason, uint now) => throw new NotImplementedException();
+        public void Vanish(uint id, VanishReason reason, uint now)
+        {
+            if (!_slots.TryGetValue(id, out int slot))
+            {
+                NetLog.Trace("vanish of unknown unit " + id);
+                return;
+            }
+            bool dies = reason == VanishReason.Died, feigns = reason == VanishReason.FeignedDeath;
+            if (id == OwnId && !dies && !feigns) return; // a map change moves the own character, nothing removes it
+
+            ref var e = ref _entities[slot];
+            if (dies || feigns)
+            {
+                EndWalk(ref e);
+                SetState(ref e, EntityState.Dead);
+                // A player lies until the server says otherwise; anything else is removed after a while (D8).
+                if (dies && e.Kind != EntityKind.Player && id != OwnId)
+                {
+                    e.Removing = true;
+                    e.RemoveAt = unchecked(now + (uint)Math.Max(0, _settings.DeadMonsterLingerMs));
+                }
+            }
+            Vanished?.Invoke(new VanishInfo(id, e.Kind, reason, e.CellX, e.CellY));
+
+            // A listener may have changed the model: look the unit up again.
+            if (!dies && !feigns && _slots.TryGetValue(id, out slot)) Remove(slot);
+        }
 
         /// <summary>Empties the world: map change, disconnect (FR-3).</summary>
         public void Clear()
@@ -248,6 +341,15 @@ namespace Uninarok.World
             SetState(ref e, state);
             e.Version++;
             return slot;
+        }
+
+        // A walk ends where the unit is shown; whoever ends it places the unit if the server said where.
+        static void EndWalk(ref Entity e)
+        {
+            if (!e.Walking) return;
+            e.Walking = false;
+            e.Version++;
+            e.AnimationVersion++;
         }
 
         static void Place(ref Entity e, int x, int y)
