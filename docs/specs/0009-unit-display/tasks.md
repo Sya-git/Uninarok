@@ -104,11 +104,13 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
 
 ## Phase 4: Loading
 
-- [ ] **T4.1** `UnitLook`, `IUnitAssetSource`, `AssetDatabaseUnitAssetSource` with reference counts. (FR-1, FR-2)
+- [x] **T4.1** `UnitLook`, `IUnitAssetSource`, `AssetDatabaseUnitAssetSource` with reference counts. (FR-1, FR-2)
   *Done when:* a test acquires and releases the same reference from two users and the count returns to zero; `UnitLook.ForJob` gives Player for a player-class job id and Unit otherwise.
+  *Result (2026-11-22):* `AssetSource_CountsTwoUsers_BackToZero` and `UnitLook_ForJob_PlayerClassOrUnit` pass. Committed together with T4.2.
 
-- [ ] **T4.2** Tests, then implementation: `UnitLoader` resolution and `LoadReport`. (FR-1, FR-2)
+- [x] **T4.2** Tests, then implementation: `UnitLoader` resolution and `LoadReport`. (FR-1, FR-2)
   *Done when:* `UnitLoader_ResolvesReferenceSet`, `_MissingHeadgear_ReportsReason`, `_PlayerJobOnNpc_ShowsAsPlayer`, `_HiddenJob_ShowsNothing` pass on the imported catalog (`NeedsData`).
+  *Result (2026-11-22):* the 12 `UnitLoaderTests` pass on the imported catalog (reference set, missing headgear, player job on an NPC, hidden job, shadow scales, superseded loads).
 
 - [ ] **T4.3** `AddressablesUnitAssetSource`, ref-counted. (FR-14)
   *Done when:* a PlayMode test loads, changes and destroys looks 1,000 times and every handle count returns to zero (R7).
