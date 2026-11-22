@@ -21,7 +21,9 @@ namespace Uninarok.RoImport.Editor.Pipeline
         /// <summary>One record of the sprite catalog, path <c>catalog/&lt;category&gt;/&lt;key&gt;</c> (PLAN-0008 4.7).</summary>
         CatalogEntry,
         /// <summary>The index of one catalog category, path <c>catalog/&lt;category&gt;/_index</c>; after every entry (PLAN-0008 4.7, D6).</summary>
-        CatalogIndex
+        CatalogIndex,
+        /// <summary>The composition tables of the units, path <c>catalog/composition</c> (PLAN-0009 4.1).</summary>
+        Composition
     }
 
     /// <summary>One conversion request: a kind and a Ragnarok path (plan 4.10, SPEC-0002 FR-2).</summary>

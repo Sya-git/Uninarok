@@ -55,6 +55,11 @@ namespace Uninarok.RoImport.Editor.Catalog
             return needs;
         }
 
+        /// <summary>The composition tables run with bodies and every equipment category, or alone when asked (PLAN-0009 4.1, D1).</summary>
+        static bool WantsComposition(IEnumerable<SpriteCatalogCategory> chosen, RoImportOptions options) =>
+            options.Composition || chosen.Any(c => c == SpriteCatalogCategory.Bodies || c == SpriteCatalogCategory.Headgears || c == SpriteCatalogCategory.Garments
+                                                   || c == SpriteCatalogCategory.Weapons || c == SpriteCatalogCategory.Shields);
+
         public static RoCatalogReport Run(IEnumerable<SpriteCatalogCategory> categories, RoImportOptions options = null)
         {
             options = (options ?? new RoImportOptions()).Clone();
@@ -72,7 +77,9 @@ namespace Uninarok.RoImport.Editor.Catalog
             var system = options.SystemSource ?? (Directory.Exists(RoSourceLocation.ResolveSystem()) ? new RoFolderSource(RoSourceLocation.ResolveSystem()) : null);
             var language = RoImportSettings.LanguageFor(options);
 
+            bool composition = WantsComposition(chosen, options);
             var needs = chosen.Aggregate(RoCatalogNeeds.None, (n, c) => n | NeedsOf(c));
+            if (composition) needs |= RoCompositionTablesConverter.Needs;
             var tables = RoCatalogTables.Load(options.Source, system, needs, language, report, options.CatalogOwnTablesFolder,
                 (needs & RoCatalogNeeds.ItemKinds) != 0 ? RoImportSettings.ItemDbPathFor(options) : null);
 
@@ -112,6 +119,7 @@ namespace Uninarok.RoImport.Editor.Catalog
                 numbers[c].Failed = report.Failed - failedBefore;
                 numbers[c].Warnings = plan.GapsOf(c).Count() + (report.Issues.Count - issuesBefore);
             }
+            if (composition) RoBatch.Run(new[] { new RoJob(RoJobKind.Composition, RoPath.Parse(RoCompositionTablesConverter.Job)) }, options, report);
             hashes?.Save();
             return new RoCatalogReport(chosen.Select(c => numbers[c]).ToArray(), report);
         }

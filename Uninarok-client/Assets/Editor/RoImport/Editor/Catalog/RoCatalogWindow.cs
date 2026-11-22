@@ -19,6 +19,7 @@ namespace Uninarok.RoImport.Editor.Catalog
         static SpriteCatalogCategory[] AllCategories => (SpriteCatalogCategory[])Enum.GetValues(typeof(SpriteCatalogCategory));
 
         [SerializeField] List<SpriteCatalogCategory> _chosen = new List<SpriteCatalogCategory>();
+        [SerializeField] bool _composition;
         [SerializeField] bool _force;
         RoCatalogReport _last;
         Vector2 _scroll;
@@ -44,6 +45,7 @@ namespace Uninarok.RoImport.Editor.Catalog
             {
                 _chosen.Clear();
                 if (newAll) _chosen.AddRange(AllCategories);
+                _composition = newAll;
             }
             using (new EditorGUI.IndentLevelScope())
                 foreach (var c in AllCategories)
@@ -55,9 +57,11 @@ namespace Uninarok.RoImport.Editor.Catalog
                         else _chosen.Add(c);
                     }
                 }
+            using (new EditorGUI.IndentLevelScope())
+                _composition = EditorGUILayout.ToggleLeft(new GUIContent("Composition", "The composition tables of the units (also imported with bodies and equipment)"), _composition);
             _force = EditorGUILayout.Toggle(new GUIContent("Force", "Import even records the ledger says are current"), _force);
-            using (new EditorGUI.DisabledScope(_chosen.Count == 0))
-                if (GUILayout.Button("Import")) _last = Import(_chosen.OrderBy(c => (int)c), _force);
+            using (new EditorGUI.DisabledScope(_chosen.Count == 0 && !_composition))
+                if (GUILayout.Button("Import")) _last = Import(_chosen.OrderBy(c => (int)c), _force, new RoImportOptions { Composition = _composition });
 
             if (_last == null) return;
             EditorGUILayout.Space();
@@ -101,6 +105,7 @@ namespace Uninarok.RoImport.Editor.Catalog
         [MenuItem(Root + "Ground Items", priority = 129)] static void GroundItems() => Run(SpriteCatalogCategory.GroundItems);
         [MenuItem(Root + "Skill Icons", priority = 130)] static void SkillIcons() => Run(SpriteCatalogCategory.SkillIcons);
         [MenuItem(Root + "Effects", priority = 131)] static void Effects() => Run(SpriteCatalogCategory.Effects);
+        [MenuItem(Root + "Composition", priority = 133)] static void Composition() => RoCatalogWindow.Import(new SpriteCatalogCategory[0], force: false, new RoImportOptions { Composition = true });
         [MenuItem(Root + "Palettes", priority = 132)] static void Palettes() => Run(SpriteCatalogCategory.Palettes);
     }
 }

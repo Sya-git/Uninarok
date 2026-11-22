@@ -28,7 +28,7 @@ The two orders run in **opposite** senses: no constant offset turns one into the
 
 `TB_Layer_Priority`: `Default_Mid = 100`, `Default_Top = 200`, `Default_Bottom = 300`, `Default_Robe = 400`; `Items_List[ACCESSORY_IDs.X] = { Default = n, Direction = { [0..7] = n }, isIgnoreRiding = true }`.
 
-- `Default` from −300 to 404; `Direction` filled on 2 items (value −100 on front-facing directions 0, 1, 2, 6, 7), empty on 439; `isIgnoreRiding` on 85. **Confirmed** (shape and counts).
+- `Default` from −300 to 404; `Direction` filled on 2 items (value −100 on front-facing directions 0, 1, 2, 6, 7), empty on 439; `isIgnoreRiding` on 83. **Confirmed** (shape and counts).
 - Lookup (client function): `Direction[direction]` if given, else `Default`, else by layer: 2 bottom, 3 top, 4 mid, 8 robe. **Confirmed**.
 - Parts are drawn in ascending priority: mid, top, bottom, robe, then items above 400; a **negative** priority is drawn behind the body. **Confirmed** for the order of the defaults (roBrowser draws mid, top, bottom, robe); **Candidate** for "negative = behind the body".
 - `isIgnoreRiding`: the item's priority is ignored while riding (the layer default is used). **Candidate**.
@@ -123,4 +123,19 @@ Head: placed at `bodyAnchor − headAnchor` (anchor 0 of the frame shown of each
 
 ## 8. Import result
 
-Filled by T1.4.
+`Tools/Ragnarok/Catalog/Composition` on the full data (T1.4, 2026-11-22): `Created 1, Warnings 0` in 8.6 s, then `Skipped 1` in 3.6 s; `composition.asset` is 0.7 MB (text).
+
+| Table | Rows |
+|---|---:|
+| Headgear priorities | 568 (2 with directions, 83 ignored while riding) |
+| `RobeTopLayer` | 226 |
+| Layer swaps | 15,482 over 284 (job, sex) tables; 192 inherited jobs |
+| Head to body | 3,936 (sex, job, garment, action) rows with frame masks |
+| Head edits / body edits | 20 / 4 direct calls |
+| Doram headgear offsets | 135 |
+| Transparent garments | 2 |
+| Shadow scales | 987, of which 67 are 0 |
+| Hidden job ids | 27: 45, 111, 139 and 24 `INVISIBLE` ids |
+| Ground shadow | `sprite/shadow`, static (one frame), `sprite/_sheets/0d/shadow_0dbb9009.png` |
+
+`JOBID` is defined in `skillinfoz/jobinheritlist.lub` and `pcJobTbl` in `admin/pcidentity.lub`; `JTtbl` must also answer the NPC constants (`JTtbl.JT_EDDGA3` in the shadow table).

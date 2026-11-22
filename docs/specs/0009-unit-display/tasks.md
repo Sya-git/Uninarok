@@ -61,9 +61,10 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
   *Done when:* `RoCompositionTablesBuilder_*` pass on small text fixtures of each table; a missing file gives exactly one warning.
   *Result (2026-11-22):* 7 `RoCompositionTablesBuilder_*` tests pass; a missing file gives one gap. `JOBID` comes from `skillinfoz/jobinheritlist.lub`, `pcJobTbl` from `admin/pcidentity.lub`.
 
-- [ ] **T1.4** `RoCompositionTablesConverter` and the **Composition** category in the catalog import menu. (FR-3, FR-4, FR-11)
+- [x] **T1.4** `RoCompositionTablesConverter` and the **Composition** category in the catalog import menu. (FR-3, FR-4, FR-11)
   Runs also with Bodies or any equipment category (plan §4.1, D1); writes `Art/Imported/catalog/composition.asset`, addressable key `catalog/composition`, through the ledger.
   *Done when:* importing Composition on the real data writes the asset and reports per table the row count and warnings (recorded in composition-reference.md); a second run reports "skipped"; the shadow table has 987 rows with 67 zeros. The owner commits the generated asset.
+  *Result (2026-11-22):* import run on the real data: created, then skipped; row counts in composition-reference.md §8; 987 shadow rows with 67 zeros; 29 importer tests pass. `composition.asset`, the shadow sheet, the ledger and the Addressables entry are left uncommitted for the owner.
 
 ## Phase 2: Sprite changes
 
