@@ -45,12 +45,14 @@
 - [ ] **T0.5** Record real sessions for replay tests. (FR-3, FR-18)
   With the SPEC-0001 capture tee and the dev auto-login on the local server: (a) enter prontera, stand 60 s near NPCs and players; (b) walk among monsters on prt_fild08 for 3 minutes, including monster deaths and a dropped item; (c) walk into prontera's south warp. Save the server's "who is here" state at the end of each (GM `@who`-style dump or the walk log of T3.8 once available).
   *Done when:* the captures are under `docs/specs/0010-world-session/fixtures/` with a `README.md` (date, server commit, account kind, what happens in each), and none contains credentials (checked by search for the account name and password).
+  *Order (2026-11-22):* done after T3.8, whose plugin gives the server's state; it needs the packets of phase 1 to walk (reorder allowed by CLAUDE.md §1.4 rule 6).
 
 ## Phase 1: Packets
 
-- [ ] **T1.1** Write the new packet docs and update the existing ones. (FR-4 to FR-9, FR-13, FR-15, FR-16, FR-19)
+- [x] **T1.1** Write the new packet docs and update the existing ones. (FR-4 to FR-9, FR-13, FR-15, FR-16, FR-19)
   New: `UNIT_MOVE` (0x0086), `UNIT_SLIDE` (0x01FF), `UNIT_DIRECTION` (0x009C), `UNIT_LOOK_CHANGE` (0x01D7), `UNIT_ACT` (0x008A), `ITEM_ENTRY` (0x009D), `MAP_CHANGE` (0x0091), `MAP_SERVER_CHANGE` (0x0AC7), `PARAMETER_CHANGE` (0x00B0). Existing: the `objecttype` table in `UNIT_MOVE_ENTRY.md`, sit and dead fields from T0.2.
   *Done when:* every doc follows Packet-Implementation.md with T0.2's verified layout; `INDEX.md` is regenerated and lists them.
+  *Result (2026-11-22):* 9 new docs, the `objecttype` table and state notes; `INDEX.md` regenerated from the docs (78 rows, sorted by direction and ID). 0x00B0 linked in `CATALOG.md`.
 
 - [ ] **T1.2** Tests, then structs: unit entries, moves, stop, slide, vanish (`0x09FD`, `0x09FE`, `0x09FF`, `0x0086`, `0x0087`, `0x0088`, `0x01FF`, `0x0080`). (FR-4 to FR-7)
   *Done when:* size tests against the Hercules table and decode tests (real samples from T0.5 where present, else hand-built from the doc) pass, each leaves no unread byte, and the hot ones pass an allocation test of 1,000 decodes at 0 B; docs moved to `implemented`/`verified`.

@@ -6,7 +6,7 @@
 | **Namespace** | `Uninarok.Networking.Data` |
 | **Wire size** | 6 bytes (`UninarokMoveData.WireSize`) |
 | **Hercules** | `WBUFPOS2` / `RBUFPOS2` in `src/map/clif.cpp` |
-| **Used by** | `PLAYER_MOVE` (0x0087), `UNIT_MOVE_ENTRY` (0x09FD) |
+| **Used by** | `PLAYER_MOVE` (0x0087), `UNIT_MOVE` (0x0086), `UNIT_MOVE_ENTRY` (0x09FD) |
 
 **Description:** A walk segment: source tile, destination tile and the sub-tile offset of the source, bit-packed into 6 bytes. A single position with direction is [`UninarokPosition`](UninarokPosition.md).
 

@@ -11,7 +11,7 @@
 | **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no; layout from `packets_struct.h` (`packet_unit_walking`) |
 | **Allocates** | no |
 
-**Hercules usage:** Sent by `clif_set_unit_walking` (`clif_move` and when entering view).
+**Hercules usage:** Sent by `clif_set_unit_walking` (when a walking unit enters view, and by `clif_move` when its walk speed changed).
 
 **Description:** A unit that is already walking comes into view. Same as `UNIT_STAND_ENTRY` but with a walk path and start time instead of a position.
 
@@ -19,9 +19,9 @@
 |---|---:|---:|---|
 | PacketId | `ushort` | 2 bytes | Header. |
 | PacketLength | `ushort` | 2 bytes | Total packet length including this header. |
-| objecttype | `byte` | 1 byte | Unit kind: `0` player, `1` NPC, `2` item, `3` skill, `5` monster, `6` event NPC, `7` pet, `8` homunculus, `9` mercenary, `10` elemental (`enum clif_unittype`). |
+| objecttype | `byte` | 1 byte | Unit kind, see the table below. |
 | AID | `uint` | 4 bytes | Account ID (players) or object ID. |
-| GID | `uint` | 4 bytes | Object ID (char ID for players). |
+| GID | `uint` | 4 bytes | Character ID of a player; `0` for every other unit. |
 | speed | `short` | 2 bytes | Walk speed in ms per tile. |
 | bodyState | `short` | 2 bytes | Body state flags. |
 | healthState | `short` | 2 bytes | Health state flags. |
@@ -31,12 +31,12 @@
 | weapon | `uint` | 4 bytes | Weapon sprite. |
 | shield | `uint` | 4 bytes | Shield sprite. |
 | accessory | `ushort` | 2 bytes | Lower head sprite. |
-| moveStartTime | `uint` | 4 bytes | Server tick when the walk started. |
+| moveStartTime | `uint` | 4 bytes | Server tick when the packet is sent: the walk goes on from the source cell at this time. |
 | accessory2 | `ushort` | 2 bytes | Top head sprite. |
 | accessory3 | `ushort` | 2 bytes | Mid head sprite. |
 | headpalette | `short` | 2 bytes | Hair colour. |
 | bodypalette | `short` | 2 bytes | Body (cloth) colour. |
-| headDir | `short` | 2 bytes | Head direction. |
+| headDir | `short` | 2 bytes | Head direction: `0` straight, `1` right, `2` left. |
 | robe | `ushort` | 2 bytes | Garment sprite. |
 | GUID | `uint` | 4 bytes | Guild ID. |
 | GEmblemVer | `short` | 2 bytes | Guild emblem version. |
@@ -44,7 +44,7 @@
 | virtue | `int` | 4 bytes | Virtue. |
 | isPKModeON | `byte` | 1 byte | PK mode flag. |
 | sex | `byte` | 1 byte | Sex (`0` female, `1` male). |
-| MoveData | `UninarokMoveData` | 6 bytes | Source and destination tile. [`UninarokMoveData`](../../../../../data/UninarokMoveData.md). |
+| MoveData | `UninarokMoveData` | 6 bytes | Source (the server cell when the packet is sent) and destination tile. [`UninarokMoveData`](../../../../../data/UninarokMoveData.md). |
 | xSize | `byte` | 1 byte | Collision width hint. |
 | ySize | `byte` | 1 byte | Collision height hint. |
 | clevel | `short` | 2 bytes | Base level. |
@@ -54,5 +54,25 @@
 | isBoss | `byte` | 1 byte | Boss flag. |
 | body | `ushort` | 2 bytes | Body style. |
 | name | fixed ASCII string | 24 bytes | Unit name. |
+
+**Unit kinds** (`objecttype`: `enum clif_unittype`, `src/map/clif.h`; `clif_bl_type`, checked 2026-11-22):
+
+| Value | Kind |
+|---:|---|
+| 0 | player (`GID` not 0); with `GID` 0, a monster, pet or homunculus that looks like a player class |
+| 1 | NPC (disguised players) |
+| 2 | item |
+| 3 | skill unit |
+| 4 | unknown (chat) |
+| 5 | monster |
+| 6 | event NPC (every NPC at this version) |
+| 7 | pet |
+| 8 | homunculus |
+| 9 | mercenary |
+| 10 | elemental |
+
+**State:** this packet and `UNIT_NEW_ENTRY` carry no state (the unit stands); only `UNIT_STAND_ENTRY` does.
+
+**Weapon and shield** are the item's view id when it has one, else the item id (see [`UNIT_LOOK_CHANGE`](UNIT_LOOK_CHANGE.md)).
 
 **Parsing:** `PacketLength` is read by the framing layer; the payload is the fixed layout above (108 bytes). `name` is a 24-byte NUL-padded string (`FixedString32Bytes`).
