@@ -21,7 +21,7 @@ namespace Uninarok.World.Tests
         [TearDown]
         public void TearDown() => _rig.Dispose();
 
-        static byte[] Character(Func<CharInfo, CharInfo> change = null)
+        internal static byte[] Character(Func<CharInfo, CharInfo> change = null)
         {
             var c = new CharInfo
             {

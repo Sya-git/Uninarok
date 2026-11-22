@@ -251,6 +251,8 @@ GameObject:
   - component: {fileID: 1746140160}
   - component: {fileID: 1746140159}
   - component: {fileID: 1746140161}
+  - component: {fileID: 1746140163}
+  - component: {fileID: 1746140162}
   m_Layer: 0
   m_Name: Bootstrap
   m_TagString: Untagged
@@ -333,6 +335,36 @@ MonoBehaviour:
   CameraRig: {fileID: 1493915940}
   Settings: {fileID: 11400000, guid: 2fedfc7384612594eb7b2f18cc7af076, type: 2}
   UnitMaterial: {fileID: 2100000, guid: 7564f1b793a26a9468149218c26c83af, type: 2}
+--- !u!114 &1746140162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1746140156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 718b8c78048fa3e47abb84037003847a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Uninarok.World.View::Uninarok.World.View.OwnInput
+  World: {fileID: 1746140161}
+  Cursor: {fileID: 1746140163}
+  Actions: {fileID: -944628639613478452, guid: 7f707d7dbcb9f88408c8cab198029f8f, type: 3}
+--- !u!114 &1746140163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1746140156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a73893e5f632fd4294c58718ea071f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Uninarok.World.View::Uninarok.World.View.CellCursor
+  Material: {fileID: 2100000, guid: e47c3fb2fce8aef4fb8dc81110c5da0b, type: 2}
+  CanWalkColour: {r: 0.3, g: 1, b: 0.4, a: 0.45}
+  CanNotWalkColour: {r: 1, g: 0.25, b: 0.2, a: 0.45}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

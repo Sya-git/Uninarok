@@ -14,7 +14,8 @@
         "Uninarok.Units",
         "Uninarok.CameraRig",
         "Unity.Collections",
-        "Unity.InputSystem"
+        "Unity.InputSystem",
+        "Unity.InputSystem.TestFramework"
     ],
     "includePlatforms": [
         "Editor"
