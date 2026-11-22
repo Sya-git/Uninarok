@@ -181,6 +181,39 @@ namespace Uninarok.World.PlayTests
         }
 
         [UnityTest, Category("NeedsData")]
+        public IEnumerator AnItem_ShowsItsGroundSprite_OnItsSubCell_AndLeaves()
+        {
+            _model.AddItem(501, 501, true, 10, 20, 3, 12, 1);      // a red potion
+            _presenter.Sync(_model);
+            var view = _presenter.ItemViewOf(501);
+            for (int i = 0; i < 600 && !view.Loaded; i++) yield return null;
+            Assert.IsTrue(view.Loaded);
+            Assert.AreEqual(new Vector3(-10f + 10.25f * 0.5f, 2f, -20f + 21f * 0.5f), view.transform.position, "sub / 12 from the cell's corner");
+            bool shown = (view.Still != null && view.Still.enabled && view.Still.sprite != null) || (view.Actor != null && view.Actor.CurrentFrame >= 0);
+            Assert.IsTrue(shown, "its sprite");
+            Assert.AreEqual((1, 0), (_presenter.ItemCount, _presenter.ShownCount));
+            Assert.Greater(_source.HeldCount, 0);
+
+            _model.RemoveItem(501);
+            _presenter.Sync(_model);
+            Assert.AreEqual((0, 0), (_presenter.ItemCount, _source.HeldCount));
+            Assert.IsFalse(view.gameObject.activeSelf);
+
+            LogAssert.Expect(LogType.Warning, new System.Text.RegularExpressions.Regex("item 99999999 has no ground sprite"));
+            _model.AddItem(502, 99999999, true, 10, 20, 3, 12, 1);
+            _model.AddItem(503, 99999999, true, 10, 20, 3, 12, 1);
+            _presenter.Sync(_model);
+            Assert.AreEqual(2, _presenter.ItemCount, "one warning per item id, nothing shown");
+
+            // the slot of an item taken by a unit
+            _model.RemoveItem(502);
+            Poring(9, 10, 20);
+            _presenter.Sync(_model);
+            Assert.IsNotNull(_presenter.ViewOf(9));
+            Assert.AreEqual((1, 1), (_presenter.ItemCount, _presenter.ShownCount));
+        }
+
+        [UnityTest, Category("NeedsData")]
         public IEnumerator WorldPresenter_ReadsOnly()
         {
             for (uint i = 1; i <= 10; i++) Poring(i, (int)i, 20);
