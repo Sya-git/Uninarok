@@ -126,8 +126,9 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
   *Done when:* `UnitView_SetLook_KeepsFrameAndPosition` passes (weapon and hair colour swapped mid-walk keep the frame; a job change replaces the look in place); old assets are released.
   *Result (2026-11-22):* `UnitView_SetLook_KeepsFrameAndPosition` and `_ReleasesTheOldAssets` pass.
 
-- [ ] **T5.3** Ground placement: `PlaceOn` and the unit material's depth bias. (FR-10)
+- [x] **T5.3** Ground placement: `PlaceOn` and the unit material's depth bias. (FR-10)
   *Done when:* `UnitView_FeetOnGround_SlopeOfPrtFild08_MinMaxTilt` passes; evidence images of a poring and a swordsman on a slope at 50° and 65° tilt.
+  *Result (2026-11-22):* `UnitView_FeetOnGround_SlopeOfPrtFild08_MinMaxTilt` passes (no pixel cut at 50° and 65°); evidence/t5.3-*.png.
 
 - [ ] **T5.4** `UnitShadow`. (FR-11)
   *Done when:* poring and novice show a full shadow, fabre a half one, warp NPC and red plant none (PlayMode test on the scale; one evidence image).
