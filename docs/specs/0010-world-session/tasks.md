@@ -70,8 +70,9 @@
   *Done when:* as T1.2, plus a decode test of `0x0AC7` giving host `127.0.0.1` and a port above 32767 from bytes built as `clif_changemapserver` writes them.
   *Result (2026-11-22):* 474 of 475 networking tests pass (the known line-ending one fails): `MAP_CHANGE` from the real capture; `MAP_SERVER_CHANGE` gives 127.0.0.1 and port 50121 from bytes built as `clif_changemapserver` writes them.
 
-- [ ] **T1.6** Tests, then the outgoing packets in use: `REQUEST_MOVE`, `CHANGE_DIRECTION`, `REQUEST_ACT` (sit 2, stand 3). (FR-9, FR-13, FR-19)
+- [x] **T1.6** Tests, then the outgoing packets in use: `REQUEST_MOVE`, `CHANGE_DIRECTION`, `REQUEST_ACT` (sit 2, stand 3). (FR-9, FR-13, FR-19)
   *Done when:* serialization tests give the bytes of the docs; send allocates 0 B; docs moved to `implemented`.
+  *Result (2026-11-22):* 478 of 479 networking tests pass (the known line-ending one fails): golden bytes of the docs, 0 B over 1,000 serializations and sends.
 
 ## Phase 2: Networking flow
 

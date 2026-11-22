@@ -44,8 +44,11 @@ namespace Uninarok.Networking.Packets
         public const ushort UNIT_SLIDE = 0x01FF;                     // in
         public const ushort MAP_ENTRY_ACCEPTANCE = 0x0283;           // in
         public const ushort AUTHENTICATION_ACCEPTED = 0x02EB;        // in
+        public const ushort REQUEST_MOVE = 0x035F;                   // out
         public const ushort HEARTBEAT_REQUEST = 0x0360;              // out
+        public const ushort CHANGE_DIRECTION = 0x0361;               // out
         public const ushort REQUEST_ENTER_MAP = 0x0436;              // out
+        public const ushort REQUEST_ACT = 0x0437;                    // out
         public const ushort UNIT_MOVE_ENTRY = 0x09FD;                // in
         public const ushort UNIT_NEW_ENTRY = 0x09FE;                 // in
         public const ushort UNIT_STAND_ENTRY = 0x09FF;               // in

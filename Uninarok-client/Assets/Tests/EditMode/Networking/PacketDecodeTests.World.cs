@@ -1,10 +1,12 @@
 using System;
 using NUnit.Framework;
 using UnityEngine.TestTools.Constraints;
+using Uninarok.Networking.Core.Transport;
 using Uninarok.Networking.Core.Wire;
 using Uninarok.Networking.Data;
 using Uninarok.Networking.Packets;
 using Uninarok.Networking.Packets.In.Map;
+using Uninarok.Networking.Packets.Out.Map;
 
 namespace Uninarok.Networking.Tests
 {
@@ -365,6 +367,61 @@ namespace Uninarok.Networking.Tests
         {
             Assert.AreEqual((0x0091, 22), ((int)PacketIds.MAP_CHANGE, MAP_CHANGE.Size));
             Assert.AreEqual((0x0AC7, 156), ((int)PacketIds.MAP_SERVER_CHANGE, MAP_SERVER_CHANGE.Size));
+        }
+
+        // ---- outgoing (T1.6) ----
+
+        static byte[] Serialized<T>(in T packet) where T : struct, IOutgoingPacket
+        {
+            var b = new byte[packet.WireSize];
+            packet.Serialize(b);
+            return b;
+        }
+
+        [Test]
+        public void REQUEST_MOVE_WritesGoldenBytes()
+        {
+            Assert.AreEqual(Hex("5F03" + "258C80"), Serialized(new REQUEST_MOVE(150, 200)));
+            Assert.AreEqual(Hex("5F03" + "4B04D0"), Serialized(new REQUEST_MOVE(300, 77)));
+        }
+
+        [Test]
+        public void CHANGE_DIRECTION_WritesGoldenBytes() =>
+            Assert.AreEqual(Hex("6103" + "0200" + "05"), Serialized(new CHANGE_DIRECTION(2, UninarokDirection.SouthEast)));
+
+        [Test]
+        public void REQUEST_ACT_WritesGoldenBytes()
+        {
+            Assert.AreEqual(Hex("3704" + "00000000" + "02"), Serialized(new REQUEST_ACT(0, REQUEST_ACT.Sit)));
+            Assert.AreEqual(Hex("3704" + "00000000" + "03"), Serialized(new REQUEST_ACT(0, REQUEST_ACT.Stand)));
+        }
+
+        [Test]
+        public void OutgoingWorldPackets_SizesAndIds_AndAllocateNothing()
+        {
+            Assert.AreEqual((0x035F, 5), ((int)PacketIds.REQUEST_MOVE, REQUEST_MOVE.Size));
+            Assert.AreEqual((0x0361, 5), ((int)PacketIds.CHANGE_DIRECTION, CHANGE_DIRECTION.Size));
+            Assert.AreEqual((0x0437, 7), ((int)PacketIds.REQUEST_ACT, REQUEST_ACT.Size));
+            var client = new FakeNetworkClient { Status = Client.ConnectionStatus.Connected, RecordSends = false };
+            var buffer = new byte[16];
+            Action run = () =>
+            {
+                for (int i = 0; i < Decodes; i++)
+                {
+                    var move = new REQUEST_MOVE((ushort)i, 5);
+                    var turn = new CHANGE_DIRECTION(1, UninarokDirection.East);
+                    var act = new REQUEST_ACT(0, REQUEST_ACT.Sit);
+                    move.Serialize(new Span<byte>(buffer, 0, move.WireSize));
+                    turn.Serialize(new Span<byte>(buffer, 0, turn.WireSize));
+                    act.Serialize(new Span<byte>(buffer, 0, act.WireSize));
+                    client.Send(move);
+                    client.Send(turn);
+                    client.Send(act);
+                }
+            };
+            run();
+            Assert.That(() => run(), UnityEngine.TestTools.Constraints.Is.Not.AllocatingGCMemory());
+            Assert.AreEqual(2 * 3 * Decodes, client.UncountedSends);
         }
     }
 }
