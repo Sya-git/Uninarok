@@ -318,17 +318,15 @@ namespace Uninarok.World
         }
 
         /// <summary>
-        /// The path of another unit's walk, from the two ends its packet carries (PLAN-0010 D11): A* for players and NPCs; for units
-        /// the server also walks with its easy path (a chasing monster), that one when it reaches the destination, else A*.
+        /// The path of another unit's walk, from the two ends its packet carries (PLAN-0010 D11, measured in T3.8): A*, also for units
+        /// the server walks with its easy path (a chasing monster), which are right more often than not and at most a cell off; the
+        /// easy path when A* finds none.
         /// </summary>
         public PathResult SearchForUnit(EntityKind kind, int x0, int y0, int x1, int y1, ref WalkPath path)
         {
-            if (kind != EntityKind.Player && kind != EntityKind.Npc)
-            {
-                var easy = SearchEasy(x0, y0, x1, y1, ref path);
-                if (easy != PathResult.NoPath) return easy;
-            }
-            return Search(x0, y0, x1, y1, ref path);
+            var result = Search(x0, y0, x1, y1, ref path);
+            if (result == PathResult.NoPath && kind != EntityKind.Player && kind != EntityKind.Npc) result = SearchEasy(x0, y0, x1, y1, ref path);
+            return result;
         }
 
         /// <summary>

@@ -125,10 +125,11 @@
   *Done when:* `_EasyPath_MatchesServer_*` and `_Limits17And14` pass.
   *Result (2026-11-22):* `HerculesPathfinder_EasyPath_MatchesServer` and `_StraightLineAndWalkLimits_MatchServer` pass for the 30,000 pairs (easy path steps, straight line, accepted and too long); `_Limits17And14` passes.
 
-- [ ] **T3.8** Walk-log mode of the plugin and the D11 measurement; implement `SearchForUnit` (plan §4.4, D11). (FR-6, FR-10)
+- [x] **T3.8** Walk-log mode of the plugin and the D11 measurement; implement `SearchForUnit` (plan §4.4, D11). (FR-6, FR-10)
   Log a 10-minute session on prt_fild08 with monsters chasing and wandering.
   *Done when:* the log is a committed fixture; the report gives, for the default rule and for "always A*", the share of monster walks reproduced and the largest mid-walk distance on a mismatch; the better rule is in `SearchForUnit` (Decisions note if not the default); `SearchForUnit_WalkLog_*` passes at the measured share.
   *Order (2026-11-22):* waits for the owner to allow a restart of the local map-server with the plugin; phases 4 and 5 go on with the default rule of D11 (reorder allowed by CLAUDE.md §1.4 rule 6).
+  *Result (2026-11-22):* nine-minute walk log on prt_fild08 committed. Always A*: 2,760 of 2,763 monster walks reproduced (99.89 %), largest mid-walk distance 1 cell; easy path first: 2,722 (98.52 %), 2 cells; players 273 of 273. `SearchForUnit` is now A*, with the easy path when A* finds none (D11); `SearchForUnit_WalkLog_PrtFild08` passes at 99.8 %.
 
 ## Phase 4: World model
 
