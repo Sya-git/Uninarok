@@ -162,9 +162,10 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
 
 ## Phase 7: Tools
 
-- [ ] **T7.1** Entity Sandbox scene and panel. (FR-13)
+- [x] **T7.1** Entity Sandbox scene and panel. (FR-13)
   `Scenes/Dev/EntitySandbox.unity` (prontera additive), spawn by look at a clicked cell, select, facing, head facing, animation, play mode, live parts, camera follow, FR-6 turn buttons, doridori and bangbang buttons.
   *Done when:* `EntitySandbox_Loads_SpawnsReferenceSet_OnProntera` passes; FR-6, FR-10, FR-11 and FR-12 are checked by hand in the sandbox with evidence images.
+  *Result (2026-11-22):* `EntitySandbox_Loads_SpawnsReferenceSet_OnProntera` passes. Checked by driving the sandbox in play mode through the Unity MCP: sector 0 at 22° and 1 at 23°, side at 90°, back at 180° (evidence/t7.1-turn*.png), units uncut at 50° and 65° (t7.1-nearest-*.png), shadows, zoom 23 to 40 u (t7.1-farthest-tilt50.png). The mouse in a hand and the IMGUI clicks are the owner's to try.
 
 - [ ] **T7.2** Stress mode and its readout; first measurement. (FR-13, FR-14)
   100 players + 200 monsters, seeded, mixed animations and turns; tick time (mean, max) and GC per frame on screen; profiler markers.
