@@ -133,18 +133,9 @@ namespace Uninarok.World
             return Turn(model, (UninarokDirection)((target + (step < 4 ? 7 : 1)) & 7), head);
         }
 
-        /// <summary><c>/doridori</c>: the head one step on: from straight to the left, then the right, then straight (D32).</summary>
-        public bool Doridori()
-        {
-            if (!TryTurning(out var model, out int slot)) return false;
-            var head = model[slot].Head switch
-            {
-                HeadDirection.Straight => HeadDirection.Left,
-                HeadDirection.Left => HeadDirection.Right,
-                _ => HeadDirection.Straight,
-            };
-            return Turn(model, model[slot].Facing, head);
-        }
+        /// <summary><c>/doridori</c>: the head to the left, or to the right when it is on the left (D32); it stays there.</summary>
+        public bool Doridori() =>
+            TryTurning(out var model, out int slot) && Turn(model, model[slot].Facing, model[slot].Head == HeadDirection.Left ? HeadDirection.Right : HeadDirection.Left);
 
         /// <summary><c>/bangbang</c>: the body one step clockwise, the head straight.</summary>
         public bool Bangbang() =>

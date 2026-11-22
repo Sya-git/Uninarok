@@ -345,7 +345,7 @@ namespace Uninarok.World.Tests
         {
             _rig.ToInGame(Character());
             var own = _rig.Session.Own;
-            foreach (var head in new[] { HeadDirection.Left, HeadDirection.Right, HeadDirection.Straight, HeadDirection.Left })
+            foreach (var head in new[] { HeadDirection.Left, HeadDirection.Right, HeadDirection.Left, HeadDirection.Right })
             {
                 _rig.Client.ClearRecords();
                 Assert.IsTrue(own.Doridori());
