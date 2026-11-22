@@ -28,9 +28,10 @@
   *Done when:* plan §5 holds the execution order values; any signature that differs from plan §4.9/§4.10 is recorded under Decisions and the plan text follows the code.
   *Result (2026-11-22):* orders in plan §5 (`WorldBootstrap` 10, before `RoCamera` 50, brain 100, `UnitSystemDriver` 900, `SpriteSystemDriver` 1000); `SetLook`, `Facing`, `HeadFacing`, `Play`, `PlaceOn`, `RoCamera.Follow` and `SnapToTarget` as planned; `UnitView.Speed` multiplies the frame time; differences in D12 (loader, asynchronous source, ground items) and D13 (`UnitView.Clear`).
 
-- [ ] **T0.2** Verify every packet of plan §4.1 against Hercules for PACKETVER 20220406. (FR-4 to FR-9, FR-13, FR-15, FR-16, FR-19)
+- [x] **T0.2** Verify every packet of plan §4.1 against Hercules for PACKETVER 20220406. (FR-4 to FR-9, FR-13, FR-15, FR-16, FR-19)
   For each: ID, size, field layout in `packets_struct.h` and `clif.cpp`; the look types of `0x01D7` (`enum look`, `map.h`); the `objecttype` values (`clif_bl_type`); how `UNIT_STAND_ENTRY`/`UNIT_NEW_ENTRY` carry sitting and dead; whether Hercules sends `0x009C` and `0x008A` back to the player who turned or sat (plan D9). Check against a real capture where the packet appears (T0.5 may provide it).
   *Done when:* a table of the results is written into plan §4.1 (a Decisions note for any difference); D9 says "echo" or "local on send".
+  *Result (2026-11-22):* table in plan §4.1, from the sources and the real capture of SPEC-0001 (0x0091, 0x01D7, 0x09FF, 0x00B0 seen; the rest come with T0.5). Differences: no echo of turns (D9 is now "local on send" for turns, "echo" for sitting), north after a warp (D14), no `state` in 0x09FE/0x09FD (107 and 114 bytes), weapon values may be item ids, uninitialised bytes in 0x008A.
 
 - [ ] **T0.3** Read the display facts from roBrowser's source and the original client. (FR-5, FR-6, FR-16)
   Item sub-cell to position formula; walk animation speed as a function of walk speed; how long a dead monster stays before it disappears.

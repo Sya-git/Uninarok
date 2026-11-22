@@ -76,8 +76,8 @@ Sizes below are from the Hercules length table for 20220406 (`fixtures/hercules-
 
 | Direction | ID | Struct (doc name) | Hot | New doc | Notes |
 |---|---|---|---|---|---|
-| in | `0x09FE` | `UNIT_NEW_ENTRY` | yes | — | spawn; variable (108 sent); `name` as `FixedString32Bytes` |
-| in | `0x09FF` | `UNIT_STAND_ENTRY` | yes | — | standing unit; carries `action` (sit) and dead state |
+| in | `0x09FE` | `UNIT_NEW_ENTRY` | yes | — | spawn; variable (107 sent, T0.2); `name` as `FixedString32Bytes` |
+| in | `0x09FF` | `UNIT_STAND_ENTRY` | yes | — | standing unit; carries `state` (sitting, dead) |
 | in | `0x09FD` | `UNIT_MOVE_ENTRY` | yes | — | walking unit entering view; `UninarokMoveData` + `moveStartTime` |
 | in | `0x0086` | `UNIT_MOVE` | yes | yes | `ZC_NOTIFY_MOVE`: id, move data, server tick (16 B) |
 | in | `0x0087` | `PLAYER_MOVE` | warm | — | own walk confirmed |
@@ -97,8 +97,35 @@ Sizes below are from the Hercules length table for 20220406 (`fixtures/hercules-
 | out | `0x0361` | `CHANGE_DIRECTION` | warm | — | |
 | out | `0x0437` | `REQUEST_ACT` | warm | — | action 2 sit, 3 stand, target 0 |
 
-- **Look types of 0x01D7** (`enum look` in Hercules `map.h`): base (job), hair, weapon (value = weapon, value2 = shield), head bottom, head top, head mid, hair colour, cloth colour, shield, shoes, body2 (costume style), robe. T0.2 writes the table into the doc. Unknown types are ignored at trace level.
-- **Entity kinds** (`objecttype` of the entry packets, Hercules `enum bl_type` mapped by `clif_bl_type`): PC 0, NPC 1, item 2, skill 3, unknown 4, monster 5, event NPC 6, pet 7, homunculus 8, mercenary 9, elemental 10; the doc of `UNIT_MOVE_ENTRY` gets the table.
+**T0.2 results** (2026-11-22; `src/map/clif.cpp`, `packets_struct.h`, `clif.h`, `map.h` with `PACKETVER` 20220406 main, and the length table). "Capture": the real capture `Map-20261117-124252.bin` holds the packet and its bytes match the layout.
+
+| ID | Size | Source | Capture | Layout after the header, notes |
+|---|---:|---|---|---|
+| `0x09FF` | 108 | `packet_idle_unit`, `clif_set_unit_idle` | yes | as the doc; `state` = `vd->dead_sit`: 0 standing, 1 dead (also feigned death), 2 sitting |
+| `0x09FE` | 107 | `packet_spawn_unit`, `clif_spawn_unit` | no | as the idle entry **without `state`** (a spawned unit stands) |
+| `0x09FD` | 114 | `packet_unit_walking`, `clif_set_unit_walking` | no | no `state`; `moveStartTime` is the server tick **when the packet is sent** and the source is the unit's server cell at that moment, so the path is the rest of the walk |
+| `0x0086` | 16 | `clif_move` | no | id `uint`, move data 6 B, tick `uint` (send time); sent to the area without the unit itself |
+| `0x0087` | 12 | `clif_walkok` | no | tick `uint`, move data 6 B |
+| `0x0088` | 10 | `clif_fixpos` | no | id `uint`, x `ushort`, y `ushort`; area, the unit included |
+| `0x01FF` | 10 | `clif_slide` | no | id `uint`, x `ushort`, y `ushort`; area, the unit included |
+| `0x0080` | 7 | `clif_clearunit_area` | no | id `uint`, reason `byte` |
+| `0x009C` | 9 | `clif_changed_dir` | no | id `uint`, head `ushort`, body `byte`. **`clif_parse_ChangeDir` sends it `AREA_WOS`: the player who turned gets no echo** (D9) |
+| `0x01D7` | 15 | `PACKET_ZC_SPRITE_CHANGE`, `clif_sendlook` | yes | id `uint`, type `byte`, value `uint`, value2 `uint`. A shield change is sent as type weapon (value weapon, value2 shield) |
+| `0x008A` | 29 | `clif_sitting`, `clif_standing` | no | id `uint` at 2, action `byte` at 26; **the other bytes are uninitialised** (`unsigned char buf[32]`) and must be skipped. Area, the player included: sitting and standing echo (D9) |
+| `0x009D` | 19 | `PACKET_ZC_ITEM_ENTRY` | no | id `uint`, item `uint`, identified `byte`, x, y, amount `ushort`, sub x, sub y `byte` |
+| `0x0ADD` | 24 | `packet_dropflooritem` | no | as the doc (amount after the sub cell, unlike `0x009D`) |
+| `0x00A1` | 6 | `clif_clearflooritem` | no | id `uint` |
+| `0x0091` | 22 | `clif_changemap` | yes | map 16 B (`izint.gat`), x, y `ushort`. Also sent for a move on the **same** map, and once right after `MAP_LOADED` when a script warped the player while loading (`state.rewarp`) |
+| `0x0AC7` | 156 | `clif_changemapserver` | no | map 16 B, x, y, ip `htonl` (big-endian), port little-endian, dns 128 B |
+| `0x00B0` | 8 | `PACKET_ZC_PAR_CHANGE` | yes | var `ushort`, value `int`; `SP_SPEED` 0 is the own walk speed |
+| out `0x035F`, `0x0361`, `0x0437` | 5, 5, 7 | `packets_shuffle_main.h`, `clif_parse_WalkToXY`, `_ChangeDir`, `_ActionRequest` | - | as the docs; the body direction is stored as sent, nothing is refused |
+
+- **Look types of 0x01D7** (`enum look` in Hercules `map.h`): 0 base (job), 1 hair, 2 weapon (value = weapon, value2 = shield), 3 head bottom, 4 head top, 5 head mid, 6 hair colour, 7 cloth colour, 8 shield (never sent: folded into 2), 9 shoes, 10 body (unknown use), 11 floor (unknown use), 12 robe, 13 body2 (costume style). Unknown types are ignored at trace level.
+- **Weapon and shield values** are the item's view id when it has one, else the **item id** (`clif_get_weapon_view`; the capture's look change holds 1201, Knife): the look mapping (§4.9) passes the value as view id and as item id (`UnitLook.WeaponItem`/`ShieldItem`), which the catalog tries in that order (SPEC-0008 R6).
+- **Walking resets the head** (`unit_walk_toxy_sub`: `sd->head_dir = 0`): `Walk` of a player sets the head straight.
+- **Warp facing**: `pc_setpos` turns the player north unless `player_warp_keep_direction` is on (default off): D14.
+- `objecttype` 0 (PC) is also sent for monsters, pets and homunculi that look like a player class (`clif_bl_type`); they carry `GID` 0 (a player's `GID` is its character id), so kind = player needs `objecttype` 0 **and** `GID` not 0, else monster.
+- **Entity kinds** (`objecttype` of the entry packets, `enum clif_unittype`, `clif_bl_type`): PC 0, NPC 1, item 2, skill 3, unknown 4, monster 5, event NPC 6, pet 7, homunculus 8, mercenary 9, elemental 10; the doc of `UNIT_MOVE_ENTRY` gets the table.
 - Hot packets read names only into `FixedString32Bytes` and keep no arrays (PLAN-0001 §4.10). `MAP_SERVER_CHANGE` is cold and may allocate.
 
 ### 4.2 Server time: `ServerClock`
@@ -266,13 +293,13 @@ public sealed class OwnCharacter
 public enum WalkRequestResult : byte { Sent, Dead, Sitting, Blocked, NoPath, TooLong, Occupied, SameCell, NotInGame }
 ```
 
-- **Handlers** (one `PacketHandler<T>` per packet, created once, registered through SPEC-0001 `Subscriptions` while the flow is `LoadingMap` after authentication or `InGame`). Each handler is one model call; entries map `objecttype` → `EntityKind`, `bodyState`/`healthState`/`action` → `EntityState` (sit: `action == 2` in `UNIT_STAND_ENTRY`; dead: as the doc says, checked in T0.2), `headDir` → `HeadDirection`. `UNIT_MOVE`/`UNIT_MOVE_ENTRY`/`PLAYER_MOVE` call `Walk` with the packet's server tick (`PLAYER_MOVE` and `UNIT_MOVE` carry it; `UNIT_MOVE_ENTRY` its `moveStartTime`). `PARAMETER_CHANGE` with var 0 sets the own speed. No string work, closures or LINQ in handlers (PLAN-0001 §4.10).
+- **Handlers** (one `PacketHandler<T>` per packet, created once, registered through SPEC-0001 `Subscriptions` while the flow is `LoadingMap` after authentication or `InGame`). Each handler is one model call; entries map `objecttype` → `EntityKind`, `bodyState`/`healthState`/`action` → `EntityState` (`state` of `UNIT_STAND_ENTRY`: 0 standing, 1 dead, 2 sitting; the other two entries carry none and mean standing), `headDir` → `HeadDirection`. `UNIT_MOVE`/`UNIT_MOVE_ENTRY`/`PLAYER_MOVE` call `Walk` with the packet's server tick (`PLAYER_MOVE` and `UNIT_MOVE` carry it; `UNIT_MOVE_ENTRY` its `moveStartTime`). `PARAMETER_CHANGE` with var 0 sets the own speed. No string work, closures or LINQ in handlers (PLAN-0001 §4.10).
 - **Own character at entry** (FR-1): look from the selected `CharInfo` (`Class`, `Hair`, `HairColor`, `ClothesColor`, `Body`, `Weapon`, `LookShield`, `LookHeadTop/Mid/Bottom`, `LookRobe`, `Sex`), speed `DefaultWalkSpeed`, cell and facing from `Context.Entry.Position`, state `Dead` when `CharInfo.Hp == 0` (FR-1: enters lying dead, no input).
 - **Walk rules** (FR-9), in order: not in game → `NotInGame`; dead → `Dead`; sitting → `Sitting`; same cell → `SameCell`; then `SearchWalk` from the own **server cell** (`CellX/CellY`, which is where the server's path starts) → `Blocked`/`NoPath`/`TooLong`; a one-cell walk onto a cell where the model holds a player, NPC or monster → `Occupied` (stack limit 1); else send `REQUEST_MOVE` → `Sent`. Nothing but `Sent` sends a packet. The walk starts only on `PLAYER_MOVE` (no prediction).
-- **Turn rule** (FR-13): target direction `t` from the own cell to the clicked cell (Hercules `map_calc_dir`, ported). With body `b`: `(t − b) mod 8 == 1` → head `Left`; `== 7` → head `Right`; `== 0` → head `Straight`; otherwise body `t`, head `Straight`. Sends `CHANGE_DIRECTION(head, body)`; the model changes on the server's `UNIT_DIRECTION` echo (Hercules sends `clif_changed_dir` to the area including the player; checked in T0.2, else applied locally on send).
+- **Turn rule** (FR-13): target direction `t` from the own cell to the clicked cell (Hercules `map_calc_dir`, ported). With body `b`: `(t − b) mod 8 == 1` → head `Left`; `== 7` → head `Right`; `== 0` → head `Straight`; otherwise body `t`, head `Straight`. Sends `CHANGE_DIRECTION(head, body)`; because the server does not echo it to the sender (T0.2, D9), the same turn is applied to the model when the packet was queued; a turn the server sends for the own id is applied too.
 - **`/doridori`**: head Left, then Right, then Straight, 200 ms apart (three `CHANGE_DIRECTION`); a new command restarts it. **`/bangbang`**: body one step clockwise, `(b + 7) mod 8`, head Straight. Both are checked against the original client in T0.4 (timing, order) and the constants live in `WorldSettings`.
 - **Sit** (FR-19): `ToggleSit` sends `REQUEST_ACT(0, 3)` when sitting, `(0, 2)` otherwise; the model changes only on `UNIT_ACT` 2/3 for the own id. A refusal leaves the state unchanged (the server sends nothing).
-- **Map change** (FR-15): `ZoneManager` events (§4.8) → `EndMap`; the flow goes to `LoadingMap` and the loader runs again (§4.7). The own entry position for the new map is the packet's `(x, y)`; facing is kept (Hercules `pc_setpos` keeps `ud.dir`).
+- **Map change** (FR-15): `ZoneManager` events (§4.8) → `EndMap`; the flow goes to `LoadingMap` and the loader runs again (§4.7). The own entry position for the new map is the packet's `(x, y)`; facing is north, or kept when `WorldSettings.WarpKeepsDirection` is on (Hercules `player_warp_keep_direction`, default off; D14).
 
 ### 4.7 Map loading: `WorldBootstrap`, `MapSceneLoader`
 
@@ -419,11 +446,12 @@ Manual checks on a local Hercules (evidence in `docs/specs/0010-world-session/ev
 | D6 | One heartbeat right after `MAP_LOADED`, then every 10 s; lowest-RTT of 8 samples; forward jumps, backward slew 0.5 ms/ms | Only the 10 s heartbeat; averaging samples | Walks arriving in the first 10 s need a measured clock; the least-delayed sample is the most accurate; slewing keeps time monotonic (FR-2). |
 | D7 | A new walk order within one cell of the shown position starts from there; farther snaps | Always snap to the packet's source; always walk to the source first | Avoids visible jumps for normal re-orders without hiding real desyncs. |
 | D8 | Dead monsters stay `DeadMonsterLingerMs` (1,500 ms) then are removed; the view plays dead once and holds | Removing when the animation ends (model would depend on the view) | Keeps the model independent of animation data; the value is a setting, checked against the original client in T0.3. |
-| D9 | Own turns and sitting change the model only on the server's echo | Local change on send | Others see what the server accepted; a refused sit stays standing (FR-19). Fallback to local on send only if T0.2 shows Hercules does not echo to the sender. |
+| D9 | Own **sitting** changes the model only on the server's echo (`UNIT_ACT`); own **turns** are local on send (T0.2: `clif_parse_ChangeDir` sends `AREA_WOS`, no echo, and never refuses) | Local change on send for both; waiting for an echo of turns | Others see what the server accepted; a refused sit stays standing (FR-19). A turn is never refused, so what is sent is what the server has. |
 | D10 | Cell picking on `MapData` triangles, no colliders | Physics raycast on the ground mesh | Walkability lives in `MapData`; no physics setup for map scenes; exact on slopes. |
 | D11 | Other non-player units: easy path if it reaches the destination, else A*; measured in T3.8 with the server's walk log | Always A* (the original client's behaviour); changing the server so chases use A* (`walk_tobl` flag) or so move packets carry the path | The packets do not say which algorithm ran; chases are where position matters (combat). A server change is out of this spec (the owner plans server changes later, spec non-goals) and would make the rule unnecessary. |
 | D12 | (T0.1) Views are made with `UnitView.Create(UnitLoader, Material, parent, name)`, so the presenter takes a `UnitLoader`; `AddressablesUnitAssetSource` is not constructed directly but by the asynchronous `AddressablesUnitAssetSource.LoadAsync`, which gets an optional list of extra catalog categories (ground items). `WorldBootstrap` starts it once and the presenter is created when both the map and the source are there | Constructor with `IUnitAssetSource`; a second catalog for the items | Follows the merged SPEC-0009 code (§1 rule); its category list has no ground items, and one catalog is enough. The session does not wait for the catalog: the model runs without views (FR-3) |
 | D13 | (T0.1) `UnitView.Clear()` is added to SPEC-0009's component: it releases the parts, forgets the look and shows nothing | Pooling a view as it is; destroying and creating views | A pooled view keeps its old look until the next one is loaded (`SetLook`), so a reused view would show the previous unit for a moment, and the pool would keep its assets held |
+| D14 | (T0.2) After a map change the own character faces north (`WorldSettings.WarpKeepsDirection` false, Hercules `player_warp_keep_direction` default) | Keeping the facing (§4.6 as first written) | `pc_setpos` sets `UNIT_DIR_NORTH`, and the move packet has no facing: the others see north |
 
 ## 9. Risks
 
