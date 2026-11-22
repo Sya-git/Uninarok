@@ -112,8 +112,9 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
   *Done when:* `UnitLoader_ResolvesReferenceSet`, `_MissingHeadgear_ReportsReason`, `_PlayerJobOnNpc_ShowsAsPlayer`, `_HiddenJob_ShowsNothing` pass on the imported catalog (`NeedsData`).
   *Result (2026-11-22):* the 12 `UnitLoaderTests` pass on the imported catalog (reference set, missing headgear, player job on an NPC, hidden job, shadow scales, superseded loads).
 
-- [ ] **T4.3** `AddressablesUnitAssetSource`, ref-counted. (FR-14)
+- [x] **T4.3** `AddressablesUnitAssetSource`, ref-counted. (FR-14)
   *Done when:* a PlayMode test loads, changes and destroys looks 1,000 times and every handle count returns to zero (R7).
+  *Result (2026-11-22):* `LoadChangeDestroy_1000Looks_EveryHandleCountReturnsToZero` passes in play mode (1.6 s).
 
 ## Phase 5: Unit in the scene
 
