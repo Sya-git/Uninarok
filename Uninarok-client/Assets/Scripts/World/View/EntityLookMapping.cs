@@ -1,3 +1,4 @@
+using System;
 using Uninarok.Networking.Data;
 using Uninarok.Units;
 
@@ -13,6 +14,19 @@ namespace Uninarok.World.View
         // start at 501; by item, the catalog also finds the sprite of its type (D22).
         static bool IsItem(int value) => value >= 500;
 
+        // The client numbers the first hair styles in its own order (D27): the head file of each style id, by sex. The ids after are
+        // the file numbers, as all of a doram's.
+        static ReadOnlySpan<byte> FemaleHeads => new byte[] { 2, 2, 4, 7, 1, 5, 3, 6, 12, 10, 9, 11, 8 };
+        static ReadOnlySpan<byte> MaleHeads => new byte[] { 2, 2, 1, 7, 5, 4, 3, 6, 8, 9, 10, 12, 11 };
+
+        /// <summary>The head file number (the catalog's hair style) of the server's hair style.</summary>
+        internal static int HeadOf(int job, byte sex, int style)
+        {
+            if (job == (int)PlayerJob.JOB_SUMMONER || job == (int)PlayerJob.JOB_BABY_SUMMONER) return Math.Max(1, style);
+            var heads = sex == (byte)AccountSex.SEX_FEMALE ? FemaleHeads : MaleHeads;
+            return style < heads.Length ? heads[style] : style;
+        }
+
         /// <summary>
         /// A player's parts when the job id is a player class (players, and any kind that looks like one), else one sprite by job id:
         /// monsters, NPCs, pets, and players disguised as one.
@@ -26,7 +40,7 @@ namespace Uninarok.World.View
                 JobId = look.Job,
                 Sex = look.Sex == (byte)AccountSex.SEX_FEMALE ? AccountSex.SEX_FEMALE : AccountSex.SEX_MALE,
                 BodyStyle = look.BodyStyle,
-                HairStyle = look.HairStyle,
+                HairStyle = HeadOf(look.Job, look.Sex, look.HairStyle),
                 HairColour = look.HairColour,
                 ClothColour = look.ClothColour,
                 HeadTop = look.HeadTop,

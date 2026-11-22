@@ -308,6 +308,21 @@ namespace Uninarok.World.PlayTests
             Assert.That(() => frames(), UnityEngine.TestTools.Constraints.Is.Not.AllocatingGCMemory());
         }
 
+        [TestCase(0, 1, 0, 2)] // job, sex, server style, head file
+        [TestCase(0, 0, 0, 2)]
+        [TestCase(0, 1, 2, 1)]
+        [TestCase(0, 0, 2, 4)]
+        [TestCase(0, 1, 12, 11)]
+        [TestCase(0, 0, 12, 8)]
+        [TestCase(0, 1, 13, 13)]
+        [TestCase(4218, 1, 2, 2)]
+        [TestCase(4218, 0, 0, 1)]
+        public void LookMapping_HairStyle_IsTheClientsHeadFile(int job, int sex, int style, int head)
+        {
+            var look = new EntityLook { Job = (short)job, Sex = (byte)sex, HairStyle = (ushort)style };
+            Assert.AreEqual(head, EntityLookMapping.ToUnitLook(EntityKind.Player, look).HairStyle);
+        }
+
         [Test]
         public void LookMapping_PlayersByClass_TheRestByJob()
         {
