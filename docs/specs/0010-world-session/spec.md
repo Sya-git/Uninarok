@@ -1,0 +1,80 @@
+# SPEC-0010: World Session and Movement
+
+| | |
+|---|---|
+| **Status** | Approved (owner, 2026-11-21) |
+| **Created** | 2026-11-21 |
+| **Owner** | Jhonnatan |
+| **Depends on** | [SPEC-0001](../0001-networking-core/spec.md) (connection, flow, packets), [SPEC-0005](../0005-gat-map-data/spec.md) (walkable cells, heights), [SPEC-0006](../0006-rsw-map-scene/spec.md) (map scenes), [SPEC-0008](../0008-sprite-catalog/spec.md) (ground items), [SPEC-0009](../0009-unit-display/spec.md) (unit display, facing, camera) |
+| **Reference** | [Packets](../0001-networking-core/Packets/INDEX.md), [UninarokPosition](../../data/UninarokPosition.md), [UninarokMoveData](../../data/UninarokMoveData.md) |
+| **Plan** | [plan.md](plan.md) (Approved, 2026-11-21) |
+| **Tasks** | [tasks.md](tasks.md) (Approved, 2026-11-21) |
+
+## 1. Why
+
+SPEC-0001 carries a player to a loaded map and keeps the connection alive; SPEC-0009 can show any unit on a map from its ids. Nothing yet joins them: the client enters the map but shows nothing, cannot walk, and ignores every unit the server reports. This is the first gameplay spec. It brings the server's world onto the screen and lets the player move in it. Movement must line up with the server cell for cell, because combat, skills and pickups (next specs) all depend on where the client thinks units are. If client and server disagree on a path or on the time, units jump and clicks miss.
+
+## 2. Goals
+
+1. From the Bootstrap scene, a character enters its map and sees the players, NPCs, monsters and items the server reports, where the server says they are.
+2. The own character walks where the player clicks, along the path the server takes, and other units walk along the server's paths at the server's pace.
+3. The world state lives in one place, separate from what is drawn, so it can be tested without a scene and later specs read it.
+4. Map changes (warps, server moves) work without restarting the client.
+
+## 3. Non-goals
+
+- Combat (attack, damage, death and respawn of the own character, HP), skills, effects (warp portal effect, teleport effect, drop effect), item pickup (SPEC-0011 to 0013).
+- Chat, NPC dialogs, names over units, emotes, any game UI; login and character selection UI (the dev auto-login of SPEC-0001 drives the flow).
+- Pets, homunculi, mercenaries as controllable units, carts, mounts as input, vending and chat rooms.
+- Client-side prediction of the own walk before the server confirms it, and lag compensation: the client waits for the server, as the original client does (FR-9). The owner plans to move the server to real (float) positions later; that work extends this spec in a future one.
+- The visual of a disappearance: this spec keeps the reason and the moment (FR-5), the effects spec draws it, checked against the original client (logout is believed to show a small aura around the character, teleport perhaps a fade).
+- Maps without a converted scene and map data (SPEC-0006 converted three: prontera, izlude, prt_fild08).
+
+## 4. Requirements
+
+Priority: **M** = must, **S** = should.
+
+| ID | Pri | Requirement | Acceptance (observable) |
+|---|---|---|---|
+| FR-1 | M | Map entry: when the session is accepted by the map server, the client loads that map's scene and data, places the own character on the cell and facing the server gives, with the look from the selected character, and only then tells the server the map is loaded. Entry takes the camera from SPEC-0009. A map with no converted scene keeps the session alive, reports once which map is missing, and tracks the world without showing it. A character that enters dead lies dead and takes no input (respawn is the combat spec). | With the dev auto-login from Bootstrap, a character saved on prontera appears on its saved cell and facing, with its hair, colours and equipment, and the server then sends the units around it. A character saved on a map with no scene stays connected with one warning naming the map. A character saved dead appears lying dead; clicks and turns send nothing. |
+| FR-2 | M | Server time: the client keeps an estimate of the server's clock, started at map entry and corrected by each keepalive reply, that never runs backwards and never jumps by more than the correction it receives. All server times in packets (walk starts) are read against it. | In a test with a server clock offset by 5 s and 50–200 ms simulated round trip, the estimate stays within half the round trip plus 10 ms of the server clock, and is monotonic over 10 minutes. |
+| FR-3 | M | World model: one model per map session owns every known entity (own character, players, NPCs, monsters, other units, ground items) by its server id, with its kind, cell, sub-cell position, path, facing, head facing, look, walk speed and state (standing, sitting, dead). Packets change only the model; what is drawn follows the model and never changes it. The model works with nothing drawn. The model is emptied on map change and disconnect. | Replaying a recorded session into the model with no scene gives, at the end, the entity set and cells the server had (recorded "who is here" list). Destroying a unit's display leaves the model unchanged; a model entry with no display is still updated. |
+| FR-4 | M | Appearing: every entry the server sends (unit standing, unit just spawned, unit already walking, item on the ground) creates the entity, or updates it in place if the id is known: never two entities for one id. A unit already walking appears on the point of its path where it is now, by server time. | A monster that enters view mid-walk appears on the cell the server reports for that moment (FR-2), not at its start; receiving the same unit's entry twice leaves one unit. |
+| FR-5 | M | Disappearing, by reason. The server gives five: out of sight (also walking through a warp portal), died, logged out (also respawn), teleported (fly wing and butterfly wing alike, same map or not), feigned death. Out of sight, logged out and teleported remove the unit at once; died plays the unit's dead animation and then removes a monster, while a player stays lying dead until the server says otherwise; feigned death shows the dead pose and keeps the unit. Each disappearance is announced with its reason, unit and place, so the effects spec can attach its visual without changing this behaviour. Items disappear when the server says so. An unknown id is ignored. | Each reason fed for a monster and a player gives the behaviour listed and one announcement with that reason; a vanish for an id never seen logs nothing above info level and changes nothing. |
+| FR-6 | M | Walking: a unit told to walk follows the client's path (FR-10) from its current position to the destination, starting at the server's start time, one cell per its walk speed (diagonal steps cost 1.4 times as much, as on the server), turning to each step's direction and playing walk, then idle on arrival. A new walk order replaces the current one from where the unit is. | A monster with speed 200 walking 5 straight cells arrives 1 s after the server start time (±1 frame); with one diagonal step, 1.08 s. In a recorded session, every later stop, walk or vanish the server sends for a walking unit finds it within one cell of the cell the server gives. |
+| FR-7 | M | Stopping and correction: a stop places the unit on the given cell and ends its walk; a slide (knock-back, position fix) moves it to the cell at once without walking. | A stop mid-path snaps the unit to the given cell and plays idle; a slide moves it in one frame and keeps its facing. |
+| FR-8 | M | Facing, look and posture of others: a direction change sets body and head facing; a look change (job, hair style and colour, cloth colour, any equipment) updates the unit in place (SPEC-0009 FR-9); sit and stand switch the posture. | Changing another character's headgear on the server updates it mid-walk; that character sitting and turning its head is shown. |
+| FR-9 | M | Own walk: clicking a cell asks the server to walk there; the own character walks when the server confirms, along the client's path (FR-10), and stops where the server stops it. A click the server would refuse (destination not walkable, no path, or path longer than the server allows) sends nothing. Holding the button keeps walking towards the cell under the cursor, re-asking every 0.5 s and when that cell changes. | Clicking 10 cells away on prontera walks there and the server's position (FR-14) equals the client's at arrival; clicking a wall or a cell 20 straight cells away sends no request; holding the button and sweeping the cursor walks a curve. |
+| FR-10 | M | Pathfinding as the server: the path between two cells is the one Hercules finds: eight directions, straight cost 10, diagonal 14, no diagonal that cuts a blocked corner, the same heuristic and the same choice among equal paths, the same length limits (17 cells; 14 when no straight line exists). | For 10,000 random start and end cells on prontera, izlude and prt_fild08, the client's path equals the path Hercules computes on the same cells, step by step, including "no path" and "too long". |
+| FR-11 | M | Cell picking and cursor: the cell under the mouse is found on the real ground (heights, slopes, at any camera turn, tilt and zoom) and marked by a cell cursor that shows whether a walk there is possible. | On a slope of prt_fild08, at the lowest and highest tilt and 4 camera turns, the cursor sits on the cell the mouse covers (checked against the map data gizmos) and turns to "not walkable" over a wall. |
+| FR-12 | M | Camera: the SPEC-0009 camera follows the own character from map entry, and is placed on it at once (no slide across the map) after a map change. | Walking across prontera keeps the character centred; after a warp the first frame already shows the character. |
+| FR-13 | M | Turning the own character: shift + click turns towards the clicked cell without walking: a target within one direction step of the body turns the head left or right, further turns the body with the head straight; `/doridori` shakes the head left and right; `/bangbang` turns the body one step clockwise. The commands are typed in a dev-only command line, not in release builds, until a chat spec takes them over. Every turn is sent to the server and others see it. | Shift + click on each of 8 neighbouring cells gives the expected body and head facing; a second client sees each turn; each command does what it says. |
+| FR-14 | S | World debug view (dev only): per entity id, kind, cell and state; the own character's path and the last server-confirmed cell drawn on the map; the server time estimate. Not in release builds. | The view shows the own path and confirmed cell during a walk; a release build contains none of it. |
+| FR-15 | M | Map change: a move to another map on the same server loads the new map, clears the world and enters as FR-1, on the server's cell; a move to another map server reconnects through the SPEC-0001 flow and does the same. Walking into a warp cell is enough (the server decides). | Walking into prontera's south warp loads prt_fild08 with the character on the server's cell and only that map's units; a map-server move, with a two-map-server setup, ends in game on the new server. |
+| FR-16 | M | Ground items: an item on the ground shows its ground sprite (SPEC-0008) at its cell and sub-cell position; one that falls (drop) appears where the server places it. | A dropped red potion shows its sprite on the server's cell and sub-cell; it disappears when picked up by another client. |
+| FR-17 | M | Cost: 300 units walking on one map (100 players, 200 monsters) cost at most 1 ms per frame for the world update (model, movement, display sync, excluding SPEC-0009's unit update) on the owner's PC, with no per-frame garbage; one path search allocates nothing. | Profiler capture of a 300-unit session (real server or replayed) shows the world update ≤ 1 ms and 0 B GC allocation per frame; an allocation test of 1,000 path searches shows 0 B. |
+| FR-18 | M | Offline testing: the world model, time estimate and pathfinding are tested without a server and without a scene, including against recorded real sessions. | The tests run in the editor test runner; a recorded session replays into the model with the FR-3 result. |
+| FR-19 | M | Own sitting: the Insert key and the `/sit` / `/stand` commands (dev command line, FR-13) ask the server to sit or stand (toggle for Insert); the own character sits or stands when the server confirms and others see it. While sitting, a click on the ground sends no walk (the server refuses it); turning works as standing. | Insert sits the character and Insert again stands it, each after the server's confirmation; a second client sees both; clicking a cell while sitting sends nothing; a character the server refuses to seat (basic skill too low) stays standing. |
+
+## 5. Success criteria
+
+- From Bootstrap, on a local Hercules: enter prontera, walk to the south warp, arrive on prt_fild08, walk among monsters for 5 minutes; the own character's cell agrees with the server's (`@where`) at every stop (FR-14 readout), every server stop or walk finds a monster within one cell of where the client shows it, and no unit is duplicated or left behind.
+- FR-10's comparison passes on the three reference maps.
+- FR-17's budget is met at 300 walking units.
+
+## 6. Assumptions and constraints
+
+- Hercules is the reference for every rule here (`src/map/path.cpp`, `unit.cpp`, `clif.cpp`): path costs 10/14, corner rule and heuristic (`path_search`), `max_walk_path` 17 and the 14-cell rule (`OFFICIAL_WALKPATH` is defined in `src/config/core.h`), diagonal walk time ×14/10 (`unit.cpp`), view range `area_size` 14 (`conf/map/battle/client.conf`). Server values come from its configuration; the client uses Hercules's defaults and they are one setting each.
+- The client's cells must equal the server's: only prontera, izlude and prt_fild08 have server caches rebuilt from the client data (BACKLOG). Acceptance uses those three maps.
+- Packet IDs and layouts depend on PACKETVER 20220406: each one is checked against Hercules `packets_struct.h` and `clif.cpp`, not only the length table (BACKLOG), and gets its packet doc in the same change. Expected, to be confirmed in the plan: entries `0x09FD`/`0x09FE`/`0x09FF`, vanish `0x0080`, own walk `0x0087`, stop `0x0088`, slide `0x01FF`, direction `0x009C`, look `0x01D7`, sit/stand `0x008A`, ground items `0x009D` and `0x0ADD`, item gone `0x00A1`, map change `0x0091`, map-server change `0x0AC7`, server time `0x007F`; out: walk `0x035F`, turn `0x0361`, sit and stand `0x0437` (actions 2 and 3).
+- The server time comes from the existing keepalive and its reply (SPEC-0001 FR-14); this spec adds no new keepalive.
+- The own character's look comes from the character data of the character server (SPEC-0001) until the server sends a look change; its walk speed from the server's status value.
+- One display per entity uses SPEC-0009 (look, facing, head facing, animations, camera). Pathfinding uses only the map data of SPEC-0005.
+- The hot packets of SPEC-0001 (entries, vanish, stop, ground items) must not allocate; this spec keeps that through to the model.
+- Dev-only code is stripped from release builds (project rule).
+
+## 7. Open questions
+
+| # | Question | Blocks |
+|---|---|---|
+| — | None open. | — |
