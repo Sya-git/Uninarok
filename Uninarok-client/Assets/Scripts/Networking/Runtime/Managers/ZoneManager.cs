@@ -1,6 +1,7 @@
 using System;
 using Uninarok.Networking.Client;
 using Uninarok.Networking.Core.Dispatch;
+using Uninarok.Networking.Data;
 using Uninarok.Networking.Flow;
 using Uninarok.Networking.Packets.In.Map;
 using Uninarok.Networking.Packets.Out.Map;
@@ -23,6 +24,7 @@ namespace Uninarok.Networking.Managers
         private readonly PacketHandler<AUTHENTICATION_ACCEPTED> _onAuthenticated;
         private readonly PacketHandler<MAP_ENTRY_REFUSAL> _onRefusal;
         private readonly PacketHandler<SERVER_HEARTBEAT_RESPONSE> _onHeartbeatResponse;
+        private readonly PacketHandler<MAP_CHANGE> _onMapChange;
 
         // The keepalive starts at SendMapLoaded (the session is InGame, spec section 6) and stops at Exit.
         private bool _heartbeatActive;
@@ -42,6 +44,7 @@ namespace Uninarok.Networking.Managers
             _onAuthenticated = OnAuthenticated;
             _onRefusal = OnRefusal;
             _onHeartbeatResponse = OnHeartbeatResponse;
+            _onMapChange = OnMapChange;
         }
 
         /// <summary>AUTHENTICATION_ACCEPTED was stored in <c>Context.Entry</c>.</summary>
@@ -56,6 +59,13 @@ namespace Uninarok.Networking.Managers
         /// </summary>
         public event Action<uint, long, long> HeartbeatAnswered;
 
+        /// <summary>
+        /// The server moved the player to a map (or cell) of this map server: <c>Context.Map</c> has the new map and
+        /// <c>Context.Entry</c> the new cell, facing north (SPEC-0010 FR-15, PLAN-0010 D14). The heartbeat stopped until the next
+        /// <see cref="SendMapLoaded"/>.
+        /// </summary>
+        public event Action MapChangeOrdered;
+
         public void Enter()
         {
             _heartbeatActive = false;
@@ -63,6 +73,7 @@ namespace Uninarok.Networking.Managers
             _subscriptions.Add(_onAuthenticated);
             _subscriptions.Add(_onRefusal);
             _subscriptions.Add(_onHeartbeatResponse);
+            _subscriptions.Add(_onMapChange);
         }
 
         public void Exit()
@@ -131,6 +142,21 @@ namespace Uninarok.Networking.Managers
         }
 
         private void OnRefusal(in MAP_ENTRY_REFUSAL p) => EnterRefused?.Invoke(p.ErrorCode);
+
+        private void OnMapChange(in MAP_CHANGE p)
+        {
+            _heartbeatActive = false;
+            _context.Map = new MapEndpoint(_context.Map.Host, _context.Map.Port, in p.MapName, in _context.Map.DnsHost);
+            MoveEntry(p.X, p.Y);
+            MapChangeOrdered?.Invoke();
+        }
+
+        // The move packets carry no tick and no facing.
+        private void MoveEntry(ushort x, ushort y)
+        {
+            var position = new UninarokPosition(x, y, UninarokDirection.North);
+            _context.Entry = new MapEntry(0, in position, _context.Entry.XSize, _context.Entry.YSize);
+        }
 
         // The reply to HEARTBEAT_REQUEST carries the server tick.
         private void OnHeartbeatResponse(in SERVER_HEARTBEAT_RESPONSE p)

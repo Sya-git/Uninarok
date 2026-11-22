@@ -80,8 +80,9 @@
   *Done when:* `ZoneManager_HeartbeatAnswered_RttFromSendTime` passes; an answer with no outstanding request raises nothing; the SPEC-0001 keepalive tests are updated for the one extra heartbeat and pass (interval still 10 s).
   *Result (2026-11-22):* `ZoneManager_HeartbeatAnswered_RttFromSendTime` and two more pass; an answer with no outstanding request raises nothing; the keepalive tests count the extra heartbeat (481 of 482, the known line-ending one fails). The loopback journey test reads it too.
 
-- [ ] **T2.2** Tests, then implementation: `MAP_CHANGE` in `ZoneManager` and the `InGame → LoadingMap → InGame` edge of `NetworkFlow` (plan §4.8). (FR-15)
+- [x] **T2.2** Tests, then implementation: `MAP_CHANGE` in `ZoneManager` and the `InGame → LoadingMap → InGame` edge of `NetworkFlow` (plan §4.8). (FR-15)
   *Done when:* `NetworkFlow_MapChange_LoadingMapThenInGame` passes with the simulated connection (`Context.Map` name and `Context.Entry` updated, `MAP_LOADED` sent again, deadline armed); disconnect in the new `LoadingMap` still fails the flow.
+  *Result (2026-11-22):* `NetworkFlow_MapChange_LoadingMapThenInGame` and 3 more pass (485 of 486, the known line-ending one fails). One event for the game, `MapLoadRequested` (D15); the facing is north (D14).
 
 - [ ] **T2.3** Tests, then implementation: `MAP_SERVER_CHANGE` and the reconnect to the new map server (plan §4.8). (FR-15)
   *Done when:* `NetworkFlow_MapServerChange_Reconnects` passes (old connection dropped silently, connect to the new endpoint, `REQUEST_ENTER_MAP` with the same account, character and auth code, then the first-entry path).

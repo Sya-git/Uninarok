@@ -612,6 +612,95 @@ namespace Uninarok.Networking.Tests
             Assert.AreEqual(FailureCode.ConnectTimeout, _flow.Failure.Value.Code);
         }
 
+        // ---- map change on the same map server (SPEC-0010 FR-15, PLAN-0010 4.8) ----
+
+        private static MAP_CHANGE MapChange()
+        {
+            var b = new byte[MAP_CHANGE.Size - 2];
+            System.Text.Encoding.ASCII.GetBytes("prt_fild08.gat").CopyTo(b, 0);
+            b[16] = 170;
+            b[18] = 0x7B; b[19] = 0x01;      // 379
+            return new MAP_CHANGE(b);
+        }
+
+        [Test]
+        public void NetworkFlow_MapChange_LoadingMapThenInGame()
+        {
+            ToInGame();
+            _client.Status = ConnectionStatus.Connected;
+            string host = _flow.Context.Map.Host;
+            ushort port = _flow.Context.Map.Port;
+            int requests = 0;
+            FlowState seenIn = FlowState.Idle;
+            _flow.MapLoadRequested += () => { requests++; seenIn = _flow.State; };
+            _client.ClearRecords();
+
+            _client.Deliver(MapChange());
+
+            Assert.AreEqual(FlowState.LoadingMap, _flow.State);
+            Assert.AreEqual((1, FlowState.LoadingMap), (requests, seenIn));
+            Assert.AreEqual("prt_fild08.gat", _flow.Context.Map.MapName.ToString());
+            Assert.AreEqual((host, port), (_flow.Context.Map.Host, _flow.Context.Map.Port), "the same server");
+            Assert.AreEqual((170, 379), ((int)_flow.Context.Entry.Position.X, (int)_flow.Context.Entry.Position.Y));
+            Assert.AreEqual(UninarokDirection.North, _flow.Context.Entry.Position.Direction, "PLAN-0010 D14");
+            Assert.AreEqual(0, _client.DisconnectCalls);
+
+            _clock.AdvanceSeconds(10.1);
+            _flow.Tick();
+            Assert.AreEqual(0, _client.SentCount(PacketIds.HEARTBEAT_REQUEST), "no heartbeat while the map loads");
+
+            _flow.MapLoaded();
+            Assert.AreEqual(FlowState.InGame, _flow.State);
+            Assert.AreEqual(1, _client.SentCount(PacketIds.MAP_LOADED), "MAP_LOADED again");
+            Assert.AreEqual(1, _client.SentCount(PacketIds.HEARTBEAT_REQUEST), "and the heartbeat with it");
+            _clock.AdvanceSeconds(10_000);
+            _flow.Tick();
+            Assert.AreEqual(FlowState.InGame, _flow.State, "no deadline left");
+        }
+
+        [Test]
+        public void MapChange_WhileLoading_AsksForTheNewMap_AndRestartsTheDeadline()
+        {
+            ToInGame();
+            int requests = 0;
+            _flow.MapLoadRequested += () => requests++;
+            _client.Deliver(MapChange());
+            _clock.AdvanceSeconds(_settings.MapLoadSeconds - 1);
+            _client.Deliver(MapChange());
+            Assert.AreEqual(2, requests);
+            _clock.AdvanceSeconds(_settings.MapLoadSeconds - 1);
+            _flow.Tick();
+            Assert.AreEqual(FlowState.LoadingMap, _flow.State);
+        }
+
+        [Test]
+        public void MapChange_LoadDeadline_AndDisconnect_FailTheFlow()
+        {
+            ToInGame();
+            _client.Deliver(MapChange());
+            _clock.AdvanceSeconds(_settings.MapLoadSeconds + 1);
+            _flow.Tick();
+            Assert.AreEqual(FlowState.Failed, _flow.State);
+            Assert.AreEqual(FailureCode.ReplyTimeout, _flow.Failure.Value.Code);
+
+            SetUp();
+            ToInGame();
+            _client.Deliver(MapChange());
+            _client.RaiseDisconnected(new CloseInfo(CloseReason.RemoteClosed, "gone"), ConnectionRole.Map);
+            Assert.AreEqual(FlowState.Failed, _flow.State);
+            Assert.AreEqual(FailureCode.RemoteClosed, _flow.Failure.Value.Code);
+        }
+
+        [Test]
+        public void MapLoadRequested_OnFirstEntry_ComesWithTheAuthentication()
+        {
+            int requests = 0;
+            SetUp();
+            _flow.MapLoadRequested += () => requests++;
+            ToInGame();
+            Assert.AreEqual(1, requests);
+        }
+
         // ---- keepalives are driven by Tick (FR-14) ----
 
         [Test]
