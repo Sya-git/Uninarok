@@ -31,6 +31,9 @@ namespace Uninarok.Units
         /// <summary>The camera sector of the last tick (0 with no camera).</summary>
         public static int Sector { get; private set; }
 
+        /// <summary>Ticks run since the statics were reset (tests).</summary>
+        internal static int TickCount { get; private set; }
+
         /// <summary>Time of the last tick in milliseconds (the sandbox readout).</summary>
         public static double LastTickMs { get; private set; }
 
@@ -42,6 +45,9 @@ namespace Uninarok.Units
             s_views[s_count++] = view;
             if (Application.isPlaying && s_driver == null) s_driver = UnitSystemDriver.Create();
         }
+
+        /// <summary>One tick per frame: only the current driver runs it, whatever other driver is alive.</summary>
+        internal static bool IsDriver(UnitSystemDriver driver) => s_driver == driver;
 
         internal static void Unregister(UnitView view)
         {
@@ -58,6 +64,7 @@ namespace Uninarok.Units
         internal static void Tick(float deltaSeconds)
         {
             TickMarker.Begin();
+            TickCount++;
             long start = System.Diagnostics.Stopwatch.GetTimestamp();
 
             var camera = Camera != null ? Camera : UnityEngine.Camera.main;

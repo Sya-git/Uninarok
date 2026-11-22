@@ -84,6 +84,20 @@ namespace Uninarok.Units.PlayTests
         }
 
         [UnityTest, Timeout(120000)]
+        public IEnumerator UnitSystem_TicksOncePerFrame_WithAStrayDriver()
+        {
+            Spawn(UnitPlayData.Novice());
+            yield return WaitLoaded();
+            var stray = UnitSystemDriver.Create(); // as a driver left over from an earlier play session
+            Assert.That(stray.gameObject.hideFlags & HideFlags.DontSave, Is.EqualTo(HideFlags.None), "leaves with play mode");
+            yield return null;
+            int ticks = UnitSystem.TickCount, frames = Time.frameCount;
+            for (int i = 0; i < 10; i++) yield return null;
+            Assert.That(UnitSystem.TickCount - ticks, Is.EqualTo(Time.frameCount - frames));
+            Assert.That(stray == null, Is.True, "the stray one is gone");
+        }
+
+        [UnityTest, Timeout(120000)]
         public IEnumerator UnitView_DeadHolds_AttackOnceReportsItsEnd()
         {
             var u = Spawn(UnitPlayData.Swordsman());

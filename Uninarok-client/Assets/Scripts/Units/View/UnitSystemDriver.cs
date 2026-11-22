@@ -12,11 +12,16 @@ namespace Uninarok.Units
     {
         internal static UnitSystemDriver Create()
         {
-            var go = new GameObject("UnitSystem") { hideFlags = HideFlags.HideAndDontSave };
+            // Not DontSave: such an object survives leaving play mode, and every later session would tick once more per frame.
+            var go = new GameObject("UnitSystem") { hideFlags = HideFlags.HideInHierarchy };
             DontDestroyOnLoad(go);
             return go.AddComponent<UnitSystemDriver>();
         }
 
-        void LateUpdate() => UnitSystem.Tick(Time.deltaTime);
+        void LateUpdate()
+        {
+            if (UnitSystem.IsDriver(this)) UnitSystem.Tick(Time.deltaTime);
+            else Destroy(gameObject); // left over from an earlier session
+        }
     }
 }

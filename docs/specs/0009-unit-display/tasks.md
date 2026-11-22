@@ -196,6 +196,10 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
   *Done when:* every `JOB_BABY_*` loads a body and a head at scale 0.8 with the adult's parts; the high first classes and the `_T` classes load their base sprites at scale 1; seen in the Entity Sandbox.
   *Result (2026-11-22):* `UnitLoader_BabyJobs_AreTheirAdultClassAt08`, `_BabySwordsman_HasTheSwordsmansParts`, `_HighAndTranscendentJobs_UseTheirBaseSprites` pass (Units EditMode 95 of 95); baby swordsman and baby acolyte seen beside the adults on prontera. Hercules' placeholders `JOB_DUMMY4230` to `4237` still have no body: their base jobs are not in `PlayerJob`.
 
+- [x] **T8.5** One `UnitSystem` tick per frame in every play session (added 2026-11-22, owner report). (FR-5, FR-13, FR-14)
+  *Done when:* with a driver left over from an earlier session the tick still runs once per frame; in the Entity Sandbox, in a second play session, a walk frame lasts the body's frame time.
+  *Result (2026-11-22):* before: 4 ticks per frame. After: 1; walk frame time 75 ms, measured 75.5 ms over 4 s. `UnitSystem_TicksOncePerFrame_WithAStrayDriver` passes (PlayMode 16 of 16). FR-14 measured again (editor, 300 units, 600 frames): 0.73 ms mean, 1.97 ms max.
+
 - [ ] **T8.3** Close the spec. (all)
   *Done when:* spec success criteria checked and reported; sprite-catalog.md §1 points the composition rows to SPEC-0009; the two BACKLOG items of plan §7 are removed (closed) and leftovers added; spec, plan and tasks status `Implemented`.
   *Open (2026-11-22):* waits for T6.4 and T8.1. Done already: sprite-catalog.md §1 points to SPEC-0009, leftovers are in BACKLOG.
