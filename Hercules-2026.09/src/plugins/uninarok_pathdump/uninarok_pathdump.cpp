@@ -212,7 +212,7 @@ static int log_in_view(struct block_list *bl, va_list ap)
 		if (bl->type == BL_NPC && (BL_UCAST(BL_NPC, bl)->option & (OPTION_HIDE | OPTION_INVISIBLE)) != 0)
 			return 0;
 	}
-	struct unit_data *ud = unit->bl2ud(bl);
+	struct unit_data *ud = bl->type == BL_ITEM ? NULL : unit->bl2ud(bl); // it asserts on items
 	fprintf(walk_log, "U %d %d %d %d %d %d %d\n", bl->id, (int)bl->type, cls, bl->x, bl->y,
 		ud != NULL && ud->walktimer != INVALID_TIMER ? 1 : 0, vd != NULL ? (int)vd->dead_sit : 0);
 	(*n)++;
