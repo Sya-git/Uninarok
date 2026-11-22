@@ -167,7 +167,6 @@ namespace Uninarok.World.View
             if (model == null) return;
             using var marker = UpdateMarker.Auto();
             uint now = Clock.Now;
-            Session.Own.Tick(now);
             model.Advance(now);
             if (_presenter != null && _map != null)
             {

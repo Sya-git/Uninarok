@@ -18,5 +18,4 @@ MonoBehaviour:
   WarpKeepsDirection: 0
   HoldRepeatMs: 500
   DeadMonsterLingerMs: 5000
-  DoridoriStepMs: 200
   WalkAnimationSpeed: 150

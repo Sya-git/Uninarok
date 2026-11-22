@@ -255,15 +255,16 @@ namespace Uninarok.World.Tests
 
         static object[][] Neighbours() => new[]
         {
-            // facing south (4): one step beside is the head, the rest the body
+            // facing south (4): one step beside is the head; farther, the head looks there and the body stops one step short;
+            // behind, both (the owner's comparison with the original client, 2026-11-22)
             new object[] { 0, -1, UninarokDirection.South, HeadDirection.Straight },
             new object[] { 1, -1, UninarokDirection.South, HeadDirection.Left },      // south-east is 5, one step counter-clockwise
             new object[] { -1, -1, UninarokDirection.South, HeadDirection.Right },    // south-west is 3
-            new object[] { 1, 0, UninarokDirection.East, HeadDirection.Straight },
-            new object[] { -1, 0, UninarokDirection.West, HeadDirection.Straight },
-            new object[] { 1, 1, UninarokDirection.NorthEast, HeadDirection.Straight },
+            new object[] { 1, 0, UninarokDirection.SouthEast, HeadDirection.Left },
+            new object[] { -1, 0, UninarokDirection.SouthWest, HeadDirection.Right },
+            new object[] { 1, 1, UninarokDirection.East, HeadDirection.Left },
             new object[] { 0, 1, UninarokDirection.North, HeadDirection.Straight },
-            new object[] { -1, 1, UninarokDirection.NorthWest, HeadDirection.Straight },
+            new object[] { -1, 1, UninarokDirection.West, HeadDirection.Right },
         };
 
         [TestCaseSource(nameof(Neighbours))]
@@ -290,6 +291,22 @@ namespace Uninarok.World.Tests
             Assert.IsTrue(_rig.Session.Own.TurnTowards(150 + dx, 199));
             Assert.AreEqual(ChangeDirection(HeadDirection.Straight, body), _rig.Client.Sent[3].Bytes);
             Assert.AreEqual((body, HeadDirection.Straight), (Own.Facing, Own.Head));
+        }
+
+        // The owner's pictures: body west, head south-west; a click on the east turns both east.
+        [Test]
+        public void OwnCharacter_TurnTowards_Behind_TurnsBodyAndHead()
+        {
+            _rig.ToInGame(Character());
+            var own = _rig.Session.Own;
+            own.TurnTowards(149, 200);
+            Assert.AreEqual((UninarokDirection.SouthWest, HeadDirection.Right), (Own.Facing, Own.Head));
+            own.TurnTowards(149, 200);
+            Assert.AreEqual((UninarokDirection.West, HeadDirection.Straight), (Own.Facing, Own.Head), "the same click again");
+            own.TurnTowards(149, 199);
+            Assert.AreEqual((UninarokDirection.West, HeadDirection.Left), (Own.Facing, Own.Head));
+            own.TurnTowards(151, 200);
+            Assert.AreEqual((UninarokDirection.East, HeadDirection.Straight), (Own.Facing, Own.Head));
         }
 
         [Test]
@@ -328,35 +345,16 @@ namespace Uninarok.World.Tests
         {
             _rig.ToInGame(Character());
             var own = _rig.Session.Own;
-            Assert.IsTrue(own.Doridori());
-            Assert.AreEqual(HeadDirection.Left, Own.Head);
-            void Pass(int ms)
+            foreach (var head in new[] { HeadDirection.Left, HeadDirection.Right, HeadDirection.Straight, HeadDirection.Left })
             {
-                _rig.Local.AdvanceMs(ms);
-                own.Tick(_rig.Clock.Now);
+                _rig.Client.ClearRecords();
+                Assert.IsTrue(own.Doridori());
+                Assert.AreEqual(1, _rig.Client.Sent.Count, "one step for each command");
+                Assert.AreEqual(ChangeDirection(head, UninarokDirection.South), _rig.Client.Sent[0].Bytes);
+                Assert.AreEqual((UninarokDirection.South, head), (Own.Facing, Own.Head));
             }
-            Pass(199);
-            Assert.AreEqual(1, _rig.Client.Sent.Count);
-            Pass(1);
-            Assert.AreEqual(HeadDirection.Right, Own.Head);
-            Pass(200);
-            Assert.AreEqual(HeadDirection.Straight, Own.Head);
-            Pass(1000);
-            Assert.AreEqual(3, _rig.Client.Sent.Count);
-            Assert.AreEqual(ChangeDirection(HeadDirection.Left, UninarokDirection.South), _rig.Client.Sent[0].Bytes);
-            Assert.AreEqual(ChangeDirection(HeadDirection.Right, UninarokDirection.South), _rig.Client.Sent[1].Bytes);
-            Assert.AreEqual(ChangeDirection(HeadDirection.Straight, UninarokDirection.South), _rig.Client.Sent[2].Bytes);
-
-            own.Doridori();
-            Pass(200);
-            own.Doridori();                                    // starts over
-            Assert.AreEqual(HeadDirection.Left, Own.Head);
-            Pass(200);
-            Assert.AreEqual(HeadDirection.Right, Own.Head);
             _rig.Client.Deliver(WorldSessionTests.OwnMove(150, 200, 160, 200, _rig.Clock.Now));
-            int sent = _rig.Client.Sent.Count;
-            Pass(500);
-            Assert.AreEqual(sent, _rig.Client.Sent.Count, "walking ends it");
+            Assert.IsFalse(own.Doridori(), "not while walking");
         }
 
         [Test]

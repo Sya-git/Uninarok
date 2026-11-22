@@ -33,11 +33,6 @@ namespace Uninarok.World
         readonly INetworkClient _client;
         readonly NetworkFlow _flow;
         WalkPath _path;
-        // The heads of /doridori still to come.
-        int _doridoriNext = DoridoriSteps;
-        uint _doridoriAt;
-
-        const int DoridoriSteps = 3;
 
         internal OwnCharacter(WorldSession session, INetworkClient client, NetworkFlow flow)
         {
@@ -121,9 +116,9 @@ namespace Uninarok.World
         // ---- turn (FR-13): the server does not echo a turn to who turned, so it is applied when it was sent (D9) ----
 
         /// <summary>
-        /// Shift + click: a cell one direction step beside the body's turns the head, and the body when the head is turned there
-        /// already; the body's own direction turns the head straight, any other the body. False when nothing was sent: not able to
-        /// act, walking, or the own cell.
+        /// Shift + click: the head ends in the direction of the cell. One step beside the body's, the head turns alone, or the body
+        /// when the head is turned there already; two or three steps, the body stops one step short of it (PLAN-0010 D31); behind,
+        /// the body turns with the head straight. False when nothing was sent: not able to act, walking, or the own cell.
         /// </summary>
         public bool TurnTowards(int x, int y)
         {
@@ -131,41 +126,29 @@ namespace Uninarok.World
             ref readonly var own = ref model[slot];
             if (x == own.CellX && y == own.CellY) return false;
             int target = DirectionTo(own.CellX, own.CellY, x, y), body = (int)own.Facing;
-            int step = (target - body) & 7;
-            if (step == 0) return Turn(model, own.Facing, HeadDirection.Straight);
-            if (step == 1 && own.Head != HeadDirection.Left) return Turn(model, own.Facing, HeadDirection.Left); // counter-clockwise
-            if (step == 7 && own.Head != HeadDirection.Right) return Turn(model, own.Facing, HeadDirection.Right);
-            return Turn(model, (UninarokDirection)target, HeadDirection.Straight);
+            int step = (target - body) & 7; // counter-clockwise
+            if (step == 0 || step == 4) return Turn(model, (UninarokDirection)target, HeadDirection.Straight);
+            var head = step < 4 ? HeadDirection.Left : HeadDirection.Right;
+            if ((step == 1 || step == 7) && own.Head == head) return Turn(model, (UninarokDirection)target, HeadDirection.Straight);
+            return Turn(model, (UninarokDirection)((target + (step < 4 ? 7 : 1)) & 7), head);
         }
 
-        /// <summary><c>/doridori</c>: the head left, right, straight; a new command starts over.</summary>
+        /// <summary><c>/doridori</c>: the head one step on: from straight to the left, then the right, then straight (D32).</summary>
         public bool Doridori()
         {
-            if (!TryTurning(out _, out _)) return false;
-            _doridoriNext = 0;
-            _doridoriAt = _session.Clock.Now;
-            Tick(_doridoriAt);
-            return true;
+            if (!TryTurning(out var model, out int slot)) return false;
+            var head = model[slot].Head switch
+            {
+                HeadDirection.Straight => HeadDirection.Left,
+                HeadDirection.Left => HeadDirection.Right,
+                _ => HeadDirection.Straight,
+            };
+            return Turn(model, model[slot].Facing, head);
         }
 
         /// <summary><c>/bangbang</c>: the body one step clockwise, the head straight.</summary>
         public bool Bangbang() =>
             TryTurning(out var model, out int slot) && Turn(model, (UninarokDirection)(((int)model[slot].Facing + 7) & 7), HeadDirection.Straight);
-
-        /// <summary>Runs what takes time (a shaking head); called every frame with the server time.</summary>
-        public void Tick(uint now)
-        {
-            if (_doridoriNext >= DoridoriSteps || ServerClock.Diff(now, _doridoriAt) < 0) return;
-            if (!TryTurning(out var model, out int slot))
-            {
-                _doridoriNext = DoridoriSteps; // it walks or died: the head is straight
-                return;
-            }
-            var head = _doridoriNext == 0 ? HeadDirection.Left : _doridoriNext == 1 ? HeadDirection.Right : HeadDirection.Straight;
-            Turn(model, model[slot].Facing, head);
-            _doridoriNext++;
-            _doridoriAt = unchecked(now + (uint)Math.Max(0, _session.Settings.DoridoriStepMs));
-        }
 
         bool TryTurning(out WorldModel model, out int slot) =>
             TryGet(out model, out slot) && model[slot].State != EntityState.Dead && !model[slot].Walking;

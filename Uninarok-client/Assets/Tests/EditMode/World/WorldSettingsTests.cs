@@ -12,7 +12,7 @@ namespace Uninarok.World.Tests
             var s = AssetDatabase.LoadAssetAtPath<WorldSettings>("Assets/Settings/World/WorldSettings.asset");
             Assert.IsNotNull(s, "Assets/Settings/World/WorldSettings.asset");
             Assert.AreEqual((17, 14, 1), (s.MaxWalkPath, s.MaxWalkPathObstructed, s.CellStackLimit));
-            Assert.AreEqual((500, 5000, 200, 150), (s.HoldRepeatMs, s.DeadMonsterLingerMs, s.DoridoriStepMs, s.WalkAnimationSpeed));
+            Assert.AreEqual((500, 5000, 150), (s.HoldRepeatMs, s.DeadMonsterLingerMs, s.WalkAnimationSpeed));
             Assert.IsFalse(s.WarpKeepsDirection);
         }
     }

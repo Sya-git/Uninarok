@@ -24,8 +24,6 @@ namespace Uninarok.World
         [Min(50)] public int HoldRepeatMs = 500;
         [Tooltip("How long a dead monster stays before it is removed, in ms (PLAN-0010 D8).")]
         [Min(0)] public int DeadMonsterLingerMs = 5000;
-        [Tooltip("Time between the head turns of /doridori, in ms.")]
-        [Min(0)] public int DoridoriStepMs = 200;
         [Tooltip("The walk speed (ms per cell) at which the walk animation plays at its own speed.")]
         [Min(1)] public int WalkAnimationSpeed = 150;
 

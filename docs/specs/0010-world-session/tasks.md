@@ -41,7 +41,7 @@
 - [ ] **T0.4** Owner: compare the own-character turn controls with the original client. (FR-9, FR-13)
   Shift + click on each of the 8 neighbours; `/doridori` (order and timing); `/bangbang` (direction); the repeat rate when the left button is held.
   *Done when:* the results are written into plan §4.6/§4.11 (Decisions note for any difference from the spec's rule, which then goes to the owner as a spec change, CLAUDE.md §1.4 rule 6).
-  *Open (2026-11-22):* the owner compared (2026-11-22): `/bangbang` is right; shift + click was not: the second click on the head's side turns the body (fixed, D28, FR-13 amended); `/doridori` could not be seen, the character had no head (fixed, D27). Left: `/doridori`, the fixed shift + click and the repeat rate of a held button.
+  *Open (2026-11-22):* the owner compared (2026-11-22): `/bangbang` is right; shift + click was not: the second click on the head's side turns the body (fixed, D28, FR-13 amended); `/doridori` could not be seen, the character had no head (fixed, D27). Second comparison (2026-11-22): the body turns on the second click, right; a click two or three steps away turned the body and the head the same amount, where the original leaves the body one step short (fixed, D31); `/doridori` ran its steps in one command, where the original does one for each (fixed, D32); FR-13 amended. Left: the fixed shift + click and `/doridori`, and the repeat rate of a held button.
 
 - [x] **T0.5** Record real sessions for replay tests. (FR-3, FR-18)
   With the SPEC-0001 capture tee and the dev auto-login on the local server: (a) enter prontera, stand 60 s near NPCs and players; (b) walk among monsters on prt_fild08 for 3 minutes, including monster deaths and a dropped item; (c) walk into prontera's south warp. Save the server's "who is here" state at the end of each (GM `@who`-style dump or the walk log of T3.8 once available).
@@ -168,6 +168,7 @@
 - [x] **T5.4** Tests, then implementation: `TurnTowards`, `Doridori`, `Bangbang` (plan §4.6, rules from T0.4). (FR-13)
   *Done when:* `OwnCharacter_TurnTowards_8Neighbours`, `_Doridori_Sequence`, `_Bangbang_Clockwise` pass with the `CHANGE_DIRECTION` bytes checked; the model follows the echo (or the send, per T0.2's D9).
   *Result (2026-11-22):* `OwnCharacter_TurnTowards_8Neighbours`, `_Doridori_Sequence`, `_Bangbang_Clockwise` pass with the `CHANGE_DIRECTION` bytes; the model turns when the packet was queued (D9). The rules are the spec's: T0.4 (the original client) is the owner's.
+  *Changed (2026-11-22):* after the owner's comparisons the rules are those of D28, D31 and D32; `OwnCharacter_TurnTowards_8Neighbours`, `_TheHeadsSideAgain_TurnsTheBody`, `_Behind_TurnsBodyAndHead` and `_Doridori_Sequence` pass (World EditMode 161/161, PlayMode 44/44).
 
 - [x] **T5.5** Tests, then implementation: `Sit`, `Stand`, `ToggleSit` (plan §4.6, D9). (FR-19)
   *Done when:* `OwnCharacter_Sit_TogglesOnConfirmOnly` passes (no state change without the server's `UNIT_ACT`; a walk request while sitting returns `Sitting` and sends nothing).
@@ -221,7 +222,7 @@
 
 - [x] **T8.1** `DevCommandLine` with `/doridori`, `/bangbang`, `/sit`, `/stand` (plan §4.12). (FR-13, FR-19)
   *Done when:* each command does what FR-13/FR-19 say on the local server and a second client sees it; game input is off while the field has focus.
-  *Result (2026-11-22):* tests pass (commands, game input off while the field is open). On the local server each command acts on the own character and a second client sees it: `/bangbang` one step clockwise, `/doridori` left, right, straight 200 ms apart, sitting and standing (`evidence/t8.1-sitting-seen-by-second-client.png`), both ways between two players (the turns and `/doridori`) and from the own character (sitting).
+  *Result (2026-11-22):* tests pass (commands, game input off while the field is open). On the local server each command acts on the own character and a second client sees it: `/bangbang` one step clockwise, `/doridori` left, right, straight (200 ms apart then; one for each command since D32), sitting and standing (`evidence/t8.1-sitting-seen-by-second-client.png`), both ways between two players (the turns and `/doridori`) and from the own character (sitting).
 
 - [x] **T8.2** `WorldDebugView` (plan §4.12). (FR-14)
   *Done when:* F9 shows the entity list, clock estimate and round trip, and draws the own path and server cell during a walk (screenshot); drawing allocates 0 B per frame.
