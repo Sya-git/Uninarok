@@ -91,6 +91,10 @@ namespace Uninarok.World
         public int ItemId, ItemAmount;
         /// <summary>Items.</summary>
         public bool Identified;
+        /// <summary>Items: how high above the ground it is, in cells; 0 once it fell (PLAN-0010 D37).</summary>
+        public float Height;
+        internal bool Falling;
+        internal uint FallStarts;
 
         /// <summary>Milliseconds per straight cell.</summary>
         public short Speed;
@@ -105,8 +109,11 @@ namespace Uninarok.World
         /// <summary>The step being walked (an index into the path) and when it starts and ends, in server ticks.</summary>
         public int StepIndex;
         public uint StepStarts, StepEnds;
-        /// <summary>Where the first step starts from: the shown position when the walk was ordered (PLAN-0010 D7).</summary>
-        internal float FromX, FromY;
+        /// <summary>It was walking when this walk was ordered: the first step runs in from before its start (PLAN-0010 D36).</summary>
+        internal bool RunsIn;
+        /// <summary>How far it was shown from where the walk had it when it was ordered; gone at <see cref="OffEnds"/> (D36).</summary>
+        internal float OffX, OffY;
+        internal uint OffStarts, OffEnds;
 
         /// <summary>A dead unit that is removed at <see cref="RemoveAt"/>.</summary>
         internal bool Removing;

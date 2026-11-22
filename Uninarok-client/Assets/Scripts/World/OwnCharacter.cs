@@ -85,6 +85,20 @@ namespace Uninarok.World
             return WalkRequestResult.Sent;
         }
 
+        /// <summary>It walks, and to this cell.</summary>
+        public bool IsWalkingTo(int x, int y)
+        {
+            if (!TryGet(out var model, out int slot) || !model[slot].Walking) return false;
+            ref readonly var path = ref model.PathOf(slot);
+            int endX = path.StartX, endY = path.StartY;
+            for (int i = 0; i < path.Length; i++)
+            {
+                endX += HerculesPathfinder.Dx(path.Step(i));
+                endY += HerculesPathfinder.Dy(path.Step(i));
+            }
+            return x == endX && y == endY;
+        }
+
         // map_count_oncell(BL_CHAR | BL_NPC, 0x1 | 0x2): who stands on the cell. Pets and items do not count, nor hidden warps.
         static int CountOnCell(WorldModel model, int x, int y)
         {

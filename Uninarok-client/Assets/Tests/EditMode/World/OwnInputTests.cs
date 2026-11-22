@@ -95,6 +95,25 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(4, Moves);
         }
 
+        // D36: the server starts a repeated walk over on its next cell, which is felt.
+        [Test]
+        public void Holding_OnACellItWalksTo_AsksNoMore()
+        {
+            Press(_mouse.leftButton);
+            Frame();
+            InputSystem.Update();
+            _rig.Client.Deliver(WorldSessionTests.OwnMove(150, 200, 155, 200, _rig.Clock.Now));
+            Assert.IsTrue(_rig.Session.Own.IsWalkingTo(155, 200));
+            Assert.IsFalse(_rig.Session.Own.IsWalkingTo(154, 200));
+            Frame(0.6);
+            Assert.AreEqual(1, Moves, "on its way there");
+            _x = 157;
+            Frame();
+            Assert.AreEqual(2, Moves, "another cell at once");
+            Frame(0.6);
+            Assert.AreEqual(3, Moves, "not walking there yet: again");
+        }
+
         [Test]
         public void ShiftClick_Turns_AndDoesNotWalk()
         {

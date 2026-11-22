@@ -18,4 +18,8 @@ MonoBehaviour:
   WarpKeepsDirection: 0
   HoldRepeatMs: 500
   DeadMonsterLingerMs: 5000
+  WalkCorrectionMs: 500
+  ItemFallMs: 500
+  ItemFallHeight: 5
+  ItemShadowScale: 0.25
   WalkAnimationSpeed: 150

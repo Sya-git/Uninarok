@@ -234,6 +234,9 @@ namespace Uninarok.World.PlayTests
             Assert.IsTrue(shown, "its sprite");
             Assert.AreEqual((1, 0), (_presenter.ItemCount, _presenter.ShownCount));
             Assert.Greater(_source.HeldCount, 0);
+            for (int i = 0; i < 600 && view.Shadow == null; i++) yield return null;
+            Assert.IsTrue(view.Shadow.Visible && view.Shadow.Renderer.sprite != null, "its shadow");
+            Assert.AreEqual((0.25f, 0f), (view.Shadow.Scale, view.Height));
 
             _model.RemoveItem(501);
             _presenter.Sync(_model);
@@ -252,6 +255,26 @@ namespace Uninarok.World.PlayTests
             _presenter.Sync(_model);
             Assert.IsNotNull(_presenter.ViewOf(9));
             Assert.AreEqual((1, 1), (_presenter.ItemCount, _presenter.ShownCount));
+        }
+
+        [UnityTest, Category("NeedsData")]
+        public IEnumerator ADroppedItem_FallsToItsShadow()
+        {
+            _model.AddItem(501, 501, true, 10, 20, 6, 6, 1, true, 1000);
+            _presenter.Sync(_model);
+            var view = _presenter.ItemViewOf(501);
+            for (int i = 0; i < 600 && (!view.Loaded || view.Shadow == null); i++) yield return null;
+            Assert.AreEqual(2.5f, view.Height, 1e-4f, "5 cells");
+            float ground = view.Shadow.Renderer.transform.position.y;
+            _model.Advance(1250);
+            _presenter.Sync(_model);
+            Assert.AreEqual(1.25f, view.Height, 1e-4f);
+            _model.Advance(1500);
+            _presenter.Sync(_model);
+            Assert.AreEqual((0f, ground), (view.Height, view.Shadow.Renderer.transform.position.y), "the shadow stays on the ground");
+            _model.RemoveItem(501);
+            _presenter.Sync(_model);
+            Assert.AreEqual(0, _source.HeldCount);
         }
 
         [UnityTest, Category("NeedsData")]

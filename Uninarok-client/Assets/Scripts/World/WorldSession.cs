@@ -266,7 +266,7 @@ namespace Uninarok.World
 
         void OnItem(in ITEM_ENTRY p) => Model?.AddItem(p.ItemObjectId, (int)p.ItemId, p.Identified, p.X, p.Y, p.SubX, p.SubY, p.Amount);
 
-        void OnItemFall(in ITEM_FALL_ENTRY p) => Model?.AddItem(p.ItemObjectId, (int)p.ItemId, p.Identified, p.X, p.Y, p.SubX, p.SubY, p.Amount);
+        void OnItemFall(in ITEM_FALL_ENTRY p) => Model?.AddItem(p.ItemObjectId, (int)p.ItemId, p.Identified, p.X, p.Y, p.SubX, p.SubY, p.Amount, true, _clock.Now);
 
         void OnItemGone(in ITEM_DISAPPEAR p) => Model?.RemoveItem(p.ItemObjectId);
 

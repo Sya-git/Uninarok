@@ -10,7 +10,7 @@ namespace Uninarok.World.View
 {
     /// <summary>
     /// One item on the ground (SPEC-0010 FR-16; PLAN-0010 4.9): its ground sprite from the catalog, an animation or a still,
-    /// facing the camera as units do. Pooled by <see cref="WorldPresenter"/>; it has no <c>Update</c>.
+    /// facing the camera as units do, over the client's shadow. Pooled by <see cref="WorldPresenter"/>; it has no <c>Update</c>.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class GroundItemView : MonoBehaviour
@@ -20,7 +20,9 @@ namespace Uninarok.World.View
         Transform _pivot;
         SpriteActor _actor;
         SpriteRenderer _still;
-        AssetReference _held;
+        UnitShadow _shadow;
+        float _yaw;
+        AssetReference _held, _heldShadow;
         int _request;
 
         /// <summary>The item shown or being loaded; 0: none.</summary>
@@ -30,6 +32,17 @@ namespace Uninarok.World.View
 
         internal SpriteRenderer Still => _still;
         internal SpriteActor Actor => _actor;
+        internal UnitShadow Shadow => _shadow;
+
+        /// <summary>The scale of its shadow; 0: none. Counts from the next <see cref="Show"/>.</summary>
+        public float ShadowScale { get; set; }
+
+        /// <summary>How high above the ground it is, in world units; its shadow stays on the ground.</summary>
+        public float Height
+        {
+            get => _pivot.localPosition.y;
+            set => _pivot.localPosition = new Vector3(0f, value, 0f);
+        }
 
         internal static GroundItemView Create(IUnitAssetSource assets, Material material, Transform parent)
         {
@@ -77,7 +90,38 @@ namespace Uninarok.World.View
                     Loaded = true;
                 });
             }
+            ShowShadow(request);
             return true;
+        }
+
+        void ShowShadow(int request)
+        {
+            var tables = _assets.Tables;
+            if (ShadowScale <= 0f || tables == null || tables.Shadow.IsEmpty) return;
+            if (tables.Shadow.HasAnimation)
+            {
+                _heldShadow = tables.Shadow.Animation;
+                _assets.Acquire<SpriteAnimation>(tables.Shadow.Animation, a =>
+                {
+                    if (request == _request && a != null && a.Sprites.Length > 0) Apply(a.Sprites[0]);
+                });
+            }
+            else
+            {
+                _heldShadow = tables.Shadow.Still;
+                _assets.Acquire<Sprite>(tables.Shadow.Still, s =>
+                {
+                    if (request == _request && s != null) Apply(s);
+                });
+            }
+
+            void Apply(Sprite sprite)
+            {
+                _shadow ??= new UnitShadow(transform, _material);
+                _shadow.Apply(sprite, ShadowScale);
+                _shadow.Turn(_yaw);
+                _shadow.Visible = true;
+            }
         }
 
         /// <summary>Shows nothing and releases the sprite.</summary>
@@ -97,9 +141,21 @@ namespace Uninarok.World.View
                 _still.enabled = false;
                 _still.sprite = null;
             }
-            if (_held == null) return;
-            _assets.Release(_held);
-            _held = null;
+            Height = 0f;
+            if (_shadow != null)
+            {
+                _shadow.Visible = false;
+                _shadow.Apply(null, 0f);
+            }
+            Release(ref _held);
+            Release(ref _heldShadow);
+        }
+
+        void Release(ref AssetReference held)
+        {
+            if (held == null) return;
+            _assets.Release(held);
+            held = null;
         }
 
         public void PlaceOn(MapData map, Vector3 position)
@@ -108,7 +164,12 @@ namespace Uninarok.World.View
             transform.position = position;
         }
 
-        internal void Face(in Quaternion camera) => _pivot.rotation = camera;
+        internal void Face(in Quaternion camera)
+        {
+            _pivot.rotation = camera;
+            _yaw = UnitSystem.YawOf(camera);
+            if (_shadow != null) _shadow.Turn(_yaw);
+        }
 
         void OnDestroy() => Clear();
 

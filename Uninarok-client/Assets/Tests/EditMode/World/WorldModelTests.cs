@@ -216,13 +216,60 @@ namespace Uninarok.World.Tests
             Assert.AreEqual((52.5f, 50f), (Get(Poring).PosX, Get(Poring).PosY), "no snap");
             Assert.AreEqual(animation, Get(Poring).AnimationVersion, "the walk animation goes on");
             _world.Advance(600);
-            Assert.AreEqual((52.25f, 50.5f), (Get(Poring).PosX, Get(Poring).PosY), "the first step starts from where it was shown");
+            Assert.AreEqual((52.4f, 50.5f), (Get(Poring).PosX, Get(Poring).PosY), "from where it was shown, little by little");
             _world.Advance(700);
-            Assert.AreEqual((52f, 51f), (Get(Poring).PosX, Get(Poring).PosY));
+            Assert.AreEqual((52.3f, 51f), (Get(Poring).PosX, Get(Poring).PosY));
             Assert.AreEqual(51, Get(Poring).CellY);
+            _world.Advance(1000);
+            Assert.AreEqual((52f, 52.5f), (Get(Poring).PosX, Get(Poring).PosY), "half a second later on its path");
 
-            _world.Walk(Poring, 70, 70, 72, 70, 700, 700);      // farther than a cell: a real desync
+            _world.Walk(Poring, 70, 70, 72, 70, 1000, 1000);      // far: a real desync
             Assert.AreEqual((70f, 70f), (Get(Poring).PosX, Get(Poring).PosY));
+        }
+
+        // D36: an order for the same walk again, the server 40 ms behind where the client shows the unit (its timers run every 20 to
+        // 50 ms), in the same cell and in the next.
+        [TestCase(0)]
+        [TestCase(8)]
+        [TestCase(20)]
+        [TestCase(-10)]
+        public void WorldModel_TheSameWalkAgain_WhileTheServerIsBehind_KeepsItsSpeed(int packetMs)
+        {
+            Human(50, 50);
+            _world.Walk(Player, 50, 50, 62, 50, 0, 0);
+            float speed = Get(Player).Speed, last = 50f;
+            uint order = 4 * (uint)speed + 40;
+            bool ordered = false;
+            for (uint now = 8; now < 11 * (uint)speed; now += 8)
+            {
+                if (!ordered && now >= order + packetMs)
+                {
+                    ordered = true;
+                    _world.Walk(Player, 54, 50, 62, 50, order, now); // in the frame, before the model advances
+                    Assert.AreEqual(1f, (Get(Player).PosX - last) * speed / 8f, 0.15f, "not held for a frame");
+                }
+                _world.Advance(now);
+                float x = Get(Player).PosX;
+                Assert.AreEqual(1f, (x - last) * speed / 8f, 0.15f, $"the speed at {now}");
+                last = x;
+            }
+            Assert.IsTrue(ordered);
+            _world.Advance(order + 8 * (uint)speed);
+            Assert.AreEqual((62f, false), (Get(Player).PosX, Get(Player).Walking), "it arrives when the server does");
+        }
+
+        [Test]
+        public void WorldModel_TheSameWalkAgain_ForOneCellOnly_ArrivesOnTime()
+        {
+            Human(50, 50);
+            _world.Walk(Player, 50, 50, 52, 50, 0, 0);
+            uint speed = (uint)Get(Player).Speed;
+            _world.Advance(speed + 60);
+            _world.Walk(Player, 51, 50, 52, 50, speed + 40, speed + 60);
+            _world.Advance(2 * speed + 39);
+            Assert.AreEqual(52f, Get(Player).PosX, 0.02f);
+            _world.Advance(2 * speed + 40);
+            Assert.IsFalse(Get(Player).Walking);
         }
 
         [Test]
@@ -275,6 +322,22 @@ namespace Uninarok.World.Tests
         {
             _world.Walk(123, 50, 50, 52, 50, 0, 0);
             Assert.AreEqual(0, _world.Count);
+        }
+
+        // D37
+        [Test]
+        public void WorldModel_ADroppedItem_FallsForHalfASecond()
+        {
+            _world.AddItem(501, 909, true, 50, 60, 6, 6, 1, true, 1000);
+            Assert.AreEqual(5f, Get(501).Height);
+            _world.Advance(1250);
+            Assert.AreEqual(2.5f, Get(501).Height, 1e-4f);
+            _world.Advance(1499);
+            Assert.Greater(Get(501).Height, 0f);
+            _world.Advance(1500);
+            Assert.AreEqual(0f, Get(501).Height);
+            _world.Advance(2000);
+            Assert.AreEqual(0f, Get(501).Height);
         }
 
         // ---- stop and slide (FR-7) ----
@@ -513,10 +576,12 @@ namespace Uninarok.World.Tests
         public void WorldModel_Item_AddedAtItsSubCell_AndRemoved()
         {
             _world.AddItem(501, 909, true, 50, 60, 3, 12, 2);
+            Assert.AreEqual(0f, Get(501).Height, "it lay there already");
             var e = Get(501);
             Assert.AreEqual((EntityKind.Item, 909, 2, true), (e.Kind, e.ItemId, e.ItemAmount, e.Identified));
             Assert.AreEqual((50, 60, 49.75f, 60.5f), (e.CellX, e.CellY, e.PosX, e.PosY), "sub / 12 from the cell's corner");
             _world.AddItem(501, 909, true, 50, 60, 3, 12, 2);
+            Assert.AreEqual(0f, Get(501).Height, "it lay there already");
             Assert.AreEqual(1, _world.Count);
             _world.RemoveItem(501);
             Assert.AreEqual((0, 0), (_world.Count, _vanished.Count));
@@ -531,6 +596,7 @@ namespace Uninarok.World.Tests
             Monster();
             Human();
             _world.AddItem(501, 909, true, 50, 60, 3, 12, 2);
+            Assert.AreEqual(0f, Get(501).Height, "it lay there already");
             _world.OwnId = Player;
             _world.Clear();
             Assert.AreEqual((0, 0, 0u), (_world.Count, _world.SlotLimit, _world.OwnId));

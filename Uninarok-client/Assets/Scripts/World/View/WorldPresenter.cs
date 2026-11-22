@@ -255,15 +255,20 @@ namespace Uninarok.World.View
             view.PlaceOn(_map, Position(_map, e.PosX, e.PosY));
             view.Face(_cameraRotation);
             _turnItems = true;
+            view.ShadowScale = _settings.ItemShadowScale;
             view.gameObject.SetActive(true);
             if (!view.Show(e.ItemId, e.Identified) && _itemsWithoutSprite.Add(e.ItemId))
                 Debug.LogWarning($"[World] item {e.ItemId} has no ground sprite in the catalog");
+            view.Height = e.Height * _map.CellSize;
         }
 
         void UpdateItem(int slot, in Entity e)
         {
             var view = _items[slot];
-            if (ReferenceEquals(view, null) || _versions[slot] == e.Version) return;
+            if (ReferenceEquals(view, null)) return;
+            float height = e.Height * _map.CellSize;
+            if (view.Height != height) view.Height = height;
+            if (_versions[slot] == e.Version) return;
             _versions[slot] = e.Version;
             if (view.ItemId != e.ItemId) view.Show(e.ItemId, e.Identified);
             view.PlaceOn(_map, Position(_map, e.PosX, e.PosY));

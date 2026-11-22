@@ -12,6 +12,9 @@ namespace Uninarok.World
     /// </summary>
     public sealed class WorldModel
     {
+        /// <summary>A unit shown farther than this from where a new walk has it is placed there (PLAN-0010 D7, D36), in cells.</summary>
+        const float MaxOffset = 1.5f;
+
         readonly Entity[] _entities;
         readonly WalkPath[] _paths;
         readonly int[] _free;
@@ -90,21 +93,32 @@ namespace Uninarok.World
             int slot = Update(id, kind, look, speed, head, EntityState.Standing, out bool created);
             if (slot < 0) return -1;
             if (created) Place(ref _entities[slot], sx, sy);
-            Walk(slot, sx, sy, dx, dy, startTick, now);
+            Walk(slot, sx, sy, dx, dy, startTick, now, created);
             return slot;
         }
 
         /// <summary>A unit walks from a cell to another, along the client's path, since a server tick (FR-6); also in the past (FR-4).</summary>
         public void Walk(uint id, int sx, int sy, int dx, int dy, uint startTick, uint now)
         {
-            if (_slots.TryGetValue(id, out int slot)) Walk(slot, sx, sy, dx, dy, startTick, now);
+            if (_slots.TryGetValue(id, out int slot)) Walk(slot, sx, sy, dx, dy, startTick, now, false);
             else NetLog.Trace("walk of unknown unit " + id);
         }
 
-        void Walk(int slot, int sx, int sy, int dx, int dy, uint startTick, uint now)
+        void Walk(int slot, int sx, int sy, int dx, int dy, uint startTick, uint now, bool unseen)
         {
             ref var e = ref _entities[slot];
             ref var path = ref _paths[slot];
+            bool walked = e.Walking;
+            if (walked)
+            {
+                // Where it would be shown now; the last frame's place would hold it for a frame. The new walk goes on with the old one's
+                // animation, also when that was just over.
+                int animation = e.AnimationVersion;
+                Step(slot, now);
+                e.Walking = true;
+                e.AnimationVersion = animation;
+            }
+            float shownX = e.PosX, shownY = e.PosY;
             e.Version++;
             if (e.Kind == EntityKind.Player) e.Head = HeadDirection.Straight; // as the server (unit_walk_toxy_sub)
             if (e.State != EntityState.Standing) SetState(ref e, EntityState.Standing);
@@ -119,15 +133,8 @@ namespace Uninarok.World
                 return;
             }
 
-            // The first step starts from where the unit is shown, unless that is a real desync (D7).
-            bool near = Math.Abs(e.PosX - sx) <= 1f && Math.Abs(e.PosY - sy) <= 1f;
-            if (!near)
-            {
-                e.PosX = sx;
-                e.PosY = sy;
-            }
-            e.FromX = e.PosX;
-            e.FromY = e.PosY;
+            e.RunsIn = walked;
+            e.OffX = e.OffY = 0f;
             e.CellX = sx;
             e.CellY = sy;
             e.StepIndex = 0;
@@ -140,6 +147,22 @@ namespace Uninarok.World
                 e.AnimationVersion++;
             }
             Step(slot, now);
+
+            // It goes on from where it is shown and gets to where the walk has it little by little (D36), unless that is a real
+            // desync (D7). The server's steps take longer than the walk speed says, so the client is ahead at each new order.
+            if (unseen || !e.Walking) return;
+            float offX = shownX - e.PosX, offY = shownY - e.PosY;
+            if (Math.Abs(offX) > MaxOffset || Math.Abs(offY) > MaxOffset) return;
+            uint ends = e.StepEnds;
+            for (int i = e.StepIndex + 1; i < path.Length; i++) ends = unchecked(ends + (uint)StepMs(e, path.Step(i)));
+            int left = Math.Min(_settings.WalkCorrectionMs, ServerClock.Diff(ends, now));
+            if (left <= 0) return;
+            e.OffX = offX;
+            e.OffY = offY;
+            e.OffStarts = now;
+            e.OffEnds = unchecked(now + (uint)left);
+            e.PosX = shownX;
+            e.PosY = shownY;
         }
 
         /// <summary>A unit stops on a cell (FR-7).</summary>
@@ -217,7 +240,8 @@ namespace Uninarok.World
         }
 
         /// <summary>An item on the ground, at its cell and sub-cell (FR-16).</summary>
-        public void AddItem(uint id, int itemId, bool identified, int x, int y, byte subX, byte subY, int amount)
+        /// <param name="falls">It was dropped now: it falls to the ground (D37).</param>
+        public void AddItem(uint id, int itemId, bool identified, int x, int y, byte subX, byte subY, int amount, bool falls = false, uint now = 0)
         {
             int slot = Update(id, EntityKind.Item, default, 0, HeadDirection.Straight, EntityState.Standing, out _);
             if (slot < 0) return;
@@ -230,6 +254,9 @@ namespace Uninarok.World
             // Twelfths from the cell's south-west corner (ITEM_FALL_ENTRY.md); the centre is the whole number.
             e.PosX = x - 0.5f + subX / 12f;
             e.PosY = y - 0.5f + subY / 12f;
+            e.Falling = falls && _settings.ItemFallMs > 0;
+            e.FallStarts = now;
+            e.Height = e.Falling ? _settings.ItemFallHeight : 0f;
         }
 
         /// <summary>An item leaves the ground (FR-5). An unknown id is ignored.</summary>
@@ -282,11 +309,19 @@ namespace Uninarok.World
             {
                 ref var e = ref _entities[i];
                 if (e.Walking) Step(i, now);
+                else if (e.Falling) Fall(ref e, now);
                 else if (e.Removing && ServerClock.Diff(now, e.RemoveAt) >= 0) Remove(i);
             }
         }
 
         // ---- the rules ----
+
+        void Fall(ref Entity e, uint now)
+        {
+            float part = Math.Max(0, ServerClock.Diff(now, e.FallStarts)) / (float)Math.Max(1, _settings.ItemFallMs);
+            e.Falling = part < 1f;
+            e.Height = e.Falling ? _settings.ItemFallHeight * (1f - part) : 0f;
+        }
 
         // Moves a walker to where it is at `now`: ends the steps that are over, then places it inside the current one.
         void Step(int slot, uint now)
@@ -298,8 +333,6 @@ namespace Uninarok.World
                 int done = path.Step(e.StepIndex);
                 e.CellX += HerculesPathfinder.Dx(done);
                 e.CellY += HerculesPathfinder.Dy(done);
-                e.FromX = e.CellX;
-                e.FromY = e.CellY;
                 if (++e.StepIndex >= path.Length)
                 {
                     e.Walking = false;
@@ -317,10 +350,20 @@ namespace Uninarok.World
 
             int duration = ServerClock.Diff(e.StepEnds, e.StepStarts);
             int passed = ServerClock.Diff(now, e.StepStarts);
-            float t = passed <= 0 || duration <= 0 ? 0f : (float)passed / duration;
+            float t = duration <= 0 ? 0f : Math.Max((float)passed / duration, e.RunsIn && e.StepIndex == 0 ? -1f : 0f);
             int direction = path.Step(e.StepIndex);
-            e.PosX = e.FromX + (e.CellX + HerculesPathfinder.Dx(direction) - e.FromX) * t;
-            e.PosY = e.FromY + (e.CellY + HerculesPathfinder.Dy(direction) - e.FromY) * t;
+            e.PosX = e.CellX + HerculesPathfinder.Dx(direction) * t;
+            e.PosY = e.CellY + HerculesPathfinder.Dy(direction) * t;
+            if (e.OffX == 0f && e.OffY == 0f) return;
+            int rest = ServerClock.Diff(e.OffEnds, now);
+            if (rest <= 0)
+            {
+                e.OffX = e.OffY = 0f;
+                return;
+            }
+            float part = Math.Min(1f, (float)rest / ServerClock.Diff(e.OffEnds, e.OffStarts));
+            e.PosX += e.OffX * part;
+            e.PosY += e.OffY * part;
         }
 
         static int StepMs(in Entity e, int direction) => Math.Max(1, WalkTiming.StepMs(e.Speed, WalkTiming.IsDiagonal(direction)));

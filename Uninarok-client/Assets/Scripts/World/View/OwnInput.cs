@@ -119,7 +119,7 @@ namespace Uninarok.World.View
                 }
             }
             else if (!_walk.IsPressed()) _holding = false;
-            else if (_holding && over && (x != _askedX || y != _askedY || (now - _askedAt) * 1000.0 >= RepeatMs)) Ask(own, now, x, y);
+            else if (_holding && over && (x != _askedX || y != _askedY || (now - _askedAt) * 1000.0 >= RepeatMs) && !own.IsWalkingTo(x, y)) Ask(own, now, x, y);
 
             if (over && own.TryGet(out var model, out _)) Mark(true, model.Grid.IsPassable(x, y), x, y);
             else Mark(false, false, x, y);
