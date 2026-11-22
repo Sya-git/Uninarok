@@ -16,7 +16,8 @@ namespace Uninarok.World.Dev
         const string FieldName = "Uninarok.DevCommandLine";
         const float MessageSeconds = 4f;
 
-        readonly Dictionary<string, Func<string>> _commands = new Dictionary<string, Func<string>>(StringComparer.OrdinalIgnoreCase);
+        readonly Dictionary<string, Func<string, string>> _commands = new Dictionary<string, Func<string, string>>(StringComparer.OrdinalIgnoreCase);
+        DevInventory _inventory;
         WorldBootstrap _world;
         OwnInput _input;
         string _text = string.Empty;
@@ -40,6 +41,27 @@ namespace Uninarok.World.Dev
             Add("/bangbang", () => Ask(own, c => c.Bangbang()));
             Add("/sit", () => Ask(own, c => c.Sit()));
             Add("/stand", () => Ask(own, c => c.Stand()));
+            AddWithArguments("/drop", arguments => Drop(own(), arguments));
+        }
+
+        /// <summary>The items <c>/drop</c> knows; replaces (and ends) those of before.</summary>
+        internal void UseInventory(DevInventory inventory)
+        {
+            _inventory?.Dispose();
+            _inventory = inventory;
+        }
+
+        // FR-20: "/drop item [amount]" is dragging an item out of the inventory; alone it lists the items.
+        string Drop(OwnCharacter own, string arguments)
+        {
+            if (own == null || _inventory == null) return "no character";
+            var parts = arguments.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length == 0) return _inventory.Describe();
+            ushort amount = 1;
+            if (parts.Length > 2 || !uint.TryParse(parts[0], out uint item) || parts.Length == 2 && (!ushort.TryParse(parts[1], out amount) || amount == 0)) return "/drop item [amount]";
+            if (!_inventory.TryFind(item, out ushort index, out int held)) return "no item " + item;
+            if (amount > held) return $"only {held} of item {item}";
+            return own.DropItem(index, amount) ? null : "not now";
         }
 
         static string Ask(Func<OwnCharacter> own, Func<OwnCharacter, bool> command)
@@ -49,14 +71,23 @@ namespace Uninarok.World.Dev
         }
 
         /// <summary>Adds a command; what it returns is shown, null shows nothing.</summary>
-        public void Add(string name, Func<string> run) => _commands[name ?? throw new ArgumentNullException(nameof(name))] = run ?? throw new ArgumentNullException(nameof(run));
+        public void Add(string name, Func<string> run)
+        {
+            if (run == null) throw new ArgumentNullException(nameof(run));
+            AddWithArguments(name, arguments => arguments.Length == 0 ? run() : $"{name} takes nothing");
+        }
+
+        /// <summary>Adds a command that gets what follows its name.</summary>
+        public void AddWithArguments(string name, Func<string, string> run) => _commands[name ?? throw new ArgumentNullException(nameof(name))] = run ?? throw new ArgumentNullException(nameof(run));
 
         /// <summary>Runs a line; returns the message to show, null when there is none.</summary>
         public string Execute(string line)
         {
             line = (line ?? string.Empty).Trim();
             if (line.Length == 0) return null;
-            return _commands.TryGetValue(line, out var run) ? run() : $"unknown command: {line}";
+            int space = line.IndexOf(' ');
+            string name = space < 0 ? line : line.Substring(0, space);
+            return _commands.TryGetValue(name, out var run) ? run(space < 0 ? string.Empty : line.Substring(space + 1).Trim()) : $"unknown command: {name}";
         }
 
         internal void Open()
@@ -79,6 +110,8 @@ namespace Uninarok.World.Dev
             _messageUntil = Time.unscaledTime + MessageSeconds;
             Close();
         }
+
+        void OnDestroy() => UseInventory(null);
 
         void OnDisable()
         {

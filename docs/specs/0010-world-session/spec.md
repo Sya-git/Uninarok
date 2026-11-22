@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Approved (owner, 2026-11-21; FR-13 and FR-11 amended by the owner 2026-11-22 after comparing with the original client, FR-13 three times, FR-15 for its check) |
+| **Status** | Approved (owner, 2026-11-21; FR-13 and FR-11 amended by the owner 2026-11-22 after comparing with the original client, FR-13 three times, FR-15 for its check; FR-20 added by the owner 2026-11-22) |
 | **Created** | 2026-11-21 |
 | **Owner** | Jhonnatan |
 | **Depends on** | [SPEC-0001](../0001-networking-core/spec.md) (connection, flow, packets), [SPEC-0005](../0005-gat-map-data/spec.md) (walkable cells, heights), [SPEC-0006](../0006-rsw-map-scene/spec.md) (map scenes), [SPEC-0008](../0008-sprite-catalog/spec.md) (ground items), [SPEC-0009](../0009-unit-display/spec.md) (unit display, facing, camera) |
@@ -55,6 +55,7 @@ Priority: **M** = must, **S** = should.
 | FR-17 | M | Cost: 300 units walking on one map (100 players, 200 monsters) cost at most 1 ms per frame for the world update (model, movement, display sync, excluding SPEC-0009's unit update) on the owner's PC, with no per-frame garbage; one path search allocates nothing. | Profiler capture of a 300-unit session (real server or replayed) shows the world update ≤ 1 ms and 0 B GC allocation per frame; an allocation test of 1,000 path searches shows 0 B. |
 | FR-18 | M | Offline testing: the world model, time estimate and pathfinding are tested without a server and without a scene, including against recorded real sessions. | The tests run in the editor test runner; a recorded session replays into the model with the FR-3 result. |
 | FR-19 | M | Own sitting: the Insert key and the `/sit` / `/stand` commands (dev command line, FR-13) ask the server to sit or stand (toggle for Insert); the own character sits or stands when the server confirms and others see it. While sitting, a click on the ground sends no walk (the server refuses it); turning works as standing. | Insert sits the character and Insert again stands it, each after the server's confirmation; a second client sees both; clicking a cell while sitting sends nothing; a character the server refuses to seat (basic skill too low) stays standing. |
+| FR-20 | S | Dropping an item, dev only: `/drop item [amount]` in the dev command line (FR-13) does what dragging the item out of the inventory does in the original client; `/drop` alone lists the items. No inventory window (a later spec's). Not in release builds. | With a red potion in the inventory, `/drop 501` puts one on the ground beside the character, seen by a second client, and the server takes it out of the inventory; an item or an amount it does not have is refused with a message. |
 
 ## 5. Success criteria
 

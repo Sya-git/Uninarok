@@ -37,7 +37,7 @@ One row per documented packet (SPEC-0001, PACKETVER 20220406). Generated from th
 | Client to map server | `0x0360` | [HEARTBEAT_REQUEST](Out/MapServer/HEARTBEAT_REQUEST.md) | 6 | verified | warm |
 | Client to map server | `0x0361` | [CHANGE_DIRECTION](Out/MapServer/CHANGE_DIRECTION.md) | 5 | implemented | warm |
 | Client to map server | `0x0362` | [PICKUP_ITEM](Out/MapServer/PICKUP_ITEM.md) | 6 | documented | warm |
-| Client to map server | `0x0363` | [DROP_ITEM](Out/MapServer/DROP_ITEM.md) | 6 | documented | warm |
+| Client to map server | `0x0363` | [DROP_ITEM](Out/MapServer/DROP_ITEM.md) | 6 | implemented | warm |
 | Client to map server | `0x0366` | [USE_SKILL_TO_POS](Out/MapServer/USE_SKILL_TO_POS.md) | 10 | documented | warm |
 | Client to map server | `0x0368` | [REQUEST_UNIT_NAME](Out/MapServer/REQUEST_UNIT_NAME.md) | 6 | documented | warm |
 | Client to map server | `0x0369` | [REQUEST_UNIT_NAME_BY_ID](Out/MapServer/REQUEST_UNIT_NAME_BY_ID.md) | 6 | documented | warm |
@@ -64,6 +64,7 @@ One row per documented packet (SPEC-0001, PACKETVER 20220406). Generated from th
 | Map server to client | `0x009C` | [UNIT_DIRECTION](In/MapServer/UNIT_DIRECTION.md) | 9 | implemented | warm |
 | Map server to client | `0x009D` | [ITEM_ENTRY](In/MapServer/ITEM_ENTRY.md) | 19 | implemented | hot |
 | Map server to client | `0x00A1` | [ITEM_DISAPPEAR](In/MapServer/ITEM_DISAPPEAR.md) | 6 | implemented | hot |
+| Map server to client | `0x00AF` | [DROP_ITEM_ACK](In/MapServer/DROP_ITEM_ACK.md) | 6 | implemented | warm |
 | Map server to client | `0x00B0` | [PARAMETER_CHANGE](In/MapServer/PARAMETER_CHANGE.md) | 8 | verified | warm |
 | Map server to client | `0x01D7` | [UNIT_LOOK_CHANGE](In/MapServer/UNIT_LOOK_CHANGE.md) | 15 | verified | warm |
 | Map server to client | `0x01FF` | [UNIT_SLIDE](In/MapServer/UNIT_SLIDE.md) | 10 | implemented | warm |
@@ -80,7 +81,9 @@ One row per documented packet (SPEC-0001, PACKETVER 20220406). Generated from th
 | Map server to client | `0x0AC7` | [MAP_SERVER_CHANGE](In/MapServer/MAP_SERVER_CHANGE.md) | 156 | implemented | cold |
 | Map server to client | `0x0ADD` | [ITEM_FALL_ENTRY](In/MapServer/ITEM_FALL_ENTRY.md) | 24 | implemented | hot |
 | Map server to client | `0x0ADE` | [OVERWEIGHT_PERCENT_INFO](In/MapServer/OVERWEIGHT_PERCENT_INFO.md) | 6 | documented | warm |
+| Map server to client | `0x0B09` | [INVENTORY_LIST_NORMAL](In/MapServer/INVENTORY_LIST_NORMAL.md) | variable | implemented | cold |
 | Map server to client | `0x0B18` | [INVENTORY_EXPANSION_INFO](In/MapServer/INVENTORY_EXPANSION_INFO.md) | 4 | documented | cold |
-| Map server to client | `0x0B41` | [ITEM_PICKUP_ACK](In/MapServer/ITEM_PICKUP_ACK.md) | 70 | documented | warm |
+| Map server to client | `0x0B39` | [INVENTORY_LIST_EQUIP](In/MapServer/INVENTORY_LIST_EQUIP.md) | variable | implemented | cold |
+| Map server to client | `0x0B41` | [ITEM_PICKUP_ACK](In/MapServer/ITEM_PICKUP_ACK.md) | 70 | implemented | warm |
 
-69 packets documented. Data shared by several packets is documented in `docs/data/` (`AccountSex`, `CharInfo`, `UninarokPosition`, `UninarokMoveData`).
+72 packets documented. Data shared by several packets is documented in `docs/data/` (`AccountSex`, `CharInfo`, `UninarokPosition`, `UninarokMoveData`).

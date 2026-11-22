@@ -2,6 +2,8 @@ using System.Text;
 using NUnit.Framework;
 using UnityEngine;
 using Uninarok.Networking.Packets;
+using Uninarok.Networking.Packets.In.Map;
+using Uninarok.Networking.Tests;
 using Uninarok.World.Dev;
 using Uninarok.World.View;
 
@@ -43,6 +45,46 @@ namespace Uninarok.World.Tests
             _rig.Client.Deliver(WorldSessionTests.Act(_rig.Flow.Context.AccountId, 2));
             Assert.IsNull(line.Execute("/stand"));
             Assert.AreEqual(2, _rig.Client.SentCount(PacketIds.REQUEST_ACT));
+        }
+
+        // FR-20
+        [Test]
+        public void Drop_SendsTheSlotTheServerNamed()
+        {
+            var line = _go.AddComponent<DevCommandLine>();
+            line.Register(() => _rig.Session.Own);
+            Assert.AreEqual("no character", line.Execute("/drop 501"), "no inventory yet");
+            line.UseInventory(new DevInventory(_rig.Client));
+            Assert.AreEqual("no items", line.Execute("/drop"));
+
+            string rest = "00000000" + new string('0', 32) + "00000000" + "01";
+            _rig.Client.Deliver(new INVENTORY_LIST_NORMAL(WorldSessionTests.Hex("00" + "0700" + "F5010000" + "00" + "0300" + rest)));
+            _rig.Client.Deliver(new INVENTORY_LIST_NORMAL(WorldSessionTests.Hex("01" + "0200" + "F6010000" + "00" + "0300" + rest))); // the cart's
+            string gear = new string('0', 2 * (INVENTORY_LIST_EQUIP.RecordSize - 15));
+            _rig.Client.Deliver(new INVENTORY_LIST_EQUIP(WorldSessionTests.Hex("00" + "0800" + "B1040000" + "05" + "02000000" + "00000000" + gear + "0600" + "FD080000" + "04" + "10000000" + "10000000" + gear))); // the second is worn
+            var added = new byte[ITEM_PICKUP_ACK.Size - 2];
+            WorldSessionTests.Hex("0900" + "0200" + "8F030000" + "01").CopyTo(added, 0);
+            _rig.Client.Deliver(new ITEM_PICKUP_ACK(added));
+            added[31] = 2;
+            _rig.Client.Deliver(new ITEM_PICKUP_ACK(added)); // refused
+            Assert.AreEqual("501 x3, 1201 x1, 911 x2", line.Execute("/drop"));
+
+            Assert.IsNull(line.Execute("/drop 501"));
+            Assert.IsNull(line.Execute("/drop  911 2"));
+            Assert.AreEqual(WorldSessionTests.Hex("630307000100"), _rig.Client.Sent[0].Bytes);
+            Assert.AreEqual(WorldSessionTests.Hex("630309000200"), _rig.Client.Sent[1].Bytes);
+            Assert.AreEqual("501 x3, 1201 x1, 911 x2", line.Execute("/drop"), "not before the server says so");
+            _rig.Client.Deliver(new DROP_ITEM_ACK(WorldSessionTests.Hex("07000100")));
+            _rig.Client.Deliver(new DROP_ITEM_ACK(WorldSessionTests.Hex("09000200")));
+            Assert.AreEqual("501 x2, 1201 x1", line.Execute("/drop"));
+
+            Assert.AreEqual("no item 911", line.Execute("/drop 911"));
+            Assert.AreEqual("only 2 of item 501", line.Execute("/drop 501 3"));
+            foreach (string wrong in new[] { "/drop potion", "/drop 501 0", "/drop 501 1 1", "/drop 501 x" }) Assert.AreEqual("/drop item [amount]", line.Execute(wrong));
+            Assert.AreEqual(2, _rig.Client.Sent.Count);
+
+            _rig.Client.Deliver(TestPackets.AuthenticationAccepted());
+            Assert.AreEqual("no items", line.Execute("/drop"), "another session");
         }
 
         [Test]

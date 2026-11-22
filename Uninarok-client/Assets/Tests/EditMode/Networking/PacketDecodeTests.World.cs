@@ -331,6 +331,57 @@ namespace Uninarok.Networking.Tests
             Assert.AreNotEqual(0u, sum);
         }
 
+        // ---- the items a dev command drops (T8.5) ----
+
+        [Test]
+        public void INVENTORY_LIST_NORMAL_Decodes_AndRejectsWrongLengths()
+        {
+            string rest = "00000000" + new string('0', 32) + "00000000" + "01";
+            var p = new INVENTORY_LIST_NORMAL(Hex("00" + "0200" + "F5010000" + "00" + "0300" + rest + "0500" + "8F030000" + "03" + "0A00" + rest));
+            Assert.AreEqual((0, 2), ((int)p.ListType, p.Items.Length));
+            Assert.AreEqual((2, 501u, 0, 3), ((int)p.Items[0].Index, p.Items[0].ItemId, (int)p.Items[0].ItemType, (int)p.Items[0].Amount));
+            Assert.AreEqual((5, 911u, 3, 10), ((int)p.Items[1].Index, p.Items[1].ItemId, (int)p.Items[1].ItemType, (int)p.Items[1].Amount));
+            Assert.AreEqual(0, new INVENTORY_LIST_NORMAL(new byte[1]).Items.Length);
+            Assert.Throws<PacketFormatException>(() => new INVENTORY_LIST_NORMAL(new byte[34]));
+        }
+
+        [Test]
+        public void INVENTORY_LIST_EQUIP_Decodes_AndRejectsWrongLengths()
+        {
+            string rest = new string('0', 2 * (INVENTORY_LIST_EQUIP.RecordSize - 15));
+            var p = new INVENTORY_LIST_EQUIP(Hex("00" + "0300" + "B1040000" + "05" + "02000000" + "00000000" + rest + "0400" + "FD080000" + "04" + "10000000" + "10000000" + rest));
+            Assert.AreEqual((0, 2), ((int)p.ListType, p.Items.Length));
+            Assert.AreEqual((3, 1201u, 5, 2u, 0u), ((int)p.Items[0].Index, p.Items[0].ItemId, (int)p.Items[0].ItemType, p.Items[0].Location, p.Items[0].WornAt));
+            Assert.AreEqual((4, 2301u, 4, 16u, 16u), ((int)p.Items[1].Index, p.Items[1].ItemId, (int)p.Items[1].ItemType, p.Items[1].Location, p.Items[1].WornAt));
+            Assert.Throws<PacketFormatException>(() => new INVENTORY_LIST_EQUIP(new byte[68]));
+            Assert.AreEqual((0x0B39, -1), ((int)PacketIds.INVENTORY_LIST_EQUIP, INVENTORY_LIST_EQUIP.Size));
+        }
+
+        [Test]
+        public void ITEM_PICKUP_ACK_Decodes_AndRejectsWrongLengths()
+        {
+            var payload = new byte[ITEM_PICKUP_ACK.Size - 2];
+            Hex("0400" + "0300" + "F5010000" + "01").CopyTo(payload, 0);
+            payload[30] = 2;
+            payload[31] = 6;
+            var p = new ITEM_PICKUP_ACK(payload);
+            Assert.AreEqual((4, 3, 501u, true), ((int)p.InventoryIndex, (int)p.Amount, p.ItemId, p.Identified));
+            Assert.AreEqual((2, 6), ((int)p.ItemType, (int)p.Result));
+            Assert.Throws<PacketFormatException>(() => new ITEM_PICKUP_ACK(new byte[67]));
+            Assert.Throws<PacketFormatException>(() => new ITEM_PICKUP_ACK(new byte[69]));
+        }
+
+        [Test]
+        public void DropPackets_GoldenBytes_SizesAndIds()
+        {
+            var p = new DROP_ITEM_ACK(Hex("0400" + "0200"));
+            Assert.AreEqual((4, 2), ((int)p.InventoryIndex, (int)p.Amount));
+            Assert.Throws<PacketFormatException>(() => new DROP_ITEM_ACK(new byte[5]));
+            Assert.AreEqual(Hex("6303" + "0400" + "0200"), Serialized(new DROP_ITEM(4, 2)));
+            Assert.AreEqual((0x0363, 6, 0x00AF, 6), ((int)PacketIds.DROP_ITEM, DROP_ITEM.Size, (int)PacketIds.DROP_ITEM_ACK, DROP_ITEM_ACK.Size));
+            Assert.AreEqual((0x0B41, 70, 0x0B09, -1), ((int)PacketIds.ITEM_PICKUP_ACK, ITEM_PICKUP_ACK.Size, (int)PacketIds.INVENTORY_LIST_NORMAL, INVENTORY_LIST_NORMAL.Size));
+        }
+
         // ---- map change (T1.5) ----
 
         [Test]

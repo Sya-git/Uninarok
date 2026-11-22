@@ -39,6 +39,7 @@ namespace Uninarok.Networking.Packets
         public const ushort UNIT_DIRECTION = 0x009C;                 // in
         public const ushort ITEM_ENTRY = 0x009D;                     // in
         public const ushort ITEM_DISAPPEAR = 0x00A1;                 // in
+        public const ushort DROP_ITEM_ACK = 0x00AF;                  // in
         public const ushort PARAMETER_CHANGE = 0x00B0;               // in
         public const ushort UNIT_LOOK_CHANGE = 0x01D7;               // in
         public const ushort UNIT_SLIDE = 0x01FF;                     // in
@@ -47,6 +48,7 @@ namespace Uninarok.Networking.Packets
         public const ushort REQUEST_MOVE = 0x035F;                   // out
         public const ushort HEARTBEAT_REQUEST = 0x0360;              // out
         public const ushort CHANGE_DIRECTION = 0x0361;               // out
+        public const ushort DROP_ITEM = 0x0363;                      // out
         public const ushort REQUEST_ENTER_MAP = 0x0436;              // out
         public const ushort REQUEST_ACT = 0x0437;                    // out
         public const ushort UNIT_MOVE_ENTRY = 0x09FD;                // in
@@ -54,5 +56,8 @@ namespace Uninarok.Networking.Packets
         public const ushort UNIT_STAND_ENTRY = 0x09FF;               // in
         public const ushort MAP_SERVER_CHANGE = 0x0AC7;              // in
         public const ushort ITEM_FALL_ENTRY = 0x0ADD;                // in
+        public const ushort INVENTORY_LIST_NORMAL = 0x0B09;          // in
+        public const ushort INVENTORY_LIST_EQUIP = 0x0B39;           // in
+        public const ushort ITEM_PICKUP_ACK = 0x0B41;                // in
     }
 }

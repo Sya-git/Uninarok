@@ -388,9 +388,10 @@ public sealed class OwnInput : MonoBehaviour { /* Input System actions: Walk (le
 
 ### 4.12 Dev tools: `WorldDebugView`, `DevCommandLine`
 
-Satisfies FR-13, FR-14, FR-19.
+Satisfies FR-13, FR-14, FR-19, FR-20.
 
 - `DevCommandLine`: Enter opens a one-line IMGUI text field at the bottom of the screen; commands `/doridori`, `/bangbang`, `/sit`, `/stand` call `OwnCharacter`; an unknown command prints one line. A table of commands, so later specs add theirs.
+- `/drop` (FR-20, D35): `DevInventory` keeps what `INVENTORY_LIST_NORMAL`, `INVENTORY_LIST_EQUIP` (without what is worn), `ITEM_PICKUP_ACK` and `DROP_ITEM_ACK` say, by inventory index, from the connection on; `OwnCharacter.DropItem(index, amount)` sends `DROP_ITEM` when the character can act. Nothing is taken out before the server says so.
 - `WorldDebugView` (F9 toggles): list of entities (id, kind, cell, state, walking), the server time estimate and its last round trip; on the map, the own path as lines and the own server cell as a square (`GL` lines in `OnRenderObject`, no allocation).
 - Both are compiled out of release builds (§3).
 
@@ -472,6 +473,7 @@ Manual checks on a local Hercules (evidence in `docs/specs/0010-world-session/ev
 | D32 | (T5.4, T0.4) `/doridori` is one head turn for each command, left and right by turns, and the head stays; it goes on from the head's own state, so nothing is kept between commands (`Tick` and `DoridoriStepMs` are gone) | The three steps 200 ms apart for one command (first rule); Straight → Left → Right → Straight, one for each command (second) | The owner compared with the original client, twice |
 | D33 | (T6.1) An import that converts a map (or finds it current) registers the map scenes when it ends; a run into other folders (tests) does not | The menu item alone (first version); an `AssetPostprocessor` (the import architecture forbids them, SPEC-0002) | The owner imported int_land and the client did not find it: the second step was not known. `SaveAssets` already runs there; the scan is once for each run, not for each map |
 | D34 | (T8.3) A cursor that fits 32 x 32 is drawn on a square of that size and is a hardware cursor; a larger one ("cannot walk" is 43 x 43) is a software cursor at its own size. Action 0 plays at half the ACT's speed (100 ms for each frame), action 13 at the ACT's (100 ms) | The frames' own size as a hardware cursor (first version); a software cursor for both | The owner saw the cursor stretched sideways and at least twice too fast. Measured: Unity makes any hardware cursor 32 x 32 (a 22 x 31, a 32 x 32 and a 64 x 64 texture all give a 32 x 32 Windows cursor), so ours of 22 x 32 was 1.45 times too wide. The speeds are roBrowserLegacy's (`CursorManager`, `delayMult` 2 and 1) |
+| D35 | (T8.5) `/drop` names the item by id: a dev-only list of the inventory is kept from four packets | Naming the server's slot; the items received since the client started only | The owner needs dropped items before combat exists, as if dragged from the inventory. The packets are the inventory spec's too; the list is thrown away with it |
 
 ## 9. Risks
 
@@ -509,3 +511,4 @@ Manual checks on a local Hercules (evidence in `docs/specs/0010-world-session/ev
 | FR-17 | 4.4, 4.5, 4.9 | `_ZeroAllocation*` tests; profiler capture at 300 units |
 | FR-18 | 1, 3, 6 | the EditMode suite and the replay test |
 | FR-19 | 4.1, 4.6, 4.11, 4.12 | `OwnCharacter_Sit_TogglesOnConfirmOnly`; second-client check |
+| FR-20 | 4.6, 4.12 | `Drop_SendsTheSlotTheServerNamed`, packet decode tests; live check |

@@ -174,6 +174,12 @@ namespace Uninarok.World
             return -dx > dy * 2 + 1 || dy == 0 ? 2 : 1;
         }
 
+        // ---- drop (FR-20): the server puts the item on the ground and takes it out of the inventory, or ignores it ----
+
+        /// <summary>Asks to drop items of an inventory slot (the server's index, slot + 2). False when nothing was sent.</summary>
+        public bool DropItem(ushort inventoryIndex, ushort amount) =>
+            amount > 0 && CanAct && _client.Send(new DROP_ITEM(inventoryIndex, amount));
+
         // ---- sit (FR-19): the state changes on the server's answer, which a refusal never gives (D9) ----
 
         /// <summary>Asks to stand when sitting, else to sit. False when nothing was sent.</summary>

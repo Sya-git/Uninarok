@@ -98,6 +98,7 @@ namespace Uninarok.Networking.Tests
                 PacketIds.UNIT_DIRECTION, PacketIds.UNIT_LOOK_CHANGE, PacketIds.UNIT_ACT, PacketIds.PARAMETER_CHANGE,
                 PacketIds.ITEM_ENTRY, PacketIds.ITEM_FALL_ENTRY, PacketIds.ITEM_DISAPPEAR,
                 PacketIds.MAP_CHANGE, PacketIds.MAP_SERVER_CHANGE,
+                PacketIds.INVENTORY_LIST_NORMAL, PacketIds.INVENTORY_LIST_EQUIP, PacketIds.ITEM_PICKUP_ACK, PacketIds.DROP_ITEM_ACK,
             };
             var handled = GeneratedPacketRouter.HandledIds.ToArray();
             CollectionAssert.AreEquivalent(expected, handled);
