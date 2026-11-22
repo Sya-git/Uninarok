@@ -214,8 +214,9 @@
 - [ ] **T8.2** `WorldDebugView` (plan §4.12). (FR-14)
   *Done when:* F9 shows the entity list, clock estimate and round trip, and draws the own path and server cell during a walk (screenshot); drawing allocates 0 B per frame.
 
-- [ ] **T8.3** Release build check. (FR-13, FR-14)
+- [x] **T8.3** Release build check. (FR-13, FR-14)
   *Done when:* a non-development player build contains no `Uninarok.World.Dev` type and no dev command line (checked by reflection over the built assemblies, command and result in the report).
+  *Result (2026-11-22):* `PlayerBuildInterface.CompilePlayerScripts` for StandaloneWindows64 without the development option writes 9 `Uninarok.*` assemblies and no `Uninarok.World.Dev.dll`; by reflection none of them has a type in a `.Dev` namespace (the same compile with the development option has `Uninarok.World.Dev.dll` with `DevCommandLine`, `WorldDebugView`, `WorldDevTools`). The dev tools are added at run time, so the scene holds no component that a release lacks. No full player was built (7 GB of Addressables content).
 
 ## Phase 9: Verify and close
 
