@@ -14,7 +14,7 @@ namespace Uninarok.World.PlayTests
     {
         const int Size = 256;
 
-        [UnityTest, Timeout(120000), Ignore("pending T9.4")]
+        [UnityTest, Timeout(120000)]
         public IEnumerator UnitDepth_GroundItemAtAWall_IsWhole()
         {
 #if UNITY_EDITOR

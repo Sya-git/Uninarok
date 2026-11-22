@@ -369,7 +369,7 @@ public sealed class SpriteActor                               // Uninarok.Sprite
 
 - `SetGround` marks the actor dirty only when a value changed; `Apply` then writes `localScale` of the layers whose z changed (`Written` gets `ScaleZ`). No allocation, no property block, no per-frame work for a unit that does not change frame: H depends neither on the camera nor on where the unit is.
 - `UnitView.Write` calls `SetGround` with the placement's height and `parts.Scale` before `ShowFrame`. `GroundItemView` calls `SetGround(0, 1)` for an animation and sets the z scale of the still directly.
-- **Draw order** does not change: it comes from the sorting groups and orders; units do not write depth.
+- **Draw order** does not change: it comes from the sorting groups and orders; units do not write depth. The z scale makes a layer's culling bounds thicker (a sprite's 0.2 u of depth becomes 3.3 u along the view), so a unit leaves the view a little later; the bounds' centre, used for sorting, stays.
 - **Views not drawn from the output camera** (Scene view): the plane is computed for that camera and the billboards face another, so depth there is approximate. Not a game case.
 
 ## 5. Threading and lifecycle
@@ -410,7 +410,7 @@ PlayMode (`Tests/PlayMode/Units`):
 | `UnitSystem_ZeroGcAllocPerFrame_300Units` (ProfilerRecorder over 300 frames after warm-up) | FR-14 |
 | `UnitSystem_AllPartsSwitchSectorSameFrame` (slow camera turn, part directions compared every frame) | FR-6 |
 | `UnitView_FeetOnGround_SlopeOfPrtFild08_MinMaxTilt` (screen-space foot vs ground point, depth test passes) | FR-10 |
-| `UnitDepth_BackToAWall_IsWhole_4Turns_MinMaxTilt` (prontera, and iz_int when imported: a swordsman on cells where a wall cut it before), `_BehindABox_IsHiddenAsAnUprightPlane`, `_TwoUnits_SameOrderAsBefore`, `_TallUnitAtTheNearestZoom_IsNotClipped`, `_Shadow_IsUnchanged`, `_GroundItemAtAWall_IsWhole` (World PlayMode) | FR-16 |
+| `UnitDepth_BackToAWall_IsWhole_4Turns_MinMaxTilt` (prontera, and iz_int when imported: a swordsman on cells where a wall cut it before), `_BehindABox_IsHiddenAsAnUprightPlane`, `_TwoUnits_SameOrderAsBefore`, `_TallUnitNearTheCamera_IsNotClipped`, `_Shadow_IsUnchanged`, `_GroundItemAtAWall_IsWhole` (World PlayMode) | FR-16 |
 
 Manual (evidence in `evidence/`, linked from tasks): reference set vs reference viewer in the composer (8 directions, 4 camera turns); camera side by side with the original client (T6.4); stress mode timing on the owner's PC (FR-14 numbers).
 

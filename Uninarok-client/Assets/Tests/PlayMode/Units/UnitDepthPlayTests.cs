@@ -62,11 +62,11 @@ namespace Uninarok.Units.PlayTests
             Object.Destroy(_material);
         }
 
-        [UnityTest, Timeout(180000), Ignore("pending T9.4")]
+        [UnityTest, Timeout(180000)]
         public IEnumerator UnitDepth_BackToAWall_IsWhole_4Turns_MinMaxTilt_Prontera() =>
             BackToAWall("prontera", new[] { (221, 221, 0f), (190, 32, 90f), (128, 86, 180f), (262, 99, 270f) });
 
-        [UnityTest, Timeout(180000), Ignore("pending T9.4")]
+        [UnityTest, Timeout(180000)]
         public IEnumerator UnitDepth_BackToAWall_IsWhole_4Turns_MinMaxTilt_IzInt() =>
             BackToAWall("iz_int", new[] { (61, 45, 0f), (61, 41, 90f), (55, 10, 180f), (50, 40, 270f) });
 
@@ -104,7 +104,7 @@ namespace Uninarok.Units.PlayTests
             yield return SceneManager.UnloadSceneAsync(scene);
         }
 
-        [UnityTest, Timeout(120000), Ignore("pending T9.4")]
+        [UnityTest, Timeout(120000)]
         public IEnumerator UnitDepth_BehindABox_IsHiddenAsAnUprightPlane()
         {
             var unit = NewUnit(UnitPlayData.Swordsman());
@@ -137,7 +137,7 @@ namespace Uninarok.Units.PlayTests
                 }
         }
 
-        [UnityTest, Timeout(120000), Ignore("pending T9.4")]
+        [UnityTest, Timeout(120000)]
         public IEnumerator UnitDepth_TwoUnits_SameOrderAsBefore()
         {
             var a = NewUnit(UnitPlayData.Swordsman());
@@ -159,7 +159,7 @@ namespace Uninarok.Units.PlayTests
                 }
         }
 
-        [UnityTest, Timeout(120000), Ignore("pending T9.4")]
+        [UnityTest, Timeout(120000)]
         public IEnumerator UnitDepth_TallUnitNearTheCamera_IsNotClipped()
         {
             var unit = NewUnit(UnitPlayData.Swordsman());
@@ -177,7 +177,7 @@ namespace Uninarok.Units.PlayTests
                 }
         }
 
-        [UnityTest, Timeout(120000), Ignore("pending T9.4")]
+        [UnityTest, Timeout(120000)]
         public IEnumerator UnitDepth_Shadow_IsUnchanged()
         {
             var unit = NewUnit(UnitLook.ForJob(1002));

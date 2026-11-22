@@ -4,6 +4,9 @@
 // from _PaletteTex (256 x 1, point) and keeps its alpha. True-colour pixels have index 0 and are unchanged. Hand-written.
 // _DepthBias (PLAN-0009 D7, SPEC-0009 FR-10) moves the depth the pixel is tested with toward the camera, in world units
 // along the view axis; the position on screen and the size do not change. 0 (default) renders as before.
+// With a bias, the depth is also never farther than that of an upright picture (PLAN-0009 4.10, D28, D29, SPEC-0009 FR-16):
+// where the pixel's view ray meets the vertical plane through the ground point that faces the camera. The layer's height
+// above its ground point comes in the z scale of its matrix (SpriteActor.SetGround); one that was not set changes nothing.
 Shader "Uninarok/RoSprite"
 {
     Properties
@@ -63,6 +66,27 @@ Shader "Uninarok/RoSprite"
                 float _DepthBias;
             CBUFFER_END
 
+            // SpriteActor.HeightOffset: keeps the z scale that carries the height positive.
+            #define HEIGHT_OFFSET 16.0
+
+            // View-space z of the upright plane on this point's view ray, or plainZ where that is nearer (perspective only).
+            float NearerOfUpright(float3 positionVS, float plainZ)
+            {
+                float4x4 m = GetObjectToWorldMatrix();
+                float height = length(float3(m._m02, m._m12, m._m22)) - HEIGHT_OFFSET;
+                float3 groundVS = TransformWorldToView(float3(m._m03, m._m13, m._m23));
+                groundVS.y -= height; // the sprite's up is the screen's
+                float3 upVS = float3(UNITY_MATRIX_V._m01, UNITY_MATRIX_V._m11, UNITY_MATRIX_V._m21);
+                float3 n = float3(0.0, 0.0, -1.0) + upVS.z * upVS; // the view direction made horizontal
+                float along = dot(n, positionVS);
+                float ground = dot(n, groundVS);
+                // Straight down, or a ray that does not meet the plane in front of the camera.
+                if (unity_OrthoParams.w > 0.5 || dot(n, n) < 1e-4 || along < 1e-4 || ground < 1e-4) return plainZ;
+                // Not past the near plane: a tall unit close to the camera would be clipped.
+                float uprightZ = min(positionVS.z * ground / along, -_ProjectionParams.y * 1.01);
+                return max(plainZ, uprightZ); // the view looks along -z
+            }
+
             Varyings RoSpriteVertex(Attributes input)
             {
                 Varyings o = (Varyings)0;
@@ -75,7 +99,7 @@ Shader "Uninarok/RoSprite"
                 {
                     // Only z / w changes: the clip-space z of the point moved along the view axis, kept on this vertex's w.
                     float3 positionVS = TransformWorldToView(TransformObjectToWorld(input.positionOS));
-                    positionVS.z += _DepthBias; // the view looks along -z
+                    positionVS.z = NearerOfUpright(positionVS, positionVS.z + _DepthBias);
                     float4 biased = TransformWViewToHClip(positionVS);
                     o.positionCS.z = biased.z / biased.w * o.positionCS.w;
                 }

@@ -227,8 +227,9 @@ Works on the branch `feature/0010-world-session` (the owner reported it while re
   *Done when:* run without the ignore mark, the cut cases (wall, box, ground item) fail with today's shader; they are committed as ignored.
   *Result (2026-11-22):* run without the ignore mark on the shader of T9.2: both wall tests (prontera 221,221: 3,111 of 3,871 pixels; iz_int 61,45: 2,949), the box (1,989 of 3,871) and the ground item (1,376 of 4,000) fail; order, clipping and shadow pass, as they must before and after. The clipping test is `UnitDepth_TallUnitNearTheCamera_IsNotClipped`: 2.5, 4 and 23 u away, tilts 20° to 90°.
 
-- [ ] **T9.4** Compute the upright depth in `Uninarok/RoSprite`. (FR-16, FR-10)
+- [x] **T9.4** Compute the upright depth in `Uninarok/RoSprite`. (FR-16, FR-10)
   *Done when:* the tests of T9.3 and `UnitView_FeetOnGround_SlopeOfPrtFild08_MinMaxTilt` pass; no new warnings; materials without a bias render as before.
+  *Result (2026-11-22):* Units PlayMode 22 of 22 (with `UnitView_FeetOnGround_SlopeOfPrtFild08_MinMaxTilt` and `UnitSystem_ZeroGcAllocPerFrame_300Units`), `UnitDepth_GroundItemAtAWall_IsWhole` passes; no compiler or shader warnings. Without a bias the shader takes the same path as before. Preview scenes, 160 cells per turn beside something not walkable (fewer on iz_int), tilts 50° and 65°, pixels visible before and after: prontera 2,590,638 → 3,000,963 of 4,441,390, iz_int 1,252,821 → 1,573,093 of 1,928,594; no sample worse.
 
 - [ ] **T9.5** Measure the cost in the stress mode, with and without the heights. (FR-14, FR-16)
   *Done when:* unit update 2 ms or less and 0 B per frame at 100 players and 200 monsters on prontera; batches, set passes and frame time of both are recorded here.
