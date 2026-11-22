@@ -102,8 +102,9 @@
   *Done when:* `ServerClock_Offset5s_Rtt50To200_WithinHalfRttPlus10`, `_MonotonicOver10Minutes`, `_LowerCorrectionSlews`, `_Wraps` pass; `Sample` allocates 0 B.
   *Result (2026-11-22):* 20 `ServerClock_*` test cases pass (the four named ones, five seeds and both offset signs for the accuracy one); `Sample` 0 B over 1,000 calls.
 
-- [ ] **T3.3** `IWalkGrid`, `MapDataWalkGrid`, `WalkTiming` (plan §4.3). (FR-6, FR-10)
+- [x] **T3.3** `IWalkGrid`, `MapDataWalkGrid`, `WalkTiming` (plan §4.3). (FR-6, FR-10)
   *Done when:* `WalkTiming_200Straight5_Is1000ms`, `_OneDiagonal_Is1080ms` pass; `MapDataWalkGrid` agrees with `MapData.IsWalkable` on every cell of prontera (`NeedsData`), with `y = z`.
+  *Result (2026-11-22):* the timing tests pass; `MapDataWalkGrid` agrees with `MapData.IsWalkable` on every cell of prontera. `UnknownWalkGrid` is the grid of a map with no data (plan §4.7).
 
 - [ ] **T3.4** Hercules plugin `uninarok_pathdump`, pair mode, and the reference fixtures (plan §4.4, D3). (FR-10)
   Built with the server's build; seed and pair count from its command line; both A* (flag 0) and easy path (flag 1) results, plus `path_search_long`.
