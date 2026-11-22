@@ -187,9 +187,9 @@
   *Done when:* from Bootstrap with the dev auto-login, a character saved on prontera enters (the own unit on its saved cell and facing, then `MAP_LOADED` sent, then the area arrives); a PlayMode test with a fake flow shows one warning naming a missing map, the session kept and `MapLoaded` still called.
   *Result (2026-11-22):* 4 play mode tests pass (missing scene, entry, map change, disconnect). On the local server, from Bootstrap with the dev auto-login: DevHero enters iz_int and prontera on the saved cell, facing North, and the entity list then equals the server's view.
 
-- [ ] **T6.3** `EntityLookMapping` and `WorldPresenter` for units (plan §4.9). (FR-3 to FR-8)
+- [x] **T6.3** `EntityLookMapping` and `WorldPresenter` for units (plan §4.9). (FR-3 to FR-8)
   *Done when:* `WorldPresenter_ReadsOnly` and `_ZeroAllocationSteadyState` pass (PlayMode); on the local server, players, NPCs and monsters near the own character show with their looks, walk, turn and sit; a vanishing unit disappears as FR-5 says.
-  *Open (2026-11-22):* 8 play mode tests pass (`WorldPresenter_ReadsOnly`, `_ZeroAllocationSteadyState`, views, pool, releases). On the local server the NPCs and monsters near the own character show with their looks, walk, chase and vanish, and the own character walks, turns and sits. Left: another player (looks, turn, sit), which needs a second client: the owner, with T9.1.
+  *Result (2026-11-22):* `WorldPresenter_ReadsOnly` and `_ZeroAllocationSteadyState` pass with the other play mode tests. On the local server the NPCs and monsters near the own character show with their looks, walk, chase and vanish; with a second client (two Multiplayer Play Mode players) each sees the other's look, walk, turns, head and sitting. The head of hair style 0 was missing: D27.
 
 - [ ] **T6.4** `GroundItemView` (plan §4.9). (FR-16)
   *Done when:* a red potion dropped on the local server shows its ground sprite on the server's cell and sub-cell (T0.3 rule) and disappears when another client picks it up (screenshots in `evidence/`).
