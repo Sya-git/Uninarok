@@ -25,6 +25,10 @@ namespace Uninarok.Units.Dev
         {
             public UnitView View;
             public float Next;
+            /// <summary>When its animation starts: units do not live in step, so they do not start in step.</summary>
+            public float StartAt;
+            public int Animation;
+            public bool Player, Started;
         }
 
         EntitySandbox _sandbox;
@@ -74,15 +78,13 @@ namespace Uninarok.Units.Dev
             {
                 var view = _sandbox.Spawn(RandomPlayer(jobs[i % jobs.Length]), cells[n].x, cells[n].y, (UninarokDirection)_random.Next(8));
                 var animations = PlayerAnimations;
-                view.Play(animations[_random.Next(animations.Length)]);
-                Add(view);
+                Add(view, true, (int)animations[_random.Next(animations.Length)]);
             }
             for (int i = 0; i < monsters && n < cells.Count; i++, n++)
             {
                 var view = _sandbox.Spawn(UnitLook.ForJob(monsterJobs[i % monsterJobs.Length]), cells[n].x, cells[n].y, (UninarokDirection)_random.Next(8));
                 var animations = MonsterAnimations;
-                view.Play(animations[_random.Next(animations.Length)]);
-                Add(view);
+                Add(view, false, (int)animations[_random.Next(animations.Length)]);
             }
             Running = true;
             _samples = 0;
@@ -98,7 +100,10 @@ namespace Uninarok.Units.Dev
             GarbageLast = GarbageMean = 0;
         }
 
-        void Add(UnitView view) => _turners.Add(new Turner { View = view, Next = Time.time + NextTurn() });
+        void Add(UnitView view, bool player, int animation) => _turners.Add(new Turner
+        {
+            View = view, Next = Time.time + NextTurn(), StartAt = Time.time + (float)_random.NextDouble() * 2f, Player = player, Animation = animation,
+        });
 
         float NextTurn() => 2f + (float)_random.NextDouble() * 4f;
 
@@ -155,7 +160,15 @@ namespace Uninarok.Units.Dev
             for (int i = 0; i < _turners.Count; i++)
             {
                 var t = _turners[i];
-                if (now < t.Next || t.View == null) continue;
+                if (t.View == null) continue;
+                if (!t.Started && now >= t.StartAt)
+                {
+                    t.Started = true;
+                    if (t.Player) t.View.Play((PcAnimation)t.Animation);
+                    else t.View.Play((MonsterAnimation)t.Animation);
+                    _turners[i] = t;
+                }
+                if (now < t.Next) continue;
                 t.View.Facing = (UninarokDirection)_random.Next(8);
                 t.Next = now + NextTurn();
                 _turners[i] = t;

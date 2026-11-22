@@ -186,9 +186,12 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
 - [ ] **T8.1** Verify the reference set against the reference viewer in the composer. (FR-1, FR-2, FR-3, FR-4, FR-5, FR-8; success criteria)
   8 directions and 4 camera turns per member.
   *Done when:* evidence images for every member are in `evidence/`, each matches the reference viewer in parts, order, offsets and timing; any mismatch is fixed in its table task or recorded in BACKLOG with the owner's agreement.
+  *Open (2026-11-22):* images of every member in 8 directions and 4 camera turns are in evidence/t8.1-*.png; comparing them with the reference viewer is the owner's. Candidate rules to look at: composition-reference.md §2.1 (negative priority), §2.2, §2.4, §2.5, §3 (default order), §5 (which head frame is right).
 
-- [ ] **T8.2** Final budget and release check. (FR-13, FR-14)
+- [x] **T8.2** Final budget and release check. (FR-13, FR-14)
   *Done when:* the stress mode on the owner's PC shows a unit update of 2 ms or less and 0 B GC per frame (profiler capture in `evidence/`); a release build contains no Entity Sandbox scene and no `Uninarok.Units.Dev` type.
+  *Result (2026-11-22):* this PC (i5-14600KF), in the editor: readout over 10 s 0.50 ms mean, 0.97 ms max; with the profiler on, 300 frames, 0.91 ms mean, 1.66 ms max, 0 B GC in `UnitSystem.Tick` (evidence/t8.2-stress-profiler.csv, per frame). The stress starts its units spread over 2 s instead of all in one frame (in step they peaked at 2.3 to 2.7 ms under the profiler, 2 of 300 frames over 2 ms). Release: compiled release player scripts contain no `Uninarok.Units.Dev` (the development ones do) and the build list is Bootstrap only; no full player build was made.
 
 - [ ] **T8.3** Close the spec. (all)
   *Done when:* spec success criteria checked and reported; sprite-catalog.md §1 points the composition rows to SPEC-0009; the two BACKLOG items of plan §7 are removed (closed) and leftovers added; spec, plan and tasks status `Implemented`.
+  *Open (2026-11-22):* waits for T6.4 and T8.1. Done already: sprite-catalog.md §1 points to SPEC-0009, leftovers are in BACKLOG.

@@ -57,6 +57,7 @@ namespace Uninarok.Sprites
         int _applyCount;
         // Driven mode: what the last ShowFrame resolved.
         SpriteAnimation _shownData;
+        bool _shownValid;     // Data was alive when it was set: the hot path does not ask again
         int _shownAnimation = -1, _shownDirection = -1;
         int _sortingBase;
         Color32 _tint = new Color32(255, 255, 255, 255);
@@ -153,6 +154,7 @@ namespace Uninarok.Sprites
             if (dataChanged)
             {
                 _shownData = Data;
+                _shownValid = Data != null;
                 EnsureRenderers();
                 _dirty = true;
             }
@@ -162,7 +164,7 @@ namespace Uninarok.Sprites
                 _shownAnimation = _animation = animation;
                 _shownDirection = _direction = direction;
                 int before = _unique;
-                _hasAction = Data != null && Data.TryGetAction(animation, direction, Missing, out _unique);
+                _hasAction = _shownValid && Data.TryGetAction(animation, direction, Missing, out _unique);
                 if (!_hasAction) _unique = -1;
                 if (_unique != before) _dirty = true;
             }
@@ -219,6 +221,7 @@ namespace Uninarok.Sprites
         public void Hide()
         {
             _shownData = null;
+            _shownValid = false;
             _shownAnimation = _shownDirection = -1;
             _hasAction = false;
             _unique = -1;
@@ -297,7 +300,7 @@ namespace Uninarok.Sprites
                 var layer = Data.Layers[frame.FirstLayer + i];
                 var r = _renderers[i];
                 ref var w = ref _written[i];
-                if (layer.Slot < 0 || layer.Slot >= sprites.Length || sprites[layer.Slot] == null)
+                if (layer.Slot < 0 || layer.Slot >= sprites.Length || ReferenceEquals(sprites[layer.Slot], null))
                 {
                     if (w.Enabled) r.enabled = w.Enabled = false;   // −1: draws nothing (FR-5)
                     continue;

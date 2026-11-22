@@ -23,22 +23,22 @@ All `.lub` files are Lua 5.1 bytecode (header `ESC L u a Q`). GRF's `Lub` class 
 | `JTtbl` | `datainfo/jobidentity.lub` | constant name → job id for **player classes** and a few late NPCs (`JT_KNIGHT = 7`, `JT_4_*` = 10xxx) | player class id |
 | `JobNameTable` | `datainfo/jobname.lub` | job id → **sprite base name** (`[jobtbl.JT_PORING] = "PORING"`); 5,300 entries | monster/NPC/homun file name |
 | `ReqJobName(id)` | `datainfo/jobname_f.lub` | lookup function over `JobNameTable` | — |
-| `ShadowFactorTable` | `datainfo/shadowtable.lub` | job id → shadow scale (0 = no shadow) | later spec (shadows) |
+| `ShadowFactorTable` | `datainfo/shadowtable.lub` | job id → shadow scale (0 = no shadow) | SPEC-0009 ([composition-reference](../0009-unit-display/composition-reference.md) §2.8) |
 | `PCJobNameTable` | `datainfo/pcjobname.lub` | **empty** in this client | — |
 | `PCJobNameTableMan`/`Woman` | `datainfo/pcjobnamegender*.lub` | player job id → **display name** (localised, not a file name) | UI only |
 | `ACCESSORY_IDs` | `datainfo/accessoryid.lub` | constant → **headgear view id** (`ACCESSORY_GOGGLES = 1`), 2,859 entries | headgear id |
 | `AccNameTable` | `datainfo/accname.lub` | view id → **headgear file stem** (`"_고글"`) | headgear file |
 | `SPRITE_ROBE_IDs` | `datainfo/spriterobeid.lub` | constant → **garment view id** (`ROBE_WINGS = 1`), 330 ids (1–331, 168 unused; T2.5) | garment id |
-| `RobeNameTable` (+ `_Eng`), `RobeTopLayer` | `datainfo/spriterobename.lub` | garment view id → **garment folder name** (`"천사날개"`); list of garments drawn above the body | garment folder; layer order (later spec) |
+| `RobeNameTable` (+ `_Eng`), `RobeTopLayer` | `datainfo/spriterobename.lub` | garment view id → **garment folder name** (`"천사날개"`); list of garments on the top layer | garment folder; layer order: SPEC-0009 ([composition-reference](../0009-unit-display/composition-reference.md) §2.2) |
 | `Weapon_IDs` | `datainfo/weapontable.lub` | constant → **weapon view id** (0–102 plus named expansions) | weapon id |
 | `WeaponNameTable` | same file | weapon view id → **weapon file suffix** (`"_검"`, `"_1207"`) | weapon file |
 | `Expansion_Weapon_IDs` | same file | specific view id → **base weapon type** (Main Gauche → SHORTSWORD) | fallback when a specific suffix has no file |
 | `WeaponHitWaveNameTable` | same file | weapon type → hit sound | later spec (audio) |
-| `TB_Layer_Priority` | `datainfo/tb_layer_priority.lub` | headgear id → draw priority (Default_Top 200, Mid 100, Bottom 300, Robe 400) | later spec (composition) |
-| `_2dlayertoHead_list`, `BigLayerDir_*`, `SmallLayerDir_*`, `LAYER_ALL_TABLE_LIST` | `spreditinfo/*.lub` | per job, sex, action and frame: which layers swap order (weapon/garment behind or in front) | later spec (composition) |
-| `SetHeadSprEditInfo(...)` | `ridingspreditinfo/ridingspreditinfo.lub` | per job and action: head offset correction when riding | later spec (composition) |
-| `OffsetItemPos` | `offsetitempos/offsetitempos.lub` | per headgear id, direction, sex (and doram): pixel offset correction | later spec (composition) |
-| `transparentItemlist` | `transparentitem/transparentitem.lub` | headgear id → alpha | later spec |
+| `TB_Layer_Priority` | `datainfo/tb_layer_priority.lub` | headgear id → draw priority (Default_Top 200, Mid 100, Bottom 300, Robe 400) | SPEC-0009 ([composition-reference](../0009-unit-display/composition-reference.md) §2.1) |
+| `_2dlayertoHead_list`, `BigLayerDir_*`, `SmallLayerDir_*`, `LAYER_ALL_TABLE_LIST` | `spreditinfo/*.lub` | per job, sex, action and frame: garment behind or in front, garment under the head | SPEC-0009 ([composition-reference](../0009-unit-display/composition-reference.md) §2.3, §2.4) |
+| `SetHeadSprEditInfo(...)` | `ridingspreditinfo/ridingspreditinfo.lub` | per job and action: head and body offset correction when riding | SPEC-0009 ([composition-reference](../0009-unit-display/composition-reference.md) §2.5) |
+| `OffsetItemPos` | `offsetitempos/offsetitempos.lub` | per headgear id, direction, sex, doram only: pixel offset correction | SPEC-0009 ([composition-reference](../0009-unit-display/composition-reference.md) §2.6) |
+| `transparentItemlist` | `transparentitem/transparentitem.lub` | garment id → alpha | SPEC-0009 ([composition-reference](../0009-unit-display/composition-reference.md) §2.7) |
 | `hatEffectTable` | `hateffectinfo/hateffectinfo.lub` | hat effect id → STR effect file | out of scope (STR) |
 | `ET_*`, `EMOTION_ORDERLIST` | `emotion/emotionlist.lub` | emote id (`ET_SURPRISE = 0` … `ET_YUT7 = 87`) | emote action index (§3.10) |
 | `SKID` | `skillinfoz/skillid.lub` | constant → **skill id** (`SM_BASH = 5`); the lower-case constant is the icon file name | skill icons (§3.2b) |

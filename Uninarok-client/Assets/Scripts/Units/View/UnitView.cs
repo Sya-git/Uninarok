@@ -29,6 +29,8 @@ namespace Uninarok.Units
         Transform _pivot;
         UnitShadow _shadow;
         readonly SpriteActor[] _actors = new SpriteActor[UnitParts.SlotCount];
+        readonly Transform[] _actorTransforms = new Transform[UnitParts.SlotCount];
+        readonly Vector3[] _actorPositions = new Vector3[UnitParts.SlotCount];
         readonly Texture2D[] _palettes = new Texture2D[UnitParts.SlotCount];
         readonly UnitParts _parts = new UnitParts();
         readonly PartPlacement[] _placements = new PartPlacement[UnitComposer.MaxParts];
@@ -234,7 +236,7 @@ namespace Uninarok.Units
 
             var body = _parts.Animations[(int)PartSlot.Body];
             int direction = UnitFacing.Shown(Facing, cameraSector);
-            if (body == null || !body.TryGetAction(_clock.Animation, direction, SpriteMissingAction.Fallback, out int unique))
+            if (ReferenceEquals(body, null) || !body.TryGetAction(_clock.Animation, direction, SpriteMissingAction.Fallback, out int unique))
             {
                 if (_shownVersion != _parts.Version) ShowNothing();
                 return;
@@ -321,20 +323,21 @@ namespace Uninarok.Units
                 ref var p = ref _placements[i];
                 int slot = (int)p.Slot;
                 var actor = _actors[slot];
-                if (actor == null) continue;
+                if (ReferenceEquals(actor, null)) continue;
                 shown |= 1 << slot;
                 if ((_hiddenSlots & (1 << slot)) != 0)
                 {
                     actor.Hide();
                     continue;
                 }
-                actor.transform.localPosition = new Vector3(p.OffsetPx.x / ppu, -p.OffsetPx.y / ppu, -p.Order * PartDepthStep);
+                var position = new Vector3(p.OffsetPx.x / ppu, -p.OffsetPx.y / ppu, -p.Order * PartDepthStep);
+                if (!position.Equals(_actorPositions[slot])) _actorTransforms[slot].localPosition = _actorPositions[slot] = position;
                 actor.SortingBase = p.Order * OrdersPerPart;
                 actor.Tint = p.Tint;
                 actor.ShowFrame(animation, direction, _partFrames[slot]);
             }
             for (int i = 0; i < _actors.Length; i++)
-                if (_actors[i] != null && (shown & (1 << i)) == 0) _actors[i].Hide();
+                if ((shown & (1 << i)) == 0 && !ReferenceEquals(_actors[i], null)) _actors[i].Hide();
         }
 
         void Attached(PartSlot slot, int viewId, ref AttachedPart part, int animation, int direction, int frame, int head)
@@ -349,7 +352,7 @@ namespace Uninarok.Units
         {
             var data = _parts.Animations[(int)slot];
             int shown = frame;
-            if (data != null && data.TryGetAction(animation, direction, SpriteMissingAction.DrawNothing, out int unique))
+            if (!ReferenceEquals(data, null) && data.TryGetAction(animation, direction, SpriteMissingAction.DrawNothing, out int unique))
             {
                 int count = data.Actions[unique].FrameCount;
                 shown = UnitClock.PartFrame(frame, count, head, _clock.Ticks);
@@ -364,7 +367,7 @@ namespace Uninarok.Units
             anchor = default;
             var data = _parts.Animations[(int)slot];
             var policy = slot == PartSlot.Body ? SpriteMissingAction.Fallback : SpriteMissingAction.DrawNothing;
-            if (data == null || !data.TryGetAction(animation, direction, policy, out int unique)) return false;
+            if (ReferenceEquals(data, null) || !data.TryGetAction(animation, direction, policy, out int unique)) return false;
             var action = data.Actions[unique];
             if (action.FrameCount <= 0) return false;
             var f = data.Frames[action.FirstFrame + frame % action.FrameCount];
@@ -428,6 +431,8 @@ namespace Uninarok.Units
             actor.Material = Material;
             go.SetActive(true);
             if (slot == PartSlot.Body) actor.FrameEvent += OnBodyEvent;
+            _actorTransforms[i] = go.transform;
+            _actorPositions[i] = go.transform.localPosition;
             return _actors[i] = actor;
         }
 

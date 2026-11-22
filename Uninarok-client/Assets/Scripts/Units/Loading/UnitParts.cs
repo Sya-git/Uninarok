@@ -38,7 +38,7 @@ namespace Uninarok.Units
         internal int Request;
 
         public SpriteAnimation this[PartSlot slot] => Animations[(int)slot];
-        public bool Has(PartSlot slot) => Animations[(int)slot] != null;
+        public bool Has(PartSlot slot) => !ReferenceEquals(Animations[(int)slot], null);
         public bool HasShadow => ShadowScale > 0f && (ShadowSprite != null || ShadowAnimation != null);
 
         internal void Clear()
