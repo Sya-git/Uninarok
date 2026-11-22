@@ -51,9 +51,10 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
   *Done when:* `RoLuaReader_Calls_CapturedWithArguments` and the existing reader tests pass; a fixture copied from `ridingspreditinfo.lub` and one from `offsetitempos.lub` (decompiled text) read with the expected call count.
   *Result (2026-11-22):* the 3 `RoLuaReader_Calls_*` tests and the 18 existing reader tests pass (21/21).
 
-- [ ] **T1.2** Tests, then implementation: `CompositionTables` asset type and its lookups. (FR-3, FR-4, FR-11)
+- [x] **T1.2** Tests, then implementation: `CompositionTables` asset type and its lookups. (FR-3, FR-4, FR-11)
   Flat sorted arrays as plan §4.1 and T0.2's columns; `ShadowScaleOf`, `PriorityOf`, `TryGetItemOffset` and one `TryGet` per table.
   *Done when:* `CompositionTables_ShadowScaleOf_Default1_Zero_Baby075` and the lookup tests on synthetic data pass; a lookup allocates 0 B (test with `GC.GetAllocatedBytesForCurrentThread`).
+  *Result (2026-11-22):* 8 tests pass (`CompositionTablesTests`), lookups allocate 0 B. The layer swaps are keyed without the size (always big, D16) and hold a frame bit mask.
 
 - [ ] **T1.3** Tests, then implementation: `RoCompositionTablesBuilder`. (FR-3, FR-4, FR-11)
   Pure, from `RoCatalogTables` and the read chunks; a missing or unreadable table gives one gap and an empty table.
