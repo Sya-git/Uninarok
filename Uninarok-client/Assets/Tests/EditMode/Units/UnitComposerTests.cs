@@ -150,6 +150,36 @@ namespace Uninarok.Units.Tests
             Assert.That(At(front, PartSlot.Garment), Is.GreaterThan(At(front, PartSlot.Body)), "a job with a table: an action not listed is in front");
         }
 
+        // Owner report 2026-11-22: acolyte male, Attack2, frames 5 to 8 (D26).
+        [Test]
+        public void UnitComposer_GarmentInFrontWhileTheFaceShows_StaysUnderTheHead()
+        {
+            foreach (int direction in new[] { 0, 1, 2, 3, 4, 5, 6, 7 })
+                Assert.That(UnitComposer.ShowsFace((int)PcAnimation.Attack2, direction), Is.EqualTo(direction <= 1 || direction >= 6), direction.ToString());
+            Assert.That(UnitComposer.ShowsFace((int)PcAnimation.Walk, 6), Is.EqualTo(UnitComposer.ShowsFace((int)PcAnimation.Walk, 2)), "the two sides of a walk are alike");
+        }
+
+        [Test, Category("NeedsData")]
+        public void UnitComposer_AcolyteAttack2_GarmentNeverCoversTheHeadFromTheFront()
+        {
+            var tables = UnitTestData.CatalogOrIgnore().Tables;
+            var into = new PartPlacement[UnitComposer.MaxParts];
+            foreach (int garment in new[] { 1, 2 }) // wings and a top-layer backpack
+                foreach (int direction in new[] { 0, 1, 6, 7 })
+                    for (int frame = 0; frame < 9; frame++)
+                    {
+                        var input = new ComposeInput
+                        {
+                            Player = true, Job = (int)PlayerJob.JOB_ACOLYTE, Sex = AccountSex.SEX_MALE, Animation = (int)PcAnimation.Attack2,
+                            Direction = direction, Frame = frame, Body = true, Head = new AttachedPart { Present = true }, Garment = true, GarmentId = garment,
+                        };
+                        int n = UnitComposer.Compose(input, tables, into);
+                        string order = string.Empty;
+                        for (int i = 0; i < n; i++) order += into[i].Slot + " ";
+                        Assert.That(order.Trim(), Is.EqualTo(frame >= 5 ? "Body Garment Head" : "Garment Body Head"), $"{garment} {direction} {frame}");
+                    }
+        }
+
         [Test]
         public void UnitComposer_HeadToBody_GarmentUnderTheHead()
         {

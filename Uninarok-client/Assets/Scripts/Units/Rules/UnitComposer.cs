@@ -90,6 +90,14 @@ namespace Uninarok.Units
         public static bool FacesAway(int direction) => direction >= 3 && direction <= 5;
 
         /// <summary>
+        /// Views that show the face: a garment in front of the body stays under the head (composition-reference.md 2.3, D26).
+        /// Idle, walk and sit have 8 views, 6 a pure side; every other animation draws 0, 1, 6, 7 from the front and 2 to 5
+        /// from behind.
+        /// </summary>
+        public static bool ShowsFace(int animation, int direction) =>
+            direction == 0 || direction == 1 || direction == 7 || (direction == 6 && animation > (int)PcAnimation.Sit);
+
+        /// <summary>
         /// Writes the placements of the present parts into <paramref name="into"/> (at least <see cref="MaxParts"/>), sorted back
         /// to front, and returns how many. No allocation.
         /// </summary>
@@ -149,6 +157,7 @@ namespace Uninarok.Units
             if (tables == null) return behind ? KeyGarmentBehind : KeyPriority + 400;
             if (tables.TryGetLayerSwap(input.Job, input.Sex, input.FileAction, input.Frame, out bool listed)) behind = listed;
             if (behind) return KeyGarmentBehind;
+            if (ShowsFace(input.Animation, direction)) return KeyGarmentUnderHead;
             if (tables.IsGarmentUnderHead(input.Job, input.Sex, input.GarmentId, input.FileAction, input.Frame)) return KeyGarmentUnderHead;
             return tables.IsRobeTopLayer(input.GarmentId) ? KeyGarmentTop : KeyPriority + tables.DefaultRobe;
         }

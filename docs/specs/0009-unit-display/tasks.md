@@ -200,6 +200,10 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
   *Done when:* with a driver left over from an earlier session the tick still runs once per frame; in the Entity Sandbox, in a second play session, a walk frame lasts the body's frame time.
   *Result (2026-11-22):* before: 4 ticks per frame. After: 1; walk frame time 75 ms, measured 75.5 ms over 4 s. `UnitSystem_TicksOncePerFrame_WithAStrayDriver` passes (PlayMode 16 of 16). FR-14 measured again (editor, 300 units, 600 frames): 0.73 ms mean, 1.97 ms max.
 
+- [x] **T8.6** Keep a garment in front of the body under the head while the face shows (added 2026-11-22, owner report). (FR-3)
+  *Done when:* acolyte male, Attack2, facing front: the garment is behind the body in frames 0 to 4, and above the body but under the head in frames 5 to 8; the views from behind do not change.
+  *Result (2026-11-22):* `UnitComposer_AcolyteAttack2_GarmentNeverCoversTheHeadFromTheFront` and `_GarmentInFrontWhileTheFaceShows_StaysUnderTheHead` pass (Units EditMode 97 of 97); evidence/t8.6-acolyte-garment.png (frames left to right; Attack2 then Attack3, directions 0, 7, 6, 2, 4).
+
 - [ ] **T8.3** Close the spec. (all)
   *Done when:* spec success criteria checked and reported; sprite-catalog.md §1 points the composition rows to SPEC-0009; the two BACKLOG items of plan §7 are removed (closed) and leftovers added; spec, plan and tasks status `Implemented`.
   *Open (2026-11-22):* waits for T6.4 and T8.1. Done already: sprite-catalog.md §1 points to SPEC-0009, leftovers are in BACKLOG.

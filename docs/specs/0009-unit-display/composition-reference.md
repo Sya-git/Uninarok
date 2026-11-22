@@ -38,7 +38,7 @@ The two orders run in **opposite** senses: no constant offset turns one into the
 A list of garment view ids, read by `IsTopLayer(RobeID)`.
 
 - It does **not** put the garment over the body in every direction: drawn over the body facing front, the adventurer's backpack (view 2) and the bear bag (60) cover the chest (composite image of T0.2). PLAN-0009 §4.5 rule 3 was wrong (D16).
-- **Candidate** rule used: when §2.3 puts the garment in front, a listed garment is drawn above every headgear; another one takes the robe priority (400).
+- **Candidate** rule used: when §2.3 puts the garment in front, a listed garment is drawn above every headgear; another one takes the robe priority (400). Only for views from behind: see §2.3.
 
 ### 2.3 `spreditinfo/_new_biglayerdir_{male,female}.lub` — garment behind or in front (FR-3)
 
@@ -48,6 +48,7 @@ A list of garment view ids, read by `IsTopLayer(RobeID)`.
 - A job with no table, or an action not listed, is on top in the client. **Confirmed** (text). A job with **no** table uses the default of §3 here (behind when facing front), so a garment never covers a chest for a class the client does not list.
 - Size: `GetLayerSizeType` returns `LAYER_BIG` for every garment (`LayerSizeTypeList` has one entry, also big): the `smalllayerdir` tables are never read. **Confirmed**; only the big tables are imported (D16).
 - The old tables (`biglayerdir_*`, `smalllayerdir_*`, `2dlayerdir_f.lub`) have the same shape and are superseded by the `_new_` set. **Candidate** (both are in the data; the new one lists the third classes).
+- In front of the body, but the view shows the face: the garment is **under the head** (D26). Directions 0, 1, 7, and 6 except in idle, walk and sit, where 6 is a pure side like 2. Every other animation has two groups of views, 0, 1, 6, 7 (front) and 2 to 5 (behind), and the rows of the tables repeat inside each group. **Confirmed** by the owner for the acolyte (Attack2, frames 5 to 8); **Candidate** for the other classes (the same rows).
 - Sex: `SEX_FEMALE = 0`, `SEX_MALE = 1`, as `AccountSex`. **Confirmed**.
 
 ### 2.4 `spreditinfo/_2dlayer_headtobody.lub` — garment under the head (FR-3)
@@ -74,7 +75,7 @@ Calls `SetHeadSprEditInfo(job, firstAction, lastAction, firstMotion, lastMotion,
 
 `ShadowFactorTable[jobtbl.X | JTtbl.X] = scale`; 987 rows, 67 zeros, others 0.2 to 5; `ReqshadowFactor` returns −1 for a job not listed = default 1. **Confirmed**. First baby classes have 0.75, second and third baby classes **0.82**; mounts 1.5 to 2; fabre 0.5; warp NPC 0; red plant 0.
 
-Baby classes: the **body** scale is 0.8 (roBrowser `EntityView`: size 4 where other classes have 5; **Candidate**), and the shadow's is this table's times that (roBrowser draws the shadow at the entity's size). The table's 0.75 and 0.82 are shadow factors only. Baby, high and transcendent classes take their sprites from the base job of `LAYER_ALL_TABLE_LIST` (§2.3).
+Baby classes: the **body** scale is 0.8 (roBrowser `EntityView`: size 4 where other classes have 5; **Confirmed** by the owner's size comparison image, 2026-11-22), and the shadow's is this table's times that (roBrowser draws the shadow at the entity's size). The table's 0.75 and 0.82 are shadow factors only. Baby, high and transcendent classes take their sprites from the base job of `LAYER_ALL_TABLE_LIST` (§2.3).
 
 ### 2.9 Shadow sprite
 
