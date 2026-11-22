@@ -127,6 +127,7 @@
 - [ ] **T3.8** Walk-log mode of the plugin and the D11 measurement; implement `SearchForUnit` (plan §4.4, D11). (FR-6, FR-10)
   Log a 10-minute session on prt_fild08 with monsters chasing and wandering.
   *Done when:* the log is a committed fixture; the report gives, for the default rule and for "always A*", the share of monster walks reproduced and the largest mid-walk distance on a mismatch; the better rule is in `SearchForUnit` (Decisions note if not the default); `SearchForUnit_WalkLog_*` passes at the measured share.
+  *Order (2026-11-22):* waits for the owner to allow a restart of the local map-server with the plugin; phases 4 and 5 go on with the default rule of D11 (reorder allowed by CLAUDE.md §1.4 rule 6).
 
 ## Phase 4: World model
 
