@@ -153,6 +153,7 @@ namespace Uninarok.World.View
         {
             if (state == FlowState.LoadingMap || state == FlowState.InGame) return;
             LeaveMap();
+            if (state != FlowState.ConnectingToMap) _presenter?.ForgetOwn();
             _loads++;
             // Between two map servers the scene stays: the new one may ask for the same.
             if (state != FlowState.ConnectingToMap) _scenes.Unload();

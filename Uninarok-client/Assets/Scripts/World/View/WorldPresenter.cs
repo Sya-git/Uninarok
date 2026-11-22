@@ -42,6 +42,9 @@ namespace Uninarok.World.View
         EntityLook[] _looks = Array.Empty<EntityLook>();
         int _limit;
 
+        // The own character's view stays loaded between two maps, so the first frame of the new one shows it (FR-12, D24).
+        UnitView _ownView, _keptOwn;
+
         public WorldPresenter(UnitLoader loader, Material unitMaterial, Transform root, WorldSettings settings)
         {
             _loader = loader ?? throw new ArgumentNullException(nameof(loader));
@@ -117,7 +120,18 @@ namespace Uninarok.World.View
         public GroundItemView ItemViewOf(uint id) =>
             _model != null && _model.TryGetSlot(id, out int slot) && slot < _items.Length && _generations[slot] == _model[slot].Generation ? _items[slot] : null;
 
-        /// <summary>Back to the pool with every view (map change, disconnect).</summary>
+        /// <summary>Back to the pool with the own character's view too: the session is over.</summary>
+        public void ForgetOwn()
+        {
+            ReleaseAll();
+            var view = _keptOwn;
+            _keptOwn = null;
+            if (view == null) return;
+            view.Clear();
+            _pool.Push(view);
+        }
+
+        /// <summary>Back to the pool with every view but the own character's, which is hidden and kept (map change).</summary>
         public void ReleaseAll()
         {
             for (int i = 0; i < _views.Length; i++)
@@ -128,7 +142,7 @@ namespace Uninarok.World.View
 
         public void Dispose()
         {
-            ReleaseAll();
+            ForgetOwn();
             while (_pool.Count > 0)
             {
                 var view = _pool.Pop();
@@ -146,7 +160,13 @@ namespace Uninarok.World.View
 
         void Show(int slot, in Entity e)
         {
-            var view = Take();
+            bool own = e.Id == _model.OwnId;
+            var view = own && _keptOwn != null ? _keptOwn : Take();
+            if (own)
+            {
+                _ownView = view;
+                _keptOwn = null;
+            }
             _views[slot] = view;
             _looks[slot] = e.Look;
             _versions[slot] = e.Version;
@@ -310,9 +330,16 @@ namespace Uninarok.World.View
             if (ReferenceEquals(view, null)) return;
             _views[slot] = null;
             ShownCount--;
+            bool own = ReferenceEquals(view, _ownView);
+            if (own) _ownView = null;
             if (view == null) return; // destroyed with its scene
-            view.Clear();
             view.gameObject.SetActive(false);
+            if (own)
+            {
+                _keptOwn = view;
+                return;
+            }
+            view.Clear();
             _pool.Push(view);
         }
 

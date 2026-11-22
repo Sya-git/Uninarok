@@ -174,6 +174,37 @@ namespace Uninarok.World.PlayTests
         }
 
         [UnityTest, Category("NeedsData")]
+        public IEnumerator TheOwnView_StaysLoaded_ThroughAMapChange()
+        {
+            Novice(1, 10, 20);
+            Poring(2, 11, 20);
+            _model.OwnId = 1;
+            _presenter.Sync(_model);
+            yield return Loaded(1);
+            yield return Loaded(2);
+            var own = _presenter.ViewOf(1);
+
+            // the session empties the old world first, then the presenter leaves the map
+            _model.Clear();
+            _presenter.ReleaseAll();
+            _presenter.Map = null;
+            Assert.IsFalse(own.gameObject.activeSelf);
+            var next = new WorldModel(new MapDataWalkGrid(_map), _settings);
+            next.Upsert(1, EntityKind.Player, new EntityLook { Job = 0, HairStyle = 1, Sex = 1 }, 150, 40, 41, UninarokDirection.North, HeadDirection.Straight, EntityState.Standing);
+            next.OwnId = 1;
+            _presenter.Map = _map;
+            _presenter.Sync(next);
+            Assert.AreSame(own, _presenter.ViewOf(1));
+            UnitSystem.Tick(0.016f);
+            Assert.IsTrue(own.Loaded && own.Frame >= 0, "shown on the first frame (FR-12)");
+            Assert.AreEqual((UninarokDirection.North, true), (own.Facing, own.gameObject.activeSelf));
+
+            _presenter.ForgetOwn();
+            for (int i = 0; i < 60; i++) yield return null;
+            Assert.AreEqual((0, 0), (_source.HeldCount, _presenter.ShownCount));
+        }
+
+        [UnityTest, Category("NeedsData")]
         public IEnumerator EveryHandle_IsReleased_WithTheLastView()
         {
             for (uint i = 1; i <= 20; i++)
