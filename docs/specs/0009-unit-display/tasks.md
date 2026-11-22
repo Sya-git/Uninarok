@@ -34,9 +34,10 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
   *Done when:* the document exists with every table and rule marked Confirmed or Candidate with the evidence used; the reference set is complete in this file's header; any plan rule found wrong is corrected in the plan with a Decisions note.
   *Result (2026-11-22):* document written; plan rules corrected in D12 and D15 to D20. The reference viewer was not available here: rules that need it are marked Candidate and go to the owner with T8.1.
 
-- [ ] **T0.3** Check the offset between network direction and the sprite's front. (FR-6)
+- [x] **T0.3** Check the offset between network direction and the sprite's front. (FR-6)
   Compare a real capture's unit direction (idle/spawn packet) with what the original client shows at its default camera, for at least two directions.
   *Done when:* `docs/data/UninarokPosition.md` states the offset (0 or n) and the turning sign, with the evidence; plan §4.3 `UnitFacing.Shown` names the constant.
+  *Result (2026-11-22):* offset 4, sign −1 (`FrontOffset`). Evidence is the server's `dirx`/`diry` and the client's own `OffsetItemPos.Direction`, not a capture beside the original client (not available here): owner to see it in T6.4/T8.1.
 
 - [ ] **T0.4** Create the assemblies and test assemblies, empty. (FR-13, FR-15)
   `Scripts/Units/Uninarok.Units.asmdef`, `Scripts/CameraRig/Uninarok.CameraRig.asmdef`, `Scripts/Units/Dev/Uninarok.Units.Dev.asmdef`, `Scripts/Units/Editor/Uninarok.Units.Editor.asmdef` (editor only), and test assemblies under `Tests/EditMode/Units`, `Tests/EditMode/CameraRig`, `Tests/PlayMode/Units`, with the references of plan §3.

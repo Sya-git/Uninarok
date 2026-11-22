@@ -155,13 +155,15 @@ public static class UnitFacing
     public const int Directions = 8;
     // Camera turn (degrees, any value) → sector 0..7, borders at ±22.5° (OQ-2): floor((yaw + 22.5) / 45) mod 8.
     public static int CameraSector(float yawDegrees);
-    // World facing + camera sector → the sprite's action direction (0 = faces the viewer). FrontOffset is fixed in T0.3.
+    // World facing + camera sector → the sprite's action direction (0 = faces the viewer):
+    // (FrontOffset - world - sector) mod 8, FrontOffset = 4 (T0.3, D15).
+    public const int FrontOffset = 4;
     public static int Shown(UninarokDirection world, int cameraSector);
 }
 ```
 
 - Pure functions; `UnitSystem` computes the camera sector **once per tick** and every unit uses the same value, so all units and all parts of a unit switch sector on the same frame (FR-6).
-- The sign (whether turning the camera right increases or decreases the shown direction) and `FrontOffset` are fixed by T0.3 and covered by the FR-6 tests at 0°, 22°, 23°, 90°, 180°.
+- The sign (turning the camera right decreases the shown direction) and `FrontOffset = 4` come from T0.3 ([UninarokPosition](../../data/UninarokPosition.md)) and are covered by the FR-6 tests at 0°, 22°, 23°, 90°, 180°.
 - **Body and head turning** (FR-6, FR-8). In RO a player turns the body (world facing, 8 directions) and the head separately (straight, left, right of the body), with shift + click on the map, or with commands such as `/doridori` (head left–right repeatedly) and `/bangbang` (body turning round). The server sends both as one direction change (body direction + head direction). This spec only **shows** them: `UnitView.Facing` (body) and `UnitView.HeadFacing` (head) can change at any time, every frame if needed, and the next tick shows them; issuing them from input or chat commands is the world spec's job.
   - `HeadFacing { Straight, Right, Left }`. In `Idle` and `Sit` the player actions are not time-animated: the body and head actions have 3 frames, one per head facing, and the frame shown **is** the head facing (candidate from roBrowser, confirmed in T0.2 against the reference viewer, R3). So the head turn is a frame choice, not an animation, and both body and head use it (the body's frame shows the slight shoulder turn). `UnitClock` holds the frame at `(int)headFacing` for those two animations instead of advancing (D9). Headgears follow the head's frame.
   - In every other animation (walk, attack, …) the head looks straight, as in the client; the head facing is kept and shows again on return to idle or sit.
