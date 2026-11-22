@@ -69,7 +69,7 @@ namespace Uninarok.Units.Tests
         }
 
         // TASKS-0009 T9.1 (FR-16; PLAN-0009 4.10): what the shader reads is where the layer really is above the ground point.
-        [Test, Ignore("pending T9.2")]
+        [Test]
         public void UnitView_LayerHeights_AreFromThePivot_AtTheDisplayScale()
         {
             foreach (var look in new[] { UnitTestData.Swordsman(), UnitLook.ForJob((int)PlayerJob.JOB_BABY_SWORDMAN), UnitLook.ForJob(1002) })

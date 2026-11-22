@@ -122,6 +122,7 @@ namespace Uninarok.World.View
             _actor.Driven = true;
             _actor.Billboard = false;
             _actor.Material = _material;
+            _actor.SetGround(0f, 1f); // SPEC-0009 FR-16
         }
 
         void EnsureStill()
@@ -133,6 +134,7 @@ namespace Uninarok.World.View
             _still.shadowCastingMode = ShadowCastingMode.Off;
             _still.receiveShadows = false;
             if (_material != null) _still.sharedMaterial = _material;
+            go.transform.localScale = new Vector3(1f, 1f, SpriteActor.GroundScaleZ(0f, 1f)); // SPEC-0009 FR-16
         }
     }
 

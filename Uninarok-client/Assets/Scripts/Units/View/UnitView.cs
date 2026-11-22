@@ -363,6 +363,7 @@ namespace Uninarok.Units
                 if (!position.Equals(_actorPositions[slot])) _actorTransforms[slot].localPosition = _actorPositions[slot] = position;
                 actor.SortingBase = p.Order * OrdersPerPart;
                 actor.Tint = p.Tint;
+                actor.SetGround(position.y * _parts.Scale, _parts.Scale);
                 actor.ShowFrame(animation, direction, _partFrames[slot]);
             }
             for (int i = 0; i < _actors.Length; i++)

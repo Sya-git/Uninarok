@@ -362,7 +362,8 @@ public sealed class SpriteActor                               // Uninarok.Sprite
     /// The actor's height above its ground point (world units) and its display scale: layers write z scale from it.
     /// Off (z scale 1) until it is called.
     public void SetGround(float height, float scale);
-    internal const float HeightOffset = 16f;                   // the same number in RoSprite.shader
+    public const float HeightOffset = 16f;                     // the same number in RoSprite.shader
+    public static float GroundScaleZ(float height, float scale); // for a renderer without an actor (ground item still)
 }
 ```
 

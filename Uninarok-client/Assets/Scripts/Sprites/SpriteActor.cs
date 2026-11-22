@@ -41,7 +41,7 @@ namespace Uninarok.Sprites
             public short Slot;
             public Color32 Tint;
             public Vector3 Position;
-            public float Rotation, ScaleX, ScaleY;
+            public float Rotation, ScaleX, ScaleY, ScaleZ;
             public SpriteAnimation Data;
         }
 
@@ -61,6 +61,8 @@ namespace Uninarok.Sprites
         int _shownAnimation = -1, _shownDirection = -1;
         int _sortingBase;
         Color32 _tint = new Color32(255, 255, 255, 255);
+        bool _grounded;
+        float _groundHeight, _groundScale = 1f;
 
         internal int SystemIndex = -1;
         internal bool BillboardDirty = true;
@@ -202,7 +204,15 @@ namespace Uninarok.Sprites
         /// </summary>
         public void SetGround(float height, float scale)
         {
+            if (_grounded && height == _groundHeight && scale == _groundScale) return;
+            _grounded = true;
+            _groundHeight = height;
+            _groundScale = scale;
+            _dirty = true;
         }
+
+        /// <summary>The z scale that carries a height (world units) under a display scale (PLAN-0009 D28).</summary>
+        public static float GroundScaleZ(float height, float scale) => scale > 0f ? (height + HeightOffset) / scale : 1f;
 
         /// <summary>The sorting order of the first layer; the others follow. Written only when it changes.</summary>
         public int SortingBase
@@ -326,7 +336,10 @@ namespace Uninarok.Sprites
                 var tint = Multiply(layer.Tint, _tint);
                 if (tint.r != w.Tint.r || tint.g != w.Tint.g || tint.b != w.Tint.b || tint.a != w.Tint.a) r.color = w.Tint = tint;
                 var position = new Vector3(layer.OffsetX / ppu, -layer.OffsetY / ppu, -i * LayerDepthStep);
-                bool moved = !position.Equals(w.Position), turned = layer.Rotation != w.Rotation, scaled = layer.ScaleX != w.ScaleX || layer.ScaleY != w.ScaleY;
+                // A flat sprite has no use for its z scale: it carries the layer's height to the shader (PLAN-0009 D28).
+                float scaleZ = _grounded ? GroundScaleZ(_groundHeight + position.y * _groundScale, _groundScale) : 1f;
+                bool moved = !position.Equals(w.Position), turned = layer.Rotation != w.Rotation;
+                bool scaled = layer.ScaleX != w.ScaleX || layer.ScaleY != w.ScaleY || scaleZ != w.ScaleZ;
                 if (moved || turned || scaled)
                 {
                     var t = r.transform;
@@ -340,7 +353,8 @@ namespace Uninarok.Sprites
                     {
                         w.ScaleX = layer.ScaleX;
                         w.ScaleY = layer.ScaleY;
-                        t.localScale = new Vector3(layer.ScaleX, layer.ScaleY, 1f);
+                        w.ScaleZ = scaleZ;
+                        t.localScale = new Vector3(layer.ScaleX, layer.ScaleY, scaleZ);
                     }
                 }
                 if (!w.Enabled) r.enabled = w.Enabled = true;

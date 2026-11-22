@@ -80,7 +80,7 @@ namespace Uninarok.Sprites.Tests
 
         static float HeightOf(SpriteActor a, int layer, float scale) => a.LayerRenderers[layer].transform.localScale.z * scale - SpriteActor.HeightOffset;
 
-        [Test, Ignore("pending T9.2")]
+        [Test]
         public void SpriteActor_SetGround_WritesTheHeightInZScale()
         {
             var a = Driven();
@@ -94,7 +94,7 @@ namespace Uninarok.Sprites.Tests
             Assert.That(new Vector2(scale.x, scale.y), Is.EqualTo(new Vector2(2f, 0.5f)), "the layer's own scale stays");
         }
 
-        [Test, Ignore("pending T9.2")]
+        [Test]
         public void SpriteActor_SetGround_SameValue_WritesNothing()
         {
             var a = Driven();
@@ -110,7 +110,7 @@ namespace Uninarok.Sprites.Tests
             Assert.That(HeightOf(a, 0, 1f), Is.EqualTo(3.25f).Within(1e-4f));
         }
 
-        [Test, Ignore("pending T9.2")]
+        [Test]
         public void SpriteActor_SetGround_Off_KeepsZScale1()
         {
             var a = Driven();

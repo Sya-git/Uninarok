@@ -217,9 +217,10 @@ Works on the branch `feature/0010-world-session` (the owner reported it while re
   *Done when:* they compile and are listed as ignored.
   *Result (2026-11-22):* Sprites EditMode 35 pass, 3 ignored; Units EditMode 97 pass, 1 ignored ("pending T9.2"); no new warnings. `SetGround` is an empty method here, so the tests compile.
 
-- [ ] **T9.2** Write each layer's height in its z scale (plan §4.10). (FR-16, FR-14)
+- [x] **T9.2** Write each layer's height in its z scale (plan §4.10). (FR-16, FR-14)
   `SpriteActor.SetGround`, `UnitView.Write`, `GroundItemView`.
   *Done when:* the tests of T9.1 pass, the Sprites and Units EditMode tests pass, and a unit's picture is the same as before (the shader does not read the height yet).
+  *Result (2026-11-22):* Sprites EditMode 38 of 38, Units EditMode 98 of 98; no new warnings. Swordsman at the wall of prontera 128,86 (tilt 65°): 0 pixels differ between the heights (z scale up to 17.04) and z scale 1. `GroundScaleZ` is public, for the ground item still (plan §4.10).
 
 - [ ] **T9.3** Add the render tests, pending T9.4. (FR-16, FR-10)
   `UnitDepth_BackToAWall_IsWhole_4Turns_MinMaxTilt` (prontera; iz_int when imported), `_BehindABox_IsHiddenAsAnUprightPlane`, `_TwoUnits_SameOrderAsBefore`, `_TallUnitAtTheNearestZoom_IsNotClipped`, `_Shadow_IsUnchanged`, `_GroundItemAtAWall_IsWhole`.
