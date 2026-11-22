@@ -106,7 +106,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(0, different, first);
         }
 
-        [Test, Category("NeedsData"), Ignore("pending T3.7")]
+        [Test, Category("NeedsData")]
         public void HerculesPathfinder_EasyPath_MatchesServer([ValueSource(nameof(Maps))] string map)
         {
             var (grid, pairs) = Load(map);
@@ -125,7 +125,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(0, different, first);
         }
 
-        [Test, Category("NeedsData"), Ignore("pending T3.7")]
+        [Test, Category("NeedsData")]
         public void HerculesPathfinder_StraightLineAndWalkLimits_MatchServer([ValueSource(nameof(Maps))] string map)
         {
             var (grid, pairs) = Load(map);
@@ -258,7 +258,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(PathResult.NoPath, finder.Search(10, 1, 43, 1, ref path), "33 steps: a node collision or too long, never a path");
         }
 
-        [Test, Ignore("pending T3.7")]
+        [Test]
         public void HerculesPathfinder_Limits17And14()
         {
             var rules = new WalkRules(17, 14);
@@ -280,7 +280,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(PathResult.SameCell, post.SearchWalk(50, 50, 50, 50, ref path, rules));
         }
 
-        [Test, Ignore("pending T3.7")]
+        [Test]
         public void HerculesPathfinder_EasyPath_DiagonalFirst_AndNoDetour()
         {
             var path = new WalkPath();

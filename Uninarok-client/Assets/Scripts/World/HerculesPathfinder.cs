@@ -255,8 +255,79 @@ namespace Uninarok.World
             _heap[b] = t;
         }
 
-        public PathResult SearchEasy(int x0, int y0, int x1, int y1, ref WalkPath path) => throw new NotImplementedException();
-        public bool StraightLine(int x0, int y0, int x1, int y1) => throw new NotImplementedException();
-        public PathResult SearchWalk(int x0, int y0, int x1, int y1, ref WalkPath path, in WalkRules rules) => throw new NotImplementedException();
+        // ---- the other searches ----
+
+        /// <summary><c>path_search</c> with flag 1: diagonally first, then straight; the first blocked cell is the end of it.</summary>
+        public PathResult SearchEasy(int x0, int y0, int x1, int y1, ref WalkPath path)
+        {
+            var start = Start(x0, y0, x1, y1, ref path);
+            if (start.HasValue) return start.Value;
+
+            int dx = Math.Sign(x1 - x0), dy = Math.Sign(y1 - y0);
+            int x = x0, y = y0, length = 0;
+            while (length < WalkPath.MaxSteps)
+            {
+                path.SetStep(length++, Direction(dx, dy));
+                x += dx;
+                y += dy;
+                if (x == x1) dx = 0;
+                if (y == y1) dy = 0;
+                if (dx == 0 && dy == 0) break;
+                if (NoPass(x, y)) break;
+            }
+            if (x != x1 || y != y1) return PathResult.NoPath;
+            path.Length = length;
+            return PathResult.Found;
+        }
+
+        /// <summary><c>path_search_long</c> with <c>CELL_CHKNOPASS</c>: every cell of the straight line passes, the last included.</summary>
+        public bool StraightLine(int x0, int y0, int x1, int y1)
+        {
+            int dx = x1 - x0;
+            if (dx < 0)
+            {
+                (x0, x1) = (x1, x0);
+                (y0, y1) = (y1, y0);
+                dx = -dx;
+            }
+            int dy = y1 - y0;
+            int weight = dx > Math.Abs(dy) ? dx : Math.Abs(y1 - y0);
+            int wx = 0, wy = 0;
+            while (x0 != x1 || y0 != y1)
+            {
+                wx += dx;
+                wy += dy;
+                if (wx >= weight)
+                {
+                    wx -= weight;
+                    x0++;
+                }
+                if (wy >= weight)
+                {
+                    wy -= weight;
+                    y0++;
+                }
+                else if (wy < 0)
+                {
+                    wy += weight;
+                    y0--;
+                }
+                if (NoPass(x0, y0)) return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// <see cref="Search"/> with the limits of <c>unit_walktoxy</c> (SPEC-0010 FR-9): what the server does with a walk request
+        /// to this cell. On <see cref="PathResult.TooLong"/> the path is the one that is too long.
+        /// </summary>
+        public PathResult SearchWalk(int x0, int y0, int x1, int y1, ref WalkPath path, in WalkRules rules)
+        {
+            var result = Search(x0, y0, x1, y1, ref path);
+            if (result != PathResult.Found) return result;
+            if (path.Length > rules.MaxWalkPath) return PathResult.TooLong;
+            if (path.Length > rules.MaxWalkPathObstructed && !StraightLine(x0, y0, x1, y1)) return PathResult.TooLong;
+            return PathResult.Found;
+        }
     }
 }

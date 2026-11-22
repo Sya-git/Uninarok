@@ -120,8 +120,9 @@
   *Done when:* `HerculesPathfinder_MatchesServer_*` pass for all 30,000 pairs step by step (result codes included), the synthetic A* tests pass, and 1,000 searches allocate 0 B; the mean search time on prontera is recorded in the report.
   *Result (2026-11-22):* `HerculesPathfinder_MatchesServer` passes for the 30,000 pairs of the three maps, step by step, with the result codes; the synthetic tests pass; 1,000 searches 0 B. Mean 4.3 µs per search over the prontera pairs (worst 162 µs, editor).
 
-- [ ] **T3.7** Implement `SearchEasy`, `StraightLine` and `SearchWalk` with the server's limits (plan §4.4). (FR-9, FR-10)
+- [x] **T3.7** Implement `SearchEasy`, `StraightLine` and `SearchWalk` with the server's limits (plan §4.4). (FR-9, FR-10)
   *Done when:* `_EasyPath_MatchesServer_*` and `_Limits17And14` pass.
+  *Result (2026-11-22):* `HerculesPathfinder_EasyPath_MatchesServer` and `_StraightLineAndWalkLimits_MatchServer` pass for the 30,000 pairs (easy path steps, straight line, accepted and too long); `_Limits17And14` passes.
 
 - [ ] **T3.8** Walk-log mode of the plugin and the D11 measurement; implement `SearchForUnit` (plan §4.4, D11). (FR-6, FR-10)
   Log a 10-minute session on prt_fild08 with monsters chasing and wandering.
