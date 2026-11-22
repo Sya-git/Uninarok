@@ -236,10 +236,11 @@
   Entry on prontera; turns, commands and sitting seen by a second client; the turn controls against the original client.
   *Done when:* each check is recorded in `evidence/` with its result.
 
-- [ ] **T9.2** Cost at 300 walking units (plan §6). (FR-17)
+- [x] **T9.2** Cost at 300 walking units (plan §6). (FR-17)
   100 players (dev bots or replay) and 200 monsters walking on prt_fild08, development build, owner's PC.
   *Done when:* a profiler capture in `evidence/` shows the world update (`WorldModel.Advance` + `WorldPresenter.Sync` + `OwnCharacter.Tick`) at 1 ms or less and 0 B GC allocation per frame.
   *Measured (2026-11-22), not ticked:* this PC (i5-14600KF), in the editor with the profiler on (as TASKS-0009 T8.2), 100 players and 200 monsters walking on prt_fild08 through the simulated connection: `World.Update` 0.20 ms mean, 0.51 ms max over 300 frames, 0 B GC (`evidence/t9.2-world-update-profiler.csv`, `t9.2-300-walkers.png`). A development build needs the 7 GB of Addressables content built: owner to accept the editor numbers or ask for the build.
+  *Result (2026-11-22):* the owner accepted the editor numbers (2026-11-22) in place of a development build.
 
 - [ ] **T9.3** Spec §5 run and close the spec. (all)
   Enter prontera, walk to the south warp, arrive on prt_fild08, walk among monsters for 5 minutes.
