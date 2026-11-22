@@ -2,6 +2,8 @@
 // Built on URP's Sprite-Unlit-Default (flip, renderer colour, instancing). When _PaletteOn is set (SpritePalette, through
 // a property block) a pixel whose palette index (the sprite's secondary texture _IndexTex, R8) is above 0 takes its colour
 // from _PaletteTex (256 x 1, point) and keeps its alpha. True-colour pixels have index 0 and are unchanged. Hand-written.
+// _DepthBias (PLAN-0009 D7, SPEC-0009 FR-10) moves the depth the pixel is tested with toward the camera, in world units
+// along the view axis; the position on screen and the size do not change. 0 (default) renders as before.
 Shader "Uninarok/RoSprite"
 {
     Properties
@@ -10,6 +12,7 @@ Shader "Uninarok/RoSprite"
         [NoScaleOffset] _IndexTex ("Palette Index (secondary texture)", 2D) = "black" {}
         [NoScaleOffset] _PaletteTex ("Palette (256 x 1)", 2D) = "black" {}
         [Toggle] _PaletteOn ("Use Palette", Float) = 0
+        _DepthBias ("Depth Bias (world units toward the camera)", Float) = 0
 
         // Legacy properties, as in URP's sprite shaders, so the material falls back gracefully.
         [HideInInspector] _Color ("Tint", Color) = (1,1,1,1)
@@ -57,6 +60,7 @@ Shader "Uninarok/RoSprite"
             CBUFFER_START(UnityPerMaterial)
                 half4 _Color;
                 float _PaletteOn;
+                float _DepthBias;
             CBUFFER_END
 
             Varyings RoSpriteVertex(Attributes input)
@@ -67,6 +71,14 @@ Shader "Uninarok/RoSprite"
                 SetUpSpriteInstanceProperties();
                 input.positionOS = UnityFlipSprite(input.positionOS, unity_SpriteProps.xy);
                 o.positionCS = TransformObjectToHClip(input.positionOS);
+                if (_DepthBias != 0.0)
+                {
+                    // Only z / w changes: the clip-space z of the point moved along the view axis, kept on this vertex's w.
+                    float3 positionVS = TransformWorldToView(TransformObjectToWorld(input.positionOS));
+                    positionVS.z += _DepthBias; // the view looks along -z
+                    float4 biased = TransformWViewToHClip(positionVS);
+                    o.positionCS.z = biased.z / biased.w * o.positionCS.w;
+                }
                 o.uv = input.uv;
                 o.color = input.color * _Color * unity_SpriteColor;
                 return o;

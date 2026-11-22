@@ -73,9 +73,10 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
   *Done when:* `SpriteActor_Driven_NotAdvancedBySystem_WritesOnlyOnChange` passes and every existing Sprites test still passes.
   *Result (2026-11-22):* 6 `SpriteActor_Driven_*` tests and every existing Sprites test pass (87/87 with the unit tests); 0 B per ShowFrame.
 
-- [ ] **T2.2** `_DepthBias` in `Uninarok/RoSprite` and the unit material. (FR-10)
+- [x] **T2.2** `_DepthBias` in `Uninarok/RoSprite` and the unit material. (FR-10)
   Clip-space depth-only bias toward the camera in world units (default 0); `Art/Materials/sprite_unit.mat` with 0.5.
   *Done when:* existing sprites render unchanged (sprite preview evidence image before/after identical); a test scene shows a sprite with its feet below a slope cut at bias 0 and whole at 0.5, at the same screen position and size (two evidence images).
+  *Result (2026-11-22):* evidence/t2.2-default-before.png and -after.png are byte-identical; on a 20° slope at 50° tilt bias 0 cuts 11 px of the feet, 0.5 shows them, same x range and top (evidence/t2.2-slope-bias0.png, -bias0.5.png).
 
 ## Phase 3: Pure rules
 
