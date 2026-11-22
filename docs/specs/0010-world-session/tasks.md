@@ -42,10 +42,11 @@
   Shift + click on each of the 8 neighbours; `/doridori` (order and timing); `/bangbang` (direction); the repeat rate when the left button is held.
   *Done when:* the results are written into plan §4.6/§4.11 (Decisions note for any difference from the spec's rule, which then goes to the owner as a spec change, CLAUDE.md §1.4 rule 6).
 
-- [ ] **T0.5** Record real sessions for replay tests. (FR-3, FR-18)
+- [x] **T0.5** Record real sessions for replay tests. (FR-3, FR-18)
   With the SPEC-0001 capture tee and the dev auto-login on the local server: (a) enter prontera, stand 60 s near NPCs and players; (b) walk among monsters on prt_fild08 for 3 minutes, including monster deaths and a dropped item; (c) walk into prontera's south warp. Save the server's "who is here" state at the end of each (GM `@who`-style dump or the walk log of T3.8 once available).
   *Done when:* the captures are under `docs/specs/0010-world-session/fixtures/` with a `README.md` (date, server commit, account kind, what happens in each), and none contains credentials (checked by search for the account name and password).
   *Order (2026-11-22):* done after T3.8, whose plugin gives the server's state; it needs the packets of phase 1 to walk (reorder allowed by CLAUDE.md §1.4 rule 6).
+  *Result (2026-11-22):* three captures under `fixtures/` with the server's last view of each (`README.md`): prontera 60 s, prt_fild08 nine minutes with chases, deaths and dropped items, the south warp. No account name or password in them (searched). Done after T3.4's plugin gave the views.
 
 ## Phase 1: Packets
 
