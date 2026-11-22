@@ -46,9 +46,10 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
 
 ## Phase 1: Composition tables import
 
-- [ ] **T1.1** Tests, then implementation: `RoLuaReader` captures top-level calls. (FR-4)
+- [x] **T1.1** Tests, then implementation: `RoLuaReader` captures top-level calls. (FR-4)
   Calls `name(args)` and `a.b(args)` become a list of (name, literal arguments and references); nested table arguments (`{y=-15}`) are values. Skipping of function bodies and control blocks is unchanged.
   *Done when:* `RoLuaReader_Calls_CapturedWithArguments` and the existing reader tests pass; a fixture copied from `ridingspreditinfo.lub` and one from `offsetitempos.lub` (decompiled text) read with the expected call count.
+  *Result (2026-11-22):* the 3 `RoLuaReader_Calls_*` tests and the 18 existing reader tests pass (21/21).
 
 - [ ] **T1.2** Tests, then implementation: `CompositionTables` asset type and its lookups. (FR-3, FR-4, FR-11)
   Flat sorted arrays as plan §4.1 and T0.2's columns; `ShadowScaleOf`, `PriorityOf`, `TryGetItemOffset` and one `TryGet` per table.
