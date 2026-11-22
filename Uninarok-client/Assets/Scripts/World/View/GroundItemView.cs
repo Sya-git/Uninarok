@@ -144,7 +144,7 @@ namespace Uninarok.World.View
     [DefaultExecutionOrder(905)]
     internal sealed class GroundItemFacing : MonoBehaviour
     {
-        public WorldPresenter Presenter;
+        internal WorldPresenter Presenter { get; set; }
 
         void LateUpdate()
         {
