@@ -144,8 +144,9 @@
   *Done when:* the remaining `WorldModel_*` tests except allocation pass.
   *Result (2026-11-22):* every `WorldModel_*` test but the allocation one passes (51 cases).
 
-- [ ] **T4.4** Allocation-free `Advance` and drains at 300 walkers (plan §4.5). (FR-17)
+- [x] **T4.4** Allocation-free `Advance` and drains at 300 walkers (plan §4.5). (FR-17)
   *Done when:* `WorldModel_ZeroAllocation_300Walkers` passes (600 frames after warm-up, 0 B), and the mean `Advance` time for 300 walkers is recorded in the report.
+  *Result (2026-11-22):* `WorldModel_ZeroAllocation_300Walkers` passes (600 frames, 0 B, with the walk orders inside). Mean `Advance` of 300 walkers: 3.1 µs, worst 112 µs (editor).
 
 ## Phase 5: Session and own character
 

@@ -532,7 +532,7 @@ namespace Uninarok.World.Tests
             _world.Advance(100);
         }
 
-        [Test, Ignore("pending T4.4")]
+        [Test]
         public void WorldModel_ZeroAllocation_300Walkers()
         {
             var world = new WorldModel(_grid, _settings);
