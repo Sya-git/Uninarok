@@ -192,7 +192,7 @@
 
 - [ ] **T6.4** `GroundItemView` (plan §4.9). (FR-16)
   *Done when:* a red potion dropped on the local server shows its ground sprite on the server's cell and sub-cell (T0.3 rule) and disappears when another client picks it up (screenshots in `evidence/`).
-  *Open (2026-11-22):* code done; play mode test passes (sprite, sub-cell, release). Waits for the local server check.
+  *Open (2026-11-22):* play mode test passes (sprite, sub-cell, release). On the local server a red potion shows its ground sprite at 155.5,190 (`evidence/t6.4-item-on-the-ground.png`) and disappears when the own client picks it up (`t6.4-item-picked-up.png`; the same `ITEM_DISAPPEAR` packet). Left: picked up by another client: the owner, with T9.1.
 
 - [ ] **T6.5** Camera follow and snap on entry and map change (plan §4.10). (FR-12)
   *Done when:* walking across prontera keeps the own character centred; after a warp, the first rendered frame shows the character (frame capture in `evidence/`).
