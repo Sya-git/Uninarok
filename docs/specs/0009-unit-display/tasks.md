@@ -88,8 +88,9 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
   *Done when:* `UnitClock_BodyDrivesFrame_TrailOf150msFollows100msBody`, `_NoDriftAfter10MinutesSimulated`, `_OnceHoldStops`, `_OnceEndReportsOnce`, `_IdleAndSit_FrameIsHeadFacing`, `_HeadFacingIgnoredWhileWalking_ShowsAgainOnIdle` pass.
   *Result (2026-11-22):* the 8 `UnitClock_*` tests pass; the head-frame groups of D19 are covered.
 
-- [ ] **T3.3** `PcAnimation`, `MonsterAnimation` and the player-to-unit animation mapping. (FR-7)
+- [x] **T3.3** `PcAnimation`, `MonsterAnimation` and the player-to-unit animation mapping. (FR-7)
   *Done when:* the enums match `docs/data/SpriteAction.md` (which now names the namespace `Uninarok.Units`); a mapping test covers Attack1/2/3 → Attack, Dead → Die, Hurt → Hurt, others → Idle.
+  *Result (2026-11-22):* enums and mapping in `UnitAnimations.cs`; 11 `UnitAnimationsTests` pass; `SpriteAction.md` names the namespace.
 
 - [ ] **T3.4** Tests, then implementation: `UnitComposer` default order and attachment. (FR-3, FR-4)
   Default order per direction (T0.2), head on the body's anchor, headgears on the head's.

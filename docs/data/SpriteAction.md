@@ -1,7 +1,7 @@
 # SpriteAction
 
 - **Kind:** Shared enums (animation types of a sprite), one per sprite family
-- **Namespace:** decided by the plan that first uses the names (SPEC-0007 addresses animations by number)
+- **Namespace:** `Uninarok.Units` (`PcAnimation`, `MonsterAnimation`, SPEC-0009; SPEC-0007 addresses animations by number)
 - **Underlying type:** `byte`
 - **Source of the values:** the ACT files themselves, read through GRF (survey in [act-reference.md](../specs/0007-spr-act-pal-sprites/act-reference.md) §1). Player names follow the owner's reference viewer (Act Editor list); monster names are confirmed by the sound events of `몬스터/poring.act` (walk carries `poring_move.wav`, attack `poring_attack.wav`, hurt `poring_damage.wav`, die `poring_die.wav`).
 - **Description:** The animation number of an ACT action. For a directional sprite, **action index = animation × 8 + direction**, the direction being the sprite direction, 0 = front, clockwise ([UninarokPosition](UninarokPosition.md), not the network value); for a non-directional sprite (ground item, emote) the action index is the animation. Files may have fewer animations than the family defines; a missing animation is not an error (SPEC-0007 FR-5 says what is shown instead).
