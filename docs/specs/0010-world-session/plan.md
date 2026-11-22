@@ -283,7 +283,8 @@ public sealed class WorldBootstrap : MonoBehaviour   // in Bootstrap.unity, next
 {
     public RoCamera CameraRig;                      // PLAN-0009 rig prefab instance
     public WorldSettings Settings;
-    // Owns: ServerClock, WorldSession, MapSceneLoader, WorldPresenter, AddressablesUnitAssetSource, OwnInput.
+    // Owns: ServerClock, WorldSession, MapSceneLoader, WorldPresenter, AddressablesUnitAssetSource (D12), UnitLoader, OwnInput.
+    public Material UnitMaterial;                   // sprite_unit.mat (UnitView.Create)
 }
 
 public sealed class MapSceneLoader
@@ -320,7 +321,7 @@ Satisfies FR-3, FR-4 to FR-8, FR-16, FR-17.
 ```csharp
 public sealed class WorldPresenter
 {
-    public WorldPresenter(IUnitAssetSource assets, Transform root, MapData map);
+    public WorldPresenter(UnitLoader loader, Material unitMaterial, Transform root, MapData map);   // D12; map null: draws nothing
     public void Sync(WorldModel model);        // per frame after Advance; allocates nothing in steady state
     public UnitView ViewOf(uint id);           // own view for the camera, debug view
     public void ReleaseAll();
@@ -328,10 +329,10 @@ public sealed class WorldPresenter
 public static class EntityLookMapping { public static UnitLook ToUnitLook(EntityKind kind, in EntityLook look); }
 ```
 
-- **Read only** (FR-3): the presenter never calls a model operation. Per frame: drain removed ids → return their views to a pool (one pool of `UnitView` and one of `GroundItemView`, pre-warmed to 64 each, grown on demand); drain added ids → take a view from the pool; for each slot whose `Version` differs from the view's copy: `SetLook` if the look changed (FR-8 via 0009 FR-9), `Facing`, `HeadFacing`; if `AnimationVersion` changed: `Play` walk (loop) / idle (loop) / sit (loop) / dead (once and hold). Every walking or moved entity gets `UnitView.PlaceOn(map, position)` with `position` from `PosX/PosY` (`MapData` origin, cell size and row sign, §1; height from `TryGetHeight`).
-- **Walk animation speed**: `UnitView`'s clock speed is set so the walk cycle matches the walk speed as the client does (the original client scales the walk animation by speed / 150, roBrowser the same; checked in T0.3). PLAN-0009 `UnitClock.Speed` is the hook.
+- **Read only** (FR-3): the presenter never calls a model operation. Per frame: drain removed ids → return their views to a pool (one pool of `UnitView` and one of `GroundItemView`, pre-warmed to 64 each, grown on demand; a view going back to the pool is cleared first, D13); drain added ids → take a view from the pool; for each slot whose `Version` differs from the view's copy: `SetLook` if the look changed (FR-8 via 0009 FR-9), `Facing`, `HeadFacing`; if `AnimationVersion` changed: `Play` walk (loop) / idle (loop) / sit (loop) / dead (once and hold). Every walking or moved entity gets `UnitView.PlaceOn(map, position)` with `position` from `PosX/PosY` (`MapData` origin, cell size and row sign, §1; height from `TryGetHeight`).
+- **Walk animation speed**: `UnitView`'s clock speed is set so the walk cycle matches the walk speed as the client does (the original client scales the walk animation by speed / 150, roBrowser the same; checked in T0.3). `UnitView.Speed` is the hook (T0.1: it multiplies the frame time, 2 plays at half speed, so the walk cycle is `Speed = walk speed / 150`); every other animation plays at 1.
 - **Look mapping**: players (`Kind == Player`, or any kind whose job id is a player class, 0009 FR-2) get a player `UnitLook` (job, sex, hair, colours, headgears, robe, weapon/shield view ids, body style); all other kinds `UnitLook.ForJob(job)`. Pets, homunculi, mercenaries and elementals are shown by job id (non-goal: no control).
-- **Ground items**: `GroundItemView` is a small component with one driven `SpriteActor` (PLAN-0007) showing the ground sprite from `SpriteCatalog.TryGetGroundItem(itemId, identified)`; an item without a sprite logs one warning per item id and shows nothing. Items lie on the ground (same camera-facing and ground placement as units, PLAN-0009 D7).
+- **Ground items**: `GroundItemView` is a small component with one driven `SpriteActor` (PLAN-0007), or one `SpriteRenderer` when the catalog's `SpriteRef` is a still (T0.1), showing the ground sprite from `SpriteCatalog.TryGetGroundItem(itemId, identified)`; an item without a sprite logs one warning per item id and shows nothing. Items lie on the ground (same camera-facing and ground placement as units, PLAN-0009 D7).
 - **Vanish visuals**: none in this spec; the presenter only removes. `WorldModel.Vanished` is the effects spec's hook.
 
 ### 4.10 Camera follow
@@ -369,7 +370,7 @@ Satisfies FR-13, FR-14, FR-19.
 ## 5. Threading and lifecycle
 
 - Main thread only. Packets arrive through SPEC-0001's per-frame dispatch.
-- Order per frame: network dispatch (`NetworkClient`, early) → `OwnInput.Update` → `WorldBootstrap.LateUpdate`: `OwnCharacter.Tick`, `WorldModel.Advance(clock.Now)`, `WorldPresenter.Sync` → `RoCamera` / Cinemachine brain → `UnitSystemDriver` → `SpriteSystemDriver` (PLAN-0009 §5). `WorldBootstrap` uses a `DefaultExecutionOrder` before `UnitSystemDriver`; the exact values are fixed in T0.1 with 0009's code.
+- Order per frame: network dispatch (`NetworkClient`, early) → `OwnInput.Update` → `WorldBootstrap.LateUpdate`: `OwnCharacter.Tick`, `WorldModel.Advance(clock.Now)`, `WorldPresenter.Sync` → `RoCamera` / Cinemachine brain → `UnitSystemDriver` → `SpriteSystemDriver` (PLAN-0009 §5). Values (T0.1, from the merged code): `NetworkClient.Update` −100 (pump and dispatch); `OwnInput.Update` 0; **`WorldBootstrap.LateUpdate` 10**; `RoCamera.LateUpdate` 50 (eases its target to `Follow`, so the view must be placed before it); `CinemachineBrain.LateUpdate` 100; `UnitSystemDriver.LateUpdate` 900; `SpriteSystemDriver.LateUpdate` 1000. `WorldDebugView` draws after all of them (`OnRenderObject`).
 - Lifetimes: `WorldBootstrap` lives with Bootstrap; one `WorldModel` per map (created in `BeginMap`, cleared in `EndMap` and on `Disconnected`/`Failed`); views pooled across maps. Handlers registered through `Subscriptions` are released with `WorldSession.Dispose` (SPEC-0001 FR-9).
 - Statics: none in World. `AddressablesUnitAssetSource` is owned by `WorldBootstrap` (PLAN-0009 §5).
 
@@ -421,6 +422,8 @@ Manual checks on a local Hercules (evidence in `docs/specs/0010-world-session/ev
 | D9 | Own turns and sitting change the model only on the server's echo | Local change on send | Others see what the server accepted; a refused sit stays standing (FR-19). Fallback to local on send only if T0.2 shows Hercules does not echo to the sender. |
 | D10 | Cell picking on `MapData` triangles, no colliders | Physics raycast on the ground mesh | Walkability lives in `MapData`; no physics setup for map scenes; exact on slopes. |
 | D11 | Other non-player units: easy path if it reaches the destination, else A*; measured in T3.8 with the server's walk log | Always A* (the original client's behaviour); changing the server so chases use A* (`walk_tobl` flag) or so move packets carry the path | The packets do not say which algorithm ran; chases are where position matters (combat). A server change is out of this spec (the owner plans server changes later, spec non-goals) and would make the rule unnecessary. |
+| D12 | (T0.1) Views are made with `UnitView.Create(UnitLoader, Material, parent, name)`, so the presenter takes a `UnitLoader`; `AddressablesUnitAssetSource` is not constructed directly but by the asynchronous `AddressablesUnitAssetSource.LoadAsync`, which gets an optional list of extra catalog categories (ground items). `WorldBootstrap` starts it once and the presenter is created when both the map and the source are there | Constructor with `IUnitAssetSource`; a second catalog for the items | Follows the merged SPEC-0009 code (§1 rule); its category list has no ground items, and one catalog is enough. The session does not wait for the catalog: the model runs without views (FR-3) |
+| D13 | (T0.1) `UnitView.Clear()` is added to SPEC-0009's component: it releases the parts, forgets the look and shows nothing | Pooling a view as it is; destroying and creating views | A pooled view keeps its old look until the next one is loaded (`SetLook`), so a reused view would show the previous unit for a moment, and the pool would keep its assets held |
 
 ## 9. Risks
 

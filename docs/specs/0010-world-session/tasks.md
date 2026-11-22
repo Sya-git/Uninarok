@@ -23,9 +23,10 @@
 
 ## Phase 0: Prepare
 
-- [ ] **T0.1** Read the merged SPEC-0009 code and fix the facts this plan relies on. (FR-1, FR-6, FR-12)
+- [x] **T0.1** Read the merged SPEC-0009 code and fix the facts this plan relies on. (FR-1, FR-6, FR-12)
   The `DefaultExecutionOrder` of `UnitSystemDriver` and `SpriteSystemDriver`, the signatures of `UnitView` (`SetLook`, `Facing`, `HeadFacing`, `Play`, `PlaceOn`), `UnitClock.Speed`, `RoCamera.Follow` and `RoCamera.SnapToTarget`, `AddressablesUnitAssetSource` construction.
   *Done when:* plan §5 holds the execution order values; any signature that differs from plan §4.9/§4.10 is recorded under Decisions and the plan text follows the code.
+  *Result (2026-11-22):* orders in plan §5 (`WorldBootstrap` 10, before `RoCamera` 50, brain 100, `UnitSystemDriver` 900, `SpriteSystemDriver` 1000); `SetLook`, `Facing`, `HeadFacing`, `Play`, `PlaceOn`, `RoCamera.Follow` and `SnapToTarget` as planned; `UnitView.Speed` multiplies the frame time; differences in D12 (loader, asynchronous source, ground items) and D13 (`UnitView.Clear`).
 
 - [ ] **T0.2** Verify every packet of plan §4.1 against Hercules for PACKETVER 20220406. (FR-4 to FR-9, FR-13, FR-15, FR-16, FR-19)
   For each: ID, size, field layout in `packets_struct.h` and `clif.cpp`; the look types of `0x01D7` (`enum look`, `map.h`); the `objecttype` values (`clif_bl_type`); how `UNIT_STAND_ENTRY`/`UNIT_NEW_ENTRY` carry sitting and dead; whether Hercules sends `0x009C` and `0x008A` back to the player who turned or sat (plan D9). Check against a real capture where the packet appears (T0.5 may provide it).
