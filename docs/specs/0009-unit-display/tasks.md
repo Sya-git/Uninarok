@@ -118,8 +118,9 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
 
 ## Phase 5: Unit in the scene
 
-- [ ] **T5.1** `UnitView`, `UnitSystem`, its driver; full-rotation billboard. (FR-5, FR-6, FR-7)
+- [x] **T5.1** `UnitView`, `UnitSystem`, its driver; full-rotation billboard. (FR-5, FR-6, FR-7)
   *Done when:* a PlayMode test spawns the reference set and plays each animation of FR-7; the pivot rotation equals the camera rotation after a turn and a tilt and is not written when the camera did not move; `UnitView_HeadAndBodyTurnEveryFrame_Doridori` passes.
+  *Result (2026-11-22):* play tests pass: every animation on the reference set, pivot rotation, doridori, parts in step (8/8 in `Uninarok.Units.PlayTests`). The shadow (T5.4) is in the same view code.
 
 - [ ] **T5.2** Live changes: `SetLook` diff. (FR-9)
   *Done when:* `UnitView_SetLook_KeepsFrameAndPosition` passes (weapon and hair colour swapped mid-walk keep the frame; a job change replaces the look in place); old assets are released.
