@@ -60,7 +60,7 @@ One row per documented packet (SPEC-0001, PACKETVER 20220406). Generated from th
 | Map server to client | `0x0088` | [UNIT_STOP_MOVE](In/MapServer/UNIT_STOP_MOVE.md) | 10 | implemented | hot |
 | Map server to client | `0x008A` | [UNIT_ACT](In/MapServer/UNIT_ACT.md) | 29 | implemented | hot |
 | Map server to client | `0x008D` | [GLOBAL_MESSAGE](In/MapServer/GLOBAL_MESSAGE.md) | variable | documented | warm |
-| Map server to client | `0x0091` | [MAP_CHANGE](In/MapServer/MAP_CHANGE.md) | 22 | documented | cold |
+| Map server to client | `0x0091` | [MAP_CHANGE](In/MapServer/MAP_CHANGE.md) | 22 | verified | cold |
 | Map server to client | `0x009C` | [UNIT_DIRECTION](In/MapServer/UNIT_DIRECTION.md) | 9 | implemented | warm |
 | Map server to client | `0x009D` | [ITEM_ENTRY](In/MapServer/ITEM_ENTRY.md) | 19 | implemented | hot |
 | Map server to client | `0x00A1` | [ITEM_DISAPPEAR](In/MapServer/ITEM_DISAPPEAR.md) | 6 | implemented | hot |
@@ -77,7 +77,7 @@ One row per documented packet (SPEC-0001, PACKETVER 20220406). Generated from th
 | Map server to client | `0x09FE` | [UNIT_NEW_ENTRY](In/MapServer/UNIT_NEW_ENTRY.md) | variable | implemented | hot |
 | Map server to client | `0x09FF` | [UNIT_STAND_ENTRY](In/MapServer/UNIT_STAND_ENTRY.md) | variable | verified | hot |
 | Map server to client | `0x0A30` | [UNIT_NAME_ACK](In/MapServer/UNIT_NAME_ACK.md) | 106 | documented | warm |
-| Map server to client | `0x0AC7` | [MAP_SERVER_CHANGE](In/MapServer/MAP_SERVER_CHANGE.md) | 156 | documented | cold |
+| Map server to client | `0x0AC7` | [MAP_SERVER_CHANGE](In/MapServer/MAP_SERVER_CHANGE.md) | 156 | implemented | cold |
 | Map server to client | `0x0ADD` | [ITEM_FALL_ENTRY](In/MapServer/ITEM_FALL_ENTRY.md) | 24 | implemented | hot |
 | Map server to client | `0x0ADE` | [OVERWEIGHT_PERCENT_INFO](In/MapServer/OVERWEIGHT_PERCENT_INFO.md) | 6 | documented | warm |
 | Map server to client | `0x0B18` | [INVENTORY_EXPANSION_INFO](In/MapServer/INVENTORY_EXPANSION_INFO.md) | 4 | documented | cold |

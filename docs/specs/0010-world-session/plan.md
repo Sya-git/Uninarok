@@ -115,7 +115,7 @@ Sizes below are from the Hercules length table for 20220406 (`fixtures/hercules-
 | `0x009D` | 19 | `PACKET_ZC_ITEM_ENTRY` | no | id `uint`, item `uint`, identified `byte`, x, y, amount `ushort`, sub x, sub y `byte` |
 | `0x0ADD` | 24 | `packet_dropflooritem` | no | as the doc (amount after the sub cell, unlike `0x009D`) |
 | `0x00A1` | 6 | `clif_clearflooritem` | no | id `uint` |
-| `0x0091` | 22 | `clif_changemap` | yes | map 16 B (`izint.gat`), x, y `ushort`. Also sent for a move on the **same** map, and once right after `MAP_LOADED` when a script warped the player while loading (`state.rewarp`) |
+| `0x0091` | 22 | `clif_changemap` | yes | map 16 B (`iz_int.gat`), x, y `ushort`. Also sent for a move on the **same** map, and once right after `MAP_LOADED` when a script warped the player while loading (`state.rewarp`) |
 | `0x0AC7` | 156 | `clif_changemapserver` | no | map 16 B, x, y, ip `htonl` (big-endian), port little-endian, dns 128 B |
 | `0x00B0` | 8 | `PACKET_ZC_PAR_CHANGE` | yes | var `ushort`, value `int`; `SP_SPEED` 0 is the own walk speed |
 | out `0x035F`, `0x0361`, `0x0437` | 5, 5, 7 | `packets_shuffle_main.h`, `clif_parse_WalkToXY`, `_ChangeDir`, `_ActionRequest` | - | as the docs; the body direction is stored as sent, nothing is refused |

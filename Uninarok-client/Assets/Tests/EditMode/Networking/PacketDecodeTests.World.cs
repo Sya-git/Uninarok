@@ -328,5 +328,43 @@ namespace Uninarok.Networking.Tests
             Assert.That(() => run(), UnityEngine.TestTools.Constraints.Is.Not.AllocatingGCMemory());
             Assert.AreNotEqual(0u, sum);
         }
+
+        // ---- map change (T1.5) ----
+
+        [Test]
+        public void MAP_CHANGE_DecodesTheRealCapture_AndRejectsWrongLengths()
+        {
+            // Map-20261117-124252.bin: iz_int.gat 18,27
+            var p = new MAP_CHANGE(Hex("697a5f696e742e67617400000000000012001b00"));
+            Assert.AreEqual("iz_int.gat", p.MapName.ToString());
+            Assert.AreEqual((18, 27), ((int)p.X, (int)p.Y));
+            Assert.Throws<PacketFormatException>(() => new MAP_CHANGE(new byte[19]));
+            Assert.Throws<PacketFormatException>(() => new MAP_CHANGE(new byte[21]));
+        }
+
+        [Test]
+        public void MAP_SERVER_CHANGE_DecodesTheIpBigEndianAndThePortLittleEndian()
+        {
+            // as clif_changemapserver writes it: htonl(127.0.0.1), port 50121 in little-endian order
+            var payload = new byte[MAP_SERVER_CHANGE.Size - 2];
+            Hex("7072745f66696c6430382e6761740000").CopyTo(payload, 0);
+            Hex("AA00" + "7B01" + "7F000001" + "C9C3").CopyTo(payload, 16);
+            System.Text.Encoding.ASCII.GetBytes("map.example").CopyTo(payload, 26);
+            var p = new MAP_SERVER_CHANGE(payload);
+            Assert.AreEqual("prt_fild08.gat", p.MapName.ToString());
+            Assert.AreEqual((170, 379), ((int)p.X, (int)p.Y));
+            Assert.AreEqual("127.0.0.1", p.FormatIpAddress());
+            Assert.AreEqual(50121, p.Port);
+            Assert.AreEqual("map.example", p.DnsHost.ToString());
+            Assert.Throws<PacketFormatException>(() => new MAP_SERVER_CHANGE(new byte[153]));
+            Assert.Throws<PacketFormatException>(() => new MAP_SERVER_CHANGE(new byte[155]));
+        }
+
+        [Test]
+        public void MapChangePackets_SizesAndIds()
+        {
+            Assert.AreEqual((0x0091, 22), ((int)PacketIds.MAP_CHANGE, MAP_CHANGE.Size));
+            Assert.AreEqual((0x0AC7, 156), ((int)PacketIds.MAP_SERVER_CHANGE, MAP_SERVER_CHANGE.Size));
+        }
     }
 }
