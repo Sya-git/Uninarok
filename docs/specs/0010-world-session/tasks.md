@@ -131,9 +131,10 @@
 
 ## Phase 4: World model
 
-- [ ] **T4.1** Tests for `WorldModel` (plan §4.5, §6). (FR-3 to FR-8, FR-16, FR-17, FR-19)
+- [x] **T4.1** Tests for `WorldModel` (plan §4.5, §6). (FR-3 to FR-8, FR-16, FR-17, FR-19)
   `WorldModel_UpsertTwice_OneEntity`, `_Walk_ArrivesAtServerTime`, `_ServerCellChangesAtStepEnd`, `_MidWalkEntryAppearsOnPath`, `_NewOrderWhileWalking_NoSnapWithinOneCell`, `_Stop_SnapsAndIdles`, `_Slide_KeepsFacing`, `_Vanish_<Reason>_<Kind>`, `_UnknownId_Ignored`, `_RaisesVanishedOnce`, `_SetLook_EachLookType`, `_Turn`, `_SitStand`, item add and remove, `_ZeroAllocation_300Walkers`.
   *Done when:* the tests compile and are ignored pending T4.2–T4.4.
+  *Result (2026-11-22):* the 52 test cases compile and are ignored pending T4.2 to T4.4.
 
 - [ ] **T4.2** Implement storage, `Upsert`, `Walk` and `Advance` (plan §4.5, D4, D7). (FR-3, FR-4, FR-6)
   *Done when:* the upsert, walk, step-end, mid-walk and new-order tests pass.
