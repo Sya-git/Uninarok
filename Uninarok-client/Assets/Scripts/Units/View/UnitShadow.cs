@@ -12,8 +12,11 @@ namespace Uninarok.Units
     {
         /// <summary>Above the ground, so the two do not fight for depth.</summary>
         const float Lift = 0.02f;
-        /// <summary>Candidate: the client draws it see-through; the static sprite carries no tint.</summary>
-        static Color Tint => new Color(1f, 1f, 1f, 0.45f);
+        /// <summary>
+        /// The ACT gives the sprite alpha 0x80, which the client blends in gamma space; over mid-bright ground that looks as 0.69
+        /// does in our linear space (PLAN-0009 D27). The static sprite carries no tint.
+        /// </summary>
+        static Color Tint => new Color(1f, 1f, 1f, 0.69f);
 
         readonly SpriteRenderer _renderer;
         readonly Transform _transform;
