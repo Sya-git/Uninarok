@@ -1,4 +1,5 @@
 using System;
+using Unity.Profiling;
 using UnityEngine;
 using Uninarok.CameraRig;
 using Uninarok.Catalog;
@@ -22,6 +23,9 @@ namespace Uninarok.World.View
         public WorldSettings Settings;
         /// <summary><c>sprite_unit.mat</c>.</summary>
         public Material UnitMaterial;
+
+        /// <summary>The whole world update of a frame: own character, model and views (FR-17).</summary>
+        internal static readonly ProfilerMarker UpdateMarker = new ProfilerMarker("World.Update");
 
         NetworkFlow _flow;
         MapSceneLoader _scenes;
@@ -160,6 +164,7 @@ namespace Uninarok.World.View
         {
             var model = Session?.Model;
             if (model == null) return;
+            using var marker = UpdateMarker.Auto();
             uint now = Clock.Now;
             Session.Own.Tick(now);
             model.Advance(now);

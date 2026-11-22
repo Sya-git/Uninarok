@@ -181,12 +181,15 @@
 
 - [ ] **T6.2** `MapSceneLoader` and `WorldBootstrap` map entry, with the missing-scene case (plan §4.7). (FR-1)
   *Done when:* from Bootstrap with the dev auto-login, a character saved on prontera enters (the own unit on its saved cell and facing, then `MAP_LOADED` sent, then the area arrives); a PlayMode test with a fake flow shows one warning naming a missing map, the session kept and `MapLoaded` still called.
+  *Open (2026-11-22):* code done, commit "T6.2 load maps and enter them"; 4 play mode tests pass (missing scene, entry, map change, disconnect). Waits for the local server check.
 
 - [ ] **T6.3** `EntityLookMapping` and `WorldPresenter` for units (plan §4.9). (FR-3 to FR-8)
   *Done when:* `WorldPresenter_ReadsOnly` and `_ZeroAllocationSteadyState` pass (PlayMode); on the local server, players, NPCs and monsters near the own character show with their looks, walk, turn and sit; a vanishing unit disappears as FR-5 says.
+  *Open (2026-11-22):* code done; 8 play mode tests pass (`WorldPresenter_ReadsOnly`, `_ZeroAllocationSteadyState`, views, pool, releases). Waits for the local server check.
 
 - [ ] **T6.4** `GroundItemView` (plan §4.9). (FR-16)
   *Done when:* a red potion dropped on the local server shows its ground sprite on the server's cell and sub-cell (T0.3 rule) and disappears when another client picks it up (screenshots in `evidence/`).
+  *Open (2026-11-22):* code done; play mode test passes (sprite, sub-cell, release). Waits for the local server check.
 
 - [ ] **T6.5** Camera follow and snap on entry and map change (plan §4.10). (FR-12)
   *Done when:* walking across prontera keeps the own character centred; after a warp, the first rendered frame shows the character (frame capture in `evidence/`).
@@ -206,14 +209,17 @@
 
 - [ ] **T7.3** `OwnInput`: walk, hold to walk, shift + click turn, Insert sit (plan §4.11). (FR-9, FR-13, FR-19)
   *Done when:* Input System tests drive each action and check the call to `OwnCharacter`; holding the button re-asks at 500 ms and on cell change; on the local server a 10-cell click walks there and `@where` equals the debug view's cell at arrival.
+  *Open (2026-11-22):* code done; 9 Input System tests pass (walk, hold at 500 ms and on cell change, shift + click, Insert). Waits for the local server check.
 
 ## Phase 8: Dev tools
 
 - [ ] **T8.1** `DevCommandLine` with `/doridori`, `/bangbang`, `/sit`, `/stand` (plan §4.12). (FR-13, FR-19)
   *Done when:* each command does what FR-13/FR-19 say on the local server and a second client sees it; game input is off while the field has focus.
+  *Open (2026-11-22):* code done; tests pass (commands, game input off while the field is open). Waits for the local server check.
 
 - [ ] **T8.2** `WorldDebugView` (plan §4.12). (FR-14)
   *Done when:* F9 shows the entity list, clock estimate and round trip, and draws the own path and server cell during a walk (screenshot); drawing allocates 0 B per frame.
+  *Open (2026-11-22):* code done; readout test passes. Waits for the local server check.
 
 - [x] **T8.3** Release build check. (FR-13, FR-14)
   *Done when:* a non-development player build contains no `Uninarok.World.Dev` type and no dev command line (checked by reflection over the built assemblies, command and result in the report).
@@ -228,6 +234,7 @@
 - [ ] **T9.2** Cost at 300 walking units (plan §6). (FR-17)
   100 players (dev bots or replay) and 200 monsters walking on prt_fild08, development build, owner's PC.
   *Done when:* a profiler capture in `evidence/` shows the world update (`WorldModel.Advance` + `WorldPresenter.Sync` + `OwnCharacter.Tick`) at 1 ms or less and 0 B GC allocation per frame.
+  *Measured (2026-11-22), not ticked:* this PC (i5-14600KF), in the editor with the profiler on (as TASKS-0009 T8.2), 100 players and 200 monsters walking on prt_fild08 through the simulated connection: `World.Update` 0.20 ms mean, 0.51 ms max over 300 frames, 0 B GC (`evidence/t9.2-world-update-profiler.csv`, `t9.2-300-walkers.png`). A development build needs the 7 GB of Addressables content built: owner to accept the editor numbers or ask for the build.
 
 - [ ] **T9.3** Spec §5 run and close the spec. (all)
   Enter prontera, walk to the south warp, arrive on prt_fild08, walk among monsters for 5 minutes.
