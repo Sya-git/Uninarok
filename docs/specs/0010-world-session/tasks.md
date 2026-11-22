@@ -150,8 +150,9 @@
 
 ## Phase 5: Session and own character
 
-- [ ] **T5.1** Tests, then implementation: `WorldSession` handlers for every packet of plan §4.1 (plan §4.6). (FR-3 to FR-8, FR-15, FR-16, FR-19)
+- [x] **T5.1** Tests, then implementation: `WorldSession` handlers for every packet of plan §4.1 (plan §4.6). (FR-3 to FR-8, FR-15, FR-16, FR-19)
   *Done when:* one test per packet with the simulated connection shows the model change it causes; `WorldSession_ViewlessEntitiesStillUpdate` passes; handlers of hot packets allocate 0 B; handlers are released on `Dispose` (subscriber count back to zero).
+  *Result (2026-11-22):* 15 `WorldSessionTests` pass: one test per packet, `WorldSession_ViewlessEntitiesStillUpdate`, handlers released on `Dispose` and on disconnect (count back to 0), 0 B over 1,400 deliveries of the hot packets.
 
 - [ ] **T5.2** Own character at entry from `CharInfo` and `Context.Entry`, dead on entry, speed from `PARAMETER_CHANGE` (plan §4.6). (FR-1)
   *Done when:* tests show the own entity with the selected character's look, cell, facing and speed; `OwnCharacter_DeadOnEntry_NoInput` passes (HP 0: state dead, every request refused, nothing sent).

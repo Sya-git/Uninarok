@@ -46,6 +46,9 @@ namespace Uninarok.World
             IsSynced = true;
         }
 
+        /// <summary><see cref="Start(uint,long)"/> with the tick received now.</summary>
+        public void Start(uint serverTick) => Start(serverTick, _local.NowMs);
+
         /// <summary>A heartbeat answer: the server read its clock half a round trip ago.</summary>
         public void Sample(uint serverTick, long localSentMs, long localReceivedMs)
         {

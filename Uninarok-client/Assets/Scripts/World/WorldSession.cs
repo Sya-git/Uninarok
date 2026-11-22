@@ -1,0 +1,245 @@
+using System;
+using Uninarok.Map;
+using Uninarok.Networking.Client;
+using Uninarok.Networking.Core.Dispatch;
+using Uninarok.Networking.Data;
+using Uninarok.Networking.Flow;
+using Uninarok.Networking.Packets.In.Map;
+
+namespace Uninarok.World
+{
+    /// <summary>
+    /// Packets to the world model (SPEC-0010 FR-3 to FR-8, FR-15, FR-16; PLAN-0010 4.6): one handler per packet, each one model
+    /// call. It owns the model of the current map and feeds the server clock. Handlers are subscribed while the flow is on a map
+    /// server and do nothing while there is no model. No allocation in a handler. Main thread.
+    /// </summary>
+    public sealed class WorldSession : IDisposable
+    {
+        const byte ActSit = 2, ActStand = 3;
+        const ushort VarSpeed = 0; // SP_SPEED
+
+        readonly NetworkFlow _flow;
+        readonly ServerClock _clock;
+        readonly WorldSettings _settings;
+        readonly Subscriptions _subscriptions;
+        bool _disposed;
+
+        readonly PacketHandler<UNIT_STAND_ENTRY> _onStand;
+        readonly PacketHandler<UNIT_NEW_ENTRY> _onNew;
+        readonly PacketHandler<UNIT_MOVE_ENTRY> _onMoveEntry;
+        readonly PacketHandler<UNIT_MOVE> _onMove;
+        readonly PacketHandler<PLAYER_MOVE> _onOwnMove;
+        readonly PacketHandler<UNIT_STOP_MOVE> _onStop;
+        readonly PacketHandler<UNIT_SLIDE> _onSlide;
+        readonly PacketHandler<UNIT_VANISH> _onVanish;
+        readonly PacketHandler<UNIT_DIRECTION> _onDirection;
+        readonly PacketHandler<UNIT_LOOK_CHANGE> _onLook;
+        readonly PacketHandler<UNIT_ACT> _onAct;
+        readonly PacketHandler<ITEM_ENTRY> _onItem;
+        readonly PacketHandler<ITEM_FALL_ENTRY> _onItemFall;
+        readonly PacketHandler<ITEM_DISAPPEAR> _onItemGone;
+        readonly PacketHandler<PARAMETER_CHANGE> _onParameter;
+
+        public WorldSession(INetworkClient client, NetworkFlow flow, ServerClock clock, WorldSettings settings)
+        {
+            if (client == null) throw new ArgumentNullException(nameof(client));
+            _flow = flow ?? throw new ArgumentNullException(nameof(flow));
+            _clock = clock ?? throw new ArgumentNullException(nameof(clock));
+            _settings = settings != null ? settings : throw new ArgumentNullException(nameof(settings));
+            _subscriptions = new Subscriptions(client);
+
+            _onStand = OnStand;
+            _onNew = OnNew;
+            _onMoveEntry = OnMoveEntry;
+            _onMove = OnMove;
+            _onOwnMove = OnOwnMove;
+            _onStop = OnStop;
+            _onSlide = OnSlide;
+            _onVanish = OnVanish;
+            _onDirection = OnDirection;
+            _onLook = OnLook;
+            _onAct = OnAct;
+            _onItem = OnItem;
+            _onItemFall = OnItemFall;
+            _onItemGone = OnItemGone;
+            _onParameter = OnParameter;
+
+            _flow.StateChanged += OnStateChanged;
+            _flow.MapLoadRequested += OnMapLoadRequested;
+            _flow.Zone.HeartbeatAnswered += OnHeartbeatAnswered;
+            OnStateChanged(_flow.State);
+        }
+
+        /// <summary>The world of the current map; null until <see cref="BeginMap"/> and after <see cref="EndMap"/>.</summary>
+        public WorldModel Model { get; private set; }
+
+        public ServerClock Clock => _clock;
+        public WorldSettings Settings => _settings;
+
+        /// <summary>The map is loaded: a new world on its cells; without data (null) the world is tracked with nothing walkable (FR-1).</summary>
+        public void BeginMap(MapData map) => BeginMap(map != null ? new MapDataWalkGrid(map) : new UnknownWalkGrid());
+
+        internal void BeginMap(IWalkGrid grid)
+        {
+            EndMap();
+            Model = new WorldModel(grid, _settings);
+        }
+
+        /// <summary>Empties the world: map change, disconnect (FR-3). The handlers stay.</summary>
+        public void EndMap()
+        {
+            var model = Model;
+            Model = null;
+            model?.Clear();
+        }
+
+        public void Dispose()
+        {
+            if (_disposed) return;
+            _disposed = true;
+            _flow.StateChanged -= OnStateChanged;
+            _flow.MapLoadRequested -= OnMapLoadRequested;
+            _flow.Zone.HeartbeatAnswered -= OnHeartbeatAnswered;
+            _subscriptions.Clear();
+            EndMap();
+        }
+
+        // ---- flow and clock ----
+
+        void OnStateChanged(FlowState state)
+        {
+            if (state == FlowState.LoadingMap || state == FlowState.InGame) Subscribe();
+            else
+            {
+                _subscriptions.Clear();
+                EndMap(); // left the map server, or moves to another one
+            }
+        }
+
+        // Entry or map change: the old world is over before the new map loads.
+        void OnMapLoadRequested()
+        {
+            EndMap();
+            var entry = _flow.Context.Entry;
+            if (entry.StartTick != 0) _clock.Start(entry.StartTick); // a map change carries no tick (MapEntry)
+        }
+
+        void OnHeartbeatAnswered(uint serverTick, long sentMs, long receivedMs) => _clock.Sample(serverTick, sentMs, receivedMs);
+
+        void Subscribe()
+        {
+            _subscriptions.Add(_onStand);
+            _subscriptions.Add(_onNew);
+            _subscriptions.Add(_onMoveEntry);
+            _subscriptions.Add(_onMove);
+            _subscriptions.Add(_onOwnMove);
+            _subscriptions.Add(_onStop);
+            _subscriptions.Add(_onSlide);
+            _subscriptions.Add(_onVanish);
+            _subscriptions.Add(_onDirection);
+            _subscriptions.Add(_onLook);
+            _subscriptions.Add(_onAct);
+            _subscriptions.Add(_onItem);
+            _subscriptions.Add(_onItemFall);
+            _subscriptions.Add(_onItemGone);
+            _subscriptions.Add(_onParameter);
+        }
+
+        // ---- handlers ----
+
+        void OnStand(in UNIT_STAND_ENTRY p)
+        {
+            if (Model == null) return;
+            var look = Look(p.Job, p.HairStyle, p.Weapon, p.Shield, p.HeadBottom, p.HeadTop, p.HeadMid, p.HairColour, p.ClothColour, p.Robe, p.Sex, p.BodyStyle);
+            Model.Upsert(p.UnitId, KindOf(p.ObjectType, p.CharacterId), look, p.Speed, p.Position.X, p.Position.Y, p.Position.Direction, (HeadDirection)p.HeadDirection, StateOf(p.State));
+        }
+
+        void OnNew(in UNIT_NEW_ENTRY p)
+        {
+            if (Model == null) return;
+            var look = Look(p.Job, p.HairStyle, p.Weapon, p.Shield, p.HeadBottom, p.HeadTop, p.HeadMid, p.HairColour, p.ClothColour, p.Robe, p.Sex, p.BodyStyle);
+            Model.Upsert(p.UnitId, KindOf(p.ObjectType, p.CharacterId), look, p.Speed, p.Position.X, p.Position.Y, p.Position.Direction, (HeadDirection)p.HeadDirection, EntityState.Standing);
+        }
+
+        void OnMoveEntry(in UNIT_MOVE_ENTRY p)
+        {
+            if (Model == null) return;
+            var look = Look(p.Job, p.HairStyle, p.Weapon, p.Shield, p.HeadBottom, p.HeadTop, p.HeadMid, p.HairColour, p.ClothColour, p.Robe, p.Sex, p.BodyStyle);
+            Model.UpsertWalking(p.UnitId, KindOf(p.ObjectType, p.CharacterId), look, p.Speed, p.Move.SourceX, p.Move.SourceY, p.Move.DestX, p.Move.DestY,
+                                (HeadDirection)p.HeadDirection, p.MoveStartTime, _clock.Now);
+        }
+
+        void OnMove(in UNIT_MOVE p) => Model?.Walk(p.UnitId, p.Move.SourceX, p.Move.SourceY, p.Move.DestX, p.Move.DestY, p.StartTick, _clock.Now);
+
+        void OnOwnMove(in PLAYER_MOVE p) => Model?.Walk(Model.OwnId, p.Move.SourceX, p.Move.SourceY, p.Move.DestX, p.Move.DestY, p.StartTick, _clock.Now);
+
+        void OnStop(in UNIT_STOP_MOVE p) => Model?.Stop(p.UnitId, p.X, p.Y);
+
+        void OnSlide(in UNIT_SLIDE p) => Model?.Slide(p.UnitId, p.X, p.Y);
+
+        void OnVanish(in UNIT_VANISH p) =>
+            Model?.Vanish(p.UnitId, p.Type <= (byte)VanishReason.FeignedDeath ? (VanishReason)p.Type : VanishReason.OutOfSight, _clock.Now);
+
+        void OnDirection(in UNIT_DIRECTION p) =>
+            Model?.Turn(p.UnitId, (UninarokDirection)p.Direction, p.HeadDirection <= 2 ? (HeadDirection)p.HeadDirection : HeadDirection.Straight);
+
+        void OnLook(in UNIT_LOOK_CHANGE p) => Model?.SetLook(p.UnitId, (LookType)p.Type, unchecked((int)p.Value), unchecked((int)p.Value2));
+
+        // Sitting and standing; the other actions are the combat spec's.
+        void OnAct(in UNIT_ACT p)
+        {
+            if (p.Action == ActSit) Model?.SetState(p.UnitId, EntityState.Sitting);
+            else if (p.Action == ActStand) Model?.SetState(p.UnitId, EntityState.Standing);
+        }
+
+        void OnItem(in ITEM_ENTRY p) => Model?.AddItem(p.ItemObjectId, (int)p.ItemId, p.Identified, p.X, p.Y, p.SubX, p.SubY, p.Amount);
+
+        void OnItemFall(in ITEM_FALL_ENTRY p) => Model?.AddItem(p.ItemObjectId, (int)p.ItemId, p.Identified, p.X, p.Y, p.SubX, p.SubY, p.Amount);
+
+        void OnItemGone(in ITEM_DISAPPEAR p) => Model?.RemoveItem(p.ItemObjectId);
+
+        void OnParameter(in PARAMETER_CHANGE p)
+        {
+            if (p.VarId != VarSpeed) return;
+            Model?.SetSpeed(Model.OwnId, (short)Math.Clamp(p.Value, 1, short.MaxValue));
+        }
+
+        // ---- wire to model ----
+
+        // UNIT_MOVE_ENTRY.md: a monster or pet that looks like a player class is sent as a player without a character id.
+        internal static EntityKind KindOf(byte objectType, uint characterId)
+        {
+            switch (objectType)
+            {
+                case 0: return characterId != 0 ? EntityKind.Player : EntityKind.Monster;
+                case 1: return EntityKind.Npc;
+                case 5: return EntityKind.Monster;
+                case 6: return EntityKind.Npc;
+                case 7: return EntityKind.Pet;
+                case 8: return EntityKind.Homunculus;
+                case 9: return EntityKind.Mercenary;
+                case 10: return EntityKind.Elemental;
+                default: return EntityKind.Other;
+            }
+        }
+
+        static EntityState StateOf(byte state) => state == 1 ? EntityState.Dead : state == 2 ? EntityState.Sitting : EntityState.Standing;
+
+        static EntityLook Look(short job, ushort hair, uint weapon, uint shield, ushort bottom, ushort top, ushort mid,
+                               short hairColour, short clothColour, ushort robe, byte sex, ushort body) => new EntityLook
+        {
+            Job = job,
+            HairStyle = hair,
+            Weapon = unchecked((int)weapon),
+            Shield = unchecked((int)shield),
+            HeadBottom = bottom,
+            HeadTop = top,
+            HeadMid = mid,
+            HairColour = unchecked((ushort)hairColour),
+            ClothColour = unchecked((ushort)clothColour),
+            Robe = robe,
+            Sex = sex,
+            BodyStyle = body,
+        };
+    }
+}
