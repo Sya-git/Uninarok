@@ -6,7 +6,7 @@
 | **Hercules packet name** | `ZC_NOTIFY_VANISH` |
 | **Packet ID** | `0x0080` |
 | **Declared size** | 7 bytes total, including the 2-byte packet ID |
-| **Status** | documented |
+| **Status** | implemented |
 | **Frequency** | hot (every unit leaving view) |
 | **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no |
 | **Allocates** | no |

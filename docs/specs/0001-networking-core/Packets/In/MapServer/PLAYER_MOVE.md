@@ -6,7 +6,7 @@
 | **Hercules packet name** | `ZC_NOTIFY_PLAYERMOVE` |
 | **Packet ID** | `0x0087` |
 | **Declared size** | 12 bytes total, including the 2-byte packet ID |
-| **Status** | documented |
+| **Status** | implemented |
 | **Frequency** | warm (every time the local player is told to walk) |
 | **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no |
 | **Allocates** | no |

@@ -54,8 +54,9 @@
   *Done when:* every doc follows Packet-Implementation.md with T0.2's verified layout; `INDEX.md` is regenerated and lists them.
   *Result (2026-11-22):* 9 new docs, the `objecttype` table and state notes; `INDEX.md` regenerated from the docs (78 rows, sorted by direction and ID). 0x00B0 linked in `CATALOG.md`.
 
-- [ ] **T1.2** Tests, then structs: unit entries, moves, stop, slide, vanish (`0x09FD`, `0x09FE`, `0x09FF`, `0x0086`, `0x0087`, `0x0088`, `0x01FF`, `0x0080`). (FR-4 to FR-7)
+- [x] **T1.2** Tests, then structs: unit entries, moves, stop, slide, vanish (`0x09FD`, `0x09FE`, `0x09FF`, `0x0086`, `0x0087`, `0x0088`, `0x01FF`, `0x0080`). (FR-4 to FR-7)
   *Done when:* size tests against the Hercules table and decode tests (real samples from T0.5 where present, else hand-built from the doc) pass, each leaves no unread byte, and the hot ones pass an allocation test of 1,000 decodes at 0 B; docs moved to `implemented`/`verified`.
+  *Result (2026-11-22):* the 8 structs; `Uninarok.Networking.Tests` 460 of 461 pass (the failing one is the line-ending fixture of the BACKLOG), with size tests (`PacketSizeTests`), 9 decode tests (`UNIT_STAND_ENTRY` also from the real capture) and 1,000 decodes of each at 0 B; docs implemented, `UNIT_STAND_ENTRY` verified. No new warnings.
 
 - [ ] **T1.3** Tests, then structs: direction, look change, act, parameter change (`0x009C`, `0x01D7`, `0x008A`, `0x00B0`). (FR-8, FR-13, FR-19)
   *Done when:* as T1.2.

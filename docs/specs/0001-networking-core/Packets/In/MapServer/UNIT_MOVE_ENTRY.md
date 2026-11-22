@@ -6,7 +6,7 @@
 | **Hercules packet name** | struct `packet_unit_walking` |
 | **Packet ID** | `0x09FD` |
 | **Declared size** | Variable (`Size = -1`); Hercules 20220406 always sends 114 bytes |
-| **Status** | documented |
+| **Status** | implemented |
 | **Frequency** | hot |
 | **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no; layout from `packets_struct.h` (`packet_unit_walking`) |
 | **Allocates** | no |
