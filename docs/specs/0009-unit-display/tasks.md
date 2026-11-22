@@ -136,9 +136,10 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
 
 ## Phase 6: Camera
 
-- [ ] **T6.1** Tests, then implementation: `RoCameraSettings`, `RoCamera` and the Cinemachine rig prefab. (FR-12)
+- [x] **T6.1** Tests, then implementation: `RoCameraSettings`, `RoCamera` and the Cinemachine rig prefab. (FR-12)
   Perspective 15°, `OrbitalFollow` sphere, limits 23–40 u and 50°–65°, damping 0.384 s / 0.768 s (or T0.1's recomputed values).
   *Done when:* `RoCamera_Clamps_Eases_Resets`, `RoCamera_DampingMatchesRoBrowser_At30_60_144Fps`, `RoCamera_TiltOrbitsVertically_CameraHeightGrowsWithTilt_WithinLimits` pass.
+  *Result (2026-11-22):* `RoCameraTests` pass (clamps, easing, resets, orbit height, free turn, follow without swinging, 0 B). Damping: D22, D23. The prefab comes with T6.2 (it holds the input component).
 
 - [ ] **T6.2** `RoCameraInput` and the `Camera` action map. (FR-12)
   Right-drag turn, shift tilt, wheel and ctrl zoom, double right-click resets with modifiers.
