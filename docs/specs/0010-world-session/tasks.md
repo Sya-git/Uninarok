@@ -200,8 +200,9 @@
   *Done when:* `CellPicker_PrtFild08Slope_4Turns_MinMaxTilt` passes (PlayMode, `NeedsData`); picking allocates 0 B.
   *Result (2026-11-22):* `CellPicker_PrtFild08Slope_4Turns_MinMaxTilt` passes (the steepest walkable cell; 4 turns, tilts 20°, 50° and 65°; 441 rays each, against a brute-force triangle test); flat maps, a ground wall, misses; 0 B over 1,000 picks.
 
-- [ ] **T7.2** `CellCursor` (plan §4.11). (FR-11)
+- [x] **T7.2** `CellCursor` (plan §4.11). (FR-11)
   *Done when:* on prt_fild08 the cursor lies on the hovered cell's slope and turns "not walkable" over a wall and over a cell too far to walk (screenshots in `evidence/`, both tilts).
+  *Result (2026-11-22):* on prt_fild08 (simulated connection, real map) the cursor lies on the slope of cell 158,198 (0.45 units) and turns red over the rock at 305,312 and over 168,202, 18 cells away, at tilts 50° and 65°: `evidence/t7.2-*.png`. Depth bias instead of the lift alone (D21).
 
 - [ ] **T7.3** `OwnInput`: walk, hold to walk, shift + click turn, Insert sit (plan §4.11). (FR-9, FR-13, FR-19)
   *Done when:* Input System tests drive each action and check the call to `OwnCharacter`; holding the button re-asks at 500 ms and on cell change; on the local server a 10-cell click walks there and `@where` equals the debug view's cell at arrival.

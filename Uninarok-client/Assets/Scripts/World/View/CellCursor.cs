@@ -117,6 +117,7 @@ namespace Uninarok.World.View
             _renderer.sharedMaterial = Material;
             _renderer.shadowCastingMode = ShadowCastingMode.Off;
             _renderer.receiveShadows = false;
+            _renderer.sortingOrder = -2; // under the units' shadows (-1) and the units
             _renderer.enabled = false;
             _x = _y = -1;
             WriteVerticesOnce();
