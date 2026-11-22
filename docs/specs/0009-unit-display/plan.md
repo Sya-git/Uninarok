@@ -213,12 +213,12 @@ public readonly struct ComposeInput
 - **Order** (FR-3), applied in this sequence:
   1. Default order per shown direction: shadow, (garment if drawn behind), body, head, headgears (by priority), (garment if in front), weapon, weapon trail, shield, with the client's front/back rule for weapon and shield (which directions draw them behind the body; values recorded in composition-reference.md).
   2. Headgear priorities from `tb_layer_priority` (per direction when given, ignored when riding if `isIgnoreRiding`).
-  3. Garments in `RobeTopLayer` go above the body in every direction; others follow the default.
-  4. Frame swaps from `LayerSwaps` (`*layerdir_*`: per sex, job, file action and frame) flip the listed layer to the other side of the body for those frames only.
-  5. `HeadToBody` rows (head drawn under the body for given job/action) last.
+  3. Frame swaps from `LayerSwaps` (`_new_biglayerdir_*`: per sex, job, file action): for a job with a table the garment is in front except in the listed frames, where it is behind (D16).
+  4. A garment in front takes priority 400 (`Default_Robe`); one in `RobeTopLayer` goes above every headgear (D16).
+  5. `HeadToBody` rows last: the garment goes above the body and under the head (D16).
 - **Attachment** (FR-4): the head's origin is placed so its anchor 0 meets the body's anchor 0 in the current frame (the client's rule: `bodyAnchor − headAnchor`); headgears attach to the head the same way. Then `ItemOffsets` (per view id, direction, race) and the riding / body corrections (`HeadEdits`, `BodyEdits` by job and action range) add their pixel offsets.
 - **Depth**: each placement gets an `Order`; `UnitView` turns it into `SpriteRenderer.sortingOrder` within the unit and a tiny local z step (as `SpriteActor.LayerDepthStep`), so parts never z-fight and the order is exact.
-- **Tint**: `Transparency` rows set the alpha of listed headgears; the layer's own tint (ACT) still multiplies.
+- **Tint**: `Transparency` rows set the alpha of listed garments (D18); the layer's own tint (ACT) still multiplies.
 - **No table**: every step whose table is empty is skipped; step 1 alone gives a sane result.
 
 ### 4.6 Unit component and loop: `UnitView`, `UnitSystem`, `UnitShadow`
@@ -250,7 +250,7 @@ public static class UnitSystem        // [AutoStaticsCleanup], like SpriteSystem
 - `UnitView` owns one child `SpriteActor` per `PartSlot` (created on demand, `Driven = true`, `Billboard = false`) and a `Pivot` child that the system rotates.
 - **Billboard** (FR-10): the pivot takes the **full camera rotation** (yaw and pitch), not yaw only, so sprites are never squashed by the tilt; written only when the camera's rotation changed (one `Quaternion` compare per tick) or the unit is new.
 - **Ground** (FR-10, approved variant E): sprites keep the ACT origin at the ground point; `Uninarok/RoSprite` gets a **clip-space depth bias** (`_DepthBias`, world units toward the camera, default 0.5 u, D7): the vertex is moved toward the camera **in depth only** (the depth-test value), not in space. The sprite is therefore drawn exactly where and exactly as large as it would be without the bias; the bias only decides whether the ground hides its lower pixels. The unit is a normal object in the perspective view: zooming the camera out makes it smaller on screen, like the map. Result: the feet are not cut by the ground and the unit does not float. Units still sort behind buildings correctly because 0.5 u is less than one cell.
-- **Shadow** (FR-11): `UnitShadow` uses the catalog effect sprite `shadow` (`TryGetEffect`), drawn flat on the ground (not billboarded) under the pivot, scaled by `CompositionTables.ShadowScaleOf(jobId)` × the unit's display scale; scale 0 disables it. Hidden units have none.
+- **Shadow** (FR-11): `UnitShadow` uses `CompositionTables.Shadow` (the client's `sprite/shadow`, D20), drawn flat on the ground (not billboarded) under the pivot, scaled by `CompositionTables.ShadowScaleOf(jobId)` × the unit's display scale; scale 0 disables it. Hidden units have none.
 - **Loop** (FR-14): `Tick` reads the camera once, then for each unit: advance `UnitClock`; if (frame, shown direction, look version, head facing) differs from last tick, `UnitComposer.Compose` and write the changed parts' `ShowFrame`/transform/sortingOrder. Pre-allocated `PartPlacement[10]` per unit; no LINQ, no closures, no boxing in the loop.
 
 ### 4.7 Camera: `RoCamera`, `RoCameraSettings`, `RoCameraInput`
@@ -404,9 +404,15 @@ Manual (evidence in `evidence/`, linked from tasks): reference set vs reference 
 | D9 | Idle/sit: the frame shown is the head facing (3 frames: straight, right, left), not a timed loop, for players | Looping idle like monsters; a separate head rotation | Matches how the client stores head turns (shift + click, `/doridori`); to confirm in T0.2 (R3); makes FR-8 cost nothing. |
 | D10 | `IUnitAssetSource` with Addressables (game) and AssetDatabase (editor) | Addressables in edit mode | The composer and EditMode tests work without building Addressables content; same loader code. |
 | D11 | Dev code under `#if UNITY_EDITOR \|\| DEVELOPMENT_BUILD` and the sandbox scene outside the build list | Runtime flag | Same rule as SPEC-0001 dev code; nothing ships. (The `DEVELOPMENT_BUILD` deprecation warning is BACKLOG, not fixed here.) |
-| D12 | Shadow = catalog effect `shadow`, flat on ground, scaled by table × display scale | A projector or blob mesh | Uses the client's own sprite and table; cheap. |
+| D12 | Shadow = the client's `shadow` sprite (D20: not a catalog effect), flat on ground, scaled by table × display scale | A projector or blob mesh | Uses the client's own sprite and table; cheap. |
 | D13 | `RoCamera.SnapToTarget()`: sets `CameraTarget` to the current target and warps the Cinemachine state at once (`CinemachineCamera.OnTargetObjectWarped` or `ForceCameraPosition`, chosen in T6.5 from the installed version), keeping turn, tilt and zoom | Letting the follow damping slide the camera across the map; disabling damping for one frame | Added 2026-11-21 at the owner's request for SPEC-0010 (map change and teleport must show the character on the first frame, SPEC-0010 FR-12); it belongs to the camera, so it is built here. |
 | D14 | Cinemachine 6.7.0 (T0.1) | 3.1.x | Unity 6.7 ships Cinemachine 3 under the editor's own version number; the registry offers no 3.x for this editor. Same API. |
+| D15 | Facing is `(4 − network − sector) mod 8` (T0.2, T0.3): the network order is counter-clockwise from north, the sprite's clockwise from the front, so a constant offset is not enough | `FrontOffset` constant only (§4.3) | Client table `OffsetItemPos.Direction`, Hercules `dirx`/`diry` (composition-reference.md §1) |
+| D16 | Garment rules from the client's functions (T0.2): `_New_DrawOnTop` decides behind or front per frame (listed = behind); only the new "big" tables are imported (the size is always big); `RobeTopLayer` garments, when in front, go above every headgear, others take priority 400; `HeadToBody` rows put the **garment** under the head | Rules 3 and 5 of §4.5 as first written (top layer above the body in every direction; head under the body) | A backpack above the body facing front covers the chest (image check); the row's columns are (sex, job, garment, action, frame) |
+| D17 | Riding and body edits are imported and the composer can apply them, but they are **off** by default (`ComposeInput.RidingEdits`) | Applying them | Their values contradict our mount bodies (35 px on a head that is placed right): composition-reference.md §2.5. Owner check against the original client |
+| D18 | `Transparency` rows are garments (T0.2), constant mean alpha | Headgears | The ids with values are robe names |
+| D19 | In idle and sit a part with 3 × k frames (animated headgears and garments, 24 or 48) plays its group of k for the head facing, on the body's idle frame time; a part with 3 frames shows the head facing. Units (monsters, NPCs) loop idle normally | `frame % count` in idle (an animated hat would stand still or turn the head) | Frame counts of the data, roBrowser |
+| D20 | One extra sprite, `sprite/shadow`, is converted by the Composition import (it is not in the catalog's effects) and referenced by `CompositionTables.Shadow`; its folder gets an Addressables entry | Catalog effect `shadow` (D12) | The file is at the sprite root, outside the effects folder (composition-reference.md §2.9) |
 
 ## 9. Risks
 

@@ -18,7 +18,7 @@
 - Evidence images go to `docs/specs/0009-unit-display/evidence/` and are linked from the task's report.
 - Unrelated problems go to `docs/specs/BACKLOG.md` as one line each.
 
-Reference set (spec §5, OQ-5), used by every check below: novice male; swordsman male with hair style and colour, top and low headgear (item 2220 and one low headgear chosen in T0.2), garment `천사날개` (view id 1), a sword and a shield; knight on peco female; a doram (summoner male); Poring (1002); one 64-action monster (chosen in T0.2); one town NPC of prontera (chosen in T0.2). Also: warp NPC (45), a red plant, a fabre (shadow checks, FR-11).
+Reference set (spec §5, OQ-5), used by every check below: novice male; swordsman male with hair style and colour, top and low headgear (item 2220, view 16; item 2218 flu mask, view 8), garment `천사날개` (view id 1), a sword and a shield; knight on peco female; a doram (summoner male); Poring (1002); one 64-action monster (Lunatic, 1063); one town NPC of prontera (Kafra, 117). Ids in [composition-reference.md](composition-reference.md) §7. Also: warp NPC (45), a red plant, a fabre (shadow checks, FR-11).
 
 ---
 
@@ -29,9 +29,10 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
   *Done when:* the package resolves and the project compiles with no new warnings (Editor.log); the three facts are written in the plan (with a Decisions note if any differs from the plan, and the damp times recomputed).
   *Result (2026-11-22):* 6.7.0 (Cinemachine 3 API, D14); `Damper.Damp` as assumed, damp times unchanged; brain order 100, `LateUpdate`; no `warning CS/UA` in Editor.log.
 
-- [ ] **T0.2** Decode the composition tables and write `composition-reference.md`. (FR-2, FR-3, FR-4, FR-5, FR-8, FR-11)
+- [x] **T0.2** Decode the composition tables and write `composition-reference.md`. (FR-2, FR-3, FR-4, FR-5, FR-8, FR-11)
   For each table of plan §1 (`tb_layer_priority`, `spriterobename` `RobeTopLayer`, `*layerdir_*` old and new, `_2dlayer_headtobody`, `ridingspreditinfo` head and body calls, `offsetitempos` with Doram, `transparentitem`, `shadowtable`): file, shape, every column's meaning, counts, Confirmed/Candidate, as sprite-catalog.md does. Also settle, against the reference viewer on the reference set: the default part order per direction (weapon/shield front or back), the idle/sit 3-frame head rule (D9, R3), what a part with fewer frames than the body shows (R2), the job ids drawn as nothing, and pick the open members of the reference set.
   *Done when:* the document exists with every table and rule marked Confirmed or Candidate with the evidence used; the reference set is complete in this file's header; any plan rule found wrong is corrected in the plan with a Decisions note.
+  *Result (2026-11-22):* document written; plan rules corrected in D12 and D15 to D20. The reference viewer was not available here: rules that need it are marked Candidate and go to the owner with T8.1.
 
 - [ ] **T0.3** Check the offset between network direction and the sprite's front. (FR-6)
   Compare a real capture's unit direction (idle/spawn packet) with what the original client shows at its default camera, for at least two directions.
