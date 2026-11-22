@@ -80,8 +80,9 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
 
 ## Phase 3: Pure rules
 
-- [ ] **T3.1** Tests, then implementation: `UnitFacing`. (FR-6)
+- [x] **T3.1** Tests, then implementation: `UnitFacing`. (FR-6)
   *Done when:* `UnitFacing_CameraSector_Borders` and `UnitFacing_Shown_SouthFrontAtDefault_BackAt180_SideAt90` pass with T0.3's offset.
+  *Result (2026-11-22):* `UnitFacingTests` pass (borders, South at 0/22/23/90/180, the client's names).
 
 - [ ] **T3.2** Tests, then implementation: `UnitClock` (body drives, play modes, idle/sit head frame). (FR-5, FR-7, FR-8)
   *Done when:* `UnitClock_BodyDrivesFrame_TrailOf150msFollows100msBody`, `_NoDriftAfter10MinutesSimulated`, `_OnceHoldStops`, `_OnceEndReportsOnce`, `_IdleAndSit_FrameIsHeadFacing`, `_HeadFacingIgnoredWhileWalking_ShowsAgainOnIdle` pass.
