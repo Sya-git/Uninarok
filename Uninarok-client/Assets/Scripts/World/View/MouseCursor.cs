@@ -15,7 +15,8 @@ namespace Uninarok.World.View
     /// <summary>
     /// The client's animated mouse cursor (SPEC-0010 FR-11; PLAN-0010 4.11, D29): the frames of <c>sprite/cursors</c> become
     /// cursor textures once, the first time a kind is shown; the mouse gets another only when the frame changes. Layers keep
-    /// their offset, mirror and tint; the cursors shown have no scale or rotation.
+    /// their offset, mirror and tint; the cursors shown have no scale or rotation. Unity stretches any hardware cursor to the
+    /// system's size, so a cursor that fits is drawn on a square of that size, and a larger one is a software cursor (D34).
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class MouseCursor : MonoBehaviour
@@ -25,7 +26,11 @@ namespace Uninarok.World.View
             public Texture2D[] Textures;
             public Vector2 Hotspot;
             public float FrameMs;
+            public CursorMode Mode;
         }
+
+        /// <summary>The size Windows gives a hardware cursor.</summary>
+        const int HardwareSize = 32;
 
         /// <summary>The converted <c>sprite/cursors.act</c>; null keeps the system's cursor.</summary>
         public SpriteAnimation Animation;
@@ -38,7 +43,7 @@ namespace Uninarok.World.View
         Color32[] _sheet;
         int _sheetWidth;
 
-        internal Action<Texture2D, Vector2> Apply { get; set; } = (texture, hotspot) => Cursor.SetCursor(texture, hotspot, CursorMode.Auto);
+        internal Action<Texture2D, Vector2, CursorMode> Apply { get; set; } = Cursor.SetCursor;
 
         public MouseCursorKind Kind
         {
@@ -63,14 +68,14 @@ namespace Uninarok.World.View
             var texture = frames.Textures[frame];
             if (ReferenceEquals(texture, _shown)) return;
             _shown = texture;
-            Apply(texture, frames.Hotspot);
+            Apply(texture, frames.Hotspot, frames.Mode);
         }
 
         void OnDisable()
         {
             if (_shown == null) return;
             _shown = null;
-            Apply(null, Vector2.zero);
+            Apply(null, Vector2.zero, CursorMode.Auto);
         }
 
         void OnDestroy()
@@ -106,7 +111,10 @@ namespace Uninarok.World.View
 
             built.Textures = new Texture2D[data.FrameCount];
             built.Hotspot = new Vector2(Mathf.Clamp(-bounds.xMin, 0, bounds.width - 1), Mathf.Clamp(-bounds.yMin, 0, bounds.height - 1));
-            built.FrameMs = data.FrameMs;
+            built.FrameMs = data.FrameMs * DelayFactor((MouseCursorKind)action);
+            bool fits = bounds.width <= HardwareSize && bounds.height <= HardwareSize;
+            built.Mode = fits ? CursorMode.Auto : CursorMode.ForceSoftware;
+            bounds.width = bounds.height = fits ? HardwareSize : Mathf.Max(bounds.width, bounds.height);
             for (int f = 0; f < data.FrameCount; f++)
             {
                 var pixels = new Color32[bounds.width * bounds.height];
@@ -120,6 +128,9 @@ namespace Uninarok.World.View
             }
             return built;
         }
+
+        // The client plays its default cursor at half the ACT's speed (roBrowserLegacy CursorManager, delayMult).
+        static float DelayFactor(MouseCursorKind kind) => kind == MouseCursorKind.Default ? 2f : 1f;
 
         // Where a layer lies, in pixels from the ACT's origin, y down.
         bool TryLayer(int index, out SpriteAnimation.LayerData layer, out RectInt at)

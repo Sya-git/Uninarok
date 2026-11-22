@@ -237,6 +237,7 @@
 - [x] **T8.3** The client's cell cursor and mouse cursors (plan §4.11, D29). (FR-11)
   *Done when:* `TheCursor_MarksWalkableCells_AndTheMouseSaysTheOthers` and `TheMouseCursor_PlaysTheClientsCursors` pass; in game the grid shows on a walkable cell and not on another (screenshot).
   *Result (2026-11-22):* added after the owner compared T7.2 with the original client. Both tests pass; `evidence/t8.3-cell-cursor.png` (iz_int). The frames of the two mouse cursors were checked as pictures in the running game; a screenshot does not hold a hardware cursor, so the owner sees it in T9.1.
+  *Changed (2026-11-22):* shape and speed corrected after the owner's check (D34); `TheMouseCursor_PlaysTheClientsCursors` checks size, mode and frame times. The owner sees both cursors again in T9.1: the software one was not seen running.
 
 - [x] **T8.4** A dev account per play mode player (D30). (FR-8, FR-13)
   *Done when:* `Credentials_TheAccountOfAPlayersTag` passes and two players in one editor are in game on two accounts.

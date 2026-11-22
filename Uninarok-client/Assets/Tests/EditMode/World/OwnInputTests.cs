@@ -194,22 +194,25 @@ namespace Uninarok.World.Tests
             if (animation == null) Assert.Ignore("no converted cursors");
             var mouse = _go.AddComponent<MouseCursor>();
             mouse.Animation = animation;
-            var shown = new System.Collections.Generic.List<(Texture2D texture, Vector2 hotspot)>();
-            mouse.Apply = (texture, hotspot) => shown.Add((texture, hotspot));
+            var shown = new System.Collections.Generic.List<(Texture2D texture, Vector2 hotspot, CursorMode mode)>();
+            mouse.Apply = (texture, hotspot, mode) => shown.Add((texture, hotspot, mode));
             mouse.Step(10.0);
             mouse.Step(10.01);
             Assert.AreEqual(1, shown.Count, "only when the frame changes");
-            Assert.AreEqual((new Vector2Int(22, 32), Vector2.zero), (new Vector2Int(shown[0].texture.width, shown[0].texture.height), shown[0].hotspot));
+            Assert.AreEqual((32, 32, Vector2.zero, CursorMode.Auto), (shown[0].texture.width, shown[0].texture.height, shown[0].hotspot, shown[0].mode), "Unity stretches another size to 32 x 32");
             int opaque = 0;
             foreach (var p in shown[0].texture.GetPixels32()) if (p.a > 0) opaque++;
             Assert.Greater(opaque, 100);
+            for (double t = 10.0; t < 11.0; t += 0.01) mouse.Step(t);
+            Assert.AreEqual(10, shown.Count, "100 ms each, half the ACT's speed");
+            shown.RemoveRange(1, shown.Count - 1);
 
             mouse.Kind = MouseCursorKind.NoWalk;
             for (double t = 20.0; t < 22.2; t += 0.01) mouse.Step(t);
-            Assert.AreEqual(new Vector2(13f, 6f), shown[1].hotspot, "the arrow's tip stays where it was");
+            Assert.AreEqual((43, 43, new Vector2(13f, 6f), CursorMode.ForceSoftware), (shown[1].texture.width, shown[1].texture.height, shown[1].hotspot, shown[1].mode), "the arrow's tip stays where it was");
             int distinct = new System.Collections.Generic.HashSet<Texture2D>(shown.ConvertAll(s => s.texture)).Count;
             Assert.AreEqual(1 + 22, distinct, "22 frames in 2.2 s");
-            mouse.Apply = (_, _) => { };
+            mouse.Apply = (_, _, _) => { };
         }
 
         [Test]
