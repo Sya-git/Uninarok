@@ -146,8 +146,9 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
   *Done when:* `RoCamera_DoubleClickVariants` and an input test per control pass (Input System test fixture).
   *Result (2026-11-22):* one input test per control and `RoCamera_DoubleClickVariants` pass (7, Input System test fixture); `RoCameraRig.prefab` and `RoCameraSettings.asset` saved.
 
-- [ ] **T6.3** `UnitSystem` reads the sector from the brain's output camera. (FR-6)
+- [x] **T6.3** `UnitSystem` reads the sector from the brain's output camera. (FR-6)
   *Done when:* `UnitSystem_AllPartsSwitchSectorSameFrame` passes, and a test shows the sector read in a frame equals the one of the rendered camera that frame.
+  *Result (2026-11-22):* `UnitSystem_AllPartsSwitchSectorSameFrame` (T5.1's file) and `UnitSystem_ReadsTheSectorOfTheRenderedCamera` pass over 240 frames of a turn.
 
 - [ ] **T6.4** Owner: measure the camera against the original client, side by side. (FR-12)
   Same window size, prontera: default view on entering, nearest and farthest zoom, lowest and highest tilt, wheel step. Fill `Settings/Units/RoCameraSettings.asset`.
