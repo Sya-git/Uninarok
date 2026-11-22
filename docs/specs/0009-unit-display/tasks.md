@@ -129,6 +129,10 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
   Same window size, prontera: default view on entering, nearest and farthest zoom, lowest and highest tilt, wheel step. Fill `Settings/Units/RoCameraSettings.asset`.
   *Done when:* screenshot pairs for each case are in `evidence/` and show the same map area; the settings hold the measured values; plan §4.7 records them (a Decisions note if the limits differ from `viewpointtable.txt`).
 
+- [ ] **T6.5** Tests, then implementation: `RoCamera.SnapToTarget` (plan §4.7, D13). (FR-12)
+  Choose `OnTargetObjectWarped` or `ForceCameraPosition` from the installed Cinemachine and record it in D13.
+  *Done when:* `RoCamera_SnapToTarget_FirstFrameAtTarget_KeepsTurnTiltZoom` passes (target moved 200 u, snap, the next rendered frame is centred on it with unchanged yaw, pitch and distance).
+
 ## Phase 7: Tools
 
 - [ ] **T7.1** Entity Sandbox scene and panel. (FR-13)

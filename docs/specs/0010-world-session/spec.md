@@ -7,8 +7,8 @@
 | **Owner** | Jhonnatan |
 | **Depends on** | [SPEC-0001](../0001-networking-core/spec.md) (connection, flow, packets), [SPEC-0005](../0005-gat-map-data/spec.md) (walkable cells, heights), [SPEC-0006](../0006-rsw-map-scene/spec.md) (map scenes), [SPEC-0008](../0008-sprite-catalog/spec.md) (ground items), [SPEC-0009](../0009-unit-display/spec.md) (unit display, facing, camera) |
 | **Reference** | [Packets](../0001-networking-core/Packets/INDEX.md), [UninarokPosition](../../data/UninarokPosition.md), [UninarokMoveData](../../data/UninarokMoveData.md) |
-| **Plan** | [plan.md](plan.md) (Draft) |
-| **Tasks** | tasks.md (not written) |
+| **Plan** | [plan.md](plan.md) (Approved, 2026-11-21) |
+| **Tasks** | [tasks.md](tasks.md) (Approved, 2026-11-21) |
 
 ## 1. Why
 

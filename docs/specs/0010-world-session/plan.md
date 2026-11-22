@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [spec.md](spec.md) (SPEC-0010, approved 2026-11-21) |
-| **Status** | Draft |
+| **Status** | Approved (owner, 2026-11-21) |
 | **Audience** | Architects, senior developers, AI agents |
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. The connection, flow, managers and packet rules are [PLAN-0001](../0001-networking-core/plan.md) (packet rules normative in [Packet-Implementation.md](../0001-networking-core/Packets/Packet-Implementation.md)); `MapData` is [PLAN-0005](../0005-gat-map-data/plan.md); map scenes [PLAN-0006](../0006-rsw-map-scene/plan.md); `SpriteCatalog` [PLAN-0008](../0008-sprite-catalog/plan.md); `UnitView`, `UnitLook`, `UnitSystem`, `RoCamera` and `IUnitAssetSource` [PLAN-0009](../0009-unit-display/plan.md). This plan adds the layer between them: **packets → one world model → views**, plus the own character's input.
@@ -15,12 +15,13 @@
 - **Hercules is the reference** for every rule (spec §6). Facts read in `Hercules-2026.09/src/map` on 2026-11-21:
   - `path.cpp` `path_search`: A* over 8 neighbours, `MOVE_COST` 10, `MOVE_DIAGONAL_COST` 14, Manhattan heuristic ×10 (`heuristic`), a diagonal only if both orthogonal neighbours and the diagonal cell pass (`chk_dir`), neighbours pushed in the fixed order (+1,−1), (+1,0), (+1,+1), (0,+1), (−1,+1), (−1,0), (−1,−1), (0,−1); binary heap ordered by `f_cost` only (`NODE_MINTOPCMP`); node table of 32×32 indexed by `(x + y·32) & 1023`, a collision aborts the search (`add_path` error → "no path"); path at most `MAX_WALKPATH` 32 steps; start cell never checked; same start and end gives an empty path.
   - `unit.cpp` `unit_walk_toxy_sub`/`unit_walktoxy`: REQUEST_MOVE walks with flag 4 (A*, not the easy path); a path longer than `max_walk_path` (17, `conf/map/battle/client.conf`) is refused; with `OFFICIAL_WALKPATH` (defined, `src/config/core.h`) a path longer than 14 is refused when `path_search_long` (straight line) fails; NPCs are exempt. Each step's timer is `speed` (straight) or `speed × 14 / 10` (diagonal); **the unit's server cell changes when the step's timer fires, at the end of the step**.
+  - **The easy path still exists** (`path_search` with `flag & 1`, the rAthena-era rule): it goes **diagonally first, then straight**, and fails at the first blocked cell, with no search. It is used when `ud->state.walk_easy` is set: monsters chasing a target or walking to a warp (`mob.cpp` `walk_tobl(…, 1, 1)`), pets fetching items, `unitwalkto` on a target in scripts, Wink of Charm. Players' clicks (flag 4), monster random walk (flags 0 and 8) and attack approach (flag 2) use A*. **The move packets do not say which one the server used**, and the original client always uses A* (comment in `path.cpp`), so a chasing monster can be shown on other cells than the server's mid-walk, ends equal. §4.4 and D11 handle it.
   - `clif.cpp` `clif_parse_WalkToXY`: no walk when dead, sitting (unit cannot move), vending or in an NPC dialog; a one-cell walk onto a cell already holding a character or NPC is ignored (`official_cell_stack_limit` 1, `conf/map/battle/misc.conf`).
   - `clif_move`: a unit already known to the area walks with **`ZC_NOTIFY_MOVE` 0x0086** (id, move data with sub-cell fixed to 8/8, server tick); `unit_walking` 0x09FD only when a walking unit enters view or its speed changed. 0x0086 is not yet in the packet index.
   - Vanish reasons (`enum clr_type`): 0 out of sight (also warp portals, `npc.cpp`), 1 dead, 2 respawn/logout (`map.cpp`), 3 teleport (fly and butterfly wing, script `warp` to save point), 4 trick dead.
   - `clif_changemap` 0x0091 (map name 16 B, x, y), `clif_changemapserver` 0x0AC7 (map, x, y, ip, port, dns host 128 B) for PACKETVER ≥ 20170315; `clif_changed_dir` 0x009C (id, head dir `ushort`, body dir `byte`); `clif_changelook` 0x01D7 (`ZC_SPRITE_CHANGE2`); `clif_sitting`/`clif_standing` 0x008A with action 2/3; `clif_slide` 0x01FF; `clif_fixpos` 0x0088; `clif_getareachar_item` 0x009D (item id 32-bit from 20181121); `clif_dropflooritem` 0x0ADD; `clif_clearflooritem` 0x00A1; `clif_notify_time` 0x007F answers the heartbeat 0x0360.
 - **Coordinates.** A server cell `(x, y)` is `MapData` cell `(x, z)` with `z = y`: PLAN-0005 T8.1 found the cell map identical to the server's on prontera with that indexing. Only prontera, izlude and prt_fild08 have server caches built from the client data (BACKLOG), so all map-based tests use them.
-- **Phase 0 checks** named in this plan (the tasks file will hold them): **T0.1** 0009's merged code (execution orders, camera snap call); **T0.2** every packet of §4.1 against `packets_struct.h`, `clif.cpp` and a real capture, plus the server echoes this plan relies on (direction, sit) and whether any monster walks with the easy path; **T0.3** display facts from roBrowser and the original client (item sub-cell, walk animation speed, dead monster time); **T0.4** `/doridori` and `/bangbang` side by side with the original client. A check that contradicts this plan stops the task; the plan is updated first, with a note under Decisions.
+- **Phase 0 checks** named in this plan ([tasks.md](tasks.md)): **T0.1** 0009's merged code (execution orders, camera snap call); **T0.2** every packet of §4.1 against `packets_struct.h`, `clif.cpp` and a real capture, plus the server echoes this plan relies on (direction, sit); **T0.3** display facts from roBrowser and the original client (item sub-cell, walk animation speed, dead monster time); **T0.4** `/doridori` and `/bangbang` side by side with the original client; **T0.5** recorded sessions for replay. The D11 measurement needs the pathfinder port and runs in **T3.8**. A check that contradicts this plan stops the task; the plan is updated first, with a note under Decisions.
 - **Pure core, thin components** (as PLAN-0009 D3): the world model, the clock, the pathfinder and the own-character rules are plain C# with no `MonoBehaviour` and no scene, tested in EditMode (FR-18). Components only read the model and call 0009's display.
 - **One update loop**, no `Update` per entity. Hot packets and the per-frame update allocate nothing (FR-17, SPEC-0001 FR-6).
 
@@ -157,6 +158,8 @@ public sealed class HerculesPathfinder
 {
     public HerculesPathfinder(IWalkGrid grid);                 // owns its node table and heap: allocated once
     public PathResult Search(int x0, int y0, int x1, int y1, ref WalkPath path);       // path_search, flag 0 (A*)
+    public PathResult SearchEasy(int x0, int y0, int x1, int y1, ref WalkPath path);   // path_search, flag 1: diagonal first, then straight
+    public PathResult SearchForUnit(EntityKind kind, int x0, int y0, int x1, int y1, ref WalkPath path);  // D11 rule
     public bool StraightLine(int x0, int y0, int x1, int y1);                         // path_search_long (Bresenham-like)
     public PathResult SearchWalk(int x0, int y0, int x1, int y1, ref WalkPath path, in WalkRules rules); // + limits
 }
@@ -164,9 +167,11 @@ public readonly struct WalkRules { public readonly int MaxWalkPath, MaxWalkPathO
 ```
 
 - **A port, not a re-implementation.** `Search` reproduces `path_search` line by line: the 32×32 node table with the same index (and the same abort on collision), the same binary heap (`BHEAP_PUSH2`/`BHEAP_POP2` of `common/db.h`: sift-up on push, last element to the top and sift-down on pop, ties keep heap order, comparator `f_cost` only), the same neighbour order, the same corner rule and bounds (`x < xs − 1` etc.), and path reconstruction through parents. `StraightLine` ports `path_search_long`. Any deviation shows up as a different path in the comparison test, which is the acceptance (D3).
+- `SearchEasy` ports the `flag & 1` branch: steps of `(sgn dx, sgn dy)` until one axis is reached, then straight; the first blocked cell fails (no fallback).
+- **Which path for another unit's walk** (`SearchForUnit`, D11): players and NPCs use A*. For monsters, pets, homunculi, mercenaries and elementals the client cannot know the server's choice; the default rule is **"easy path if it reaches the destination, else A\*"** (a chase, the case that matters near the player, is then exact; a random walk is exact whenever both algorithms agree). T3.8 measures the rule with the walk log below on a real session (share of monster walks whose path the rule reproduces, and the largest mid-walk distance when it does not); if another rule (always A*) scores better, it replaces the default with a Decisions note.
 - `SearchWalk` applies `unit_walktoxy`'s rules: `Blocked` when the destination is not passable; `TooLong` when the path exceeds `MaxWalkPath`, or `MaxWalkPathObstructed` when `StraightLine` fails. NPC paths are not searched by the client (NPCs that walk use the same A* without limits: `SearchWalk` is given `int.MaxValue` limits for `EntityKind.Npc`).
 - Directions: `walk_choices` gives Hercules directions 0 N, 1 NW, 2 W, 3 SW, 4 S, 5 SE, 6 E, 7 NE with y growing north, the same values as `UninarokDirection`.
-- **Reference paths (D3).** The plugin `uninarok_pathdump` (Hercules plugin API, loaded with `--load-plugin uninarok_pathdump` on a server whose map cache was rebuilt from the client data) reads a seed and a pair count from its command line, draws random walkable start cells and random end cells within 20 cells (so "too long" and "no path" occur), runs the server's own `path->search` (flag 0) and `path->search_long`, and writes per pair `x0 y0 x1 y1 result len steps[]` into `paths-<map>.bin`. 10,000 pairs per reference map; the files are committed as test fixtures with the seed and the server commit in their README.
+- **Reference paths (D3).** The plugin `uninarok_pathdump` (Hercules plugin API, loaded with `--load-plugin uninarok_pathdump` on a server whose map cache was rebuilt from the client data) reads a seed and a pair count from its command line, draws random walkable start cells and random end cells within 20 cells (so "too long" and "no path" occur), runs the server's own `path->search` (flag 0) and `path->search_long`, and writes per pair `x0 y0 x1 y1 result len steps[]` for both A* and the easy path into `paths-<map>.bin`. A second mode, **walk log**, hooks `unit->walk_toxy_sub` (HPM post-hook) during a normal server run and appends per walk `tick id kind walk_easy src dst steps[]` to a file: the ground truth of how each unit really walked, used by T3.8's measurement and by the replay test of §6. 10,000 pairs per reference map; the files are committed as test fixtures with the seed and the server commit in their README.
 - Cost: one search touches at most 1,024 nodes; target ≤ 50 µs and 0 B per search (allocation test).
 
 ### 4.5 World model: `WorldModel`, `Entity`
@@ -227,7 +232,7 @@ public readonly struct VanishInfo { public readonly uint Id; public readonly Ent
 ```
 
 - **Storage** (FR-17): a struct array of `capacity` entities, a free list, a `Dictionary<uint,int>` created with the full capacity (no rehash in play), one `WalkPath` per slot, and two ring buffers of added and removed ids. A full model logs one warning and ignores the new entity (capacity 2048 is about 7 times what `area_size` 14 can show).
-- **Walking** (FR-6): `Walk` searches the path with `HerculesPathfinder.Search` from the packet's source cell (the client does what the original client does: the move packet carries only the ends). If the search fails, the unit is placed on the destination at once (one trace line): the server reached it, so the client must too. Step `i` lasts `WalkTiming.StepMs(speed, step is odd)` (odd Hercules directions are diagonal). `Advance(now)` finds the current step from `now − WalkStart` and sets `PosX/PosY` linearly between the step's cells, `Facing` to the step's direction, and `CellX/CellY` to the cell reached when the step **ends** (the server's cell, §1). Arrival ends the walk and bumps `AnimationVersion` (idle).
+- **Walking** (FR-6): `Walk` searches the path with `HerculesPathfinder.SearchForUnit` (A* for players, D11 rule for other units) from the packet's source cell (the client does what the original client does: the move packet carries only the ends). If the search fails, the unit is placed on the destination at once (one trace line): the server reached it, so the client must too. Step `i` lasts `WalkTiming.StepMs(speed, step is odd)` (odd Hercules directions are diagonal). `Advance(now)` finds the current step from `now − WalkStart` and sets `PosX/PosY` linearly between the step's cells, `Facing` to the step's direction, and `CellX/CellY` to the cell reached when the step **ends** (the server's cell, §1). Arrival ends the walk and bumps `AnimationVersion` (idle).
 - **Mid-walk entry** (FR-4): `Walk` with a start time in the past runs the same rule, so a unit entering view appears where its path says it is at `now`.
 - **New order while walking:** the new path starts at the packet's source cell. If the shown position is within one cell of it, the first segment starts from the shown position (no snap); farther, the unit snaps (D7).
 - **Stop** ends the walk on the given cell; **slide** moves position and cell at once and keeps `Facing` (FR-7).
@@ -333,7 +338,7 @@ public static class EntityLookMapping { public static UnitLook ToUnitLook(Entity
 
 Satisfies FR-12.
 
-`WorldBootstrap` sets `RoCamera.Follow` to the own `UnitView` transform after `BeginMap` and calls a new `RoCamera.SnapToTarget()` (sets the target and the Cinemachine state at once, `CinemachineCamera.ForceCameraPosition` or `OnTargetObjectWarped`, chosen in T0.1 with 0009's installed version) so the first frame after a map change already shows the character. This is a small addition to PLAN-0009 `RoCamera`; it is recorded in that plan's Decisions in the same commit.
+`WorldBootstrap` sets `RoCamera.Follow` to the own `UnitView` transform after `BeginMap` and calls `RoCamera.SnapToTarget()` (PLAN-0009 §4.7, D13, task T6.5 of TASKS-0009: built with the camera in SPEC-0009) so the first frame after a map change already shows the character.
 
 ### 4.11 Input: `CellPicker`, `CellCursor`, `OwnInput`
 
@@ -376,6 +381,7 @@ EditMode unless marked. `NeedsData` tests need the imported maps/catalog and are
 |---|---|
 | `ServerClock_Offset5s_Rtt50To200_WithinHalfRttPlus10`, `_MonotonicOver10Minutes`, `_LowerCorrectionSlews`, `_Wraps` (fake `IClock`, simulated server) | FR-2 |
 | `HerculesPathfinder_MatchesServer_<map>` (10,000 fixture pairs each for prontera, izlude, prt_fild08; step by step, result codes included) — `NeedsData` | FR-10 |
+| `HerculesPathfinder_EasyPath_MatchesServer_<map>` (same fixtures), `SearchForUnit_WalkLog_<capture>` (share reproduced ≥ the value T3.8 records) — `NeedsData` | FR-6, FR-10 |
 | `HerculesPathfinder_CornerRule`, `_SameCell`, `_NodeCollisionAborts`, `_Limits17And14`, `_ZeroAllocation1000Searches` | FR-10, FR-17 |
 | `WalkTiming_200Straight5_Is1000ms`, `_OneDiagonal_Is1080ms`; `WorldModel_Walk_ArrivesAtServerTime`, `_ServerCellChangesAtStepEnd`, `_MidWalkEntryAppearsOnPath` | FR-4, FR-6 |
 | `WorldModel_UpsertTwice_OneEntity`, `_NewOrderWhileWalking_NoSnapWithinOneCell`, `_Stop_SnapsAndIdles`, `_Slide_KeepsFacing` | FR-4, FR-6, FR-7 |
@@ -398,7 +404,7 @@ Manual checks on a local Hercules (evidence in `docs/specs/0010-world-session/ev
 - **Heartbeat at entry** (D6): one extra `HEARTBEAT_REQUEST` right after `MAP_LOADED`. The SPEC-0001 keepalive tests that count heartbeats get the extra one; FR-14 of SPEC-0001 ("every 10 s") still holds for the interval.
 - **Bootstrap scene**: gains `WorldBootstrap`, the PLAN-0009 camera rig and an EventSystem-free input setup. The BACKLOG item on `DevAutoLogin` missing in release players also applies to `WorldBootstrap`'s dev children; not fixed here.
 - **Packet docs** move from `documented` to `implemented`/`verified`; `INDEX.md` is regenerated.
-- **PLAN-0009** gets `RoCamera.SnapToTarget` (§4.10) with a Decisions note.
+- `RoCamera.SnapToTarget` was moved into PLAN-0009 (D13, TASKS-0009 T6.5) on 2026-11-21; this plan only calls it.
 
 ## 8. Decisions
 
@@ -414,6 +420,7 @@ Manual checks on a local Hercules (evidence in `docs/specs/0010-world-session/ev
 | D8 | Dead monsters stay `DeadMonsterLingerMs` (1,500 ms) then are removed; the view plays dead once and holds | Removing when the animation ends (model would depend on the view) | Keeps the model independent of animation data; the value is a setting, checked against the original client in T0.3. |
 | D9 | Own turns and sitting change the model only on the server's echo | Local change on send | Others see what the server accepted; a refused sit stays standing (FR-19). Fallback to local on send only if T0.2 shows Hercules does not echo to the sender. |
 | D10 | Cell picking on `MapData` triangles, no colliders | Physics raycast on the ground mesh | Walkability lives in `MapData`; no physics setup for map scenes; exact on slopes. |
+| D11 | Other non-player units: easy path if it reaches the destination, else A*; measured in T3.8 with the server's walk log | Always A* (the original client's behaviour); changing the server so chases use A* (`walk_tobl` flag) or so move packets carry the path | The packets do not say which algorithm ran; chases are where position matters (combat). A server change is out of this spec (the owner plans server changes later, spec non-goals) and would make the rule unnecessary. |
 
 ## 9. Risks
 
@@ -421,9 +428,10 @@ Manual checks on a local Hercules (evidence in `docs/specs/0010-world-session/ev
 |---|---|
 | A packet layout differs at 20220406 from the docs (BACKLOG precedent) | T0.2 checks every packet in `packets_struct.h`/`clif.cpp` and a real capture before any handler is written |
 | Client and server cell maps differ on a map | Tests use the three maps with rebuilt caches; BACKLOG item for the rest |
-| Monsters walk with a path the server found differently (easy path, chase trimming) | The packet's destination already includes the trimming; mobs that use the easy path (`flag & 1`) are found in T0.2 by reading `mob.cpp`; if any, `Walk` uses the easy path for them and the plugin dumps it too |
+| Monsters walk with a path the server found differently (easy path for chases, confirmed in `mob.cpp`; chase trimming) | The packet's destination already includes the trimming; D11 rule, measured with the walk log in T3.8; a mismatch is bounded (same ends) and corrected by the next stop or move packet. Removing it for good needs a server change (D11, rejected alternative) |
 | Clock error makes walks start late | Sync at entry (D6); FR-2 tests; debug view shows round trip |
 | The plugin cannot be built on the owner's Windows setup | Fallback: a console program compiling `path.cpp` with a stub `map_data` read from the same `.mcache`; same output format |
+| Known server-side position quirks: the A* node table (32×32) aborts some valid paths (`path.cpp` FIXME); a speed change mid-walk is resent as a full walking-unit entry (`clif_move`); knock-back is a stop plus a slide (`clif_blown`); the server cell lags the shown position by up to one step (D4) | The port reproduces the abort (the client refuses the same clicks the server would); entries for a known id update in place (FR-4); stop and slide are FR-7; range checks against the server cell are the combat spec's concern |
 | 0009's display contracts change during its implementation | §1: follow the code, record in Decisions |
 | Look-type numbers of 0x01D7 differ from the doc | T0.2 reads `enum look` and writes the table |
 

@@ -289,6 +289,7 @@ public sealed class RoCamera : MonoBehaviour     // on the rig; owns the Cinemac
     public float Yaw { get; } public float Pitch { get; } public float Distance { get; }   // current (eased) values
     public void Turn(float degrees); public void Tilt(float degrees); public void Zoom(float units);
     public void ResetTurn(); public void ResetTilt(); public void ResetZoom();
+    public void SnapToTarget();                    // jump to Target/Follow now, no damping (map change, teleport; D13)
     public int Sector { get; }                     // UnitFacing.CameraSector of the brain's output camera yaw
     // Update: clamp the wanted values, damp current → wanted with Cinemachine's Damper (damp times above), write
     // Orbit.HorizontalAxis/VerticalAxis/RadialAxis.Value, move CameraTarget (followed with Orbit's position damping).
@@ -404,6 +405,7 @@ Manual (evidence in `evidence/`, linked from tasks): reference set vs reference 
 | D10 | `IUnitAssetSource` with Addressables (game) and AssetDatabase (editor) | Addressables in edit mode | The composer and EditMode tests work without building Addressables content; same loader code. |
 | D11 | Dev code under `#if UNITY_EDITOR \|\| DEVELOPMENT_BUILD` and the sandbox scene outside the build list | Runtime flag | Same rule as SPEC-0001 dev code; nothing ships. (The `DEVELOPMENT_BUILD` deprecation warning is BACKLOG, not fixed here.) |
 | D12 | Shadow = catalog effect `shadow`, flat on ground, scaled by table × display scale | A projector or blob mesh | Uses the client's own sprite and table; cheap. |
+| D13 | `RoCamera.SnapToTarget()`: sets `CameraTarget` to the current target and warps the Cinemachine state at once (`CinemachineCamera.OnTargetObjectWarped` or `ForceCameraPosition`, chosen in T6.5 from the installed version), keeping turn, tilt and zoom | Letting the follow damping slide the camera across the map; disabling damping for one frame | Added 2026-11-21 at the owner's request for SPEC-0010 (map change and teleport must show the character on the first frame, SPEC-0010 FR-12); it belongs to the camera, so it is built here. |
 
 ## 9. Risks
 
