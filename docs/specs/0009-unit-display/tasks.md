@@ -237,3 +237,4 @@ Works on the branch `feature/0010-world-session` (the owner reported it while re
 
 - [ ] **T9.6** Evidence and close. (FR-16)
   *Done when:* screenshots on prontera next to a wall and indoors on iz_int are in `evidence/` (before and after, both tilts); the Sprites, Units and World tests pass; the owner checked the images; statuses are `Implemented`.
+  *So far (2026-11-22):* evidence/t9.6-prontera-turn90.png, t9.6-prontera-turn180.png, t9.6-iz_int-turn0.png, t9.6-iz_int-turn270.png (left before, right after; tilt 50° above, 65° below; game view angle, nearest zoom, preview scenes). Sprites EditMode 38 of 38, Units EditMode 98 of 98, Units PlayMode 22 of 22, World EditMode 160 of 160, World PlayMode 44 of 44. Open: the owner's check.
