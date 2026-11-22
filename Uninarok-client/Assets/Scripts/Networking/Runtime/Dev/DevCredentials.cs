@@ -38,19 +38,35 @@ namespace Uninarok.Networking.Dev
             public string password;
         }
 
+        /// <summary>
+        /// A Multiplayer Play Mode player with a tag such as <c>login:account</c> logs in as that account, with the same password:
+        /// several players in one editor, each on its own account.
+        /// </summary>
+        public const string LoginTag = "login:";
+
         public static string FilePath => Path.Combine(Application.persistentDataPath, FileName);
 
         /// <summary>The credentials, or null when none are set.</summary>
         public static DevCredentials? Load()
         {
 #if UNITY_EDITOR
-            string user = UnityEditor.EditorPrefs.GetString(UserPrefKey, "");
+            string user = UserOf(Unity.Multiplayer.PlayMode.CurrentPlayer.Tags) ?? UnityEditor.EditorPrefs.GetString(UserPrefKey, "");
             if (!string.IsNullOrEmpty(user))
                 return new DevCredentials(user, UnityEditor.EditorPrefs.GetString(PasswordPrefKey, ""));
             return null;
 #else
             return LoadFromFile(FilePath);
 #endif
+        }
+
+        /// <summary>The account of the first <see cref="LoginTag"/> tag; null without one.</summary>
+        public static string UserOf(System.Collections.Generic.IEnumerable<string> tags)
+        {
+            if (tags == null) return null;
+            foreach (string tag in tags)
+                if (tag != null && tag.Length > LoginTag.Length && tag.StartsWith(LoginTag, StringComparison.OrdinalIgnoreCase))
+                    return tag.Substring(LoginTag.Length).Trim();
+            return null;
         }
 
         /// <summary>Reads a <c>dev-login.json</c> file: <c>{"user": "...", "password": "..."}</c>. Null when missing or malformed.</summary>

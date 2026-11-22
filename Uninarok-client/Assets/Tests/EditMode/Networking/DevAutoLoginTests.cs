@@ -360,6 +360,13 @@ namespace Uninarok.Networking.Tests
 
         // ---- credentials source ----
 
+        [TestCase(null, null)]
+        [TestCase("host", null)]
+        [TestCase("login:", null)]
+        [TestCase("host,login:second", "second")]
+        public void Credentials_TheAccountOfAPlayersTag(string tags, string user) =>
+            Assert.AreEqual(user, DevCredentialsSource.UserOf(tags?.Split(',')));
+
         [Test]
         public void Parse_ReadsUserAndPassword()
         {

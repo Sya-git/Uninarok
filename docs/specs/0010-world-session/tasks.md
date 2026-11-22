@@ -235,6 +235,10 @@
   *Done when:* `TheCursor_MarksWalkableCells_AndTheMouseSaysTheOthers` and `TheMouseCursor_PlaysTheClientsCursors` pass; in game the grid shows on a walkable cell and not on another (screenshot).
   *Result (2026-11-22):* added after the owner compared T7.2 with the original client. Both tests pass; `evidence/t8.3-cell-cursor.png` (iz_int). The frames of the two mouse cursors were checked as pictures in the running game; a screenshot does not hold a hardware cursor, so the owner sees it in T9.1.
 
+- [x] **T8.4** A dev account per play mode player (D30). (FR-8, FR-13)
+  *Done when:* `Credentials_TheAccountOfAPlayersTag` passes and two players in one editor are in game on two accounts.
+  *Result (2026-11-22):* added for T9.1, with the owner's Multiplayer Play Mode. The test passes; the main editor (account 2000000) and Player 2 (tag `login:testeAdmin2`, account 2000002) were in game together and see each other (`evidence/t6.3-second-player.png`).
+
 ## Phase 9: Verify and close
 
 - [ ] **T9.1** Owner: second-client and side-by-side checks. (FR-1, FR-9, FR-13, FR-19)
