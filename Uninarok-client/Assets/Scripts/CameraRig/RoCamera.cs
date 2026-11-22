@@ -8,7 +8,8 @@ namespace Uninarok.CameraRig
     /// The RO camera (PLAN-0009 4.7, D8, D13, D22; SPEC-0009 FR-12): turns, tilts and zooms a Cinemachine orbit around a
     /// target, easing towards the wanted values. Before the brain moves the camera each frame it clamps the wanted values,
     /// damps the current ones with Cinemachine's <see cref="Damper"/> and writes the three axes and the target. The target is
-    /// eased here too, not by the orbit's own damping, so the view never swings while it follows (D22).
+    /// eased here too, not by the orbit's own damping, so the view never swings while it follows (D22). While it catches up, the
+    /// followed unit is kept on whole pixels of the screen, so its sprite is sampled the same way in every frame (D30).
     /// </summary>
     [DefaultExecutionOrder(50)]
     [DisallowMultipleComponent]
@@ -27,6 +28,7 @@ namespace Uninarok.CameraRig
         float _wantedYaw, _wantedPitch, _wantedDistance;
         float _yaw, _pitch, _distance;
         bool _started;
+        Vector3 _eased; // the eased target before it is moved to whole pixels
 
         /// <summary>The ground point the camera orbits.</summary>
         public Vector3 Target { get; set; }
@@ -118,7 +120,7 @@ namespace Uninarok.CameraRig
             if (CameraTarget != null)
             {
                 var delta = Target - CameraTarget.position;
-                CameraTarget.position = Target;
+                CameraTarget.position = _eased = Target;
                 if (Camera != null) Camera.OnTargetObjectWarped(CameraTarget, delta);
             }
             WriteAxes();
@@ -145,8 +147,27 @@ namespace Uninarok.CameraRig
             }
 
             if (Follow != null) Target = Follow.position;
-            if (CameraTarget != null) CameraTarget.position += Damper.Damp(Target - CameraTarget.position, Settings.FollowDampTime, deltaSeconds);
+            if (CameraTarget != null)
+            {
+                _eased += Damper.Damp(Target - _eased, Settings.FollowDampTime, deltaSeconds);
+                var output = OutputCamera;
+                CameraTarget.position = Settings.AlignToPixels && output != null ? AlignedTo(output.pixelHeight) : _eased;
+            }
             WriteAxes();
+        }
+
+        // The eased target moved by less than a pixel across the view, so that what it follows is a whole number of pixels from it.
+        internal Vector3 AlignedTo(int pixelHeight)
+        {
+            if (pixelHeight <= 0) return _eased;
+            var rotation = Quaternion.Euler(_pitch, _yaw, 0f);
+            Vector3 right = rotation * Vector3.right, up = rotation * Vector3.up;
+            var delta = Target - _eased;
+            float depth = _distance + Vector3.Dot(delta, rotation * Vector3.forward);
+            if (depth <= 0f) return _eased;
+            float unitsPerPixel = 2f * depth * Mathf.Tan(Settings.FieldOfView * 0.5f * Mathf.Deg2Rad) / pixelHeight;
+            float x = Vector3.Dot(delta, right) / unitsPerPixel, y = Vector3.Dot(delta, up) / unitsPerPixel;
+            return _eased + ((x - Mathf.Round(x)) * right + (y - Mathf.Round(y)) * up) * unitsPerPixel;
         }
 
         void WriteAxes()

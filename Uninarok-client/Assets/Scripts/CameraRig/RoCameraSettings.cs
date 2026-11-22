@@ -29,6 +29,8 @@ namespace Uninarok.CameraRig
         public float TiltDampTime = 0.384f;
         public float ZoomDampTime = 0.384f;
         public float FollowDampTime = 0.768f;
+        /// <summary>The followed unit stays on whole pixels while the camera catches up (D30).</summary>
+        public bool AlignToPixels = true;
 
         [Header("Controls")]
         public float TurnDegreesPerScreenWidth = 720f;

@@ -26,6 +26,7 @@ MonoBehaviour:
   TiltDampTime: 0.384
   ZoomDampTime: 0.384
   FollowDampTime: 0.768
+  AlignToPixels: 1
   TurnDegreesPerScreenWidth: 720
   PitchDegreesPerScreenHeight: 300
   WheelStep: 2.5
