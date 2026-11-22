@@ -4,6 +4,7 @@ using Unity.Collections;
 using Uninarok.Networking.Core.Wire;
 using Uninarok.Networking.Data;
 using Uninarok.Networking.Flow;
+using Uninarok.Networking.Packets;
 using Uninarok.Networking.Packets.In.Map;
 using Uninarok.Networking.Tests;
 
@@ -107,6 +108,7 @@ namespace Uninarok.World.Tests
             _rig.ToInGame(Character(c => { c.Hp = 0; return c; }));
             Assert.AreEqual(EntityState.Dead, Own.State);
             Assert.IsFalse(_rig.Session.Own.CanAct);
+            Assert.AreEqual(WalkRequestResult.Dead, _rig.Session.Own.RequestWalk(155, 200));
             Assert.AreEqual(0, _rig.Client.Sent.Count);
         }
 
@@ -141,6 +143,108 @@ namespace Uninarok.World.Tests
             _rig.Client.Deliver(WorldSessionTests.VanishPacket(Id, 1));
             Assert.AreEqual(EntityState.Dead, Own.State);
             Assert.IsFalse(_rig.Session.Own.CanAct);
+        }
+
+        // ---- walk (FR-9, T5.3); the own character stands on 150,200 ----
+
+        WalkRequestResult Request(int x, int y, bool sends = false)
+        {
+            var own = _rig.Session.Own;
+            _rig.Client.ClearRecords();
+            var check = own.CheckWalk(x, y);
+            Assert.AreEqual(0, _rig.Client.Sent.Count, "the dry run sends nothing");
+            var result = own.RequestWalk(x, y);
+            Assert.AreEqual(check, result, "the dry run says the same");
+            Assert.AreEqual(sends ? 1 : 0, _rig.Client.Sent.Count);
+            return result;
+        }
+
+        [Test]
+        public void OwnCharacter_RequestWalk_Sent_AndTheWalkStartsOnlyOnTheAnswer()
+        {
+            _rig.ToInGame(Character());
+            Assert.AreEqual(WalkRequestResult.Sent, Request(160, 200, sends: true));
+            Assert.AreEqual(WorldSessionTests.Hex("5F03" + WorldSessionTests.Pos(160, 200, 0)), _rig.Client.Sent[0].Bytes);
+            Assert.IsFalse(Own.Walking, "no prediction");
+            _rig.Local.AdvanceMs(500);
+            _rig.Model.Advance(_rig.Clock.Now);
+            Assert.AreEqual(150f, Own.PosX);
+
+            _rig.Client.Deliver(WorldSessionTests.OwnMove(150, 200, 160, 200, _rig.Clock.Now));
+            Assert.IsTrue(Own.Walking);
+            _rig.Local.AdvanceMs(1500);
+            _rig.Model.Advance(_rig.Clock.Now);
+            Assert.AreEqual((160, false), (Own.CellX, Own.Walking));
+        }
+
+        [Test]
+        public void OwnCharacter_RequestWalk_NotInGame()
+        {
+            Assert.AreEqual(WalkRequestResult.NotInGame, _rig.Session.Own.RequestWalk(1, 1));
+            _rig.ToLoadingMap(Character());
+            _rig.Session.BeginMap(_rig.Grid);
+            Assert.AreEqual(WalkRequestResult.NotInGame, Request(155, 200), "the map is loading");
+            _rig.Flow.MapLoaded();
+            _rig.Client.AcceptSends = false;
+            Assert.AreEqual(WalkRequestResult.NotInGame, _rig.Session.Own.RequestWalk(155, 200), "nothing was queued");
+        }
+
+        [Test]
+        public void OwnCharacter_RequestWalk_Dead_Sitting_SameCell()
+        {
+            _rig.ToInGame(Character());
+            Assert.AreEqual(WalkRequestResult.SameCell, Request(150, 200));
+            _rig.Client.Deliver(WorldSessionTests.Act(Id, 2));
+            Assert.AreEqual(WalkRequestResult.Sitting, Request(155, 200));
+            _rig.Client.Deliver(WorldSessionTests.VanishPacket(Id, 1));
+            Assert.AreEqual(WalkRequestResult.Dead, Request(155, 200));
+        }
+
+        [Test]
+        public void OwnCharacter_RequestWalk_Blocked_NoPath_TooLong()
+        {
+            _rig.Grid.Wall = (x, y) => (x == 155 && y == 200) || (Math.Max(Math.Abs(x - 145), Math.Abs(y - 200)) == 2);
+            _rig.ToInGame(Character());
+            Assert.AreEqual(WalkRequestResult.Blocked, Request(155, 200));
+            Assert.AreEqual(WalkRequestResult.Blocked, Request(-1, 200));
+            Assert.AreEqual(WalkRequestResult.NoPath, Request(145, 200), "inside a closed wall");
+            Assert.AreEqual(WalkRequestResult.TooLong, Request(150, 220), "20 straight cells");
+            Assert.AreEqual(WalkRequestResult.Sent, Request(150, 217, sends: true));
+            Assert.AreEqual(WalkRequestResult.TooLong, Request(165, 200), "15 cells around an obstacle");
+            Assert.AreEqual(WalkRequestResult.Sent, Request(164, 200, sends: true));
+        }
+
+        [Test]
+        public void OwnCharacter_RequestWalk_Occupied()
+        {
+            _rig.ToInGame(Character());
+            _rig.Client.Deliver(WorldSessionTests.Stand(77, 151, 201));
+            Assert.AreEqual(WalkRequestResult.Occupied, Request(151, 201), "one cell, onto a monster");
+            _rig.Client.Deliver(WorldSessionTests.Move(77, 151, 201, 160, 201, _rig.Clock.Now));
+            Assert.AreEqual(WalkRequestResult.Sent, Request(151, 201, sends: true), "it walks away");
+            _rig.Client.Deliver(WorldSessionTests.Stand(78, 152, 200));
+            Assert.AreEqual(WalkRequestResult.Sent, Request(152, 200, sends: true), "two cells away the server does not look");
+            _rig.Client.Deliver(WorldSessionTests.Stand(79, 149, 200, type: 6, job: 117));
+            Assert.AreEqual(WalkRequestResult.Occupied, Request(149, 200), "an NPC");
+            _rig.Client.Deliver(WorldSessionTests.Stand(80, 149, 199, type: 6, job: 139));
+            Assert.AreEqual(WalkRequestResult.Sent, Request(149, 199, sends: true), "a hidden warp");
+            _rig.Client.Deliver(WorldSessionTests.Stand(81, 150, 199));
+            _rig.Client.Deliver(WorldSessionTests.VanishPacket(81, 1));
+            Assert.AreEqual(WalkRequestResult.Sent, Request(150, 199, sends: true), "a dead monster");
+            _rig.Settings.CellStackLimit = 0;
+            Assert.AreEqual(WalkRequestResult.Sent, Request(149, 200, sends: true));
+        }
+
+        [Test]
+        public void OwnCharacter_RequestWalk_WhileWalking_StartsFromTheServersCell()
+        {
+            _rig.ToInGame(Character());
+            _rig.Client.Deliver(WorldSessionTests.OwnMove(150, 200, 160, 200, _rig.Clock.Now));
+            _rig.Local.AdvanceMs(400);                          // shown at 152.67, the server's cell is 152
+            _rig.Model.Advance(_rig.Clock.Now);
+            Assert.AreEqual(152, Own.CellX);
+            Assert.AreEqual(WalkRequestResult.Sent, Request(169, 200, sends: true), "17 cells from 152");
+            Assert.AreEqual(WalkRequestResult.TooLong, Request(170, 200));
         }
     }
 }

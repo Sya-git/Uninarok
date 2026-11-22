@@ -158,8 +158,9 @@
   *Done when:* tests show the own entity with the selected character's look, cell, facing and speed; `OwnCharacter_DeadOnEntry_NoInput` passes (HP 0: state dead, every request refused, nothing sent).
   *Result (2026-11-22):* 8 `OwnCharacterTests` pass: look, cell, facing and speed at entry; `OwnCharacter_DeadOnEntry_NoInput` (extended by T5.3 to T5.5 as the requests come); after a map change the look and speed are what the server last said and the facing is north (D14).
 
-- [ ] **T5.3** Tests, then implementation: `OwnCharacter.RequestWalk` and its dry run (plan §4.6). (FR-9)
+- [x] **T5.3** Tests, then implementation: `OwnCharacter.RequestWalk` and its dry run (plan §4.6). (FR-9)
   *Done when:* `OwnCharacter_RequestWalk_<Result>` pass for every result, and only `Sent` sends a packet; the walk starts only on `PLAYER_MOVE`.
+  *Result (2026-11-22):* `OwnCharacter_RequestWalk_*` pass for every result; only `Sent` sends (checked with the dry run), and the walk starts on `PLAYER_MOVE` only.
 
 - [ ] **T5.4** Tests, then implementation: `TurnTowards`, `Doridori`, `Bangbang` (plan §4.6, rules from T0.4). (FR-13)
   *Done when:* `OwnCharacter_TurnTowards_8Neighbours`, `_Doridori_Sequence`, `_Bangbang_Clockwise` pass with the `CHANGE_DIRECTION` bytes checked; the model follows the echo (or the send, per T0.2's D9).
