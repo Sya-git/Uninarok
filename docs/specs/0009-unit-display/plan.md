@@ -415,6 +415,7 @@ Manual (evidence in `evidence/`, linked from tasks): reference set vs reference 
 | D18 | `Transparency` rows are garments (T0.2), constant mean alpha | Headgears | The ids with values are robe names |
 | D19 | In idle and sit a part with 3 × k frames (animated headgears and garments, 24 or 48) plays its group of k for the head facing, on the body's idle frame time; a part with 3 frames shows the head facing. Units (monsters, NPCs) loop idle normally | `frame % count` in idle (an animated hat would stand still or turn the head) | Frame counts of the data, roBrowser |
 | D20 | One extra sprite, `sprite/shadow`, is converted by the Composition import (it is not in the catalog's effects) and referenced by `CompositionTables.Shadow`; its folder gets an Addressables entry | Catalog effect `shadow` (D12) | The file is at the sprite root, outside the effects folder (composition-reference.md §2.9) |
+| D21 | `Uninarok.Units.Dev` is dev-only by its asmdef define constraint (`UNITY_EDITOR || DEVELOPMENT_BUILD`), and `UnitSystem.Camera` is the Unity output camera (the rig references Units, for `UnitFacing`) | `#if` in every dev file (D11); `UnitSystem.Camera` of type `RoCamera` (§4.6) | One constraint excludes the whole assembly and avoids the `UAC0009` warning of `DEVELOPMENT_BUILD` in code; Units and CameraRig would reference each other |
 
 ## 9. Risks
 

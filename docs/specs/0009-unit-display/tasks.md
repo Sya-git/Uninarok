@@ -39,9 +39,10 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
   *Done when:* `docs/data/UninarokPosition.md` states the offset (0 or n) and the turning sign, with the evidence; plan §4.3 `UnitFacing.Shown` names the constant.
   *Result (2026-11-22):* offset 4, sign −1 (`FrontOffset`). Evidence is the server's `dirx`/`diry` and the client's own `OffsetItemPos.Direction`, not a capture beside the original client (not available here): owner to see it in T6.4/T8.1.
 
-- [ ] **T0.4** Create the assemblies and test assemblies, empty. (FR-13, FR-15)
+- [x] **T0.4** Create the assemblies and test assemblies, empty. (FR-13, FR-15)
   `Scripts/Units/Uninarok.Units.asmdef`, `Scripts/CameraRig/Uninarok.CameraRig.asmdef`, `Scripts/Units/Dev/Uninarok.Units.Dev.asmdef`, `Scripts/Units/Editor/Uninarok.Units.Editor.asmdef` (editor only), and test assemblies under `Tests/EditMode/Units`, `Tests/EditMode/CameraRig`, `Tests/PlayMode/Units`, with the references of plan §3.
   *Done when:* the project compiles with no new warnings and the test runner lists the (empty) assemblies.
+  *Result (2026-11-22):* assemblies compile; no warnings in Editor.log for them. The Dev assembly is excluded from release builds by its define constraint (D21).
 
 ## Phase 1: Composition tables import
 
