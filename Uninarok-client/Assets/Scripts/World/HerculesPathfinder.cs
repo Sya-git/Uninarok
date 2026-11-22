@@ -318,6 +318,20 @@ namespace Uninarok.World
         }
 
         /// <summary>
+        /// The path of another unit's walk, from the two ends its packet carries (PLAN-0010 D11): A* for players and NPCs; for units
+        /// the server also walks with its easy path (a chasing monster), that one when it reaches the destination, else A*.
+        /// </summary>
+        public PathResult SearchForUnit(EntityKind kind, int x0, int y0, int x1, int y1, ref WalkPath path)
+        {
+            if (kind != EntityKind.Player && kind != EntityKind.Npc)
+            {
+                var easy = SearchEasy(x0, y0, x1, y1, ref path);
+                if (easy != PathResult.NoPath) return easy;
+            }
+            return Search(x0, y0, x1, y1, ref path);
+        }
+
+        /// <summary>
         /// <see cref="Search"/> with the limits of <c>unit_walktoxy</c> (SPEC-0010 FR-9): what the server does with a walk request
         /// to this cell. On <see cref="PathResult.TooLong"/> the path is the one that is too long.
         /// </summary>

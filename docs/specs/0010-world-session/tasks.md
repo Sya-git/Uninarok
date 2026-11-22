@@ -136,8 +136,9 @@
   *Done when:* the tests compile and are ignored pending T4.2–T4.4.
   *Result (2026-11-22):* the 52 test cases compile and are ignored pending T4.2 to T4.4.
 
-- [ ] **T4.2** Implement storage, `Upsert`, `Walk` and `Advance` (plan §4.5, D4, D7). (FR-3, FR-4, FR-6)
+- [x] **T4.2** Implement storage, `Upsert`, `Walk` and `Advance` (plan §4.5, D4, D7). (FR-3, FR-4, FR-6)
   *Done when:* the upsert, walk, step-end, mid-walk and new-order tests pass.
+  *Result (2026-11-22):* the upsert, walk, step-end, mid-walk, new-order, wrap and full-model tests pass (16 cases). `SearchForUnit` is in with the default rule of D11, measured in T3.8.
 
 - [ ] **T4.3** Implement `Stop`, `Slide`, `Turn`, `SetLook`, `SetState`, `SetSpeed`, `AddItem`, `Vanish` and the `Vanished` event (plan §4.5, D8). (FR-5, FR-7, FR-8, FR-16, FR-19)
   *Done when:* the remaining `WorldModel_*` tests except allocation pass.

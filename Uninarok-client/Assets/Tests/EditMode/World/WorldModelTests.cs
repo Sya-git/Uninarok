@@ -56,7 +56,7 @@ namespace Uninarok.World.Tests
 
         // ---- appearing (FR-4) ----
 
-        [Test, Ignore("pending T4.2")]
+        [Test]
         public void WorldModel_UpsertTwice_OneEntity()
         {
             int first = Monster();
@@ -72,7 +72,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(generation, e.Generation, "the same entity");
         }
 
-        [Test, Ignore("pending T4.2")]
+        [Test]
         public void WorldModel_Upsert_SetsEverythingOfTheEntry()
         {
             int slot = Human(12, 34, state: EntityState.Sitting);
@@ -85,7 +85,7 @@ namespace Uninarok.World.Tests
             Assert.Less(slot, _world.SlotLimit);
         }
 
-        [Test, Ignore("pending T4.2")]
+        [Test]
         public void WorldModel_AReusedSlot_HasAnotherGeneration()
         {
             int slot = Monster();
@@ -96,7 +96,7 @@ namespace Uninarok.World.Tests
             Assert.AreNotEqual(generation, _world[slot].Generation);
         }
 
-        [Test, Ignore("pending T4.2")]
+        [Test]
         public void WorldModel_Full_WarnsOnce_AndIgnoresTheNewEntity()
         {
             var small = new WorldModel(_grid, _settings, 2);
@@ -111,7 +111,7 @@ namespace Uninarok.World.Tests
 
         // ---- walking (FR-6) ----
 
-        [Test, Ignore("pending T4.2")]
+        [Test]
         public void WorldModel_Walk_ArrivesAtServerTime()
         {
             Monster();
@@ -132,7 +132,7 @@ namespace Uninarok.World.Tests
             Assert.AreNotEqual(animation, e.AnimationVersion, "idle on arrival");
         }
 
-        [Test, Ignore("pending T4.2")]
+        [Test]
         public void WorldModel_Walk_OneDiagonalTakes1080ms()
         {
             Monster();
@@ -145,7 +145,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual((55, 51), (Get(Poring).CellX, Get(Poring).CellY));
         }
 
-        [Test, Ignore("pending T4.2")]
+        [Test]
         public void WorldModel_Walk_TurnsToEachStep_AroundAWall()
         {
             _grid.Wall = (x, y) => x == 52 && y < 52;
@@ -164,7 +164,7 @@ namespace Uninarok.World.Tests
             Assert.Greater(facings.Count, 2);
         }
 
-        [Test, Ignore("pending T4.2")]
+        [Test]
         public void WorldModel_ServerCellChangesAtStepEnd()
         {
             Monster();
@@ -180,7 +180,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(52, Get(Poring).CellX);
         }
 
-        [Test, Ignore("pending T4.2")]
+        [Test]
         public void WorldModel_MidWalkEntryAppearsOnPath()
         {
             _world.UpsertWalking(Poring, EntityKind.Monster, Look, 200, 50, 50, 55, 50, HeadDirection.Straight, 10_000, 10_700);
@@ -193,7 +193,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(55f, Get(77).PosX);
         }
 
-        [Test, Ignore("pending T4.2")]
+        [Test]
         public void WorldModel_Walk_BeforeItsStart_WaitsOnTheSourceCell()
         {
             Monster();
@@ -204,7 +204,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(50.5f, Get(Poring).PosX);
         }
 
-        [Test, Ignore("pending T4.2")]
+        [Test]
         public void WorldModel_NewOrderWhileWalking_NoSnapWithinOneCell()
         {
             Monster();
@@ -225,7 +225,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual((70f, 70f), (Get(Poring).PosX, Get(Poring).PosY));
         }
 
-        [Test, Ignore("pending T4.2")]
+        [Test]
         public void WorldModel_MoveEntryOfAKnownUnit_GoesOnWithTheNewSpeed_AndNoSnap()
         {
             Monster();
@@ -239,7 +239,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(55f, Get(Poring).PosX);
         }
 
-        [Test, Ignore("pending T4.2")]
+        [Test]
         public void WorldModel_Walk_WithoutAPath_IsPlacedOnTheDestination()
         {
             _grid.Wall = (x, y) => x == 52;
@@ -250,7 +250,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual((54, 50, 54f), (e.CellX, e.CellY, e.PosX), "the server got there, so the client must too");
         }
 
-        [Test, Ignore("pending T4.2")]
+        [Test]
         public void WorldModel_Walk_OfAPlayer_TurnsTheHeadStraight_AndStandsItUp()
         {
             Human(state: EntityState.Sitting);
@@ -258,7 +258,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual((HeadDirection.Straight, EntityState.Standing), (Get(Player).Head, Get(Player).State));
         }
 
-        [Test, Ignore("pending T4.2")]
+        [Test]
         public void WorldModel_Walk_AcrossTheTickWrap()
         {
             Monster();
@@ -270,7 +270,7 @@ namespace Uninarok.World.Tests
             Assert.IsFalse(Get(Poring).Walking);
         }
 
-        [Test, Ignore("pending T4.2")]
+        [Test]
         public void WorldModel_UnknownId_WalkIsIgnored()
         {
             _world.Walk(123, 50, 50, 52, 50, 0, 0);
