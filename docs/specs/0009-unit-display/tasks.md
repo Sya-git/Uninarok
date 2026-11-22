@@ -167,9 +167,10 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
   *Done when:* `EntitySandbox_Loads_SpawnsReferenceSet_OnProntera` passes; FR-6, FR-10, FR-11 and FR-12 are checked by hand in the sandbox with evidence images.
   *Result (2026-11-22):* `EntitySandbox_Loads_SpawnsReferenceSet_OnProntera` passes. Checked by driving the sandbox in play mode through the Unity MCP: sector 0 at 22° and 1 at 23°, side at 90°, back at 180° (evidence/t7.1-turn*.png), units uncut at 50° and 65° (t7.1-nearest-*.png), shadows, zoom 23 to 40 u (t7.1-farthest-tilt50.png). The mouse in a hand and the IMGUI clicks are the owner's to try.
 
-- [ ] **T7.2** Stress mode and its readout; first measurement. (FR-13, FR-14)
+- [x] **T7.2** Stress mode and its readout; first measurement. (FR-13, FR-14)
   100 players + 200 monsters, seeded, mixed animations and turns; tick time (mean, max) and GC per frame on screen; profiler markers.
   *Done when:* the stress mode starts with one action; `UnitSystem_ZeroGcAllocPerFrame_300Units` passes; the first timing on the owner's PC is recorded here. If it is over 2 ms, stop and update the plan (R4) before going on.
+  *Result (2026-11-22):* stress mode starts with one action (300 units loaded, no part missing); `UnitSystem_ZeroGcAllocPerFrame_300Units` passes (0 B per tick). First timing, editor, i5-14600KF: 0.555 ms mean, 1.66 ms max over 300 frames (readout in a longer editor run before the last write saving: mean 0.66 to 0.75, worst spike 2.5); evidence/t7.2-stress.png. Under 2 ms; unchanged renderer properties are no longer rewritten in `SpriteActor`.
 
 - [ ] **T7.3** `RoUnitComposerWindow`: inputs, playback and preview. (FR-15)
   Unit or player look (view id or item id per equipment), animation, play mode, facing, head facing, play/pause/step/restart/scrub/speed, preview camera with yaw and tilt.

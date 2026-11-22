@@ -34,7 +34,19 @@ namespace Uninarok.Sprites
         /// </summary>
         public bool Driven;
 
+        /// <summary>What a layer renderer holds, so unchanged properties are not written again (SPEC-0009 FR-14).</summary>
+        struct Written
+        {
+            public bool Enabled, Mirror;
+            public short Slot;
+            public Color32 Tint;
+            public Vector3 Position;
+            public float Rotation, ScaleX, ScaleY;
+            public SpriteAnimation Data;
+        }
+
         SpriteRenderer[] _renderers = Array.Empty<SpriteRenderer>();
+        Written[] _written = Array.Empty<Written>();
         int _animation, _direction;
         bool _hasAction;
         int _unique = -1;
@@ -284,19 +296,40 @@ namespace Uninarok.Sprites
             {
                 var layer = Data.Layers[frame.FirstLayer + i];
                 var r = _renderers[i];
+                ref var w = ref _written[i];
                 if (layer.Slot < 0 || layer.Slot >= sprites.Length || sprites[layer.Slot] == null)
                 {
-                    r.enabled = false;   // −1: draws nothing (FR-5)
+                    if (w.Enabled) r.enabled = w.Enabled = false;   // −1: draws nothing (FR-5)
                     continue;
                 }
-                r.sprite = sprites[layer.Slot];
-                r.flipX = layer.Mirror;
-                r.color = Multiply(layer.Tint, _tint);
-                var t = r.transform;
-                t.localPosition = new Vector3(layer.OffsetX / ppu, -layer.OffsetY / ppu, -i * LayerDepthStep);
-                t.localRotation = Quaternion.Euler(0f, 0f, -layer.Rotation);
-                t.localScale = new Vector3(layer.ScaleX, layer.ScaleY, 1f);
-                r.enabled = true;
+                if (w.Slot != layer.Slot || !ReferenceEquals(w.Data, Data))
+                {
+                    w.Slot = layer.Slot;
+                    w.Data = Data;
+                    r.sprite = sprites[layer.Slot];
+                }
+                if (w.Mirror != layer.Mirror) r.flipX = w.Mirror = layer.Mirror;
+                var tint = Multiply(layer.Tint, _tint);
+                if (tint.r != w.Tint.r || tint.g != w.Tint.g || tint.b != w.Tint.b || tint.a != w.Tint.a) r.color = w.Tint = tint;
+                var position = new Vector3(layer.OffsetX / ppu, -layer.OffsetY / ppu, -i * LayerDepthStep);
+                bool moved = !position.Equals(w.Position), turned = layer.Rotation != w.Rotation, scaled = layer.ScaleX != w.ScaleX || layer.ScaleY != w.ScaleY;
+                if (moved || turned || scaled)
+                {
+                    var t = r.transform;
+                    if (moved) t.localPosition = w.Position = position;
+                    if (turned)
+                    {
+                        w.Rotation = layer.Rotation;
+                        t.localRotation = Quaternion.Euler(0f, 0f, -layer.Rotation);
+                    }
+                    if (scaled)
+                    {
+                        w.ScaleX = layer.ScaleX;
+                        w.ScaleY = layer.ScaleY;
+                        t.localScale = new Vector3(layer.ScaleX, layer.ScaleY, 1f);
+                    }
+                }
+                if (!w.Enabled) r.enabled = w.Enabled = true;
             }
             HideFrom(used);
         }
@@ -310,7 +343,7 @@ namespace Uninarok.Sprites
         {
             _dirty = false;
             for (int i = first; i < _renderers.Length; i++)
-                if (_renderers[i].enabled) _renderers[i].enabled = false;
+                if (_written[i].Enabled) _renderers[i].enabled = _written[i].Enabled = false;
         }
 
         /// <summary>Creates (or finds again after a reload) one renderer per layer slot the data needs.</summary>
@@ -335,10 +368,15 @@ namespace Uninarok.Sprites
                 r.shadowCastingMode = ShadowCastingMode.Off;
                 r.receiveShadows = false;
                 if (Material != null) r.sharedMaterial = Material;
+                r.flipX = false;
+                r.color = Color.white;
                 r.enabled = false;
                 renderers[i] = r;
             }
             _renderers = renderers;
+            // What the renderers hold is not known (new, or found again after a reload): everything is written once.
+            _written = new Written[renderers.Length];
+            for (int i = 0; i < _written.Length; i++) _written[i] = new Written { Slot = -2, Tint = new Color32(255, 255, 255, 255), Rotation = float.NaN, ScaleX = float.NaN, Position = new Vector3(float.NaN, 0f, 0f) };
             if (Palette != null) SpritePalette.Write(this);
         }
     }
