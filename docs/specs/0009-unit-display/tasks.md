@@ -84,8 +84,9 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
   *Done when:* `UnitFacing_CameraSector_Borders` and `UnitFacing_Shown_SouthFrontAtDefault_BackAt180_SideAt90` pass with T0.3's offset.
   *Result (2026-11-22):* `UnitFacingTests` pass (borders, South at 0/22/23/90/180, the client's names).
 
-- [ ] **T3.2** Tests, then implementation: `UnitClock` (body drives, play modes, idle/sit head frame). (FR-5, FR-7, FR-8)
+- [x] **T3.2** Tests, then implementation: `UnitClock` (body drives, play modes, idle/sit head frame). (FR-5, FR-7, FR-8)
   *Done when:* `UnitClock_BodyDrivesFrame_TrailOf150msFollows100msBody`, `_NoDriftAfter10MinutesSimulated`, `_OnceHoldStops`, `_OnceEndReportsOnce`, `_IdleAndSit_FrameIsHeadFacing`, `_HeadFacingIgnoredWhileWalking_ShowsAgainOnIdle` pass.
+  *Result (2026-11-22):* the 8 `UnitClock_*` tests pass; the head-frame groups of D19 are covered.
 
 - [ ] **T3.3** `PcAnimation`, `MonsterAnimation` and the player-to-unit animation mapping. (FR-7)
   *Done when:* the enums match `docs/data/SpriteAction.md` (which now names the namespace `Uninarok.Units`); a mapping test covers Attack1/2/3 → Attack, Dead → Die, Hurt → Hurt, others → Idle.
