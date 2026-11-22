@@ -247,7 +247,7 @@
 - [ ] **T9.1** Owner: second-client and side-by-side checks. (FR-1, FR-9, FR-13, FR-19)
   Entry on prontera; turns, commands and sitting seen by a second client; the turn controls against the original client.
   *Done when:* each check is recorded in `evidence/` with its result.
-  *Open (2026-11-22):* done with two Multiplayer Play Mode players: entry, turns (head first, then the body), `/bangbang`, `/doridori`, sitting and walking seen by the other client. Left for the owner, against the original client: T0.4's three points, the heads of hair styles 1 to 12 (D27), the cell and mouse cursors (T8.3), the shadow (PLAN-0009 D27; here 105,93,56 over 165,145,78, the original 108,98,58 over 178,157,83; `evidence/t9.1-shadow.png`), the dead monster time and the item sub-cell.
+  *Open (2026-11-22):* done with two Multiplayer Play Mode players: entry, turns (head first, then the body), `/bangbang`, `/doridori`, sitting and walking seen by the other client. The owner compared (2026-11-22): the cursors (T8.3) and the shadow (PLAN-0009 D27; here 105,93,56 over 165,145,78, the original 108,98,58 over 178,157,83; `evidence/t9.1-shadow.png`) are right. Left for the owner, against the original client: what T0.4 leaves, the heads of hair styles 1 to 12 (D27), the dead monster time and the item sub-cell (without combat: the original client on a second account beside ours, where it kills the monster and drops the item, and both show it).
 
 - [x] **T9.2** Cost at 300 walking units (plan §6). (FR-17)
   100 players (dev bots or replay) and 200 monsters walking on prt_fild08, development build, owner's PC.
