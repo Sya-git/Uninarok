@@ -1,5 +1,6 @@
 using System;
 using Uninarok.Networking.Client;
+using Uninarok.Networking.Data;
 using Uninarok.Networking.Flow;
 using Uninarok.Networking.Packets.Out.Map;
 
@@ -32,6 +33,11 @@ namespace Uninarok.World
         readonly INetworkClient _client;
         readonly NetworkFlow _flow;
         WalkPath _path;
+        // The heads of /doridori still to come.
+        int _doridoriNext = DoridoriSteps;
+        uint _doridoriAt;
+
+        const int DoridoriSteps = 3;
 
         internal OwnCharacter(WorldSession session, INetworkClient client, NetworkFlow flow)
         {
@@ -110,6 +116,89 @@ namespace Uninarok.World
                 }
             }
             return count;
+        }
+
+        // ---- turn (FR-13): the server does not echo a turn to who turned, so it is applied when it was sent (D9) ----
+
+        /// <summary>
+        /// Shift + click: a cell one direction step beside the body's turns the head, the body's own the head straight, any other
+        /// the body. False when nothing was sent: not able to act, walking, or the own cell.
+        /// </summary>
+        public bool TurnTowards(int x, int y)
+        {
+            if (!TryTurning(out var model, out int slot)) return false;
+            ref readonly var own = ref model[slot];
+            if (x == own.CellX && y == own.CellY) return false;
+            int target = DirectionTo(own.CellX, own.CellY, x, y), body = (int)own.Facing;
+            switch ((target - body) & 7)
+            {
+                case 0: return Turn(model, own.Facing, HeadDirection.Straight);
+                case 1: return Turn(model, own.Facing, HeadDirection.Left); // the directions go counter-clockwise
+                case 7: return Turn(model, own.Facing, HeadDirection.Right);
+                default: return Turn(model, (UninarokDirection)target, HeadDirection.Straight);
+            }
+        }
+
+        /// <summary><c>/doridori</c>: the head left, right, straight; a new command starts over.</summary>
+        public bool Doridori()
+        {
+            if (!TryTurning(out _, out _)) return false;
+            _doridoriNext = 0;
+            _doridoriAt = _session.Clock.Now;
+            Tick(_doridoriAt);
+            return true;
+        }
+
+        /// <summary><c>/bangbang</c>: the body one step clockwise, the head straight.</summary>
+        public bool Bangbang() =>
+            TryTurning(out var model, out int slot) && Turn(model, (UninarokDirection)(((int)model[slot].Facing + 7) & 7), HeadDirection.Straight);
+
+        /// <summary>Runs what takes time (a shaking head); called every frame with the server time.</summary>
+        public void Tick(uint now)
+        {
+            if (_doridoriNext >= DoridoriSteps || ServerClock.Diff(now, _doridoriAt) < 0) return;
+            if (!TryTurning(out var model, out int slot))
+            {
+                _doridoriNext = DoridoriSteps; // it walks or died: the head is straight
+                return;
+            }
+            var head = _doridoriNext == 0 ? HeadDirection.Left : _doridoriNext == 1 ? HeadDirection.Right : HeadDirection.Straight;
+            Turn(model, model[slot].Facing, head);
+            _doridoriNext++;
+            _doridoriAt = unchecked(now + (uint)Math.Max(0, _session.Settings.DoridoriStepMs));
+        }
+
+        bool TryTurning(out WorldModel model, out int slot) =>
+            TryGet(out model, out slot) && model[slot].State != EntityState.Dead && !model[slot].Walking;
+
+        bool Turn(WorldModel model, UninarokDirection body, HeadDirection head)
+        {
+            if (!_client.Send(new CHANGE_DIRECTION((ushort)head, body))) return false;
+            model.Turn(model.OwnId, body, head);
+            return true;
+        }
+
+        /// <summary>The direction of a cell seen from another (<c>map_calc_dir</c>); the cells differ.</summary>
+        internal static int DirectionTo(int x0, int y0, int x1, int y1)
+        {
+            int dx = x1 - x0, dy = y1 - y0;
+            if (dx >= 0 && dy >= 0)
+            {
+                if (dx * 2 < dy || dx == 0) return 0;
+                return dx > dy * 2 + 1 || dy == 0 ? 6 : 7;
+            }
+            if (dx >= 0 && dy <= 0)
+            {
+                if (dx * 2 < -dy || dx == 0) return 4;
+                return dx > -dy * 2 + 1 || dy == 0 ? 6 : 5;
+            }
+            if (dx <= 0 && dy <= 0)
+            {
+                if (dx * 2 > dy || dx == 0) return 4;
+                return dx < dy * 2 + 1 || dy == 0 ? 2 : 3;
+            }
+            if (-dx * 2 < dy || dx == 0) return 0;
+            return -dx > dy * 2 + 1 || dy == 0 ? 2 : 1;
         }
     }
 }

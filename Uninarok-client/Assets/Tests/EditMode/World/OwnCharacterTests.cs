@@ -109,6 +109,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(EntityState.Dead, Own.State);
             Assert.IsFalse(_rig.Session.Own.CanAct);
             Assert.AreEqual(WalkRequestResult.Dead, _rig.Session.Own.RequestWalk(155, 200));
+            Assert.IsFalse(_rig.Session.Own.TurnTowards(155, 200) || _rig.Session.Own.Doridori() || _rig.Session.Own.Bangbang());
             Assert.AreEqual(0, _rig.Client.Sent.Count);
         }
 
@@ -245,6 +246,118 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(152, Own.CellX);
             Assert.AreEqual(WalkRequestResult.Sent, Request(169, 200, sends: true), "17 cells from 152");
             Assert.AreEqual(WalkRequestResult.TooLong, Request(170, 200));
+        }
+
+        // ---- turn (FR-13, T5.4) ----
+
+        static byte[] ChangeDirection(HeadDirection head, UninarokDirection body) => WorldSessionTests.Hex($"6103{(int)head:X2}00{(int)body:X2}");
+
+        static readonly object[][] Neighbours =
+        {
+            // facing south (4): one step beside is the head, the rest the body
+            new object[] { 0, -1, UninarokDirection.South, HeadDirection.Straight },
+            new object[] { 1, -1, UninarokDirection.South, HeadDirection.Left },      // south-east is 5, one step counter-clockwise
+            new object[] { -1, -1, UninarokDirection.South, HeadDirection.Right },    // south-west is 3
+            new object[] { 1, 0, UninarokDirection.East, HeadDirection.Straight },
+            new object[] { -1, 0, UninarokDirection.West, HeadDirection.Straight },
+            new object[] { 1, 1, UninarokDirection.NorthEast, HeadDirection.Straight },
+            new object[] { 0, 1, UninarokDirection.North, HeadDirection.Straight },
+            new object[] { -1, 1, UninarokDirection.NorthWest, HeadDirection.Straight },
+        };
+
+        [TestCaseSource(nameof(Neighbours))]
+        public void OwnCharacter_TurnTowards_8Neighbours(int dx, int dy, UninarokDirection body, HeadDirection head)
+        {
+            _rig.ToInGame(Character());
+            Assert.IsTrue(_rig.Session.Own.TurnTowards(150 + dx, 200 + dy));
+            Assert.AreEqual(1, _rig.Client.Sent.Count);
+            Assert.AreEqual(ChangeDirection(head, body), _rig.Client.Sent[0].Bytes);
+            Assert.AreEqual((body, head), (Own.Facing, Own.Head), "applied when it was sent: the server does not echo it (PLAN-0010 D9)");
+        }
+
+        [Test]
+        public void OwnCharacter_TurnTowards_FarCells_OwnCell_AndWhileWalking()
+        {
+            _rig.ToInGame(Character());
+            Assert.IsTrue(_rig.Session.Own.TurnTowards(150, 260));
+            Assert.AreEqual(UninarokDirection.North, Own.Facing, "any distance, also farther than a walk");
+            Assert.IsTrue(_rig.Session.Own.TurnTowards(152, 203));
+            Assert.AreEqual((UninarokDirection.North, HeadDirection.Right), (Own.Facing, Own.Head), "north-east by map_calc_dir");
+            Assert.IsFalse(_rig.Session.Own.TurnTowards(150, 200));
+            _rig.Client.Deliver(WorldSessionTests.OwnMove(150, 200, 160, 200, _rig.Clock.Now));
+            _rig.Client.ClearRecords();
+            Assert.IsFalse(_rig.Session.Own.TurnTowards(150, 190));
+            Assert.AreEqual(0, _rig.Client.Sent.Count);
+        }
+
+        [Test]
+        public void OwnCharacter_Turn_NotSent_ChangesNothing()
+        {
+            _rig.ToInGame(Character());
+            _rig.Client.AcceptSends = false;
+            Assert.IsFalse(_rig.Session.Own.TurnTowards(150, 201));
+            Assert.AreEqual(UninarokDirection.South, Own.Facing);
+        }
+
+        [Test]
+        public void OwnCharacter_Directions_MatchMapCalcDir()
+        {
+            var expected = new[] { (0, 5, 0), (1, 5, 0), (3, 5, 7), (5, 5, 7), (5, 2, 7), (6, 2, 6), (5, 0, 6), (3, -5, 5), (6, -2, 6), (1, -5, 4), (0, -5, 4), (-3, -5, 3), (-6, -2, 2), (-1, -5, 4), (-5, 0, 2), (-3, 5, 1), (-6, 2, 2), (-1, 5, 0) };
+            foreach (var (dx, dy, d) in expected) Assert.AreEqual(d, OwnCharacter.DirectionTo(50, 50, 50 + dx, 50 + dy), $"{dx},{dy}");
+        }
+
+        [Test]
+        public void OwnCharacter_Doridori_Sequence()
+        {
+            _rig.ToInGame(Character());
+            var own = _rig.Session.Own;
+            Assert.IsTrue(own.Doridori());
+            Assert.AreEqual(HeadDirection.Left, Own.Head);
+            void Pass(int ms)
+            {
+                _rig.Local.AdvanceMs(ms);
+                own.Tick(_rig.Clock.Now);
+            }
+            Pass(199);
+            Assert.AreEqual(1, _rig.Client.Sent.Count);
+            Pass(1);
+            Assert.AreEqual(HeadDirection.Right, Own.Head);
+            Pass(200);
+            Assert.AreEqual(HeadDirection.Straight, Own.Head);
+            Pass(1000);
+            Assert.AreEqual(3, _rig.Client.Sent.Count);
+            Assert.AreEqual(ChangeDirection(HeadDirection.Left, UninarokDirection.South), _rig.Client.Sent[0].Bytes);
+            Assert.AreEqual(ChangeDirection(HeadDirection.Right, UninarokDirection.South), _rig.Client.Sent[1].Bytes);
+            Assert.AreEqual(ChangeDirection(HeadDirection.Straight, UninarokDirection.South), _rig.Client.Sent[2].Bytes);
+
+            own.Doridori();
+            Pass(200);
+            own.Doridori();                                    // starts over
+            Assert.AreEqual(HeadDirection.Left, Own.Head);
+            Pass(200);
+            Assert.AreEqual(HeadDirection.Right, Own.Head);
+            _rig.Client.Deliver(WorldSessionTests.OwnMove(150, 200, 160, 200, _rig.Clock.Now));
+            int sent = _rig.Client.Sent.Count;
+            Pass(500);
+            Assert.AreEqual(sent, _rig.Client.Sent.Count, "walking ends it");
+        }
+
+        [Test]
+        public void OwnCharacter_Bangbang_Clockwise()
+        {
+            _rig.ToInGame(Character());
+            var seen = new System.Collections.Generic.List<UninarokDirection>();
+            for (int i = 0; i < 8; i++)
+            {
+                Assert.IsTrue(_rig.Session.Own.Bangbang());
+                seen.Add(Own.Facing);
+            }
+            CollectionAssert.AreEqual(new[]
+            {
+                UninarokDirection.SouthWest, UninarokDirection.West, UninarokDirection.NorthWest, UninarokDirection.North,
+                UninarokDirection.NorthEast, UninarokDirection.East, UninarokDirection.SouthEast, UninarokDirection.South,
+            }, seen, "south, west, north, east: clockwise from above");
+            Assert.AreEqual(ChangeDirection(HeadDirection.Straight, UninarokDirection.SouthWest), _rig.Client.Sent[0].Bytes);
         }
     }
 }

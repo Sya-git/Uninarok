@@ -162,8 +162,9 @@
   *Done when:* `OwnCharacter_RequestWalk_<Result>` pass for every result, and only `Sent` sends a packet; the walk starts only on `PLAYER_MOVE`.
   *Result (2026-11-22):* `OwnCharacter_RequestWalk_*` pass for every result; only `Sent` sends (checked with the dry run), and the walk starts on `PLAYER_MOVE` only.
 
-- [ ] **T5.4** Tests, then implementation: `TurnTowards`, `Doridori`, `Bangbang` (plan §4.6, rules from T0.4). (FR-13)
+- [x] **T5.4** Tests, then implementation: `TurnTowards`, `Doridori`, `Bangbang` (plan §4.6, rules from T0.4). (FR-13)
   *Done when:* `OwnCharacter_TurnTowards_8Neighbours`, `_Doridori_Sequence`, `_Bangbang_Clockwise` pass with the `CHANGE_DIRECTION` bytes checked; the model follows the echo (or the send, per T0.2's D9).
+  *Result (2026-11-22):* `OwnCharacter_TurnTowards_8Neighbours`, `_Doridori_Sequence`, `_Bangbang_Clockwise` pass with the `CHANGE_DIRECTION` bytes; the model turns when the packet was queued (D9). The rules are the spec's: T0.4 (the original client) is the owner's.
 
 - [ ] **T5.5** Tests, then implementation: `Sit`, `Stand`, `ToggleSit` (plan §4.6, D9). (FR-19)
   *Done when:* `OwnCharacter_Sit_TogglesOnConfirmOnly` passes (no state change without the server's `UNIT_ACT`; a walk request while sitting returns `Sitting` and sends nothing).
