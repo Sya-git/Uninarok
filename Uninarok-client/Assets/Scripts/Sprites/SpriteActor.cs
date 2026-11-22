@@ -193,6 +193,17 @@ namespace Uninarok.Sprites
         public int FrameCountOf(int animation, int direction) =>
             Data != null && Data.TryGetAction(animation, direction & (SpriteAnimation.Directions - 1), Missing, out int unique) ? Data.Actions[unique].FrameCount : 0;
 
+        /// <summary>Added to a layer's height before it goes into its z scale, so that it stays positive; also in <c>RoSprite.shader</c>.</summary>
+        public const float HeightOffset = 16f;
+
+        /// <summary>
+        /// The actor's height above its ground point in world units, along the camera's up axis, and the display scale above it
+        /// (PLAN-0009 4.10, D28; SPEC-0009 FR-16). Off until it is called.
+        /// </summary>
+        public void SetGround(float height, float scale)
+        {
+        }
+
         /// <summary>The sorting order of the first layer; the others follow. Written only when it changes.</summary>
         public int SortingBase
         {

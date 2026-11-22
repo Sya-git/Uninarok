@@ -212,9 +212,10 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
 
 Works on the branch `feature/0010-world-session` (the owner reported it while reviewing SPEC-0010).
 
-- [ ] **T9.1** Add the tests of the heights, pending T9.2. (FR-16, FR-14)
+- [x] **T9.1** Add the tests of the heights, pending T9.2. (FR-16, FR-14)
   `SpriteActor_SetGround_WritesTheHeightInZScale`, `_SameValue_WritesNothing`, `_Off_KeepsZScale1`; `UnitView_LayerHeights_AreFromThePivot_AtTheDisplayScale`.
   *Done when:* they compile and are listed as ignored.
+  *Result (2026-11-22):* Sprites EditMode 35 pass, 3 ignored; Units EditMode 97 pass, 1 ignored ("pending T9.2"); no new warnings. `SetGround` is an empty method here, so the tests compile.
 
 - [ ] **T9.2** Write each layer's height in its z scale (plan §4.10). (FR-16, FR-14)
   `SpriteActor.SetGround`, `UnitView.Write`, `GroundItemView`.
