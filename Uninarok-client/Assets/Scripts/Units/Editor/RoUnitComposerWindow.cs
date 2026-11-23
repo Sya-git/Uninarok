@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Uninarok.Catalog;
 using Uninarok.Networking.Data;
 using Uninarok.RoImport.Core.Output;
@@ -44,7 +45,10 @@ namespace Uninarok.Units.Editor
         [SerializeField] AccountSex _sex = AccountSex.SEX_MALE;
         [SerializeField] int _bodyStyle, _hairStyle = 2, _hairColour = 3, _clothColour;
         [SerializeField] Equipment _top = new Equipment(IdMode.ItemId, 2220), _mid, _low = new Equipment(IdMode.ItemId, 2218);
-        [SerializeField] Equipment _garment = new Equipment(IdMode.ViewId, 1), _weapon = new Equipment(IdMode.ItemId, 1101), _shield = new Equipment(IdMode.ItemId, 2101);
+        [SerializeField] Equipment _garment = new Equipment(IdMode.ViewId, 1);
+        // The hands as typed (D35): the value is a view id or an item id by its size; the mode is not used.
+        [SerializeField, FormerlySerializedAs("_weapon")] Equipment _right = new Equipment(IdMode.ItemId, 1101);
+        [SerializeField, FormerlySerializedAs("_shield")] Equipment _left = new Equipment(IdMode.ItemId, 2101);
 
         [SerializeField] int _animation;
         [SerializeField] PlayMode _mode = PlayMode.Loop;
@@ -60,7 +64,9 @@ namespace Uninarok.Units.Editor
         string _problem;
         bool _ended;
         double _lastTime;
-        Vector2 _left, _right;
+        Vector2 _leftScroll, _rightScroll;
+        LoadReport _handsReport;
+        string _handsText = "";
         Texture2D _gridImage;
         int _gridKey;
 
@@ -126,10 +132,9 @@ namespace Uninarok.Units.Editor
             var look = new UnitLook
             {
                 Kind = UnitKind.Player, JobId = (int)_class, Sex = _sex, BodyStyle = _bodyStyle, HairStyle = _hairStyle, HairColour = _hairColour, ClothColour = _clothColour,
-                HeadTop = ViewOf(_top), HeadMid = ViewOf(_mid), HeadBottom = ViewOf(_low), Garment = ViewOf(_garment), Weapon = ViewOf(_weapon), Shield = ViewOf(_shield),
+                HeadTop = ViewOf(_top), HeadMid = ViewOf(_mid), HeadBottom = ViewOf(_low), Garment = ViewOf(_garment),
             };
-            if (_weapon.Mode == IdMode.ItemId) look.WeaponItem = _weapon.Id;
-            if (_shield.Mode == IdMode.ItemId) look.ShieldItem = _shield.Id;
+            ComposerHands.Apply(ref look, _right.Id, _left.Id);
             return look;
         }
 
@@ -170,9 +175,9 @@ namespace Uninarok.Units.Editor
             if (_problem != null) EditorGUILayout.HelpBox(_problem, MessageType.Info);
             using (new EditorGUILayout.HorizontalScope())
             {
-                using (var scroll = new EditorGUILayout.ScrollViewScope(_left, GUILayout.Width(330)))
+                using (var scroll = new EditorGUILayout.ScrollViewScope(_leftScroll, GUILayout.Width(330)))
                 {
-                    _left = scroll.scrollPosition;
+                    _leftScroll = scroll.scrollPosition;
                     Inputs();
                     Playback();
                     CameraInputs();
@@ -205,8 +210,8 @@ namespace Uninarok.Units.Editor
                 _mid = Field("Mid headgear", _mid);
                 _low = Field("Low headgear", _low);
                 _garment = Field("Garment", _garment);
-                _weapon = Field("Weapon", _weapon);
-                _shield = Field("Shield", _shield);
+                _right.Id = EditorGUILayout.IntField(new GUIContent("Right hand", "As the server sends it: a view id (below 500) or an item id (500 or more)"), _right.Id);
+                _left.Id = EditorGUILayout.IntField(new GUIContent("Left hand", "As the server sends it: a view id (a shield) or an item id"), _left.Id);
             }
             if (!EditorGUI.EndChangeCheck()) return;
             if (IsPlayerLook != wasPlayer) _animation = 0;
@@ -368,12 +373,25 @@ namespace Uninarok.Units.Editor
 
         int _gridImageKey;
 
+        // The report's hands line (D35); Describe allocates, so it is rebuilt only when the report is a new one.
+        string HandsLine()
+        {
+            var report = _stage.View.Report;
+            if (report != _handsReport)
+            {
+                _handsReport = report;
+                _handsText = report != null && IsPlayerLook ? report.Hands.Describe() : "";
+            }
+            return _handsText;
+        }
+
         void PartsList()
         {
+            EditorGUILayout.LabelField("Hands", HandsLine(), EditorStyles.wordWrappedLabel);
             EditorGUILayout.LabelField("Parts (slot order; “order” is back to front in this frame)", EditorStyles.boldLabel);
-            using (var scroll = new EditorGUILayout.ScrollViewScope(_right, GUILayout.Height(210)))
+            using (var scroll = new EditorGUILayout.ScrollViewScope(_rightScroll, GUILayout.Height(210)))
             {
-                _right = scroll.scrollPosition;
+                _rightScroll = scroll.scrollPosition;
                 foreach (var row in _stage.Rows())
                     using (new EditorGUILayout.HorizontalScope())
                     {
