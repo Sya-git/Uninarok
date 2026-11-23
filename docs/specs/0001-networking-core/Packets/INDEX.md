@@ -76,7 +76,7 @@ One row per documented packet (SPEC-0001, PACKETVER 20220406). Generated from th
 | Map server to client | `0x01FF` | [UNIT_SLIDE](In/MapServer/UNIT_SLIDE.md) | 10 | implemented | warm |
 | Map server to client | `0x0283` | [MAP_ENTRY_ACCEPTANCE](In/MapServer/MAP_ENTRY_ACCEPTANCE.md) | 6 | verified | cold |
 | Map server to client | `0x02EB` | [AUTHENTICATION_ACCEPTED](In/MapServer/AUTHENTICATION_ACCEPTED.md) | 13 | verified | cold |
-| Map server to client | `0x08C8` | [DAMAGE](In/MapServer/DAMAGE.md) | 34 | documented | hot |
+| Map server to client | `0x08C8` | [DAMAGE](In/MapServer/DAMAGE.md) | 34 | verified | hot |
 | Map server to client | `0x0977` | [UNIT_HP](In/MapServer/UNIT_HP.md) | 14 | documented | hot |
 | Map server to client | `0x0983` | [STATUS_CHANGE](In/MapServer/STATUS_CHANGE.md) | 29 | documented | warm |
 | Map server to client | `0x09CA` | [SKILL_UNIT_ENTRY](In/MapServer/SKILL_UNIT_ENTRY.md) | variable | documented | warm |
@@ -85,8 +85,8 @@ One row per documented packet (SPEC-0001, PACKETVER 20220406). Generated from th
 | Map server to client | `0x09FF` | [UNIT_STAND_ENTRY](In/MapServer/UNIT_STAND_ENTRY.md) | variable | verified | hot |
 | Map server to client | `0x0A30` | [UNIT_NAME_ACK](In/MapServer/UNIT_NAME_ACK.md) | 106 | documented | warm |
 | Map server to client | `0x0AC7` | [MAP_SERVER_CHANGE](In/MapServer/MAP_SERVER_CHANGE.md) | 156 | implemented | cold |
-| Map server to client | `0x0ACB` | [LONG_PARAMETER_CHANGE](In/MapServer/LONG_PARAMETER_CHANGE.md) | 12 | documented | warm |
-| Map server to client | `0x0ACC` | [EXP_GAIN](In/MapServer/EXP_GAIN.md) | 18 | documented | warm |
+| Map server to client | `0x0ACB` | [LONG_PARAMETER_CHANGE](In/MapServer/LONG_PARAMETER_CHANGE.md) | 12 | verified | warm |
+| Map server to client | `0x0ACC` | [EXP_GAIN](In/MapServer/EXP_GAIN.md) | 18 | verified | warm |
 | Map server to client | `0x0ADD` | [ITEM_FALL_ENTRY](In/MapServer/ITEM_FALL_ENTRY.md) | 24 | implemented | hot |
 | Map server to client | `0x0ADE` | [OVERWEIGHT_PERCENT_INFO](In/MapServer/OVERWEIGHT_PERCENT_INFO.md) | 6 | documented | warm |
 | Map server to client | `0x0B09` | [INVENTORY_LIST_NORMAL](In/MapServer/INVENTORY_LIST_NORMAL.md) | variable | implemented | cold |

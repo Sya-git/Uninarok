@@ -6,7 +6,7 @@
 | **Hercules packet name** | `ZC_NOTIFY_ACT3` (struct `packet_damage`) |
 | **Packet ID** | `0x08C8` |
 | **Declared size** | 34 bytes total, including the 2-byte packet ID |
-| **Status** | documented |
+| **Status** | verified |
 | **Frequency** | hot |
 | **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16); layout from `packets_struct.h` (`packet_damage`) and `clif_damage` (checked 2026-11-22, SPEC-0011 T0.1). Capture: yes, SPEC-0010 `world-prt_fild08.bin` (119: types 0 and 11) |
 | **Allocates** | no |

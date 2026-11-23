@@ -45,7 +45,7 @@
   New: `ATTACK_TOO_FAR`, `ATTACK_RANGE`, `ACTION_FAILURE`, `LONG_PARAMETER_CHANGE`, `EXP_GAIN`, `RESURRECTION`, `STOP_ATTACK`. Existing: `DAMAGE` (types, times), `UNIT_ACT` (action 1), `PARAMETER_CHANGE` (vars), `ITEM_PICKUP_ACK` (results), `UNIT_HP` (never sent), `UNIT_MOVE_ENTRY` (HP re-sent, not at full), `REQUEST_ACT`, `PICKUP_ITEM`, `RESTART`.
   *Done when:* every doc follows Packet-Implementation.md with T0.1's layout; `INDEX.md` and `CATALOG.md` list them.
 
-- [ ] **T1.2** Tests, then structs: `DAMAGE`, `LONG_PARAMETER_CHANGE`, `EXP_GAIN`. (FR-1, FR-5, FR-11, FR-12)
+- [x] **T1.2** Tests, then structs: `DAMAGE`, `LONG_PARAMETER_CHANGE`, `EXP_GAIN`. (FR-1, FR-5, FR-11, FR-12)
   *Done when:* size and decode tests pass (real samples from the captures), each leaves no unread byte, and 1,000 decodes of `DAMAGE`, `PARAMETER_CHANGE` and `LONG_PARAMETER_CHANGE` allocate 0 B.
 
 - [ ] **T1.3** Tests, then structs: `ATTACK_TOO_FAR`, `ATTACK_RANGE`, `ACTION_FAILURE`, `RESURRECTION`; `UNIT_ACT.TargetId`. (FR-2, FR-3, FR-8, FR-9, FR-10)

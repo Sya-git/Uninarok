@@ -53,10 +53,13 @@ namespace Uninarok.Networking.Packets
         public const ushort DROP_ITEM = 0x0363;                      // out
         public const ushort REQUEST_ENTER_MAP = 0x0436;              // out
         public const ushort REQUEST_ACT = 0x0437;                    // out
+        public const ushort DAMAGE = 0x08C8;                         // in
         public const ushort UNIT_MOVE_ENTRY = 0x09FD;                // in
         public const ushort UNIT_NEW_ENTRY = 0x09FE;                 // in
         public const ushort UNIT_STAND_ENTRY = 0x09FF;               // in
         public const ushort MAP_SERVER_CHANGE = 0x0AC7;              // in
+        public const ushort LONG_PARAMETER_CHANGE = 0x0ACB;          // in
+        public const ushort EXP_GAIN = 0x0ACC;                       // in
         public const ushort ITEM_FALL_ENTRY = 0x0ADD;                // in
         public const ushort INVENTORY_LIST_NORMAL = 0x0B09;          // in
         public const ushort INVENTORY_LIST_EQUIP = 0x0B39;           // in
