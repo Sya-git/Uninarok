@@ -1,10 +1,30 @@
 {
     "entries": [
         {
+            "Source": "iz_int.gat",
+            "SourceHash": "245ea72abf7e3a219b9df82208bc77b451e6f1bf1046a6f132d7cac48e9984fc",
+            "Rules": 2001,
+            "Outputs": [
+                "Assets/Art/Imported/map/iz_int/iz_int_cells.png",
+                "Assets/Data/map/iz_int.asset"
+            ],
+            "Dependencies": [
+                {
+                    "Source": "iz_int.gnd",
+                    "Hash": "f04656053d0c5c32c80c1df521a84efcf7bc994e078e9b498676b20723d7f4f5"
+                },
+                {
+                    "Source": "iz_int.rsw",
+                    "Hash": "8ef5610c926f08e0e18647e63e833142ea8adb7e30cfbba2fb0d35145b0d1682"
+                }
+            ]
+        },
+        {
             "Source": "izlude.gat",
             "SourceHash": "37c6d1273e734747a5318270b56a936fc7b80bba022497ec911a3511926a0fab",
             "Rules": 2001,
             "Outputs": [
+                "Assets/Art/Imported/map/izlude/izlude_cells.png",
                 "Assets/Data/map/izlude.asset"
             ],
             "Dependencies": [
@@ -23,6 +43,7 @@
             "SourceHash": "78b73e865bcaca4bda365312fcb0d6a7c20ffa49999ed8511a2b4248646d266b",
             "Rules": 2001,
             "Outputs": [
+                "Assets/Art/Imported/map/prontera/prontera_cells.png",
                 "Assets/Data/map/prontera.asset"
             ],
             "Dependencies": [
@@ -41,6 +62,7 @@
             "SourceHash": "bb7908930002a276e59efd0dbc2c46efa15f05a01e6573ee7b78d9a2b1b4a0f0",
             "Rules": 2001,
             "Outputs": [
+                "Assets/Art/Imported/map/prt_fild08/prt_fild08_cells.png",
                 "Assets/Data/map/prt_fild08.asset"
             ],
             "Dependencies": [
@@ -51,6 +73,25 @@
                 {
                     "Source": "prt_fild08.rsw",
                     "Hash": "1ebc0c9621e7652c56b5d9d48395f6a5420f9c9df03f34b0b36f6875cfdbb9c6"
+                }
+            ]
+        },
+        {
+            "Source": "texture/int_land.gat",
+            "SourceHash": "e8e3c4674203c2ecfee855d73665aee55af9b6d153d58a7c81d37a5da0a8e680",
+            "Rules": 2001,
+            "Outputs": [
+                "Assets/Art/Imported/map/int_land/int_land_cells.png",
+                "Assets/Data/map/int_land.asset"
+            ],
+            "Dependencies": [
+                {
+                    "Source": "texture/int_land.gnd",
+                    "Hash": "ee28ff449c67b16406ee84af4dcf804976b1c634419c3b5fe8bfdddeea0edff5"
+                },
+                {
+                    "Source": "texture/int_land.rsw",
+                    "Hash": "3236255376bca92b632186eaa5f764b4898b0cf9d279868c98ce4272654004b1"
                 }
             ]
         }

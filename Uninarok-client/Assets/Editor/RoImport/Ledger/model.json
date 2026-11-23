@@ -785,6 +785,21 @@
             ]
         },
         {
+            "Source": "model/내부소품/거미줄.rsm",
+            "SourceHash": "641c137ec8abda54ee790957c711521931c393f90b505d28a096f7c477b7e89f",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/model/내부소품/거미줄.prefab",
+                "Assets/Art/Imported/model/내부소품/거미줄/Box01.asset"
+            ],
+            "Dependencies": [
+                {
+                    "Source": "texture/내부소품/pron-spai.bmp",
+                    "Hash": "c09f02fa0aae0e1c76bee1c05b3adf8833410febaf77ba9baaa2ecaf3d848240"
+                }
+            ]
+        },
+        {
             "Source": "model/내부소품/기사청동.rsm",
             "SourceHash": "dc7f0cde2e5c5fee402f6fae441ecf17fc103e0777b93bd5f9904ec1164016bf",
             "Rules": 1,
@@ -819,6 +834,21 @@
                 {
                     "Source": "texture/내부소품/chch-side1.bmp",
                     "Hash": "9fa165545a98f0c592e5603b6a3423b6393cee411c37a82c099a8bf5eb36a444"
+                }
+            ]
+        },
+        {
+            "Source": "model/내부소품/나무기둥1.rsm",
+            "SourceHash": "e0053c344c0d9712bede415ecefef0fd1f28afb0a18f079c131673b561a17e3b",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/model/내부소품/나무기둥1.prefab",
+                "Assets/Art/Imported/model/내부소품/나무기둥1/Box01.asset"
+            ],
+            "Dependencies": [
+                {
+                    "Source": "texture/내부소품/tr-side1.bmp",
+                    "Hash": "2a882f3cfdd3fef4cf8cb7a738480782a17d5223f4da29433c52f624eca11ac7"
                 }
             ]
         },
@@ -898,6 +928,104 @@
                 {
                     "Source": "texture/내부소품/drum-1.bmp",
                     "Hash": "06be80921bbaab63df6ae2bfcd21faf1f965284db1fb82b87bf9debed1df785d"
+                }
+            ]
+        },
+        {
+            "Source": "model/내부소품/보물선계단.rsm",
+            "SourceHash": "fe4d456fdb619ad373cbbbc3c1b4e2dd08b24fd856447db73b06158ff623510c",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/model/내부소품/보물선계단.prefab",
+                "Assets/Art/Imported/model/내부소품/보물선계단/Box01.asset"
+            ],
+            "Dependencies": [
+                {
+                    "Source": "texture/black.bmp",
+                    "Hash": "b490ee72f23ba9f601d0c3c788e99c21a672433a10b764e482587168e6f55cc7"
+                },
+                {
+                    "Source": "texture/내부소품/trsship-sta1.bmp",
+                    "Hash": "92f35d07b3ebd1bab709234a85bd0399b4dce71c815ab4bde8238f26140c343d"
+                }
+            ]
+        },
+        {
+            "Source": "model/내부소품/보물선아치기둥.rsm",
+            "SourceHash": "7a2f14d3b26c42bf1a475f7019dbcfb8a8d785e91088df76a2d9bffca7b08c55",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/model/내부소품/보물선아치기둥.prefab",
+                "Assets/Art/Imported/model/내부소품/보물선아치기둥/Line01.asset"
+            ],
+            "Dependencies": [
+                {
+                    "Source": "texture/내부소품/trea-arch.bmp",
+                    "Hash": "adceeb236bffd5d890a1b96f79fa2519c74c715fcb3c8d1042cc786dd764ac69"
+                }
+            ]
+        },
+        {
+            "Source": "model/내부소품/보물선의자01.rsm",
+            "SourceHash": "58a95ca586aa0f249827845075f7066dab9637444bc0ea3f470e4fd93b7bba8b",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/model/내부소품/보물선의자01.prefab",
+                "Assets/Art/Imported/model/내부소품/보물선의자01/Box01.asset"
+            ],
+            "Dependencies": [
+                {
+                    "Source": "texture/내부소품/trea-arch.bmp",
+                    "Hash": "adceeb236bffd5d890a1b96f79fa2519c74c715fcb3c8d1042cc786dd764ac69"
+                }
+            ]
+        },
+        {
+            "Source": "model/내부소품/사다리.rsm",
+            "SourceHash": "cf5f81ef71b0b6e73eed2fe08e85519a013b5cd48d761786dd65b19d61fed8ad",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/model/내부소품/사다리.prefab",
+                "Assets/Art/Imported/model/내부소품/사다리/Box04.asset"
+            ],
+            "Dependencies": [
+                {
+                    "Source": "texture/내부소품/trea-lder.bmp",
+                    "Hash": "017a63bfb81f190a4b3a3a6bff6aad9e2cafc0ee4b168a3d110b0329b1678820"
+                }
+            ]
+        },
+        {
+            "Source": "model/내부소품/쇠사슬01.rsm",
+            "SourceHash": "89eed0d5e169e4296ce15188b727d7921c0f531e1946c4cfb8ddde0887d57e65",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/model/내부소품/쇠사슬01.prefab",
+                "Assets/Art/Imported/model/내부소품/쇠사슬01/Box01.asset",
+                "Assets/Art/Imported/model/내부소품/쇠사슬01/쇠사슬01.anim",
+                "Assets/Art/Imported/model/내부소품/쇠사슬01/쇠사슬01.controller"
+            ],
+            "Dependencies": [
+                {
+                    "Source": "texture/trea-mchain1.bmp",
+                    "Hash": "c72149b4739b3fd274786162cbeaa9a948a2db9d42ff0c85ec6640bde7fb15bd"
+                }
+            ]
+        },
+        {
+            "Source": "model/내부소품/쇠사슬02.rsm",
+            "SourceHash": "ae6c5bf1ea168ace92b4ef61cdb3728e60500f2dd4a762e927d59a2f042b0230",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/model/내부소품/쇠사슬02.prefab",
+                "Assets/Art/Imported/model/내부소품/쇠사슬02/Box03.asset",
+                "Assets/Art/Imported/model/내부소품/쇠사슬02/쇠사슬02.anim",
+                "Assets/Art/Imported/model/내부소품/쇠사슬02/쇠사슬02.controller"
+            ],
+            "Dependencies": [
+                {
+                    "Source": "texture/trea-mchain1.bmp",
+                    "Hash": "c72149b4739b3fd274786162cbeaa9a948a2db9d42ff0c85ec6640bde7fb15bd"
                 }
             ]
         },
@@ -1016,6 +1144,40 @@
                 {
                     "Source": "texture/내부소품/ju-up.bmp",
                     "Hash": "c7eefc7b8b371dd88fe136be5914660d2691f42664e603a6f336fc628a88d8ef"
+                }
+            ]
+        },
+        {
+            "Source": "model/내부소품/흠집난침대.rsm",
+            "SourceHash": "5bf5b19214367a33fc1ad759a39fadd6343915e99cfc8392cf373d14c8146d90",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/model/내부소품/흠집난침대.prefab",
+                "Assets/Art/Imported/model/내부소품/흠집난침대/Box01.asset"
+            ],
+            "Dependencies": [
+                {
+                    "Source": "texture/내부소품/trea-arch.bmp",
+                    "Hash": "adceeb236bffd5d890a1b96f79fa2519c74c715fcb3c8d1042cc786dd764ac69"
+                },
+                {
+                    "Source": "texture/내부소품/trea-bed.bmp",
+                    "Hash": "03a293a51ee919302ededfddb48e66da39d071c6736520237cfe854c4a0e0777"
+                }
+            ]
+        },
+        {
+            "Source": "model/내부소품/흠집난탁자.rsm",
+            "SourceHash": "085d7f7f0cdd50639af9067dac184885876a4943ad1f6ecb24ea4890077f7116",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/model/내부소품/흠집난탁자.prefab",
+                "Assets/Art/Imported/model/내부소품/흠집난탁자/Box01.asset"
+            ],
+            "Dependencies": [
+                {
+                    "Source": "texture/내부소품/trea-table.bmp",
+                    "Hash": "4af45cef6a4fff6af7cf5f266f3ac3f52c1ad6d32bcab4d938182f715304f6a8"
                 }
             ]
         },

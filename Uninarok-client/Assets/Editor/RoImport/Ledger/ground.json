@@ -1,6 +1,58 @@
 {
     "entries": [
         {
+            "Source": "iz_int.gnd",
+            "SourceHash": "f04656053d0c5c32c80c1df521a84efcf7bc994e078e9b498676b20723d7f4f5",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/map/iz_int/ground/chunk_0_0.asset",
+                "Assets/Art/Imported/map/iz_int/ground/chunk_0_1.asset",
+                "Assets/Art/Imported/map/iz_int/ground/chunk_1_0.asset",
+                "Assets/Art/Imported/map/iz_int/ground/chunk_1_1.asset",
+                "Assets/Art/Imported/map/iz_int/ground/chunk_2_0.asset",
+                "Assets/Art/Imported/map/iz_int/ground/chunk_2_1.asset",
+                "Assets/Art/Imported/map/iz_int/iz_int_ground.prefab"
+            ],
+            "Dependencies": [
+                {
+                    "Source": "texture/black.bmp",
+                    "Hash": "b490ee72f23ba9f601d0c3c788e99c21a672433a10b764e482587168e6f55cc7"
+                },
+                {
+                    "Source": "texture/알베르타내부/inaltreasureship_01.bmp",
+                    "Hash": "d2934c73221a2bac3e1aa0c264a35bcbd63b51117e948fe8ba252a05370778e3"
+                },
+                {
+                    "Source": "texture/알베르타내부/inaltreasureship_02.bmp",
+                    "Hash": "778c589b6e71816b7018b8fb068a4362461c0209cbc70235105b1780182f897f"
+                },
+                {
+                    "Source": "texture/알베르타내부/inaltreasureship_03.bmp",
+                    "Hash": "08cdc6a111aae236efd670a83c393e1d243e05c5ea2ca0b0d39aad5dce1988bf"
+                },
+                {
+                    "Source": "texture/알베르타내부/inaltreasureship_04.bmp",
+                    "Hash": "fc66850eb98e3400653d812abe2e38403237a4bbb0442e72c88cb96c9e8a9596"
+                },
+                {
+                    "Source": "texture/알베르타내부/inaltreasureship_05.bmp",
+                    "Hash": "f0ca23dee03b634c86bd708388744a3217756266886a37620181edfcebba8ac6"
+                },
+                {
+                    "Source": "texture/알베르타내부/inaltreasureship_06.bmp",
+                    "Hash": "3b81592314c99366165607edae12dda68c392e90fe074bd9a23f82937cdad9ed"
+                },
+                {
+                    "Source": "texture/알베르타내부/inaltreasureship_07.bmp",
+                    "Hash": "430145a9b5e98b2e794ae17f0f878bbd9abe20ca967714644827cd3134bf3b50"
+                },
+                {
+                    "Source": "texture/알베르타내부/inaltreasureship_08.bmp",
+                    "Hash": "f014f439f44bd5f742bfc2a2796649d585cbb91cce68cedbe4306991fb073896"
+                }
+            ]
+        },
+        {
             "Source": "izlude.gnd",
             "SourceHash": "a70c8207df579bdf664498f31a1f118195d817f9d258e96497557013331b41ad",
             "Rules": 2,
@@ -624,6 +676,93 @@
                 {
                     "Source": "texture/필드바닥/prt_흙02.bmp",
                     "Hash": "731db0e180a4806b0e83233a7e41b78b2707ac6519eb5c0952916ba113663528"
+                }
+            ]
+        },
+        {
+            "Source": "texture/int_land.gnd",
+            "SourceHash": "ee28ff449c67b16406ee84af4dcf804976b1c634419c3b5fe8bfdddeea0edff5",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/map/int_land/ground/chunk_0_0.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_0_1.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_0_2.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_0_3.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_0_4.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_1_0.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_1_1.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_1_2.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_1_3.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_1_4.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_2_0.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_2_1.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_2_2.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_2_3.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_2_4.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_3_0.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_3_1.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_3_2.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_3_3.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_3_4.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_4_0.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_4_1.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_4_2.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_4_3.asset",
+                "Assets/Art/Imported/map/int_land/ground/chunk_4_4.asset",
+                "Assets/Art/Imported/map/int_land/int_land_ground.prefab"
+            ],
+            "Dependencies": [
+                {
+                    "Source": "texture/backside.bmp",
+                    "Hash": "c23d886dfe22c30d1c5c4af1ee8da4a0e0822eba29c3c5aa9731ee283d102df4"
+                },
+                {
+                    "Source": "texture/필드바닥/prt_언덕01.bmp",
+                    "Hash": "2834b9dbb6c8469abcb1a3919db24e3d0ee2fef7578fd22e7212ce2795240c0a"
+                },
+                {
+                    "Source": "texture/필드바닥/prt_언덕02.bmp",
+                    "Hash": "f74dcad58c0b670d7e591e629582ecf9703558a3697803d3625613bef7989724"
+                },
+                {
+                    "Source": "texture/필드바닥/prt_언덕03.bmp",
+                    "Hash": "8f3112c749e3832f3a3b0546d1287f30c1ceea7361316f0248eadd8628f1137d"
+                },
+                {
+                    "Source": "texture/필드바닥/prt_초원01.bmp",
+                    "Hash": "073a6e7f3ed128ddd566f51cd030c5561726f45f68029309792a348b6205c689"
+                },
+                {
+                    "Source": "texture/필드바닥/prt_초원06.bmp",
+                    "Hash": "36803c0959e2ba76ddb75820e6b08fe985d02cb63c7f08c8d62d67e51ccb4ac7"
+                },
+                {
+                    "Source": "texture/필드바닥/prt_초원08.bmp",
+                    "Hash": "2b768915abb4c7e4adbd73c445c5fac152e382cd8bdc614c5eecc3a648657749"
+                },
+                {
+                    "Source": "texture/필드바닥/프론절벽-01.bmp",
+                    "Hash": "91aeea01fa70b588de6519785591dd7d47d0589667552a057bbb555930e0ab93"
+                },
+                {
+                    "Source": "texture/필드바닥/프론절벽-02.bmp",
+                    "Hash": "ba72b0f42a425871286f7257ae2d1dfcf94b37c984205e5989b6d34dddac98bc"
+                },
+                {
+                    "Source": "texture/필드바닥/프론절벽-03.bmp",
+                    "Hash": "dea36b72180f313154efc5e02eb5b2712f29c7b1df2eac26190e857aebcb8f38"
+                },
+                {
+                    "Source": "texture/필드바닥/프론절벽-04.bmp",
+                    "Hash": "a5f5721e7e225fdb20c0c76a38f5bdf357031bddb63dae550d8e0b53c3dd11bb"
+                },
+                {
+                    "Source": "texture/필드바닥/프론절벽-05.bmp",
+                    "Hash": "5af8ab7299d3f47a382bd4cdea413fea4af61057122caa9760665fd8eb189191"
+                },
+                {
+                    "Source": "texture/필드바닥/프론절벽-06.bmp",
+                    "Hash": "7c41fcae455aa54994ef2cbaef5b0f4877f28a1a32c4cd38f1f129f77906b5ab"
                 }
             ]
         }

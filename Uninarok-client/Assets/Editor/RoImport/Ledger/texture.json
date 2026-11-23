@@ -1,6 +1,15 @@
 {
     "entries": [
         {
+            "Source": "texture/black.bmp",
+            "SourceHash": "b490ee72f23ba9f601d0c3c788e99c21a672433a10b764e482587168e6f55cc7",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/black.png"
+            ],
+            "Dependencies": []
+        },
+        {
             "Source": "texture/dewata/indo_17.bmp",
             "SourceHash": "ec36a5202c2964f50b6771308d644d02f1be51df96bdd5184e6b47b6361c9d67",
             "Rules": 2,
@@ -339,6 +348,15 @@
             "Rules": 2,
             "Outputs": [
                 "Assets/Art/Imported/texture/pron-ch9.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/trea-mchain1.bmp",
+            "SourceHash": "c72149b4739b3fd274786162cbeaa9a948a2db9d42ff0c85ec6640bde7fb15bd",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/trea-mchain1.png"
             ],
             "Dependencies": []
         },
@@ -1297,11 +1315,74 @@
             "Dependencies": []
         },
         {
+            "Source": "texture/내부소품/pron-spai.bmp",
+            "SourceHash": "c09f02fa0aae0e1c76bee1c05b3adf8833410febaf77ba9baaa2ecaf3d848240",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/pron-spai.png"
+            ],
+            "Dependencies": []
+        },
+        {
             "Source": "texture/내부소품/seokse copy.bmp",
             "SourceHash": "180fcd9db3253e7dfe0b38f46cd82810b8145e1fc9dc3665f8eec1f67cf3e5f4",
             "Rules": 2,
             "Outputs": [
                 "Assets/Art/Imported/texture/내부소품/seokse copy.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/tr-side1.bmp",
+            "SourceHash": "2a882f3cfdd3fef4cf8cb7a738480782a17d5223f4da29433c52f624eca11ac7",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/tr-side1.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/trea-arch.bmp",
+            "SourceHash": "adceeb236bffd5d890a1b96f79fa2519c74c715fcb3c8d1042cc786dd764ac69",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/trea-arch.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/trea-bed.bmp",
+            "SourceHash": "03a293a51ee919302ededfddb48e66da39d071c6736520237cfe854c4a0e0777",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/trea-bed.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/trea-lder.bmp",
+            "SourceHash": "017a63bfb81f190a4b3a3a6bff6aad9e2cafc0ee4b168a3d110b0329b1678820",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/trea-lder.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/trea-table.bmp",
+            "SourceHash": "4af45cef6a4fff6af7cf5f266f3ac3f52c1ad6d32bcab4d938182f715304f6a8",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/trea-table.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/내부소품/trsship-sta1.bmp",
+            "SourceHash": "92f35d07b3ebd1bab709234a85bd0399b4dce71c815ab4bde8238f26140c343d",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/내부소품/trsship-sta1.png"
             ],
             "Dependencies": []
         },

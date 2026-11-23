@@ -10,6 +10,87 @@
             "Dependencies": []
         },
         {
+            "Source": "texture/black.bmp",
+            "SourceHash": "b490ee72f23ba9f601d0c3c788e99c21a672433a10b764e482587168e6f55cc7",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/black__ground.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/알베르타내부/inaltreasureship_01.bmp",
+            "SourceHash": "d2934c73221a2bac3e1aa0c264a35bcbd63b51117e948fe8ba252a05370778e3",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/알베르타내부/inaltreasureship_01__ground.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/알베르타내부/inaltreasureship_02.bmp",
+            "SourceHash": "778c589b6e71816b7018b8fb068a4362461c0209cbc70235105b1780182f897f",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/알베르타내부/inaltreasureship_02__ground.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/알베르타내부/inaltreasureship_03.bmp",
+            "SourceHash": "08cdc6a111aae236efd670a83c393e1d243e05c5ea2ca0b0d39aad5dce1988bf",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/알베르타내부/inaltreasureship_03__ground.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/알베르타내부/inaltreasureship_04.bmp",
+            "SourceHash": "fc66850eb98e3400653d812abe2e38403237a4bbb0442e72c88cb96c9e8a9596",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/알베르타내부/inaltreasureship_04__ground.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/알베르타내부/inaltreasureship_05.bmp",
+            "SourceHash": "f0ca23dee03b634c86bd708388744a3217756266886a37620181edfcebba8ac6",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/알베르타내부/inaltreasureship_05__ground.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/알베르타내부/inaltreasureship_06.bmp",
+            "SourceHash": "3b81592314c99366165607edae12dda68c392e90fe074bd9a23f82937cdad9ed",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/알베르타내부/inaltreasureship_06__ground.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/알베르타내부/inaltreasureship_07.bmp",
+            "SourceHash": "430145a9b5e98b2e794ae17f0f878bbd9abe20ca967714644827cd3134bf3b50",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/알베르타내부/inaltreasureship_07__ground.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/알베르타내부/inaltreasureship_08.bmp",
+            "SourceHash": "f014f439f44bd5f742bfc2a2796649d585cbb91cce68cedbe4306991fb073896",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/알베르타내부/inaltreasureship_08__ground.png"
+            ],
+            "Dependencies": []
+        },
+        {
             "Source": "texture/필드바닥/prt_도시01.bmp",
             "SourceHash": "b086b532d229e775c02da094edaeb52eba4e05e50ca12631dc09a644b74db18b",
             "Rules": 2,

@@ -1,6 +1,72 @@
 {
     "entries": [
         {
+            "Source": "iz_int.rsw",
+            "SourceHash": "8ef5610c926f08e0e18647e63e833142ea8adb7e30cfbba2fb0d35145b0d1682",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Scenes/Maps/iz_int.unity"
+            ],
+            "Dependencies": [
+                {
+                    "Source": "iz_int.gat",
+                    "Hash": "245ea72abf7e3a219b9df82208bc77b451e6f1bf1046a6f132d7cac48e9984fc"
+                },
+                {
+                    "Source": "iz_int.gnd",
+                    "Hash": "f04656053d0c5c32c80c1df521a84efcf7bc994e078e9b498676b20723d7f4f5"
+                },
+                {
+                    "Source": "model/내부소품/거미줄.rsm",
+                    "Hash": "641c137ec8abda54ee790957c711521931c393f90b505d28a096f7c477b7e89f"
+                },
+                {
+                    "Source": "model/내부소품/나무기둥1.rsm",
+                    "Hash": "e0053c344c0d9712bede415ecefef0fd1f28afb0a18f079c131673b561a17e3b"
+                },
+                {
+                    "Source": "model/내부소품/나무상자01.rsm",
+                    "Hash": "1dee79cbedd90d4296fcfed5225bdcd08978f67688b054ea27bbe2da8c322026"
+                },
+                {
+                    "Source": "model/내부소품/보물선계단.rsm",
+                    "Hash": "fe4d456fdb619ad373cbbbc3c1b4e2dd08b24fd856447db73b06158ff623510c"
+                },
+                {
+                    "Source": "model/내부소품/보물선아치기둥.rsm",
+                    "Hash": "7a2f14d3b26c42bf1a475f7019dbcfb8a8d785e91088df76a2d9bffca7b08c55"
+                },
+                {
+                    "Source": "model/내부소품/보물선의자01.rsm",
+                    "Hash": "58a95ca586aa0f249827845075f7066dab9637444bc0ea3f470e4fd93b7bba8b"
+                },
+                {
+                    "Source": "model/내부소품/사다리.rsm",
+                    "Hash": "cf5f81ef71b0b6e73eed2fe08e85519a013b5cd48d761786dd65b19d61fed8ad"
+                },
+                {
+                    "Source": "model/내부소품/쇠사슬01.rsm",
+                    "Hash": "89eed0d5e169e4296ce15188b727d7921c0f531e1946c4cfb8ddde0887d57e65"
+                },
+                {
+                    "Source": "model/내부소품/쇠사슬02.rsm",
+                    "Hash": "ae6c5bf1ea168ace92b4ef61cdb3728e60500f2dd4a762e927d59a2f042b0230"
+                },
+                {
+                    "Source": "model/내부소품/술통01.rsm",
+                    "Hash": "7e8b99a939d2dd99cc00297710330238ca3a3129b9c0cb2dd958dccee65ede69"
+                },
+                {
+                    "Source": "model/내부소품/흠집난침대.rsm",
+                    "Hash": "5bf5b19214367a33fc1ad759a39fadd6343915e99cfc8392cf373d14c8146d90"
+                },
+                {
+                    "Source": "model/내부소품/흠집난탁자.rsm",
+                    "Hash": "085d7f7f0cdd50639af9067dac184885876a4943ad1f6ecb24ea4890077f7116"
+                }
+            ]
+        },
+        {
             "Source": "izlude.rsw",
             "SourceHash": "76ffe39bd8665c82d4344d01cb26427b53bebdf5de379126838ff4e150eeade3",
             "Rules": 1,
@@ -751,6 +817,120 @@
                 {
                     "Source": "prt_fild08.gnd",
                     "Hash": "9e5bdbc8c0a1ce1f2c1e98b928535745eedd80c72f363206d6963d817f858dc6"
+                }
+            ]
+        },
+        {
+            "Source": "texture/int_land.rsw",
+            "SourceHash": "3236255376bca92b632186eaa5f764b4898b0cf9d279868c98ce4272654004b1",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Scenes/Maps/int_land.unity"
+            ],
+            "Dependencies": [
+                {
+                    "Source": "model/나무잡초꽃/나무01.rsm",
+                    "Hash": "4fb1b5d4964c3b260bb59b399efb1a8e15e50f7487f7636c023f7dd4051ab889"
+                },
+                {
+                    "Source": "model/나무잡초꽃/나무02.rsm",
+                    "Hash": "0eb9f3dc376e223904b739b75c5fe2f02bef99c2348fdfcd69665ae8e5449d0b"
+                },
+                {
+                    "Source": "model/나무잡초꽃/나뭇잎01.rsm",
+                    "Hash": "b3758e6a292ce6628dab9eb188071ba44d9206c5963ad4ecc40d0370a1ce0354"
+                },
+                {
+                    "Source": "model/나무잡초꽃/덤불01.rsm",
+                    "Hash": "d14bd060d70beb1794e5d27922513b823c4821e54123f628d8b7bbfc4dfb27f3"
+                },
+                {
+                    "Source": "model/나무잡초꽃/덤불02.rsm",
+                    "Hash": "37865073bfb81506a38b80bdd314b0fff7eac836cfce21887935d1fb3476d446"
+                },
+                {
+                    "Source": "model/내부소품/거미줄.rsm",
+                    "Hash": "641c137ec8abda54ee790957c711521931c393f90b505d28a096f7c477b7e89f"
+                },
+                {
+                    "Source": "model/내부소품/나무기둥1.rsm",
+                    "Hash": "e0053c344c0d9712bede415ecefef0fd1f28afb0a18f079c131673b561a17e3b"
+                },
+                {
+                    "Source": "model/내부소품/나무기둥2.rsm",
+                    "Hash": ""
+                },
+                {
+                    "Source": "model/내부소품/나무상자01.rsm",
+                    "Hash": "1dee79cbedd90d4296fcfed5225bdcd08978f67688b054ea27bbe2da8c322026"
+                },
+                {
+                    "Source": "model/내부소품/나무상자02.rsm",
+                    "Hash": "fa193d9f7b405d359ef085c28923590f9f79e90b7b5afcc802fc49d811ee555d"
+                },
+                {
+                    "Source": "model/내부소품/드럼통1.rsm",
+                    "Hash": "623210a0d2fe6cde0cbc81e5ec44a0db6cf728e73af237d3d6cd8815cbe00478"
+                },
+                {
+                    "Source": "model/내부소품/보따리.rsm",
+                    "Hash": ""
+                },
+                {
+                    "Source": "model/내부소품/보물상자02.rsm",
+                    "Hash": ""
+                },
+                {
+                    "Source": "model/내부소품/보물선의자01.rsm",
+                    "Hash": "58a95ca586aa0f249827845075f7066dab9637444bc0ea3f470e4fd93b7bba8b"
+                },
+                {
+                    "Source": "model/내부소품/산호01.rsm",
+                    "Hash": ""
+                },
+                {
+                    "Source": "model/내부소품/술통01.rsm",
+                    "Hash": "7e8b99a939d2dd99cc00297710330238ca3a3129b9c0cb2dd958dccee65ede69"
+                },
+                {
+                    "Source": "model/내부소품/양동이1.rsm",
+                    "Hash": "87785ecb41624c47cc91881d4d1349c317ee60e6e099d08824e159384167a317"
+                },
+                {
+                    "Source": "model/내부소품/주전자.rsm",
+                    "Hash": "02ad044923cec5023497cba42405d1c0f23a01ccb4f6b4f13e5c186973ed2e5c"
+                },
+                {
+                    "Source": "model/내부소품/흠집난탁자.rsm",
+                    "Hash": "085d7f7f0cdd50639af9067dac184885876a4943ad1f6ecb24ea4890077f7116"
+                },
+                {
+                    "Source": "model/알베르타/범선.rsm",
+                    "Hash": "3cd42565996952eb90bf308ffb46d05807b93a7127042176226a51e8d2094407"
+                },
+                {
+                    "Source": "model/외부소품/봉화대사다리.rsm",
+                    "Hash": ""
+                },
+                {
+                    "Source": "model/외부소품/해골_대가리.rsm",
+                    "Hash": ""
+                },
+                {
+                    "Source": "model/외부소품/호리병01.rsm",
+                    "Hash": ""
+                },
+                {
+                    "Source": "model/외부소품/호리병02.rsm",
+                    "Hash": ""
+                },
+                {
+                    "Source": "texture/int_land.gat",
+                    "Hash": "e8e3c4674203c2ecfee855d73665aee55af9b6d153d58a7c81d37a5da0a8e680"
+                },
+                {
+                    "Source": "texture/int_land.gnd",
+                    "Hash": "ee28ff449c67b16406ee84af4dcf804976b1c634419c3b5fe8bfdddeea0edff5"
                 }
             ]
         }
