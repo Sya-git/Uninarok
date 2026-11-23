@@ -75,6 +75,7 @@ namespace Uninarok.RoImport.Core.Catalog.Composition
                 Transparency();
                 Shadows();
                 Hidden();
+                WeaponTypes();
             }
 
             // ---- reading ----
@@ -331,6 +332,18 @@ namespace Uninarok.RoImport.Core.Catalog.Composition
                 foreach (var kv in jobs.SpriteNames)
                     if (string.Equals(kv.Value, InvisibleName, StringComparison.OrdinalIgnoreCase)) ids.Add(kv.Key);
                 Data.HiddenJobIds = ids.ToArray();
+            }
+
+            // SPEC-0011 FR-4, FR-14 (PLAN-0011 4.7): weapontable.lub's Expansion_Weapon_IDs, read with the catalog's view ids.
+            void WeaponTypes()
+            {
+                var map = _tables?.ViewIds?.WeaponBaseTypes;
+                if (map == null) return;
+                var rows = new SortedDictionary<int, int>();
+                foreach (var kv in map)
+                    if (kv.Key != kv.Value) rows[kv.Key] = kv.Value;
+                Data.WeaponViewIds = rows.Keys.ToArray();
+                Data.WeaponBaseTypes = rows.Values.ToArray();
             }
         }
     }

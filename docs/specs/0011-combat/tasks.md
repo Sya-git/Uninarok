@@ -110,7 +110,7 @@
 - [x] **T4.5** `CombatTimeline`: death after the hit, pickup motion. (FR-9, FR-10)
   *Done when:* the `_DeathHeldUntilHit`, `_MonsterHurt250`, `_OwnDeath` and `_PickUpMotion` tests pass.
 
-- [ ] **T4.6** Weapon types in the composition tables (plan §4.7). (FR-4, FR-14)
+- [x] **T4.6** Weapon types in the composition tables (plan §4.7). (FR-4, FR-14)
   *Done when:* builder tests pass (Main Gauche → short sword, a bow, an unknown id → 0); the asset is rebuilt and only it changed.
 
 - [ ] **T4.7** Tests, then implementation: `AttackMotions` (plan §4.7, D7). (FR-4)
