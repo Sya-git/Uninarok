@@ -116,7 +116,7 @@
 - [x] **T4.7** Tests, then implementation: `AttackMotions` (plan §4.7, D7). (FR-4)
   *Done when:* `AttackMotions_Rows` passes; the rows are in `combat-reference.md`.
 
-- [ ] **T4.8** Tests, then implementation: `ProjectileRules` and the timeline's projectiles. (FR-13, FR-14)
+- [x] **T4.8** Tests, then implementation: `ProjectileRules` and the timeline's projectiles. (FR-13, FR-14)
   *Done when:* the `ProjectileRules_*` tests pass, with a blow of each of the cases (bow, archer monster, other, none) through the timeline.
 
 - [ ] **T4.9** `Combat_ZeroAllocation_100Fighting`. (FR-12)

@@ -147,7 +147,64 @@ namespace Uninarok.World
 
             // H11: an attack time of 0 or less is at once.
             uint hit = unchecked(blow.At + (uint)Math.Max(0, blow.AttackMs));
+            // 4.7: a player's number waits for its arrow.
+            if (AddProjectile(model, blow, out uint arrives)) hit = arrives;
             AddNumbers(blow, hit);
+        }
+
+        // FR-14: one projectile per blow, also a multi-hit, between the shown positions (taken again at the launch).
+        bool AddProjectile(WorldModel model, in Blow blow, out uint arrives)
+        {
+            arrives = 0;
+            if (blow.AttackerId == blow.TargetId || !model.TryGetSlot(blow.AttackerId, out int attacker) || !model.TryGetSlot(blow.TargetId, out int target))
+                return false;
+            ref readonly var a = ref model[attacker];
+            ref readonly var t = ref model[target];
+            int weapon = a.Kind == EntityKind.Player && Weapons != null ? Weapons.TypeOf(a.Look.Weapon) : 0;
+            var kind = ProjectileRules.Of(a.Kind, a.Look.Job, weapon);
+            if (kind == ProjectileKind.None) return false;
+
+            bool player = a.Kind == EntityKind.Player;
+            float dx = t.PosX - a.PosX, dy = t.PosY - a.PosY;
+            float hitFrame = player ? AttackMotions.HitFrameOf(a.Look.Job, a.Look.Sex, weapon) : 0f;
+            ProjectileRules.Times(blow, player, (float)Math.Sqrt(dx * dx + dy * dy), hitFrame, _settings.FlightMs, _settings.FlightFullCells,
+                                  out uint launches, out uint lands, out bool waits);
+            if (_projectileCount == _projectiles.Length) DropOldest(_projectiles, ref _projectileCount, "projectiles");
+            _projectiles[_projectileCount++] = new Projectile
+            {
+                Launches = launches, Arrives = lands, AttackerId = blow.AttackerId, TargetId = blow.TargetId,
+                FromX = a.PosX, FromY = a.PosY, ToX = t.PosX, ToY = t.PosY, Kind = kind,
+            };
+            if (waits) arrives = lands;
+            return waits;
+        }
+
+        // Until its launch a projectile takes the shown positions again; it is gone when it arrives.
+        void AdvanceProjectiles(WorldModel model, uint now)
+        {
+            for (int i = 0; i < _projectileCount;)
+            {
+                ref var p = ref _projectiles[i];
+                if (ServerClock.Diff(now, p.Arrives) >= 0)
+                {
+                    _projectiles[i] = _projectiles[--_projectileCount];
+                    continue;
+                }
+                if (ServerClock.Diff(now, p.Launches) < 0)
+                {
+                    if (model.TryGetSlot(p.AttackerId, out int a))
+                    {
+                        p.FromX = model[a].PosX;
+                        p.FromY = model[a].PosY;
+                    }
+                    if (model.TryGetSlot(p.TargetId, out int t))
+                    {
+                        p.ToX = model[t].PosX;
+                        p.ToY = model[t].PosY;
+                    }
+                }
+                i++;
+            }
         }
 
         // FR-5, the table of 4.6.
@@ -213,6 +270,8 @@ namespace Uninarok.World
                 else i++;
             }
 
+            AdvanceProjectiles(model, now);
+
             int limit = Math.Min(model.SlotLimit, _motions.Length);
             for (int slot = 0; slot < limit; slot++) Keep(model, slot, now);
         }
@@ -253,7 +312,7 @@ namespace Uninarok.World
         /// <summary>The numbers shown now.</summary>
         public ReadOnlySpan<DamageNumber> Numbers => new ReadOnlySpan<DamageNumber>(_numbers, 0, _numberCount);
 
-        /// <summary>The projectiles in flight now.</summary>
+        /// <summary>The projectiles not yet arrived: drawn from their launch (<c>Launches</c> ≤ now) to their arrival.</summary>
         public ReadOnlySpan<Projectile> Projectiles => new ReadOnlySpan<Projectile>(_projectiles, 0, _projectileCount);
 
         public void Clear()

@@ -48,7 +48,7 @@ Each row is one setting or one table row. **Source** is where the first value co
 | `ProjectilePool` | 32 | plan choice | not displayed |
 | attack motion rows | the table below (`AttackMotions`) | lead: `src/DB/Jobs/WeaponAction.js` | shots 1, 13 |
 | hit frame | 6 for every row | lead, plan §4.7; `WeaponAction.js` has no frames | shots 1, 11, 13 |
-| projectile by attacker rows | T4.8 | lead: spec §6 | shots 11 to 13 |
+| projectile by attacker rows | the tables below (`ProjectileRules`) | lead: `src/DB/Monsters/AttackEffectTable.js`, `Engine/MapEngine/Entity.js` | shots 11 to 13 |
 
 ## Attack animation (plan §4.7, `AttackMotions`)
 
@@ -110,6 +110,47 @@ Weapon types (`Weapon_IDs`):
 Two more lead facts, not used here:
 - roBrowserLegacy also shortens the attack of monks with knuckles or bare hands (5 frames from frame 0), and of summoners with bare hands (4 frames).
 - `UnitClock.FitMs` (plan §4.9) fits every attack to `attackMT`, so this is a T0.3 question.
+
+## Projectiles by attacker (plan §4.7, `ProjectileRules`)
+
+Lead: roBrowserLegacy, read 2026-11-23:
+- `src/DB/Monsters/AttackEffectTable.js`: its job ids;
+- `Engine/MapEngine/Entity.js` `onEntityAction`;
+- `src/Renderer/Effects/ArrowFlight.js`: flight `8 × 24 ms × min(1, cells × 5 / 40)`, the same as the settings above.
+
+**Players.** An arrow for the bow type (11). Crossbow, arbalest, kakkung, hunter bow and bow of Rudra all have the bow as their base type.
+- Guns, shuriken, whips and instruments: none.
+- roBrowserLegacy also varies the hit frame in a few special cases (5.85, 5.75, 3.0) that it does not name. Here it is 6 for all, a T0.3 question.
+
+**Monsters and mercenaries with an arrow.** One row for each job id in the table (44 ids):
+
+| Monsters | Job ids |
+|---|---|
+| archer skeleton | 1016, 1420, 3034, 3445, 3763 |
+| orc archer | 1189, 1473, 1982, 3130, 3900 |
+| goblin archer | 1258, 1577 |
+| raydric archer | 1276, 1453, 2469, 3144, 20368, 20578, 21010 |
+| kobold archer | 1282, 1455, 2287, 2784 |
+| archer guardian | 1285 |
+| gargoyle | 1253, 1597, 2826, 2827, 3197, 3435, 10070, 20369, 21028, 22256 |
+| archer mercenaries | 6017 to 6026 |
+
+**Monsters with a projectile of their own** (`Other`). They are launched and timed here, and drawn by SPEC-0013. 29 ids:
+
+| Monsters | Job ids |
+|---|---|
+| parasite | 1500, 1555, 2720, 21005 |
+| stone shooter | 1495, 20274, 20999 |
+| wootan shooter | 1498, 20275, 20279 |
+| live peach tree | 1410, 1550, 2775 |
+| evil cloud hermit | 1412, 1531, 2935, 21023 |
+| ragged zombie | 1865, 20371, 21574 |
+| poton canon | 1664, 1683, 1724, 1665, 1666, 1667 |
+| lady tanee | 1688, 3288, 20238 |
+
+**Not projectiles.** The same file lists effects that appear at the target: mandragora, hydra, odium, drosera, mavka and entweihen. They are `None` here, for SPEC-0013.
+
+Not in the lead: the projectile's height, and whether it follows a moving target. It takes the shown positions until its launch and flies straight after it (T0.3 shots 11, 12).
 
 ## Numbers (plan §4.8)
 
