@@ -248,8 +248,12 @@ namespace Uninarok.World
         }
 
         /// <summary>Shows what is due at this server time and ends what is over.</summary>
+        /// <summary>The server time of the last <see cref="Advance"/>.</summary>
+        public uint Now { get; private set; }
+
         public void Advance(uint now)
         {
+            Now = now;
             var model = _model;
             if (model == null) return;
 

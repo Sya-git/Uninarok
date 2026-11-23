@@ -130,7 +130,7 @@
 - [x] **T5.2** Tests, then implementation: `PickRect` of units and ground items. (FR-2, FR-10)
   *Done when:* the rect of a known frame equals its layers' rectangle (test), it is empty when nothing is shown, and it is not computed on frames without `Compose`.
 
-- [ ] **T5.3** Presenter: motions, base animation, death after the hit. (FR-4, FR-9, FR-10)
+- [x] **T5.3** Presenter: motions, base animation, death after the hit. (FR-4, FR-9, FR-10)
   *Done when:* `WorldPresenter_PlaysMotionThenBase` and `_DeathAfterHurt` pass, `WorldPresenter_ReadsOnly` and the zero-allocation test too.
 
 - [ ] **T5.4** `CatalogWeaponTypes` and the wiring in `WorldBootstrap` (order of plan §2, §5). (FR-4, FR-14)

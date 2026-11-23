@@ -40,6 +40,10 @@ namespace Uninarok.World.View
         int[] _versions = Array.Empty<int>();
         int[] _animations = Array.Empty<int>();
         EntityLook[] _looks = Array.Empty<EntityLook>();
+        // SPEC-0011: the timeline's motion version last played, whether a motion plays, whether a death waits for its hit.
+        int[] _motionVersions = Array.Empty<int>();
+        bool[] _inMotion = Array.Empty<bool>();
+        bool[] _deathHeld = Array.Empty<bool>();
         int _limit;
 
         // The own character's view stays loaded between two maps, so the first frame of the new one shows it (FR-12, D24).
@@ -61,6 +65,9 @@ namespace Uninarok.World.View
             _facing = facing.AddComponent<GroundItemFacing>();
             _facing.Presenter = this;
         }
+
+        /// <summary>The motions of the blows (SPEC-0011 FR-4, FR-9, FR-10); without one only the base animations play.</summary>
+        public CombatTimeline Timeline { get; set; }
 
         /// <summary>Units shown.</summary>
         public int ShownCount { get; private set; }
@@ -171,6 +178,9 @@ namespace Uninarok.World.View
             _looks[slot] = e.Look;
             _versions[slot] = e.Version;
             _animations[slot] = e.AnimationVersion;
+            _motionVersions[slot] = 0;
+            _inMotion[slot] = false;
+            _deathHeld[slot] = false;
             ShownCount++;
             view.Facing = e.Facing;
             view.HeadFacing = (HeadFacing)e.Head;
@@ -180,6 +190,7 @@ namespace Uninarok.World.View
             Animate(view, e);
             // It died before it came into view: it lies, it does not fall.
             if (e.State == EntityState.Dead) view.SetFrame(int.MaxValue / 2);
+            Motion(slot, view, e);
         }
 
         void Update(int slot, UnitView view, in Entity e)
@@ -198,15 +209,65 @@ namespace Uninarok.World.View
                 if (_animations[slot] != e.AnimationVersion)
                 {
                     _animations[slot] = e.AnimationVersion;
-                    Animate(view, e);
+                    // While a motion plays, or a death waits for its hit, the change is noted and played when it ends (PLAN-0011 4.9).
+                    if (!_inMotion[slot] && !HoldsDeath(slot, e)) Animate(view, e);
+                    else if (e.State == EntityState.Dead) _deathHeld[slot] = true;
                 }
-                else if (e.Walking) view.Speed = WalkSpeed(e);
+                else if (e.Walking && !_inMotion[slot]) view.Speed = WalkSpeed(e);
                 Place(view, e);
             }
             else if (e.Walking)
             {
                 view.Facing = e.Facing;
                 Place(view, e);
+            }
+            Motion(slot, view, e);
+        }
+
+        bool HoldsDeath(int slot, in Entity e) => e.State == EntityState.Dead && Timeline != null && Timeline.HoldsDeath(slot, Timeline.Now);
+
+        // SPEC-0011 FR-4, FR-9, FR-10: the timeline's motion when it changes; the base animation when it ends.
+        void Motion(int slot, UnitView view, in Entity e)
+        {
+            var timeline = Timeline;
+            if (timeline == null) return;
+            if (_deathHeld[slot] && !timeline.HoldsDeath(slot, timeline.Now))
+            {
+                _deathHeld[slot] = false;
+                _inMotion[slot] = false;
+                Animate(view, e); // the death, after its hurt
+                return;
+            }
+            ref readonly var m = ref timeline.MotionOf(slot);
+            if (m.Version == _motionVersions[slot]) return;
+            _motionVersions[slot] = m.Version;
+            switch (m.Kind)
+            {
+                case MotionKind.Attack:
+                    view.Speed = 1f;
+                    view.PlayFor(m.AttackNumber == 3 ? PcAnimation.Attack3 : m.AttackNumber == 2 ? PcAnimation.Attack2 : PcAnimation.Attack1, m.DurationMs, PlayMode.OnceHold);
+                    _inMotion[slot] = true;
+                    break;
+                case MotionKind.Hurt:
+                    view.Speed = 1f;
+                    view.PlayFor(PcAnimation.Hurt, m.DurationMs, PlayMode.OnceHold);
+                    _inMotion[slot] = true;
+                    break;
+                case MotionKind.PickUp:
+                    view.Speed = 1f;
+                    view.Play(PcAnimation.PickUp, PlayMode.OnceHold);
+                    _inMotion[slot] = true;
+                    break;
+                case MotionKind.Standby:
+                    view.Speed = 1f;
+                    view.Play(PcAnimation.Standby);
+                    _inMotion[slot] = true;
+                    break;
+                default:
+                    _inMotion[slot] = false;
+                    if (e.State == EntityState.Dead && timeline.HoldsDeath(slot, timeline.Now)) _deathHeld[slot] = true;
+                    else Animate(view, e);
+                    break;
             }
         }
 
@@ -356,6 +417,9 @@ namespace Uninarok.World.View
             Array.Resize(ref _versions, capacity);
             Array.Resize(ref _animations, capacity);
             Array.Resize(ref _looks, capacity);
+            Array.Resize(ref _motionVersions, capacity);
+            Array.Resize(ref _inMotion, capacity);
+            Array.Resize(ref _deathHeld, capacity);
         }
     }
 }

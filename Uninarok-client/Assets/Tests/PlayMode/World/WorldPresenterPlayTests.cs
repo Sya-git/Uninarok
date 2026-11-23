@@ -331,6 +331,79 @@ namespace Uninarok.World.PlayTests
             Assert.That(() => frames(), UnityEngine.TestTools.Constraints.Is.Not.AllocatingGCMemory());
         }
 
+        // ---- SPEC-0011 T5.3 (FR-4, FR-9; PLAN-0011 4.9): the timeline's motions over the base animation ----
+
+        CombatTimeline Combat(out CombatSettings settings)
+        {
+            settings = ScriptableObject.CreateInstance<CombatSettings>();
+            var timeline = new CombatTimeline(settings, _model.Capacity);
+            timeline.Use(_model);
+            _presenter.Timeline = timeline;
+            return timeline;
+        }
+
+        void At(CombatTimeline timeline, uint now)
+        {
+            _model.Advance(now);
+            timeline.Advance(now);
+            _presenter.Sync(_model);
+        }
+
+        static Blow Hit(uint attacker, uint target, uint at) => new Blow(attacker, target, at, 500, 300, 10, 0, 1, BlowKind.Normal, false, 0);
+
+        [UnityTest, Category("NeedsData")]
+        public IEnumerator WorldPresenter_PlaysMotionThenBase()
+        {
+            Poring(1, 13, 20);
+            Novice(2, 12, 20);
+            _presenter.Sync(_model);
+            yield return Loaded(1);
+            yield return Loaded(2);
+            var timeline = Combat(out var settings);
+            var poring = _presenter.ViewOf(1);
+            var novice = _presenter.ViewOf(2);
+
+            timeline.Add(Hit(2, 1, 1000));
+            At(timeline, 1000);
+            Assert.AreEqual((int)PcAnimation.Attack1, novice.AnimationNumber, "the attack");
+            Assert.AreEqual(Uninarok.Units.PlayMode.OnceHold, novice.PlayMode);
+            Assert.AreEqual((int)MonsterAnimation.Idle, poring.AnimationNumber);
+            At(timeline, 1500);
+            Assert.AreEqual((int)UnitAnimations.ToUnit(PcAnimation.Hurt), poring.AnimationNumber, "the hurt at the hit moment");
+            Assert.AreEqual((int)PcAnimation.Standby, novice.AnimationNumber, "then the player stands by");
+            At(timeline, 1800);
+            Assert.AreEqual((int)MonsterAnimation.Idle, poring.AnimationNumber, "back to its base animation");
+
+            _model.Walk(2, 12, 20, 16, 20, 1900, 1900);
+            At(timeline, 1950);
+            Assert.AreEqual((int)PcAnimation.Walk, novice.AnimationNumber, "a walk ends the standby and shows itself");
+            UnityEngine.Object.Destroy(settings);
+        }
+
+        [UnityTest, Category("NeedsData")]
+        public IEnumerator WorldPresenter_DeathAfterHurt()
+        {
+            Poring(1, 13, 20);
+            Novice(2, 12, 20);
+            _presenter.Sync(_model);
+            yield return Loaded(1);
+            var timeline = Combat(out var settings);
+            var poring = _presenter.ViewOf(1);
+
+            timeline.Add(Hit(2, 1, 1000));
+            At(timeline, 1000);
+            _model.Vanish(1, VanishReason.Died, 1200);
+            At(timeline, 1200);
+            Assert.AreNotEqual((int)MonsterAnimation.Die, poring.AnimationNumber, "the death waits for its hit");
+            At(timeline, 1500);
+            Assert.AreEqual((int)UnitAnimations.ToUnit(PcAnimation.Hurt), poring.AnimationNumber);
+            At(timeline, 1749);
+            Assert.AreEqual((int)UnitAnimations.ToUnit(PcAnimation.Hurt), poring.AnimationNumber, "250 ms of hurt");
+            At(timeline, 1750);
+            Assert.AreEqual((int)MonsterAnimation.Die, poring.AnimationNumber, "then it dies");
+            UnityEngine.Object.Destroy(settings);
+        }
+
         [TestCase(0, 1, 0, 2)] // job, sex, server style, head file
         [TestCase(0, 0, 0, 2)]
         [TestCase(0, 1, 2, 1)]
