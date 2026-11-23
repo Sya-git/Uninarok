@@ -567,6 +567,127 @@ namespace Uninarok.World.PlayTests
             Assert.That(() => frames(), UnityEngine.TestTools.Constraints.Is.Not.AllocatingGCMemory());
         }
 
+        // ---- SPEC-0011 T7.1 (FR-2, FR-10; PLAN-0011 4.10): the unit under the pointer ----
+
+        Camera PickCamera(Vector3 target)
+        {
+            var cameraObject = new GameObject("Pick Camera");
+            cameraObject.transform.SetParent(_root.transform, false);
+            var camera = cameraObject.AddComponent<Camera>();
+            camera.fieldOfView = 15f;
+            camera.targetTexture = new RenderTexture(1280, 720, 24);
+            camera.enabled = false;
+            LookAt(camera, target, 0f);
+            UnitSystem.Camera = camera;
+            return camera;
+        }
+
+        // The middle of a view's rectangle on the screen.
+        static Vector2 ScreenCentre(Camera camera, Transform pivot, Rect rect)
+        {
+            var world = pivot.position + camera.transform.rotation * new Vector3(rect.center.x, rect.center.y, 0f);
+            return camera.WorldToScreenPoint(world);
+        }
+
+        uint Pick(UnitPicker picker, Camera camera, Vector2 at)
+        {
+            _presenter.Sync(_model);
+            UnitSystem.Tick(0.016f);
+            return picker.TryPick(_presenter, _model, camera, at, out uint id) ? id : 0;
+        }
+
+        [UnityTest, Category("NeedsData")]
+        public IEnumerator UnitPicker_NearestUnit_PlayerHidesMonster()
+        {
+            Poring(1, 20, 22);
+            _presenter.Sync(_model);
+            yield return Loaded(1);
+            var camera = PickCamera(_presenter.ViewOf(1).transform.position);
+            try
+            {
+                var picker = new UnitPicker();
+                UnitSystem.Tick(0.016f);
+                var poring = _presenter.ViewOf(1);
+                Assert.Greater(poring.PickRect.width, 0f, "the poring has a rectangle");
+                var at = ScreenCentre(camera, poring.transform, poring.PickRect);
+                Assert.AreEqual(1u, Pick(picker, camera, at), "the poring alone");
+                Assert.AreEqual(0u, Pick(picker, camera, at + new Vector2(300f, 0f)), "the ground beside it");
+
+                // A small rectangle is taken as at least MinPx wide and high.
+                float wide = ScreenWidth(camera, poring);
+                Assert.AreEqual(0u, Pick(picker, camera, at + new Vector2(wide * 0.5f + 20f, 0f)), "beside its rectangle");
+                picker.MinPx = wide + 60f;
+                Assert.AreEqual(1u, Pick(picker, camera, at + new Vector2(wide * 0.5f + 20f, 0f)), "inside the smallest size");
+                picker.MinPx = 24f;
+
+                // The own character in front of it never catches the pointer.
+                Novice(2, 20, 21);
+                _model.OwnId = 2;
+                _presenter.Sync(_model);
+                yield return Loaded(2);
+                Assert.AreEqual(1u, Pick(picker, camera, at), "the own character lets the pointer through");
+
+                // Another player in front of it hides it: a click on it never attacks the monster.
+                _model.OwnId = 0;
+                Assert.AreEqual(2u, Pick(picker, camera, at), "the player in front wins");
+
+                // A dead player does not count.
+                Novice(2, 20, 21, EntityState.Dead);
+                Assert.AreEqual(1u, Pick(picker, camera, at), "a dead player lets the pointer through");
+                _model.Vanish(2, VanishReason.OutOfSight, 0);
+
+                // An item.
+                _model.AddItem(501, 501, true, 26, 22, 6, 6, 1);
+                _presenter.Sync(_model);
+                var item = _presenter.ItemViewOf(501);
+                for (int i = 0; i < 600 && !item.Loaded; i++) yield return null;
+                _presenter.FaceItems(camera.transform.rotation);
+                var itemAt = ScreenCentre(camera, item.transform, item.PickRect);
+                Assert.AreEqual(501u, Pick(picker, camera, itemAt), "the item");
+                _model.RemoveItem(501);
+            }
+            finally
+            {
+                UnitSystem.Camera = null;
+            }
+        }
+
+        static float ScreenWidth(Camera camera, UnitView view)
+        {
+            var r = view.PickRect;
+            var rotation = camera.transform.rotation;
+            var a = camera.WorldToScreenPoint(view.transform.position + rotation * new Vector3(r.xMin, r.center.y, 0f));
+            var b = camera.WorldToScreenPoint(view.transform.position + rotation * new Vector3(r.xMax, r.center.y, 0f));
+            return Mathf.Abs(b.x - a.x);
+        }
+
+        [UnityTest, Category("NeedsData")]
+        public IEnumerator UnitPicker_300Units_AllocatesNothing()
+        {
+            for (uint i = 0; i < 300; i++) Poring(100 + i, 5 + (int)(i % 30) * 3, 5 + (int)(i / 30) * 9);
+            _presenter.Sync(_model);
+            yield return Loaded(399);
+            var camera = PickCamera(_presenter.ViewOf(250).transform.position);
+            try
+            {
+                camera.transform.position -= camera.transform.forward * 120f;
+                UnitSystem.Tick(0.016f);
+                var picker = new UnitPicker();
+                var view = _presenter.ViewOf(250);
+                var at = ScreenCentre(camera, view.transform, view.PickRect);
+                Assert.IsTrue(picker.TryPick(_presenter, _model, camera, at, out uint id));
+                Assert.AreEqual(250u, id);
+                Assert.That(() =>
+                {
+                    for (int i = 0; i < 100; i++) picker.TryPick(_presenter, _model, camera, at, out _);
+                }, UnityEngine.TestTools.Constraints.Is.Not.AllocatingGCMemory());
+            }
+            finally
+            {
+                UnitSystem.Camera = null;
+            }
+        }
+
         sealed class BowWeapons : IWeaponTypes
         {
             public int TypeOf(int weapon) => weapon;

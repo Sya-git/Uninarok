@@ -344,7 +344,7 @@ Satisfies FR-2, FR-8, FR-10, FR-12.
 
 ```csharp
 public sealed class UnitPicker
-{ public bool TryPick(WorldPresenter presenter, WorldModel model, in Ray ray, out uint id); }   // nearest unit or item under the ray
+{ public float MinPx { get; set; } public bool TryPick(WorldPresenter presenter, WorldModel model, Camera camera, Vector2 pointer, out uint id); }   // nearest unit or item under the pointer (D19)
 ```
 
 - **Picking**: for each shown view, the ray against its pivot's plane (it faces the camera), the point inside `PickRect` (taken as at least `PickMinPx` (24) wide and high); the hit nearest to the camera wins. The own character never catches the pointer; other players and NPCs do (a player in front of a monster hides it: a click on a player never attacks). Invisible looks and dead units do not count. About 300 ray-plane tests for the frame's pointer position; no allocation.
@@ -453,6 +453,7 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 | D16 | (T3.3) When the first cell in range is farther than one walk the server accepts, the approach walks to the farthest earlier cell of the path it does accept, and asks again when that walk ends | Refusing the attack as `NoPath`; walking to the target's cell | The plan did not say; a target 15 to 30 cells away in view is common for a bow, and the next walk request follows within `ApproachRepeatMs` |
 | D17 | (T4.9) `WorldSession.UseCombat(CombatSettings)` creates the timeline and gives `OwnCombat` its values; until it is called `Timeline` is null and `OwnCombat` uses the same values as its defaults. The session feeds the timeline: `Use` at each map, damage, and `UNIT_ACT` 1, which also turns a standing player towards the item | A `CombatSettings` parameter in the session's constructor | The constructor is used by SPEC-0010's bootstrap and every session test; the tests that need no display keep working unchanged |
 | D18 | (T5.4) `CombatTimeline.Jobs` (`IJobBases`, implemented by `CatalogWeaponTypes`) maps baby, high and transcendent jobs to the job of their sprites (`LAYER_ALL_TABLE_LIST`) before `AttackMotions` is asked; the second hand is not told apart yet (a shield's view id reads as a weapon type) and dual wield plays the one-weapon row until T9.3 checks fixture (d) | A `BaseJob` member in `IWeaponTypes`; reading the shield value as a second weapon | Without it a lord knight plays `Attack1`; the shield value is ambiguous at this PACKETVER and needs the dual-wield capture to settle |
+| D19 | (T7.1) `UnitPicker.TryPick` takes the camera and the pointer's screen position instead of a ray | A ray alone | The plane of each view faces the camera, and `PickMinPx` is in screen pixels: both need the camera, which a ray does not carry |
 
 ## 9. Risks
 

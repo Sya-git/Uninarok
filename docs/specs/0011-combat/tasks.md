@@ -155,7 +155,7 @@
 
 ## Phase 7: Input and restart
 
-- [ ] **T7.1** Tests, then implementation: `UnitPicker`. (FR-2, FR-10)
+- [x] **T7.1** Tests, then implementation: `UnitPicker`. (FR-2, FR-10)
   *Done when:* `UnitPicker_NearestUnit_PlayerHidesMonster` passes, with the own character, dead units and items; 300 units allocate nothing.
 
 - [ ] **T7.2** `OwnInput` and the attack cursor (plan §4.10). (FR-2, FR-8, FR-10)

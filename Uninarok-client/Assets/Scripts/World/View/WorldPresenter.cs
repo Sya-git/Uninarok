@@ -127,6 +127,15 @@ namespace Uninarok.World.View
         public GroundItemView ItemViewOf(uint id) =>
             _model != null && _model.TryGetSlot(id, out int slot) && slot < _items.Length && _generations[slot] == _model[slot].Generation ? _items[slot] : null;
 
+        // SPEC-0011 FR-2: the views by slot, for the picker; null when the slot shows nothing.
+        internal int SlotLimit => _model != null ? _limit : 0;
+
+        internal UnitView UnitAt(int slot) =>
+            _model != null && slot < _views.Length && slot < _model.SlotLimit && _generations[slot] == _model[slot].Generation ? _views[slot] : null;
+
+        internal GroundItemView ItemAt(int slot) =>
+            _model != null && slot < _items.Length && slot < _model.SlotLimit && _generations[slot] == _model[slot].Generation ? _items[slot] : null;
+
         /// <summary>Back to the pool with the own character's view too: the session is over.</summary>
         public void ForgetOwn()
         {
