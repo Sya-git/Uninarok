@@ -31,7 +31,7 @@
   HP and max HP per monster in the view lines, one `S` line per second with the player's HP, SP, levels and EXP; a line-of-sight flag (`path->search_long`, `CELL_CHKWALL`) per pair in the path fixtures, which are made again with the same seeds.
   *Done when:* the plugin builds and loads; the three path files differ from the committed ones only in the new flag and SPEC-0010's pathfinder tests still pass on them; a sample of the new lines is in the report; `docs/specs/0010-world-session/fixtures/README.md` describes both formats.
 
-- [ ] **T0.3** Owner: record the reference footage; then measure it. (FR-2, FR-4 to FR-7, FR-9, FR-10, FR-14)
+- [x] **T0.3** Owner: record the reference footage; then measure it. (FR-2, FR-4 to FR-7, FR-9, FR-10, FR-14)
   The 17 shots of plan §6.3. The owner's footage of 2026-11-22 (`C:\Users\catdo\Videos\Captures`, four files, listed in plan §6.3) covers shots 1, 3, 4, 11, 13, 14, 16 and 17 in part; dual wield (shots 5, 6) comes from three YouTube Shorts the owner named, as files the owner provides. FR-16's mark (shot 17) is measured here too.
   *Done when:* every row of `combat-reference.md` (T4.1) has a measured value or "as lead", with the shot and frame numbers, and the frames used are in `evidence/`.
 
