@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [spec.md](spec.md) (SPEC-0011, approved 2026-11-22) |
-| **Status** | Draft |
+| **Status** | Approved (owner, 2026-11-22) |
 | **Audience** | Architects, senior developers, AI agents |
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. Packets and flow are [PLAN-0001](../0001-networking-core/plan.md) (packet rules normative in [Packet-Implementation.md](../0001-networking-core/Packets/Packet-Implementation.md)); animations and unit display [PLAN-0009](../0009-unit-display/plan.md); the world model, the server clock, the own character, picking and the presenter [PLAN-0010](../0010-world-session/plan.md). This plan adds four things to them: **combat state in the world model**, **the own character's combat rules**, **a timeline that turns each blow into motions, numbers and projectiles**, and **what draws those**.
@@ -34,7 +34,7 @@
 
 - **Client data** (extracted GRF, checked 2026-11-22): `sprite/이팩트/숫자` (digits 0 to 9 and two suffixes, 6 × 11 to 13 × 13 px) and `sprite/이팩트/msg` (0 miss, 1 guard, 2 critical, 3 critical background, 4 lucky background, 5 lucky; meanings from roBrowserLegacy) are there and **already imported** (effect category); `sprite/npc/skel_archer_arrow` (one frame, 8 × 61) is there and not imported yet; `sprite/cursors` action 5 is the attack cursor (lead). **The window textures of the restart prompt (`esc_*.bmp`) are not in the extracted data** and its label texts were not found in it (T0.4 asks the owner).
 - **roBrowserLegacy** (read 2026-11-22: `Entity.js` `onEntityAction`, `Damage.js`, `EntityLife.js`, `WeaponAction.js`, `EquipmentRules.js`, `ArrowFlight.js`, `AttackEffectTable.js`, `Escape.html`) gives the first values of §4.6 to §4.9. They are **leads**: each is one setting or one table row, marked *(lead)*, and replaced by what the original client's footage shows (T0.3). A correction is a setting change plus a Decisions note, not a redesign.
-- **Phase 0 checks** (`tasks.md`, after this plan is approved): **T0.1** packets of §4.1 against `packets_struct.h`, `clif.cpp` and captures; **T0.2** recorded fights for the replay tests; **T0.3** measurements on the owner's footage of the original client (shot list in §6.3); **T0.4** restart prompt: labels, images and layout from the original client. T0.3 and T0.4 depend on the owner and do not block the code phases; the evidence phase does not close without them.
+- **Phase 0 checks** ([tasks.md](tasks.md)): **T0.1** packets of §4.1 against `packets_struct.h`, `clif.cpp` and captures; **T0.2** the plugin's new output (the fights are recorded in T1.5, when the packets exist); **T0.3** measurements on the owner's footage of the original client (shot list in §6.3); **T0.4** restart prompt: labels, images and layout from the original client. T0.3 and T0.4 depend on the owner and do not block the code phases; the evidence phase does not close without them.
 
 ## 2. Architecture
 
@@ -390,7 +390,7 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 | PlayMode: `CombatOverlay_ZeroAllocation_100Numbers300Units`, `_BarsFollowAtFourTurns`, `_BarHiddenAtFullAndWhenDead`; `WorldPresenter_PlaysMotionThenBase`, `_DeathAfterHurt`; `UnitPicker_NearestUnit_PlayerHidesMonster`; `RestartPromptView_TwoButtons` | FR-2, FR-4, FR-6 to FR-9, FR-12 |
 | Release check: no type of `Uninarok.World.Dev` in a release build; the prompt is there | FR-8, FR-11 |
 
-### 6.2 Fixtures (T0.2)
+### 6.2 Fixtures (T0.2, T1.5)
 
 `docs/specs/0011-combat/fixtures/combat-*.bin` with the capture tee (as PLAN-0010 T0.5), a README with how each was made, searched for credentials: **(a)** 20 kills on prt_fild08 with a dagger (normal, critical, miss, multi-hit), own HP falling and refilling, a level up; **(b)** own death, `@raise`, death again, restart; **(c)** a bow user with and without arrows, a too-far reply; **(d)** dual wield; pickup of own and of reserved loot; a second client seen fighting and picking up. The plugin `uninarok_pathdump` writes, beside its view lines, HP and max HP of each monster and one `S` line per second with the player's HP, SP, levels and EXP: the server's truth the replay test compares with (and with `@stats` and `@exp` typed at the end).
 
@@ -416,7 +416,7 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 | D3 | Hit moment by the packet alone: `attackMT`, for every attacker, as FR-4 says | `min(attackMT, 1,000)` for attackers that are not players (first draft): the moment Hercules applies the damage (H8) | Owner's question, 2026-11-22: the cap is a constant inside the server that no packet carries, so copying it ties the client to one server's code, for 15 % of the monsters. The original client does not know it either. A cap of the client's own is possible (roBrowserLegacy has 864 ms) and is measured with shot 16; then it is one value of `CombatSettings` |
 | D4 | After a too-far reply the client approaches one cell closer for that target | Retrying at the same cell; predicting the server's cell | Cannot loop, costs at most one step; prediction is a non-goal |
 | D5 | The client reacts to too-far replies and to silence, not to its own idea that the target of a running attack moved away | Walking as soon as the model says out of range | A walk request ends the server's attack; the server's answer comes within one attack interval and is never wrong |
-| D6 | Numbers and bars are two or three dynamic meshes | `SpriteRenderer`/`SpriteActor` per digit; UI Toolkit or uGUI elements per number and bar | 100 numbers and 300 bars at 0 B per frame (FR-12); moving UI elements every frame costs layout and style writes. The UI Toolkit rule (spec §6) is for game UI such as the prompt; **owner: confirm that the bars may be meshes** |
+| D6 | Numbers and bars are two or three dynamic meshes | `SpriteRenderer`/`SpriteActor` per digit; UI Toolkit or uGUI elements per number and bar | 100 numbers and 300 bars at 0 B per frame (FR-12); moving UI elements every frame costs layout and style writes. The UI Toolkit rule (spec §6) is for game UI such as the prompt; the owner confirmed the meshes (2026-11-22) |
 | D7 | Attack motion, hit frame and projectile lists are tables in code with a reference document | Read from the sprite's `atk` event at run time | Testable without assets (FR-13) |
 | D8 | Restart prompt in UI Toolkit, with the client's images if the owner extracts them, else plain in the same layout | Waiting for the images | The images are not in the extracted data; the labels and the behaviour are what FR-8 asks for |
 | D9 | `0x013B` is handled though the spec's packet list does not name it | Letting the watchdog find out | FR-2: no request that the server would refuse; without it an archer without arrows asks three times |
@@ -430,7 +430,7 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 |---|---|
 | The footage contradicts several leads | All display values are settings or table rows; `combat-reference.md` is the single list; the evidence phase measures again |
 | The original's numbers or bars do not scale as assumed (world or screen) | Both placements go through one function per mesh (§4.8); decided by shots 1 and 10 |
-| A monster healed to full keeps a bar (H10: not reported), against the letter of FR-7 ("gone when the monster is full") | The client shows the last report; the bar goes at the next report or when the unit leaves. Heal skills only. Written into the packet doc; **owner: accept or amend FR-7** |
+| A monster healed to full keeps a bar (H10: not reported) | The client shows the last report; the bar goes at the next report or when the unit leaves. Heal skills only. Written into the packet doc; accepted by the owner, FR-7 amended (2026-11-22) |
 | Client ahead of the server by up to a step (PLAN-0010 D36) gives too-far replies | H4 (the server keeps a request made while walking), D4; the success criterion is measured in the 20-kill run |
 | UI Toolkit input beside the Input System package (no EventSystem in Bootstrap) | Checked first in the prompt's task with a button in an empty panel; fallback: an EventSystem in Bootstrap, recorded here |
 | The server's `attack_walk_delay` or `delay_battle_damage` changed by configuration | Spec §6: defaults assumed only where nothing is sent; both only move what is shown |
