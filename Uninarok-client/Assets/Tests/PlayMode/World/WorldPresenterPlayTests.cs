@@ -690,7 +690,7 @@ namespace Uninarok.World.PlayTests
 
         sealed class BowWeapons : IWeaponTypes
         {
-            public int TypeOf(int weapon) => weapon;
+            public int TypeOf(int job, int right, int left) => right;
         }
 
         [TestCase(0, 1, 0, 2)] // job, sex, server style, head file

@@ -15,10 +15,10 @@ namespace Uninarok.World.Tests
             public bool BlocksSight(int x, int y) => !IsPassable(x, y);
         }
 
-        // The look's weapon value is its type already.
+        // The look's right-hand value is its type already.
         sealed class SameTypes : IWeaponTypes
         {
-            public int TypeOf(int weapon) => weapon;
+            public int TypeOf(int job, int right, int left) => right;
         }
 
         const uint T = 10_000;

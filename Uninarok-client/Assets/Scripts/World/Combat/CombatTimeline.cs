@@ -64,16 +64,20 @@ namespace Uninarok.World
         public ProjectileKind Kind;
     }
 
-    /// <summary>The server's weapon value of a look to its base weapon type, 0 (bare hand) to 30 (PLAN-0011 4.7).</summary>
+    /// <summary>
+    /// Both hands the server sends (<c>Look.Weapon</c>, <c>Look.Shield</c>) of a job to one weapon type, 0 (bare hand) to 30
+    /// (PLAN-0011 4.7, D21): the hands rule of PLAN-0009 4.11.
+    /// </summary>
     public interface IWeaponTypes
     {
-        int TypeOf(int weapon);
+        int TypeOf(int job, int right, int left);
     }
 
-    /// <summary>The job whose sprites and attack rows a job uses: baby, high and transcendent jobs give their base job (D18).</summary>
-    public interface IJobBases
+    /// <summary>The job and sex of the attack row a job uses (PLAN-0011 4.7, D20, D24): the family table of FR-15.</summary>
+    public interface IJobRows
     {
-        int BaseJobOf(int job);
+        int RowJobOf(int job);
+        byte RowSexOf(int job, byte sex);
     }
 
     /// <summary>
@@ -135,7 +139,7 @@ namespace Uninarok.World
         public IWeaponTypes Weapons { get; set; }
 
         /// <summary>Until the catalog is loaded every job stands for itself.</summary>
-        public IJobBases Jobs { get; set; }
+        public IJobRows Jobs { get; set; }
 
         /// <summary>The world whose units the blows are of; a new map's model forgets everything.</summary>
         public void Use(WorldModel model)
@@ -169,7 +173,7 @@ namespace Uninarok.World
                 return false;
             ref readonly var a = ref model[attacker];
             ref readonly var t = ref model[target];
-            int weapon = a.Kind == EntityKind.Player && Weapons != null ? Weapons.TypeOf(a.Look.Weapon) : 0;
+            int weapon = a.Kind == EntityKind.Player && Weapons != null ? Weapons.TypeOf(a.Look.Job, a.Look.Weapon, a.Look.Shield) : 0;
             var kind = ProjectileRules.Of(a.Kind, a.Look.Job, weapon);
             if (kind == ProjectileKind.None) return false;
 
@@ -343,15 +347,14 @@ namespace Uninarok.World
         // FR-4: a hurt unless no damage, endured, a lucky dodge or no hurt time.
         static bool Hurts(in Blow blow) => blow.Damage > 0 && !blow.Endured && blow.Kind != BlowKind.LuckyDodge && blow.HurtMs > 0;
 
-        // 4.7: players by job, sex and weapon type; others always Attack. Dual wield is not told apart here: a shield's view id
-        // reads as a weapon type, so the second hand waits for the catalog's item kinds (T5.4).
+        // 4.7: players by the row job, sex and the type of both hands; others always Attack. Row sex and one type per blow: T10.6.
         byte AttackNumber(in Entity e)
         {
             if (e.Kind != EntityKind.Player) return 1;
             var weapons = Weapons;
-            int right = weapons != null ? weapons.TypeOf(e.Look.Weapon) : 0;
-            int job = Jobs != null ? Jobs.BaseJobOf(e.Look.Job) : e.Look.Job;
-            return (byte)AttackMotions.NumberOf(job, e.Look.Sex, right);
+            int type = weapons != null ? weapons.TypeOf(e.Look.Job, e.Look.Weapon, e.Look.Shield) : 0;
+            int job = Jobs != null ? Jobs.RowJobOf(e.Look.Job) : e.Look.Job;
+            return (byte)AttackMotions.NumberOf(job, e.Look.Sex, type);
         }
 
         int LifeOf(NumberKind kind) => NumberMotion.LifeMs(kind, _settings);

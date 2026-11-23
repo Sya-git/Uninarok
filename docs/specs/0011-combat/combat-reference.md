@@ -57,7 +57,7 @@ Lead: roBrowserLegacy `src/DB/Jobs/WeaponAction.js` (read 2026-11-23). Its job c
 Rules:
 - A job, a weapon type or a sex (other than 0 female or 1 male) that is not listed gives 1.
 - Units that are not players always play `Attack`.
-- The job is the one whose sprites are used. Baby, high and transcendent jobs, and the third jobs that roBrowserLegacy copies from a base job, are looked up by that base job: the caller maps them, T5.4.
+- The timeline passes the server's job and both hand values (`Look.Weapon`, `Look.Shield`): `IJobRows` (`CatalogWeaponTypes`, from `JobFamilies`) gives the row job and row sex of "Job families" below, and `IWeaponTypes.TypeOf(job, right, left)` (`CatalogWeaponTypes.HandsOf(job, right, left).WeaponType`) the one type of both hands. The type for each case is the hands table of plan §4.7; the rule itself is SPEC-0009 `composition-reference.md` "Hands".
 - `AttackMotions.NumberOf(rowJob, sex, weaponType)` takes the row job and row sex of "Job families" below and the type of both hands (`WeaponHands.Combine`); the two-weapon rows 25 to 30 are matched by that combined type (assassin family only), there is no second-hand flag (D21).
 - Taekwon (4046) has one row for every weapon type → 2: owner-observed in the original client, 2026-11-23 (D22); roBrowserLegacy has no row. Its family (Star Gladiator, Star and Sky Emperor) uses it.
 - No row, so 1 for every weapon: Gangsi 4050, Death Knight 4051 (spec: deliberately), Dark Collector 4052, Wedding 22, Xmas 26, Summer 27 and the other outfit jobs (owner, 2026-11-23, D26).
