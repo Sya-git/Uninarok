@@ -197,8 +197,8 @@ public static class AttackRange
 }
 ```
 
-- `CanStrike` = `ClientDistance ≤ range + (targetWalks ? 1 : 0)`, and `max(|dx|, |dy|) ≤ 14`, and `LineOfSight` (the existing `path_search_long` port with `BlocksSight` instead of "not passable"; it and `StraightLine` share one loop) (H1 to H3).
-- Both cells are the model's `CellX/CellY`: server cells (spec FR-3). `UnknownWalkGrid.BlocksSight` is true, so without map data nothing is in range and nothing is sent.
+- `CanStrike` = `ClientDistance ≤ range + (targetWalks ? 1 : 0)`, and either `max(|dx|, |dy|) < 2` (no sight check, as `battle_check_range`) or `max(|dx|, |dy|) ≤ 14` and `LineOfSight` (the existing `path_search_long` port with `BlocksSight` instead of "not passable"; it and `StraightLine` share one loop) (H1 to H3). `LineOfSight` keeps the server's edge rule: a cell outside the map or on its last row or column never blocks sight (`map_getcellp` answers false there for `CELL_CHKWALL`); a grid with no cells has no sight at all (D15).
+- Both cells are the model's `CellX/CellY`: server cells (spec FR-3). `UnknownWalkGrid.BlocksSight` is true and it has no cells, so without map data only adjacent targets are in range (D15).
 
 ### 4.5 Own combat: `OwnCombat`, changes in `OwnCharacter`
 
@@ -449,6 +449,7 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 | D12 | Wire type 13 (multi-hit critical) shown as a multi-hit | Ignoring it | Hercules 2026.09 has it only among the request actions and never sends it for a basic attack |
 | D13 | (T0.1) Any pickup result ≠ 0 is a failure; its code is logged at info level as received | Treating only 6 as a failure, as spec §6 first said (corrected by the owner after T0.1) | `pc_additem` failures reach the client with their own code (2 overweight, 4, 5, 7) through `party_share_loot`; 6 covers only the refusals before that. FR-10 is unchanged: §4.1 already says "`Result` ≠ 0 is a failure" |
 | D14 | (T1.5) The second client of fixture (d) and the reserved loot are a capture of their own, (e) | Waiting with (a) to (d) until a second player can be started | The second player is the owner's Multiplayer Play Mode player and needs the owner; (a) to (d) are enough for the replay of T2.4, and (e) is only needed by the live checks of T9.2 |
+| D15 | (T3.1) `LineOfSight` applies the server's edges itself (outside and the last row and column: no wall) and is false on an empty grid; `BlocksSight` is asked only inside; no sight check below a square distance of 2 | `BlocksSight` true outside deciding the edges (first draft) | `map_getcellp` returns `cellchk == CELL_CHKNOPASS` outside, false for `CELL_CHKWALL`, so the first draft would refuse lines along the edges that the server accepts; `battle_check_range` returns true for adjacent cells before the path check. `UnknownWalkGrid` allows only adjacent targets (no cells, no sight), which the server also accepts |
 
 ## 9. Risks
 

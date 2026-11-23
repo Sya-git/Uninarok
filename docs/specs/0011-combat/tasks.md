@@ -78,7 +78,7 @@
 
 ## Phase 3: Own combat
 
-- [ ] **T3.1** Tests, then implementation: `IWalkGrid.BlocksSight`, `HerculesPathfinder.LineOfSight`, `AttackRange` (plan §4.4). (FR-3, FR-10, FR-13)
+- [x] **T3.1** Tests, then implementation: `IWalkGrid.BlocksSight`, `HerculesPathfinder.LineOfSight`, `AttackRange` (plan §4.4). (FR-3, FR-10, FR-13)
   *Done when:* the `AttackRange_*` and `LineOfSight_MatchesServer_<map>` tests pass (30,000 pairs), SPEC-0010's pathfinder tests too.
 
 - [ ] **T3.2** Tests for `OwnCombat` (plan §4.5). (FR-2, FR-3, FR-10)

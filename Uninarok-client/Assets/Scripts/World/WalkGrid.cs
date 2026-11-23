@@ -11,6 +11,12 @@ namespace Uninarok.World
 
         /// <summary><c>CELL_CHKNOPASS</c> negated; false outside.</summary>
         bool IsPassable(int x, int y);
+
+        /// <summary>
+        /// <c>CELL_CHKWALL</c>: neither walkable nor shootable, so attacks do not pass (SPEC-0011 FR-3; a cliff does not block).
+        /// True outside; the line of sight applies the server's edges itself (PLAN-0011 D15).
+        /// </summary>
+        bool BlocksSight(int x, int y);
     }
 
     /// <summary>The cells of a converted map (PLAN-0010 4.3): the server's (x, y) is the map data's (x, z) with z = y.</summary>
@@ -24,6 +30,7 @@ namespace Uninarok.World
         public int Width => _data.CellsX;
         public int Height => _data.CellsZ;
         public bool IsPassable(int x, int y) => _data.IsWalkable(x, y);
+        public bool BlocksSight(int x, int y) => (_data.FlagsAt(x, y) & (MapCellFlags.Walkable | MapCellFlags.Shootable)) == 0;
     }
 
     /// <summary>The cells of a map the client has no data of (PLAN-0010 4.7): nothing is known, so nothing is passable.</summary>
@@ -32,6 +39,7 @@ namespace Uninarok.World
         public int Width => 0;
         public int Height => 0;
         public bool IsPassable(int x, int y) => false;
+        public bool BlocksSight(int x, int y) => true;
     }
 
     /// <summary>The server's step times (PLAN-0010 4.3): integers, as <c>unit.cpp</c>.</summary>

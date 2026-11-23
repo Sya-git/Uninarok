@@ -18,7 +18,7 @@ namespace Uninarok.World.Tests
         struct Pair
         {
             public int X0, Y0, X1, Y1;
-            public bool Passable, Found, FoundEasy, Straight, Accepted;
+            public bool Passable, Found, FoundEasy, Straight, Accepted, Sight;
             public byte[] Steps, EasySteps;
 
             public override string ToString() => $"{X0},{Y0} to {X1},{Y1}";
@@ -47,6 +47,7 @@ namespace Uninarok.World.Tests
                 p.FoundEasy = (flags & 4) != 0;
                 p.Straight = (flags & 8) != 0;
                 p.Accepted = (flags & 16) != 0;
+                p.Sight = (flags & 32) != 0;
                 p.Steps = r.ReadBytes(length);
                 p.EasySteps = r.ReadBytes(easy);
                 pairs.Add(p);
@@ -147,6 +148,27 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(0, different, first);
         }
 
+        // SPEC-0011 FR-3, FR-13 (PLAN-0011 4.4, T3.1): the attack's line of sight, flag 32 of the fixtures (T0.2).
+        [Test, Category("NeedsData")]
+        public void LineOfSight_MatchesServer([ValueSource(nameof(Maps))] string map)
+        {
+            var (grid, pairs) = Load(map);
+            var finder = new HerculesPathfinder(grid);
+            int different = 0, inSight = 0;
+            string first = null;
+            foreach (var p in pairs)
+            {
+                bool sight = finder.LineOfSight(p.X0, p.Y0, p.X1, p.Y1);
+                if (sight) inSight++;
+                if (sight == p.Sight) continue;
+                different++;
+                first ??= $"{p}: sight {sight}, the server {p.Sight}";
+            }
+            Assert.AreEqual(0, different, first);
+            Assert.Greater(inSight, 0);
+            Assert.Less(inSight, pairs.Count, "some lines are blocked");
+        }
+
         // ---- synthetic maps: '.' passes, '#' does not; the first line is the north row ----
 
         sealed class TextGrid : IWalkGrid
@@ -158,6 +180,7 @@ namespace Uninarok.World.Tests
             public int Width => _rows[0].Length;
             public int Height => _rows.Length;
             public bool IsPassable(int x, int y) => x >= 0 && y >= 0 && x < Width && y < Height && _rows[Height - 1 - y][x] == '.';
+            public bool BlocksSight(int x, int y) => !IsPassable(x, y);
         }
 
         sealed class OpenGrid : IWalkGrid
@@ -166,6 +189,7 @@ namespace Uninarok.World.Tests
             public int Height { get; set; } = 200;
             public Func<int, int, bool> Wall = (x, y) => false;
             public bool IsPassable(int x, int y) => x >= 0 && y >= 0 && x < Width && y < Height && !Wall(x, y);
+            public bool BlocksSight(int x, int y) => !IsPassable(x, y);
         }
 
         [Test]
