@@ -1,7 +1,7 @@
 ---
 name: sdd-spec
-description: Create a spec, plan and tasks for a new Uninarok feature with the SDD agents. Usage /sdd-spec [NNNN] <description>, or /sdd-spec NNNN to resume a spec at its next missing stage.
-argument-hint: "[NNNN] <feature description>"
+description: Create a spec, plan and tasks for a new Uninarok feature with the SDD agents. Usage /sdd-spec [NNNN] <description>; /sdd-spec NNNN resumes a spec at its next missing stage; /sdd-spec NNNN --revise <change> modifies an existing spec and propagates it to plan and tasks.
+argument-hint: "[NNNN] <feature description> | NNNN --revise <change>"
 disable-model-invocation: true
 ---
 
@@ -32,6 +32,7 @@ A task is one reviewable commit. The agents read the templates themselves; do no
 ## 1. Resolve the number and the stage
 1. List `docs/specs/` directories matching `^\d{4}-`. Also check branches: `git branch -a --list "*NNNN-*"`.
 2. Parse `$ARGUMENTS`:
+   - **`NNNN --revise <change>`**: revise mode, section 6. The folder must exist; if not, say so and stop.
    - **No leading 4-digit number**: new spec, `NNNN = highest existing + 1`. The rest is the description.
    - **Leading `NNNN` and a description, number free** (no folder, no branch): new spec with that number.
    - **Leading `NNNN` and a description, number taken**: stop and tell the user (name the existing folder or branch). Do not overwrite.
@@ -62,3 +63,11 @@ Call the `sdd-task-writer` agent with the folder path. Read its report and open 
 
 ## 5. Finish
 Report: folder, status of each file, next command (`/sdd-exec NNNN`). Mention that the files are uncommitted.
+
+## 6. Revise mode (`NNNN --revise <change>`)
+Modifies an existing spec and propagates the change. The same agents run, each told `mode: revise`; nothing is rewritten from scratch and nothing is committed.
+- **Before starting**: read the three headers. If the spec is `Implemented`, ask the user (AskUserQuestion): *revise this spec* or *create a new spec that supersedes it*. If it is `Implementing`, warn that code and ticked tasks exist and will be kept (rework becomes new tasks). Check the working tree has no uncommitted edits to the three files; if it does, ask first.
+- **R1, spec**: call `sdd-spec-writer` with `mode: revise`, the change and the folder. Open questions are handled as in stage A. **Gate**: show the FRs added, changed and removed, and stop. Continue when the user approves the spec (you then set `Approved`) or gives feedback.
+- **R2, plan**: if no FR changed in a way that touches the plan (pure wording), say so and skip to the end. Otherwise call `sdd-plan-writer` with `mode: revise` and the affected FRs. If it reports spec issues, go back to R1 with the user. **Gate**: show sections edited and the **implemented work affected**; the user approves.
+- **R3, tasks**: call `sdd-task-writer` with `mode: revise`, the affected FRs and the plan report. Checked tasks are never altered: rework appears as new tasks naming the original, obsolete unchecked tasks are struck through. **Gate**: show tasks added, struck and edited, and the FR coverage; the user approves.
+- **Finish**: report what changed in each file (suggest `git diff docs/specs/NNNN-*/` to review), the status of each file (`Draft` until approved), and the next command (`/sdd-exec NNNN`). Files stay uncommitted; the revision is one commit the user makes.

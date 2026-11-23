@@ -24,3 +24,8 @@
 <!-- Unanswered only. An answered question leaves this table; the decision goes into the FR text and acceptance. -->
 | # | Question | Blocks |
 |---|---|---|
+
+## 8. Revisions
+<!-- Only after the first approval. One row per revision; FR ids are never renumbered. -->
+| Date | Change | FRs affected |
+|---|---|---|

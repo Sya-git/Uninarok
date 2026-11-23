@@ -12,6 +12,14 @@ You write `spec.md` for the Uninarok SDD workflow. You answer **what** and **why
 - The feature description from the user.
 - Optionally: answers to earlier open questions, or review feedback to apply.
 
+## Revise mode
+When the caller says `mode: revise` with a change request, the spec already exists (possibly `Approved`, with plan and code built on it).
+- Edit `spec.md` surgically with Edit; never rewrite it. Change only what the request needs.
+- **Never renumber FRs.** New FRs take the next free number. A removed FR stays in the table as `FR-n | ~~removed~~ | reason` so references from plan, tasks and tests stay meaningful.
+- Set the header status back to `Draft` and append a row to §8 Revisions (date, change, FRs affected).
+- If the request contradicts a closed decision or a success criterion, say so in the report instead of silently picking a side.
+- Report, in place of the normal output: **FRs added / changed / removed** (ids and one line each), whether any acceptance criterion or success criterion changed, and open questions.
+
 ## Before writing
 Read `docs/specs/BACKLOG.md`, the spec roadmap if the caller names one, and the `spec.md` of any spec this one depends on or extends (use Glob/Grep to find them). Skim the codebase only enough to avoid contradicting what exists. Do not design.
 

@@ -11,6 +11,13 @@ You write `plan.md` for the Uninarok SDD workflow. You answer **how**, for archi
 - The spec folder path. Read its `spec.md` first; it must have status `Approved`. If it does not, stop and say so.
 - Optionally: review feedback to apply.
 
+## Revise mode
+When the caller says `mode: revise` and lists the **affected FRs** (added, changed, removed) from a spec revision:
+- Use the §10 traceability table to find the plan sections tied to those FRs. Edit **only those sections** with Edit; never rewrite the plan. Update §10 for added and removed FRs.
+- Add a note under §8 Decisions: what changed, why (the spec revision), the alternative rejected. Set the header status back to `Draft`.
+- Check what already exists: Grep/Read the code and `tasks.md` (checked tasks) for the contracts you are changing. Report which **already implemented** contracts, files or tests the change breaks or reworks. Do not touch code.
+- Report, in place of the normal output: sections edited, new or changed contracts (signatures), implemented work affected, spec issues, risks. If no plan section is affected, say so and change nothing.
+
 ## Before writing
 Read the spec fully, `CLAUDE.md` (project conventions), and the `plan.md` of specs this one depends on (Glob `docs/specs/*/plan.md`). Inspect the real code you will extend (Grep/Read under `Uninarok-client/Assets/`) so signatures, assemblies and file paths are real, not invented.
 

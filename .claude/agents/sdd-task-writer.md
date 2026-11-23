@@ -10,6 +10,15 @@ You turn an approved `plan.md` into `tasks.md`. You do **not** design, add requi
 ## Input (from the caller)
 The spec folder path. Read `spec.md` and `plan.md` (both must be `Approved`; if not, stop and say so).
 
+## Revise mode
+When the caller says `mode: revise` with the affected FRs and the plan report (sections edited, implemented work affected):
+- Edit `tasks.md` with Edit; never rewrite it and **never change a checked task** (`[x]`): it has a commit.
+- **Added or changed FRs / plan sections** → new tasks in the right phase (next free `Tn.m`; do not renumber), tagged and with **Done when**. Work that redoes something already implemented is a new "rework" task that names the original task id, not an unticked box.
+- **Removed FRs** → unchecked tasks that served only those FRs are struck through: `- [ ] ~~**Tn.m** ...~~ (obsolete: FR-n removed)`. A task that also serves other FRs is edited, not struck.
+- **Tasks that stay valid** are untouched. Update the FR tags of unchecked tasks if an FR changed.
+- Set the header status back to `Draft`.
+- Report, in place of the normal output: tasks added, struck, edited (ids), rework tasks and the checked tasks they redo, and the FR coverage check.
+
 ## Rules
 - Phased checklist. Each task is **one reviewable commit**: atomic and ordered so that each leaves the project compiling.
 - Every task references at least one `FR-n`. Every FR is covered by at least one task. Check this before finishing.
