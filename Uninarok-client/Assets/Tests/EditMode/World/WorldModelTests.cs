@@ -324,18 +324,21 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(0, _world.Count);
         }
 
-        // D37
+        // D37: the owner's videos of the original client, frame by frame (a drop from the inventory; heights in cells).
         [Test]
-        public void WorldModel_ADroppedItem_FallsForHalfASecond()
+        public void WorldModel_ADroppedItem_GoesUpALittleAndFalls()
         {
             _world.AddItem(501, 909, true, 50, 60, 6, 6, 1, true, 1000);
-            Assert.AreEqual(5f, Get(501).Height);
-            _world.Advance(1250);
-            Assert.AreEqual(2.5f, Get(501).Height, 1e-4f);
-            _world.Advance(1499);
+            Assert.AreEqual(1.95f, Get(501).Height);
+            foreach (var (ms, height) in new[] { (33, 2.04f), (86, 2.09f), (150, 2.01f), (233, 1.67f), (300, 1.21f), (350, 0.76f), (400, 0.22f) })
+            {
+                _world.Advance(1000 + (uint)ms);
+                Assert.AreEqual(height, Get(501).Height, 0.06f, $"{ms} ms");
+            }
+            _world.Advance(1415);
             Assert.Greater(Get(501).Height, 0f);
-            _world.Advance(1500);
-            Assert.AreEqual(0f, Get(501).Height);
+            _world.Advance(1425);
+            Assert.AreEqual(0f, Get(501).Height, "on the ground after 0.42 s");
             _world.Advance(2000);
             Assert.AreEqual(0f, Get(501).Height);
         }

@@ -236,7 +236,7 @@ namespace Uninarok.World.PlayTests
             Assert.Greater(_source.HeldCount, 0);
             for (int i = 0; i < 600 && view.Shadow == null; i++) yield return null;
             Assert.IsTrue(view.Shadow.Visible && view.Shadow.Renderer.sprite != null, "its shadow");
-            Assert.AreEqual((0.25f, 0f), (view.Shadow.Scale, view.Height));
+            Assert.AreEqual((0.4f, 0f), (view.Shadow.Scale, view.Height));
 
             _model.RemoveItem(501);
             _presenter.Sync(_model);
@@ -264,11 +264,11 @@ namespace Uninarok.World.PlayTests
             _presenter.Sync(_model);
             var view = _presenter.ItemViewOf(501);
             for (int i = 0; i < 600 && (!view.Loaded || view.Shadow == null); i++) yield return null;
-            Assert.AreEqual(2.5f, view.Height, 1e-4f, "5 cells");
+            Assert.AreEqual(0.975f, view.Height, 1e-4f, "1.95 cells");
             float ground = view.Shadow.Renderer.transform.position.y;
-            _model.Advance(1250);
+            _model.Advance(1086);
             _presenter.Sync(_model);
-            Assert.AreEqual(1.25f, view.Height, 1e-4f);
+            Assert.Greater(view.Height, 1.03f, "up first");
             _model.Advance(1500);
             _presenter.Sync(_model);
             Assert.AreEqual((0f, ground), (view.Height, view.Shadow.Renderer.transform.position.y), "the shadow stays on the ground");

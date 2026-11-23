@@ -26,12 +26,14 @@ namespace Uninarok.World
         [Min(0)] public int DeadMonsterLingerMs = 5000;
         [Tooltip("How long a unit that gets a new walk takes to get from where it is shown to where the server has it, in ms (PLAN-0010 D36).")]
         [Min(0)] public int WalkCorrectionMs = 500;
-        [Tooltip("How long a dropped item falls, in ms; 0: it does not (PLAN-0010 D37).")]
-        [Min(0)] public int ItemFallMs = 500;
-        [Tooltip("How high above the ground a dropped item starts to fall, in cells.")]
-        [Min(0f)] public float ItemFallHeight = 5f;
+        [Tooltip("How high above the ground a dropped item starts, in cells; 0: it lies there at once (PLAN-0010 D37).")]
+        [Min(0f)] public float ItemFallHeight = 1.95f;
+        [Tooltip("How fast a dropped item goes up at first, in cells per second.")]
+        [Min(0f)] public float ItemRiseSpeed = 3.2f;
+        [Tooltip("What pulls a dropped item down, in cells per second squared.")]
+        [Min(0.1f)] public float ItemFallGravity = 37.5f;
         [Tooltip("The scale of an item's shadow; 0: none.")]
-        [Min(0f)] public float ItemShadowScale = 0.25f;
+        [Min(0f)] public float ItemShadowScale = 0.4f;
         [Tooltip("The walk speed (ms per cell) at which the walk animation plays at its own speed.")]
         [Min(1)] public int WalkAnimationSpeed = 150;
 

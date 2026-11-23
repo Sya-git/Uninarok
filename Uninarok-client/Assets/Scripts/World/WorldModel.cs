@@ -240,7 +240,7 @@ namespace Uninarok.World
         }
 
         /// <summary>An item on the ground, at its cell and sub-cell (FR-16).</summary>
-        /// <param name="falls">It was dropped now: it falls to the ground (D37).</param>
+        /// <param name="falls">It was dropped now: it goes up a little and falls to the ground (D37).</param>
         public void AddItem(uint id, int itemId, bool identified, int x, int y, byte subX, byte subY, int amount, bool falls = false, uint now = 0)
         {
             int slot = Update(id, EntityKind.Item, default, 0, HeadDirection.Straight, EntityState.Standing, out _);
@@ -254,7 +254,7 @@ namespace Uninarok.World
             // Twelfths from the cell's south-west corner (ITEM_FALL_ENTRY.md); the centre is the whole number.
             e.PosX = x - 0.5f + subX / 12f;
             e.PosY = y - 0.5f + subY / 12f;
-            e.Falling = falls && _settings.ItemFallMs > 0;
+            e.Falling = falls && _settings.ItemFallHeight > 0f;
             e.FallStarts = now;
             e.Height = e.Falling ? _settings.ItemFallHeight : 0f;
         }
@@ -318,9 +318,11 @@ namespace Uninarok.World
 
         void Fall(ref Entity e, uint now)
         {
-            float part = Math.Max(0, ServerClock.Diff(now, e.FallStarts)) / (float)Math.Max(1, _settings.ItemFallMs);
-            e.Falling = part < 1f;
-            e.Height = e.Falling ? _settings.ItemFallHeight * (1f - part) : 0f;
+            // Thrown up a little from above the ground, then it falls.
+            float t = Math.Max(0, ServerClock.Diff(now, e.FallStarts)) / 1000f;
+            float height = _settings.ItemFallHeight + (_settings.ItemRiseSpeed - 0.5f * Math.Max(0.1f, _settings.ItemFallGravity) * t) * t;
+            e.Falling = height > 0f;
+            e.Height = e.Falling ? height : 0f;
         }
 
         // Moves a walker to where it is at `now`: ends the steps that are over, then places it inside the current one.

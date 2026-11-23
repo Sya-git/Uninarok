@@ -196,7 +196,8 @@
 - [x] **T6.4** `GroundItemView` (plan §4.9). (FR-16)
   *Done when:* a red potion dropped on the local server shows its ground sprite on the server's cell and sub-cell (T0.3 rule) and disappears when another client picks it up (screenshots in `evidence/`).
   *Result (2026-11-22):* play mode test passes (sprite, sub-cell, release). On the local server a red potion shows its ground sprite at its sub-cell and disappears when the other client picks it up (`evidence/t6.4-before-the-other-client-picks-up.png`, `t6.4-after-the-other-client-picked-up.png`).
-  *Changed (2026-11-22):* fall and shadow (D37). `WorldModel_ADroppedItem_FallsForHalfASecond` and `ADroppedItem_FallsToItsShadow` pass; in game with items put in the client's model: `evidence/t6.4-item-falling.png` (the shadow on the ground under it) and `t6.4-item-shadows.png` (landed: at 0.25 the sprite covers its shadow).
+  *Changed (2026-11-22):* fall and shadow (D37). `ADroppedItem_FallsToItsShadow` passes; in game with items put in the client's model: `evidence/t6.4-item-falling.png`.
+  *Changed (2026-11-22):* to what the owner's videos show (D37, `evidence/t6.4-original-drop-inventory.png`): up a little, then down, shadow 0.4. `WorldModel_ADroppedItem_GoesUpALittleAndFalls` (heights of the video) and `ADroppedItem_FallsToItsShadow` pass (World EditMode 170/170, PlayMode 45/45). On the local server a potion of `/drop` was 66.1 px above the ground on the screen, 70.5 px after 83 ms, 45.1 px after 283 ms, 0 after 434 ms (the video: 64.2, 69.1 at 83 ms, 44.9 at 283 ms, 0 at 433 ms).
 
 - [x] **T6.5** Camera follow and snap on entry and map change (plan §4.10). (FR-12)
   *Done when:* walking across prontera keeps the own character centred; after a warp, the first rendered frame shows the character (frame capture in `evidence/`).

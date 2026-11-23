@@ -19,7 +19,8 @@ MonoBehaviour:
   HoldRepeatMs: 500
   DeadMonsterLingerMs: 5000
   WalkCorrectionMs: 500
-  ItemFallMs: 500
-  ItemFallHeight: 5
-  ItemShadowScale: 0.25
+  ItemFallHeight: 1.95
+  ItemRiseSpeed: 3.2
+  ItemFallGravity: 37.5
+  ItemShadowScale: 0.4
   WalkAnimationSpeed: 150

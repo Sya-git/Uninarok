@@ -13,7 +13,7 @@ namespace Uninarok.World.Tests
             Assert.IsNotNull(s, "Assets/Settings/World/WorldSettings.asset");
             Assert.AreEqual((17, 14, 1), (s.MaxWalkPath, s.MaxWalkPathObstructed, s.CellStackLimit));
             Assert.AreEqual((500, 5000, 150), (s.HoldRepeatMs, s.DeadMonsterLingerMs, s.WalkAnimationSpeed));
-            Assert.AreEqual((500, 500, 5f, 0.25f), (s.WalkCorrectionMs, s.ItemFallMs, s.ItemFallHeight, s.ItemShadowScale));
+            Assert.AreEqual((500, 1.95f, 3.2f, 37.5f, 0.4f), (s.WalkCorrectionMs, s.ItemFallHeight, s.ItemRiseSpeed, s.ItemFallGravity, s.ItemShadowScale));
             Assert.IsFalse(s.WarpKeepsDirection);
         }
     }
