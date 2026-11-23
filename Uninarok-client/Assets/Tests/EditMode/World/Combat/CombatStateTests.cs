@@ -53,7 +53,7 @@ namespace Uninarok.World.Tests
 
         // ---- Blow (FR-5) ----
 
-        [Test, Ignore("pending T2.2")]
+        [Test]
         public void Blow_From_EachWireType()
         {
             var rows = new (int type, BlowKind kind, bool endured)[]
@@ -71,7 +71,7 @@ namespace Uninarok.World.Tests
             }
         }
 
-        [Test, Ignore("pending T2.2")]
+        [Test]
         public void Blow_From_CountZeroIsOneHit()
         {
             Assert.AreEqual(1, Blow.From(Damage(Player, Player, 12, count: 0, attackMt: 0, attackedMt: 0), 0).Hits);
@@ -84,7 +84,7 @@ namespace Uninarok.World.Tests
 
         // ---- the model (FR-1, FR-4, FR-9) ----
 
-        [Test, Ignore("pending T2.2")]
+        [Test]
         public void WorldModel_Strike_TargetFacingLastBlow()
         {
             Monster();
@@ -112,7 +112,7 @@ namespace Uninarok.World.Tests
             Assert.DoesNotThrow(() => _world.Strike(Blow.From(Damage(998, Poring, 3), 140)));
         }
 
-        [Test, Ignore("pending T2.2")]
+        [Test]
         public void WorldModel_SetHp_FromEachEntry()
         {
             Monster();
@@ -132,7 +132,7 @@ namespace Uninarok.World.Tests
             Assert.DoesNotThrow(() => _world.SetHp(999, 1, 1));
         }
 
-        [Test, Ignore("pending T2.2")]
+        [Test]
         public void WorldModel_VanishClearsTargets()
         {
             Monster();
@@ -152,7 +152,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual((0u, 0u), (Get(Other).TargetId, Get(Poring).TargetId));
         }
 
-        [Test, Ignore("pending T2.2")]
+        [Test]
         public void WorldModel_FeignedDeathIsNotDeath()
         {
             Human();
@@ -168,7 +168,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(EntityState.Standing, Get(Player).State);
         }
 
-        [Test, Ignore("pending T2.2")]
+        [Test]
         public void WorldModel_ZeroHpDoesNotKill()
         {
             Monster();

@@ -1,4 +1,5 @@
 using System;
+using Uninarok.Networking.Client;
 using Uninarok.Networking.Packets.In.Map;
 
 namespace Uninarok.World
@@ -47,8 +48,45 @@ namespace Uninarok.World
         }
 
         /// <summary>No damage on either hand, and not a lucky dodge.</summary>
-        public bool IsMiss => throw new NotImplementedException();
+        public bool IsMiss => Damage == 0 && LeftDamage == 0 && Kind != BlowKind.LuckyDodge;
 
-        public static Blow From(in DAMAGE p, uint now) => throw new NotImplementedException();
+        /// <summary>The packet's blow, starting <paramref name="now"/> (server clock). Unknown wire types are normal blows.</summary>
+        public static Blow From(in DAMAGE p, uint now)
+        {
+            BlowKind kind;
+            bool endured = false;
+            switch (p.Type)
+            {
+                case 0: // normal
+                case 5: // splash
+                case 6: // skill
+                    kind = BlowKind.Normal;
+                    break;
+                case 4:
+                    kind = BlowKind.Normal;
+                    endured = true;
+                    break;
+                case 8:
+                case 13: // multi-hit critical: never sent for a basic attack by Hercules 2026.09 (D12)
+                    kind = BlowKind.MultiHit;
+                    break;
+                case 9:
+                    kind = BlowKind.MultiHit;
+                    endured = true;
+                    break;
+                case 10:
+                    kind = BlowKind.Critical;
+                    break;
+                case 11:
+                    kind = BlowKind.LuckyDodge;
+                    break;
+                default:
+                    NetLog.Trace("damage of unknown type " + p.Type);
+                    kind = BlowKind.Normal;
+                    break;
+            }
+            return new Blow(p.SourceId, p.TargetId, now, p.AttackMt, p.AttackedMt, p.Damage, p.LeftDamage, (short)Math.Max(1, (int)p.Count),
+                            kind, endured, p.Type);
+        }
     }
 }
