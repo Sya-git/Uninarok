@@ -25,7 +25,7 @@
 | H5 | A walk request during the walk delay after a blow (`attack_walk_delay`: the attacker's `amotion`) is **kept by the server** and run when the delay ends (up to 2 s); every accepted walk stops the attack | `unit_walk_toxy` (flag 4), `unit_stop_attack` | The client sends the walk at once and buffers nothing (§4.5) |
 | H6 | A continuous attack ends silently when: no line of sight, weight ≥ 90 %, warg riding, a status that forbids attacking. With no arrows the server answers `ZC_ACTION_FAILURE` `0x013B` (type 0) | `unit_attack`, `pc_can_attack`, `battle_check_arrows`, `clif_arrow_fail` | Watchdog with a limit (§4.5); `0x013B` ends the attack |
 | H7 | An attack sends `UNIT_STOP_MOVE` for the player first (`clif_fixpos`) when it was asked for (not for the repeats) | `unit_attack_timer_sub` | Already handled (SPEC-0010 FR-7); it must not end a motion (§4.6) |
-| H8 | Damage is applied `amotion` after the blow; for attackers that are not players `amotion` is capped at **1,000 ms** there, while the packet carries the uncapped value | `battle_delay_damage` | Hit moment, D3 |
+| H8 | Damage is applied `amotion` after the blow; for attackers that are not players `amotion` is capped at **1,000 ms** there (a constant in the code), while the packet carries the uncapped value. 268 of the 1,759 monsters of `db/re/mob_db.conf` have an attack motion above that (at most 2,000 after the server's limit). No packet says when the damage is applied: `DAMAGE` is sent once, at the start of the blow; after it only the new HP arrives | `battle_delay_damage`, `mob_db` | Shown by the packet's value, not by the cap (D3); a death that arrives earlier waits (§4.6) |
 | H9 | A monster's death notice (`UNIT_VANISH` 1) is sent **250 ms after** the damage was applied; a player's at once. A monster that looks like a player class dies at once too, and vanishes (reason 0) 3 s later | `mob_dead` (`clearunit_delayed(…, tick + 250)`), `pc_dead` | A monster's hurt motion has about 250 ms before its death (§4.6, FR-9) |
 | H10 | Each damage or heal of a monster below full HP re-sends `0x09FD` with `maxHP`, `HP`, the killing blow with HP 0. At full HP nothing is sent (a monster healed to full is **not** reported) | `mob_damage`, `mob_heal`, `clif_show_monster_hp_bar` | `HP` is taken from all three entry packets (§4.2); limit in §9 |
 | H11 | Self damage (poison and others) is a damage packet with source = target, both times 0 and often `count` 0; `@heal` sends negative damage the same way; an absorbed blow is −1 | callers of `clif->damage` | §4.6 rules for `attackMT` 0, `count` 0 and negative damage |
@@ -237,9 +237,9 @@ public sealed class CombatTimeline
 ```
 
 - **Storage**: arrays allocated once; pending hits, numbers and projectiles are compact arrays with swap removal; `UnitMotion` per model slot with the slot's `Generation` (a reused slot has no motion). Full: the oldest entry is dropped, one warning per session.
-- **Hit moment** (FR-4, D3): `At + AttackMs`; for an attacker that is not a player `At + min(AttackMs, 1,000)` (H8). For a blow with a projectile the original client waits for: the projectile's arrival (§4.7). `AttackMs ≤ 0` (H11): at once.
+- **Hit moment** (FR-4, D3): `At + AttackMs`, for every attacker. For a blow with a projectile the original client waits for: the projectile's arrival (§4.7). `AttackMs ≤ 0` (H11): at once.
 - **Attack motion** at `At`, when the attacker is known, alive, differs from the target and `AttackMs > 0`: `Attack`, `DurationMs = AttackMs`, `AttackNumber` from `AttackMotions` (§4.7). It replaces whatever motion plays (FR-4: a new blow restarts it). After an attack or a hurt a player stands in `Standby` for `StandbyMs` *(lead: until it does something else; measured in T0.3; 0 turns it off)* (D11).
-- **At each hit moment**: the number starts (kind, value, the target's shown position then), and the target plays `Hurt` for `HurtMs` unless: no damage, endured, lucky dodge, `HurtMs ≤ 0`, target dead. A hurt replaces an attack, standby or pickup motion. Walking goes on underneath: the model is not touched, so a walking unit keeps its path position and shows its walk again when the hurt ends.
+- **At each hit moment**: the number starts (kind, value, the target's shown position then), and the target plays `Hurt` for `HurtMs` unless: no damage, endured, lucky dodge, `HurtMs ≤ 0`, the target's death already shown. A hurt replaces an attack, standby or pickup motion. Walking goes on underneath: the model is not touched, so a walking unit keeps its path position and shows its walk again when the hurt ends.
 - **Which numbers** (FR-5):
 
 | Blow | Numbers (time after the hit moment) |
@@ -254,7 +254,7 @@ public sealed class CombatTimeline
 
   Split of a multi-hit: each hit `damage / n`, the remainder on the last, so they always sum to the total (FR-5); a total smaller than `n` shows one number. Each split hit starts its own hurt.
 - **Motion and base animation**: the presenter shows the motion while one plays, else the base animation of PLAN-0010 §4.9. A walk that *starts* while an attack, pickup or standby motion plays ends it; a hurt is not ended by a walk. Sitting and death end every motion, death subject to `HoldsDeath`. `Stop` and facing changes end nothing (H7).
-- **Death after the hit** (FR-9): `Vanish(Died)` changes the model at once. `HoldsDeath(slot)` is true while a hit added before the death notice is pending, and until `HurtBeforeDeathMs` after that last hit moment for units that are not players (250, H9; 0 for players; T0.3). The presenter keeps showing the hurt until it is false, then plays the death. It delays neither the model nor the removal time.
+- **Death after the hit** (FR-9): `Vanish(Died)` changes the model at once. `HoldsDeath(slot)` is true while a hit added before the death notice is pending, and until `HurtBeforeDeathMs` after that last hit moment for units that are not players (250, H9; 0 for players; T0.3). The presenter keeps showing the hurt until it is false, then plays the death. It delays neither the model nor the removal time. With a slow monster the notice can come up to 1 s before the hit moment (H8): the number, the hurt and the death are then shown in that order, and the HP bar falls before them, as the server sends it.
 - **Pickup motion** (FR-10): players only, `PickUp` once at its own speed, facing the item when its cell differs. Monsters that loot have no such animation.
 - **A target or attacker that is not in the model**: no number without a target; the motion of the known one still plays.
 
@@ -336,7 +336,7 @@ Satisfies FR-8.
 ```csharp
 public sealed class RestartPrompt                      // pure
 {
-    public bool IsOpen { get; }                         // own character dead (not feigning), not closed, no answer awaited
+    public bool IsOpen { get; }                         // own character dead (not feigning) and its death shown, not closed, no answer awaited
     public event Action Changed;
     public void Update(uint now);                       // each frame, from the model's own state
     public void ToggleByEscape();                       // only while dead
@@ -344,7 +344,7 @@ public sealed class RestartPrompt                      // pure
 }
 ```
 
-- Opens when the own entity becomes `Dead` and not `Feigning` (also when the character enters the map dead), closes when it stands (resurrection, respawn on the new map) or leaves the game. After `ReturnToSavePoint` it is hidden and waits; with neither a map change nor a resurrection within `RestartTimeoutMs` (3,000) it opens again.
+- Opens when the own entity is `Dead`, not `Feigning`, and `HoldsDeath` is false (also when the character enters the map dead), closes when it stands (resurrection, respawn on the new map) or leaves the game. After `ReturnToSavePoint` it is hidden and waits; with neither a map change nor a resurrection within `RestartTimeoutMs` (3,000) it opens again.
 - **View**: UI Toolkit (`UIDocument`, `RestartPrompt.uxml`/`.uss`), in every build (not in the Dev assembly), a scene object in Bootstrap. Two buttons with the labels and order of T0.4. Esc is ignored while the dev command line is open. If the owner can extract the `esc_*.bmp` images, window and buttons use them through the importer; if not, plain USS in the same size and layout (D8).
 - While dead `OwnInput` sends nothing; the camera and the dev tools keep working.
 
@@ -377,9 +377,9 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 | `OwnCombat_Click_SendsSingle`, `_CtrlHoldNoCtrl_SendContinuous`, `_PlayerNpcOwn_SendNothing`, `_SittingOrDead_SendNothing`, `_GroundClick_StopsThenWalks` | FR-2 |
 | `OwnCombat_Approach_StopsAtRange1And9`, `_TargetMoves_WalksAgain`, `_AsksWhileWalkingOnceInRange`, `_TooFar_ApproachesAgainAndCloser`, `_Silence_AsksAgainThenGivesUp`, `_TargetDies_Idle`, `_NoAmmo_Idle` | FR-3 |
 | `OwnCombat_PickUp_WalksWithinTwoThenAsks`, `_FailureRetriedOnce`, `_FailureReportedOnce` | FR-10 |
-| `CombatTimeline_AttackLasts500_HitAt500_Hurt300`, `_EnduredHasNumberNoHurt`, `_MissNoHurt`, `_WalkKeepsPosition`, `_NewBlowRestarts`, `_MonsterCap1000`, `_SelfDamage` | FR-4 |
+| `CombatTimeline_AttackLasts500_HitAt500_Hurt300`, `_EnduredHasNumberNoHurt`, `_MissNoHurt`, `_WalkKeepsPosition`, `_NewBlowRestarts`, `_SlowMonster1320_HitAt1320`, `_SelfDamage` | FR-4 |
 | `CombatTimeline_Kinds` (each row of §4.6's table), `_DoubleAttack300_150_150_300`, `_DualWield_TwoNumbers`, `_SplitAlwaysSums` (1 to 100 hits) | FR-5 |
-| `CombatTimeline_DeathHeldUntilHit`, `_MonsterHurt250`, `_OwnDeath`, `_PickUpMotion` | FR-9, FR-10 |
+| `CombatTimeline_DeathHeldUntilHit` (also a notice at 1,000 for a hit at 1,320), `_MonsterHurt250`, `_OwnDeath`, `_PickUpMotion` | FR-9, FR-10 |
 | `ProjectileRules_Players`, `_Monsters`, `_FlightTimes_2_5_9`, `_NumberWaits`; `AttackMotions_Rows` | FR-4, FR-14 |
 | `NumberMotion_Table` (pose at fixed times against `combat-reference.md`) | FR-6 |
 | `UnitClock_FitMs_LastsExactly_AnyFrameCount`; `UnitView_PlayFor_DirectionChangeKeepsTime` | FR-4 |
@@ -396,7 +396,7 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 
 ### 6.3 Reference footage of the original client (owner, T0.3)
 
-1920 × 1080, 60 fps, default view, as for PLAN-0010 D37. Shots: **1** ten normal blows on a poring (path, size, colour and time of the numbers; hurt; bar; pose after the attack); **2** criticals; **3** misses in both directions (over whom are they shown); **4** own damage; **5** double attack (places and times of the parts and the total); **6** dual wield; **7** fast attacks, many numbers; **8** a kill (last number, hurt, death); **9** own death and the prompt, Esc, close; **10** HP bars at several zooms and at low HP; **11** bow at 2, 5 and 9 cells; **12** an archer skeleton; **13** one attack each with gun, throwing weapon, whip, instrument; **14** click, hold and release on a monster; a player standing in front of a monster; a ground click right after a blow; **15** picking up an item. Measured values go to `combat-reference.md` with the frame numbers; frames are kept in `evidence/`.
+1920 × 1080, 60 fps, default view, as for PLAN-0010 D37. Shots: **1** ten normal blows on a poring (path, size, colour and time of the numbers; hurt; bar; pose after the attack); **2** criticals; **3** misses in both directions (over whom are they shown); **4** own damage; **5** double attack (places and times of the parts and the total); **6** dual wield; **7** fast attacks, many numbers; **8** a kill (last number, hurt, death); **9** own death and the prompt, Esc, close; **10** HP bars at several zooms and at low HP; **11** bow at 2, 5 and 9 cells; **12** an archer skeleton; **13** one attack each with gun, throwing weapon, whip, instrument; **14** click, hold and release on a monster; a player standing in front of a monster; a ground click right after a blow; **15** picking up an item; **16** a monster slower than 1 s (Medusa, 1,320 ms): when its attack ends, when the number and the hurt start, when the own HP falls. Measured values go to `combat-reference.md` with the frame numbers; frames are kept in `evidence/`.
 
 ## 7. Migration and compatibility
 
@@ -413,7 +413,7 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 |---|---|---|---|
 | D1 | Combat values in `Entity`, `OwnStatus` beside the model, `OwnCombat` for the own character's intent | A separate combat world keyed by id | One owner per fact (PLAN-0010 D1); the own status outlives a map, the model does not |
 | D2 | The model changes when the packet arrives; a separate timeline holds what is shown later | Delaying packets or model changes to the hit moment | The server's state must stay testable and immediate (range, death, HUD); only the display waits |
-| D3 | Hit moment of attackers that are not players: `min(attackMT, 1,000)` | `attackMT` for all, as FR-4's main clause reads | FR-4 gives its reason in brackets: the moment Hercules applies the damage, which is capped for them (H8). Differs only for monsters slower than 1 s. **Owner: confirm with this plan** |
+| D3 | Hit moment by the packet alone: `attackMT`, for every attacker, as FR-4 says | `min(attackMT, 1,000)` for attackers that are not players (first draft): the moment Hercules applies the damage (H8) | Owner's question, 2026-11-22: the cap is a constant inside the server that no packet carries, so copying it ties the client to one server's code, for 15 % of the monsters. The original client does not know it either. A cap of the client's own is possible (roBrowserLegacy has 864 ms) and is measured with shot 16; then it is one value of `CombatSettings` |
 | D4 | After a too-far reply the client approaches one cell closer for that target | Retrying at the same cell; predicting the server's cell | Cannot loop, costs at most one step; prediction is a non-goal |
 | D5 | The client reacts to too-far replies and to silence, not to its own idea that the target of a running attack moved away | Walking as soon as the model says out of range | A walk request ends the server's attack; the server's answer comes within one attack interval and is never wrong |
 | D6 | Numbers and bars are two or three dynamic meshes | `SpriteRenderer`/`SpriteActor` per digit; UI Toolkit or uGUI elements per number and bar | 100 numbers and 300 bars at 0 B per frame (FR-12); moving UI elements every frame costs layout and style writes. The UI Toolkit rule (spec §6) is for game UI such as the prompt; **owner: confirm that the bars may be meshes** |
