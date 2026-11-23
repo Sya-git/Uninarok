@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Approved (revision 2026-11-23, approved by the owner 2026-11-23; §8: FR-1 and FR-15 amended, FR-17 added; second revision 2026-11-23, §8: composer presets (per user, four read-only starter presets), FR-18 added, FR-15 pointer; the rest was Implemented 2026-11-22, approved by the owner 2026-11-21, FR-16 added and approved 2026-11-22) |
+| **Status** | Implementing (revision 2026-11-23, approved by the owner 2026-11-23; §8: FR-1 and FR-15 amended, FR-17 added; second revision 2026-11-23, §8: composer presets (per user, four read-only starter presets), FR-18 added, FR-15 pointer; the rest was Implemented 2026-11-22, approved by the owner 2026-11-21, FR-16 added and approved 2026-11-22) |
 | **Created** | 2026-11-21 |
 | **Owner** | Jhonnatan |
 | **Depends on** | [SPEC-0006](../0006-rsw-map-scene/spec.md) (map scene), [SPEC-0007](../0007-spr-act-pal-sprites/spec.md) (one sprite), [SPEC-0008](../0008-sprite-catalog/spec.md) (catalog by id) |

@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [spec.md](spec.md) (SPEC-0009, approved 2026-11-21; revisions of 2026-11-23 approved 2026-11-23: FR-1 and FR-15 amended, FR-17 and FR-18 added) |
-| **Status** | Approved (revision 2026-11-23, approved by the owner 2026-11-23: §4.11 both hands, §4.12 composer presets, D31 to D40, R12 to R17, the notes marked "Revision 2026-11-23"); the rest Implemented (2026-11-22; approved by the owner 2026-11-21; §4.10, FR-16, approved 2026-11-22) |
+| **Status** | Implementing (revision 2026-11-23, approved by the owner 2026-11-23: §4.11 both hands, §4.12 composer presets, D31 to D40, R12 to R17, the notes marked "Revision 2026-11-23"); the rest Implemented (2026-11-22; approved by the owner 2026-11-21; §4.10, FR-16, approved 2026-11-22) |
 | **Audience** | Architects, senior developers, AI agents |
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. One sprite (sheets, animations, palettes, `SpriteActor`, `SpriteSystem`, `Uninarok/RoSprite`) is [PLAN-0007](../0007-spr-act-pal-sprites/plan.md); finding sprites by id (`SpriteCatalog`, entries, the lub reader) is [PLAN-0008](../0008-sprite-catalog/plan.md); map scenes and `MapData` are PLAN-0005/0006. This plan adds the layer above them: **a look (ids) → loaded parts → one composed, camera-facing unit**, plus the camera that looks at it. The composition rules taken from the client's tables are documented in [composition-reference.md](composition-reference.md) (written in T0.2, normative for its topic, updated in the same commit as the code that uses it).

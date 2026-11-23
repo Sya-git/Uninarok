@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Approved (revision 2026-11-23, approved by the owner 2026-11-23: Phases 10 and 11 added for FR-1, FR-15, FR-17, FR-18; not yet approved). Phases 0 to 9: Implemented (2026-11-22; approved by the owner 2026-11-21; Phase 9, FR-16, approved 2026-11-22) |
+| **Status** | Implementing (revision 2026-11-23, approved by the owner 2026-11-23: Phases 10 and 11 added for FR-1, FR-15, FR-17, FR-18; not yet approved). Phases 0 to 9: Implemented (2026-11-22; approved by the owner 2026-11-21; Phase 9, FR-16, approved 2026-11-22) |
 
 **How to use this file**
 - Start only when SPEC-0008 is implemented and merged into `main` (its catalog facade, entries and editor lookup are what this spec builds on). Work on branch `feature/0009-unit-display`.
@@ -245,7 +245,7 @@ Works on the branch `feature/0010-world-session` (the owner reported it while re
 
 Plan §4.11, §6 (revision table), D31 to D36, R12 to R15. Spec FR-17, FR-1 (hands), FR-15 (hands as input). The rule is defined once, in `Uninarok.Units` (`Rules/WeaponHands.cs`, `Rules/JobFamilies.cs`); the combat adapter calls it (D31).
 
-- [ ] **T10.1** [core] Tests, pending T10.2: `WeaponHands_Combine_EveryCase` (the case table of plan §4.11: weapon/none, none/weapon, assassin weapon/weapon for the six pairs in both orders, swordsman weapon/weapon, weapon/shield, katar alone and with a left value, none/shield, none/none, unknown hands) and `WeaponHands_CombinedType_SixPairsEitherOrder_ElseZero`, `JobFamilies_IsAssassinFamily_EveryIdAndNotRogue`. Synthetic data. (FR-17)
+- [x] **T10.1** [core] Tests, pending T10.2: `WeaponHands_Combine_EveryCase` (the case table of plan §4.11: weapon/none, none/weapon, assassin weapon/weapon for the six pairs in both orders, swordsman weapon/weapon, weapon/shield, katar alone and with a left value, none/shield, none/none, unknown hands) and `WeaponHands_CombinedType_SixPairsEitherOrder_ElseZero`, `JobFamilies_IsAssassinFamily_EveryIdAndNotRogue`. Synthetic data. (FR-17)
   *Done when:* they compile against the empty signatures of plan §4.11 and are listed as ignored ("pending T10.2"); no new warnings in `Logs/Editor.log`.
 
 - [ ] **T10.2** [core] Implementation: `HandKind`, `Hand`, `WeaponSource`, `HandsResult` (with `Describe()`), `WeaponHands.CombinedType`, `WeaponHands.Combine`, `WeaponHands.IsItemId`, and `JobFamilies.IsAssassinFamily` (the six ids of plan §4.11). Removes the marks of T10.1. (FR-17)
