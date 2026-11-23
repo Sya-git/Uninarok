@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Draft |
+| **Status** | Approved (owner, 2026-11-22) |
 
 **How to use this file**
 - Work on branch `feature/0011-combat`. Do tasks **in order**, except T0.3 and T0.4: they wait for the owner and do not block phases 1 to 8; phase 9 does not close without them.

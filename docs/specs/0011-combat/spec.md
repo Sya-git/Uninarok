@@ -8,7 +8,7 @@
 | **Depends on** | [SPEC-0001](../0001-networking-core/spec.md) (packets), [SPEC-0009](../0009-unit-display/spec.md) (animations: attack, hurt, dead; play once and hold), [SPEC-0010](../0010-world-session/spec.md) (world model, server clock, own walk, vanish reasons, ground items) |
 | **Reference** | [Packets](../0001-networking-core/Packets/INDEX.md), [Packet catalog](../0001-networking-core/Packets/CATALOG.md) |
 | **Plan** | [plan.md](plan.md) (Approved, 2026-11-22) |
-| **Tasks** | [tasks.md](tasks.md) (Draft, 2026-11-22) |
+| **Tasks** | [tasks.md](tasks.md) (Approved, 2026-11-22) |
 
 ## 1. Why
 
