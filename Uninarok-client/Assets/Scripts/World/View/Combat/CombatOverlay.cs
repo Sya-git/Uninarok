@@ -312,8 +312,7 @@ namespace Uninarok.World.View
                 var ground = WorldPresenter.Position(map, n.X + pose.X, n.Y + pose.Y);
                 if (map.TryGetHeight(ground, out float y)) ground.y = y;
                 var at = ground + Vector3.up * (pose.Height * map.CellSize);
-                var colour = n.OnPlayer ? _settings.NumberOnPlayer : _settings.NumberOnMonster;
-                if (n.Kind == NumberKind.Critical) colour = _settings.NumberCritical;
+                var colour = NumberMotion.ColourOf(n.Kind, n.OnPlayer, _settings);
                 colour.a *= pose.Alpha;
                 var c32 = (Color32)colour;
                 var white = (Color32)new Color(1f, 1f, 1f, pose.Alpha);

@@ -245,7 +245,7 @@ namespace Uninarok.World
                         uint at = unchecked(hit + (uint)(i * Math.Max(0, _settings.MultiHitMs)));
                         bool last = i == hits - 1;
                         Pend(at, blow.TargetId, last ? blow.Damage - part * (hits - 1) : part, kind, hurts, blow.HurtMs);
-                        if (last) Pend(at, blow.TargetId, blow.Damage, NumberKind.Total, false, 0);
+                        if (last && !TargetIsPlayer(blow.TargetId)) Pend(at, blow.TargetId, blow.Damage, NumberKind.Total, false, 0); // D28: no total over a player
                     }
                 }
             }
@@ -253,6 +253,8 @@ namespace Uninarok.World
                 Pend(unchecked(hit + (uint)Math.Max(0, _settings.LeftHandMs)), blow.TargetId, blow.LeftDamage, NumberKind.Normal,
                      !blow.Endured && blow.HurtMs > 0, blow.HurtMs);
         }
+
+        bool TargetIsPlayer(uint id) => _model != null && _model.TryGetSlot(id, out int slot) && _model[slot].Kind == EntityKind.Player;
 
         /// <summary>A unit picked up an item (UNIT_ACT 1): a player bends down once (FR-10).</summary>
         public void AddPickUp(uint id, uint itemId, uint now)

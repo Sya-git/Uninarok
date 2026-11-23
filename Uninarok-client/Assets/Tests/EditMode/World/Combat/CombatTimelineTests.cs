@@ -278,6 +278,35 @@ namespace Uninarok.World.Tests
         }
 
         [Test]
+        public void CombatTimeline_MultiHit_TotalOnlyOverNonPlayer()
+        {
+            // FR-5, D28: the parts always, the total only when the target is not a player.
+            Add(Hit(P, M, T, 300, kind: BlowKind.MultiHit, hits: 2));
+            Add(Hit(M, Q, T, 300, kind: BlowKind.MultiHit, hits: 2));
+            At(T + 700);
+            int totalsOnM = 0, partsOnM = 0, totalsOnQ = 0, partsOnQ = 0;
+            foreach (var n in _timeline.Numbers)
+            {
+                bool total = n.Kind == NumberKind.Total;
+                if (n.TargetId == M) { if (total) totalsOnM++; else partsOnM++; }
+                else if (n.TargetId == Q) { if (total) totalsOnQ++; else partsOnQ++; }
+            }
+            Assert.AreEqual((2, 1), (partsOnM, totalsOnM), "over a monster: the parts and a total");
+            Assert.AreEqual((2, 0), (partsOnQ, totalsOnQ), "over a player: the parts and no total");
+        }
+
+        [Test]
+        public void CombatTimeline_NumberColours_PartsWhiteOrRed_TotalYellowGreen()
+        {
+            // FR-6, D28.
+            Assert.AreEqual((0.9f, 0.9f, 0.15f), (_settings.NumberTotal.r, _settings.NumberTotal.g, _settings.NumberTotal.b));
+            Assert.AreEqual(Color.white, NumberMotion.ColourOf(NumberKind.Normal, false, _settings));
+            Assert.AreEqual(Color.red, NumberMotion.ColourOf(NumberKind.Normal, true, _settings));
+            Assert.AreEqual(_settings.NumberTotal, NumberMotion.ColourOf(NumberKind.Total, false, _settings));
+            Assert.AreEqual(_settings.NumberCritical, NumberMotion.ColourOf(NumberKind.Critical, true, _settings));
+        }
+
+        [Test]
         public void CombatTimeline_DualWield_TwoNumbers()
         {
             Add(Hit(P, M, T, 100, left: 40));

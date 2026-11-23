@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Uninarok.World
 {
@@ -14,6 +15,14 @@ namespace Uninarok.World
     /// </summary>
     public static class NumberMotion
     {
+        /// <summary>The colour of a number (FR-6, D28): white over a monster, red over a player, the total yellow-green, a critical its own.</summary>
+        public static Color ColourOf(NumberKind kind, bool onPlayer, CombatSettings settings)
+        {
+            if (kind == NumberKind.Critical) return settings.NumberCritical;
+            if (kind == NumberKind.Total) return settings.NumberTotal;
+            return onPlayer ? settings.NumberOnPlayer : settings.NumberOnMonster;
+        }
+
         /// <summary>The life of a number of this kind, in ms.</summary>
         public static int LifeMs(NumberKind kind, CombatSettings settings)
         {

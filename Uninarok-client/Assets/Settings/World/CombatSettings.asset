@@ -49,6 +49,7 @@ MonoBehaviour:
   NumberOnMonster: {r: 1, g: 1, b: 1, a: 1}
   NumberOnPlayer: {r: 1, g: 0, b: 0, a: 1}
   NumberCritical: {r: 0.9, g: 0.9, b: 0.15, a: 1}
+  NumberTotal: {r: 0.9, g: 0.9, b: 0.15, a: 1}
   NumberCapacity: 512
   MaxDigits: 10
   HpBarPx: {x: 60, y: 5}

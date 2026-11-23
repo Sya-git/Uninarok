@@ -81,6 +81,8 @@ namespace Uninarok.World
         public Color NumberOnMonster = Color.white;
         public Color NumberOnPlayer = Color.red;
         public Color NumberCritical = new Color(0.9f, 0.9f, 0.15f);
+        [Tooltip("A multi-hit's total (D28).")]
+        public Color NumberTotal = new Color(0.9f, 0.9f, 0.15f);
         [Tooltip("Numbers on screen at most, and digits of one number.")]
         [Min(1)] public int NumberCapacity = 512;
         [Min(1)] public int MaxDigits = 10;

@@ -200,7 +200,7 @@
   300 units, 100 fighting, 100 numbers on screen.
   *Done when:* a profiler capture in `evidence/` shows 0 B GC per frame from the combat update; its frame time is recorded (guide 0.5 ms).
 
-- [ ] **T9.7** [core] Multi-hit colours (D28; spec FR-5, FR-6 revision 2026-11-23). Tests first, one commit: `CombatTimeline_MultiHit_TotalOnlyOverNonPlayer` (a multi-hit over a monster has the parts and a `Total`; over a player the parts and no `Total`) and `CombatOverlay` colour choice (parts white over a monster, red over a player; `Total` in `CombatSettings.NumberTotal`, (0.9, 0.9, 0.15)). `CombatSettings.NumberTotal` and its asset value; `combat-reference.md` row already written. Done after phase 10; it does not wait for T9.6's run. (FR-5, FR-6)
+- [x] **T9.7** [core] Multi-hit colours (D28; spec FR-5, FR-6 revision 2026-11-23). Tests first, one commit: `CombatTimeline_MultiHit_TotalOnlyOverNonPlayer` (a multi-hit over a monster has the parts and a `Total`; over a player the parts and no `Total`) and `CombatOverlay` colour choice (parts white over a monster, red over a player; `Total` in `CombatSettings.NumberTotal`, (0.9, 0.9, 0.15)). `CombatSettings.NumberTotal` and its asset value; `combat-reference.md` row already written. Done after phase 10; it does not wait for T9.6's run. (FR-5, FR-6)
   *Done when:* the new tests pass, the existing `CombatTimeline_*` and overlay tests pass (a test that expected a total over a player is changed with a note); a screenshot of a multi-hit over a monster (white parts, yellow-green total) and over the own character (red parts, no total) is in `evidence/`.
 
 - [ ] **T9.6** Spec §5 run and close the spec. (all)
