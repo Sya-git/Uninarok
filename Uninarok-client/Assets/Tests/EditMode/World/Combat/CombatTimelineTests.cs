@@ -184,6 +184,50 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(1, NumbersNow().Count, "a heal shows nothing here");
         }
 
+        // Records what reaches it; the type it answers is set by the test.
+        sealed class FakeHands : IWeaponTypes, IJobRows
+        {
+            public int Type;
+            public readonly List<(int Job, int Right, int Left)> TypeCalls = new List<(int, int, int)>();
+            public int RowJobOf(int job) => job == 4001 ? 9 : -1;
+            public byte RowSexOf(int job, byte sex) => job == 4001 && sex == 1 ? (byte)0 : (byte)200;
+
+            public int TypeOf(int job, int right, int left)
+            {
+                TypeCalls.Add((job, right, left));
+                return Type;
+            }
+        }
+
+        // FR-15, FR-4: the server's job and both hands reach the type, the row job and row sex reach the number, and the same
+        // type reaches the projectile rules. Job 4001 uses the Wizard row (9), male as female (row sex 0); a Rod there is Attack3
+        // (a male Wizard's would be Attack2, the server's job has no row: Attack1).
+        [Test]
+        [Ignore("pending T10.6")]
+        public void CombatTimeline_AttackNumber_BothHandsAndRowJob()
+        {
+            var hands = new FakeHands { Type = 10 };
+            _timeline.Weapons = hands;
+            _timeline.Jobs = hands;
+            const uint R = 2000009;
+            int r = _model.Upsert(R, EntityKind.Player, new EntityLook { Job = 4001, Weapon = 111, Shield = 222, Sex = 1 }, 150, 12, 10,
+                                  UninarokDirection.South, HeadDirection.Straight, EntityState.Standing);
+
+            Add(Hit(R, M, T, 10));
+            At(T);
+            Assert.AreEqual(3, _timeline.MotionOf(r).AttackNumber, "Rod on the Wizard female row");
+            Assert.IsNotEmpty(hands.TypeCalls);
+            foreach (var call in hands.TypeCalls) Assert.AreEqual((4001, 111, 222), call, "the server's job and both hands");
+            Assert.AreEqual(0, _timeline.Projectiles.Length, "a Rod has no projectile");
+
+            hands.Type = ProjectileRules.WeaponTypeBow;
+            Add(Hit(R, M, T + 1000, 10));
+            At(T + 1000);
+            Assert.AreEqual(1, _timeline.MotionOf(r).AttackNumber, "a Bow has no Wizard row");
+            Assert.AreEqual(1, _timeline.Projectiles.Length, "the combined type, not the right hand (111), reaches the projectile rules");
+            Assert.AreEqual(ProjectileKind.Arrow, _timeline.Projectiles[0].Kind);
+        }
+
         // ---- FR-5: which numbers ----
 
         [Test]
