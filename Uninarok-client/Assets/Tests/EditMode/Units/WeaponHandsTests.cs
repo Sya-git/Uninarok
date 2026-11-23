@@ -108,8 +108,6 @@ namespace Uninarok.Units.Tests
 
     public class JobFamiliesTests
     {
-        const string Pending = "pending T10.2";
-
         // Expected row job per id (PLAN-0011 4.7 family table, FR-15). Ids up to 4242: Hercules class.h and class_hidden.h.
         // Ids above 4242: roBrowserLegacy JobConst.js / WeaponAction.js, copied untested (D27). Ids absent here map to themselves.
         static readonly (int Row, int[] Ids)[] Families =
@@ -156,7 +154,7 @@ namespace Uninarok.Units.Tests
         // range markers and an unlisted id; also the first classes and rows that stand for themselves.
         static readonly int[] OwnRow = { 0, 1, 7, 12, 17, 22, 26, 27, 4046, 4049, 4050, 4051, 4052, 4218, 4249, 4331, 4350, 4351, 4356, 4357, 4361, 9999 };
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void JobFamilies_RowJobOf_Table()
         {
             foreach (var (row, ids) in Families)
@@ -166,7 +164,7 @@ namespace Uninarok.Units.Tests
                 Assert.That(JobFamilies.RowJobOf(id), Is.EqualTo(id), $"job {id} stands for itself");
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void JobFamilies_RowSexOf_SoulReaperMale()
         {
             foreach (int id in SoulReaperFamily)
@@ -186,7 +184,7 @@ namespace Uninarok.Units.Tests
                     Assert.That(JobFamilies.RowSexOf(id, sex), Is.EqualTo(sex), $"job {id} sex {sex}");
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void JobFamilies_IsAssassinFamily_EveryIdAndNotRogue()
         {
             // JOB_ASSASSIN, JOB_ASSASSIN_CROSS, JOB_BABY_ASSASSIN, JOB_GUILLOTINE_CROSS, JOB_GUILLOTINE_CROSS_T, JOB_BABY_CROSS,

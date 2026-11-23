@@ -111,6 +111,46 @@ Two more lead facts, not used here:
 - roBrowserLegacy also shortens the attack of monks with knuckles or bare hands (5 frames from frame 0), and of summoners with bare hands (4 frames).
 - `UnitClock.FitMs` (plan §4.9) fits every attack to `attackMT`, so this is a T0.3 question.
 
+### Job families (plan §4.7, `JobFamilies`)
+
+`JobFamilies.RowJobOf(job)` gives the job whose rows above a job uses; `RowSexOf(job, sex)` gives the sex of the row. The table is in code (`Scripts/Units/Rules/JobFamilies.cs`, sorted entries of job, row job and a flag) and equals this list. An id that is not listed is its own row job. `IsAssassinFamily(job)` is `RowJobOf(job) == 12`.
+
+Sources: ids up to 4242 are Hercules's (`src/common/class.h`, `class_hidden.h`). Ids above 4242 are not in Hercules 2026.09: their names are roBrowserLegacy's `DB/Jobs/JobConst.js` and their rows its `DB/Jobs/WeaponAction.js` copies (`WeaponAction[JobId.X] = WeaponAction[JobId.Y]`, read 2026-11-23). They are **copied from roBrowserLegacy, not run** (owner, 2026-11-23, D27). A row marked **proposal, to confirm** is a choice made where roBrowserLegacy has no copy or a broken one; the owner has not confirmed it yet.
+
+| Row job | Job ids mapped to it (Hercules) | Ids above 4242 (copied from roBrowserLegacy, not run) |
+|---|---|---|
+| 0 Novice | 4001, 4023 | |
+| 1 Swordman | 4002, 4024 | |
+| 2 Mage | 4003, 4025 | |
+| 3 Archer | 4004, 4026 | |
+| 4 Acolyte | 4005, 4027 | |
+| 5 Merchant | 4006, 4028 | |
+| 6 Thief | 4007, 4029 | |
+| 7 Knight | 4008, 4030, 4054, 4060, 4096 | 4252 DRAGON_KNIGHT, 4265 DRAGON_KNIGHT_RIDING, 4332 RUNE_KNIGHT_2ND |
+| 13 Knight on a peco | 4014, 4036, 4080, 4081, 4088 to 4095, 4109 | 4280 DRAGON_KNIGHT2, 4345 RUNE_KNIGHT2_2ND |
+| 14 Crusader | 4015, 4037, 4066, 4073, 4102 | 4258 IMPERIAL_GUARD, 4271 IMPERIAL_GUARD_RIDING, 4338 ROYAL_GUARD_2ND |
+| 21 Crusader on a peco | 4022, 4044, 4082, 4083, 4110 (D25: each as `WeaponAction.js` copies it; it copies `CRUSADER2` to every one, so all take 21: CRUSADER2_H 4022, CRUSADER2_B 4044, ROYAL_GUARD2 4082, ROYAL_GUARD2_H 4083, ROYAL_GUARD2_B 4110) | 4281 IMPERIAL_GUARD2, 4348 ROYAL_GUARD2_2ND (also copies of `CRUSADER2`) |
+| 8 Priest | 4009, 4031, 4057, 4063, 4099 | 4256 CARDINAL, 4269 CARDINAL_RIDING; 4336 ARCH_BISHOP_2ND: **proposal, to confirm** (`WeaponAction.js` copies to `JobId.ARCHBISHOP_2ND`, a constant `JobConst.js` does not define, so the source gives 4336 no row; the evident intent is the Priest row) |
+| 9 Wizard | 4010, 4032, 4055, 4061, 4097 | 4255 ARCH_MAGE, 4268 ARCH_MAGE_RIDING, 4335 WARLOCK_2ND |
+| 9 Wizard, **male** row for either sex (D24) | 4240 Soul Reaper, 4242 Baby Soul Reaper | 4303 SOUL_ASCETIC, 4310 SOUL_ASCETIC_RIDING; 4246 HAETAE_SOUL_REAPER, 4248 HAETAE_SOUL_REAPER_B: **proposal, to confirm** (no `WeaponAction.js` copy; Soul Reaper family by their name) |
+| 16 Sage | 4017, 4039, 4067, 4074, 4103 | 4261 ELEMENTAL_MASTER, 4274 ELEMENTAL_MASTER_RIDING, 4341 SORCERER_2ND |
+| 10 Blacksmith | 4011, 4033, 4058, 4064, 4086, 4087, 4100, 4112 | 4253 MEISTER, 4266 MEISTER_RIDING, 4279 MEISTER2, 4333 MECHANIC_2ND, 4347 MECHANIC2_2ND |
+| 18 Alchemist | 4019, 4041, 4071, 4078, 4107 | 4259 BIOLO, 4272 BIOLO_RIDING, 4339 GENETIC_2ND |
+| 11 Hunter | 4012, 4034, 4056, 4062, 4084, 4085, 4098, 4111 | 4257 WINDHAWK, 4270 WINDHAWK_RIDING, 4278 WINDHAWK2, 4337 RANGER_2ND, 4346 RANGER2_2ND |
+| 17 Rogue | 4018, 4040, 4072, 4079, 4108 | 4260 ABYSS_CHASER, 4273 ABYSS_CHASER_RIDING, 4340 SHADOW_CHASER_2ND |
+| 12 Assassin | 4013, 4035, 4059, 4065, 4101 | 4254 SHADOW_CROSS, 4267 SHADOW_CROSS_RIDING, 4334 GUILLOTINE_CROSS_2ND |
+| 15 Monk | 4016, 4038, 4070, 4077, 4106 | 4262 INQUISITOR, 4275 INQUISITOR_RIDING, 4342 SURA_2ND |
+| 19 Bard | 4020, 4042, 4068, 4075, 4104 | 4263 TROUBADOUR, 4276 TROUBADOUR_RIDING, 4343 MINSTREL_2ND |
+| 20 Dancer | 4021, 4043, 4069, 4076, 4105 | 4264 TROUVERE, 4277 TROUVERE_RIDING, 4344 WANDERER_2ND |
+| 23 Super Novice | 4045, 4190, 4191 | 4307 HYPER_NOVICE, 4314 HYPER_NOVICE_RIDING |
+| 24 Gunslinger | 4215, 4228, 4229 | 4306 NIGHT_WATCH, 4313 NIGHT_WATCH_RIDING |
+| 25 Ninja | 4211, 4212, 4222, 4223, 4224 | 4304 SHINKIRO, 4305 SHIRANUI, 4311 SHINKIRO_RIDING, 4312 SHIRANUI_RIDING |
+| 4049 Soul Linker | 4227 | |
+| 4218 Summoner | 4220; 4219 (Hercules `JOB_DUMMY4219`, roBrowserLegacy DO_CART_SUMMONER1, a copy of DO_SUMMONER): **proposal, to confirm** | 4308 SPIRIT_HANDLER, 4315 SPIRIT_HANDLER_RIDING1 |
+| 4046 Taekwon: `Attack2` for every weapon (owner-observed, 2026-11-23, D22; roBrowserLegacy has no row for any of them) | 4047, 4048, 4225, 4226, 4238, 4239, 4241 | 4243 STAR_EMPEROR2, 4244 STAR_EMPEROR2_B, 4245 HAETAE_STAR_EMPEROR, 4247 HAETAE_STAR_EMPEROR_B, 4302 SKY_EMPEROR, 4309 SKY_EMPEROR_RIDING, 4316 SKY_EMPEROR2: **proposal, to confirm** (no `WeaponAction.js` entry; Star and Sky Emperor play `Attack2`, D22) |
+| 4351 Druid (own rows, T10.3) | | 4352 DRUID_B, 4353 KARNOS, 4354 KARNOS_B, 4355 ALITEA, 4358 DRUID_RIDING, 4359 KARNOS_RIDING, 4360 ALITEA_RIDING |
+| themselves, no row: `Attack1` | 4050 Gangsi, 4051 Death Knight (spec: deliberately); 4052 Dark Collector, 22 Wedding, 26 Xmas, 27 Summer and the other outfit jobs (owner, 2026-11-23, D26); any id not listed | 4356 WEREWOLF, 4357 WERERAPTOR: **proposal, to confirm** (no `WeaponAction.js` entry); markers 4331, 4350, 4361 |
+
 ## Projectiles by attacker (plan §4.7, `ProjectileRules`)
 
 Lead: roBrowserLegacy, read 2026-11-23:

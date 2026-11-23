@@ -166,7 +166,7 @@ The kind of an item id comes from `SpriteCatalog.TryGetItemView` (the client's i
 
 ### 9.2 Both hands together (`Combine`)
 
-`job` is the look's job id, not its sprite base job. The assassin family is `JobFamilies.IsAssassinFamily`: 12, 4013, 4035, 4059, 4065, 4101.
+`job` is the look's job id, not its sprite base job. The assassin family is `JobFamilies.IsAssassinFamily`, which is `RowJobOf(job) == 12` since SPEC-0011 T10.2 (family table in `docs/specs/0011-combat/combat-reference.md`, "Job families"): 12, 4013, 4035, 4059, 4065, 4101, and the ids above 4242 copied from roBrowserLegacy (not run): 4254 SHADOW_CROSS, 4267 SHADOW_CROSS_RIDING, 4334 GUILLOTINE_CROSS_2ND.
 
 | Right | Left | Weapon type | Weapon drawn from | Shield drawn |
 |---|---|---|---|---|
