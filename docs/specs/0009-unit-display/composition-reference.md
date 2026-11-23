@@ -192,3 +192,15 @@ Combined types, either order: short sword (1) + short sword 25, sword (2) + swor
 | `db/item_db2.conf` | 0 (its 38 examples are commented out, none a weapon) | 0 | 0 | 0 |
 
 Method: a script that strips `/* */` and `//` comments, splits each table into its top-level `{ … }` entries, and counts entries with `Type: "IT_WEAPON"` and a `ViewSprite:` line. Example of the shield side: item 2101 Guard is `IT_ARMOR` with `ViewSprite: 1`, so left value 1 is Guard. If a server's own item table ever gives a weapon a small `ViewSprite`, that weapon in the left hand shows as a shield.
+
+### 9.4 What the loader draws (`UnitLoader.Player`, T10.6)
+
+`UnitLook.RightValue` is `WeaponItem` when given, else `Weapon`; `LeftValue` is `ShieldItem` when given, else `Shield` (an item id tells the kind). The loader calls `WeaponHands.Of(JobId, RightValue, LeftValue, …)` and draws:
+
+| Weapon drawn from | Weapon part |
+|---|---|
+| Right | `Equipment(Weapon, look.Weapon, look.WeaponItem)`, with its trail |
+| Left | the single-weapon sprite of the left item (`hands.Left.ViewId`, `look.ShieldItem`), with its trail |
+| Both | the combined entry of type 25 to 30 (`TryFindEquipment(Weapon, WeaponType, 0)`), resolved for job and sex with the base job fallback, with its trail |
+
+The shield part is drawn only when `DrawShield`; otherwise the shield slot stays empty. The weapon line of `LoadReport` ends with `[HandsResult.Describe()]` (right and left hand, type, `left weapon not drawn` when so); this is a found line, not a warning. An unknown hand is a missing line on its slot (right: Weapon, left: Shield) with its reason: `right item N is a Headgear`, or `left item N is not in the catalog`. `LoadReport.Hands` carries the `HandsResult`.

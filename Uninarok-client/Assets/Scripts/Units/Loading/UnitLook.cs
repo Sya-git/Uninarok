@@ -26,10 +26,18 @@ namespace Uninarok.Units
         public int HairStyle, HairColour, ClothColour;
         /// <summary>Headgear and garment view ids.</summary>
         public int HeadTop, HeadMid, HeadBottom, Garment;
-        /// <summary>Weapon and shield view ids.</summary>
+        /// <summary>
+        /// View ids of the two hands as the server sends them (PLAN-0009 D34): <c>Weapon</c> is the right hand, <c>Shield</c> the
+        /// left hand, which holds a shield or, for the assassin family, a second weapon (FR-17). Names kept from before.
+        /// </summary>
         public int Weapon, Shield;
-        /// <summary>Item ids, optional, for files the client names by item (PLAN-0008 D10).</summary>
+        /// <summary>Item ids of the right (<c>WeaponItem</c>) and left (<c>ShieldItem</c>) hand, optional, for files the client names by item (PLAN-0008 D10).</summary>
         public int WeaponItem, ShieldItem;
+
+        /// <summary>The right hand's value: the item id when given (it tells the kind), else the view id (PLAN-0009 4.11).</summary>
+        public int RightValue => WeaponItem > 0 ? WeaponItem : Weapon;
+        /// <summary>The left hand's value: the item id when given, else the view id; a small value is a shield (FR-17).</summary>
+        public int LeftValue => ShieldItem > 0 ? ShieldItem : Shield;
 
         public PlayerJob PlayerJob => (PlayerJob)JobId;
 

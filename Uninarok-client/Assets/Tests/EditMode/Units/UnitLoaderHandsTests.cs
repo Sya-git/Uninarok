@@ -7,11 +7,10 @@ using Uninarok.Units.Editor;
 
 namespace Uninarok.Units.Tests
 {
-    // TASKS-0009 T10.5 (FR-17, FR-1, FR-9; PLAN-0009 4.11) on the imported catalog. Pending T10.6 (the loader's hand resolution).
+    // TASKS-0009 T10.5 (FR-17, FR-1, FR-9; PLAN-0009 4.11) on the imported catalog.
     [Category("NeedsData")]
     public class UnitLoaderHandsTests
     {
-        const string Pending = "pending T10.6";
         const string DaggerPair = "단검_단검";
 
         AssetDatabaseUnitAssetSource _source;
@@ -43,7 +42,7 @@ namespace Uninarok.Units.Tests
             return (parts, report);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void UnitLoaderHands_AssassinTwoKnives_CombinedSprite()
         {
             var (parts, report) = Load(Assassin(1201, 1201));
@@ -55,7 +54,7 @@ namespace Uninarok.Units.Tests
             Assert.That(report.Hands.Weapon, Is.EqualTo(WeaponSource.Both));
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void UnitLoaderHands_KnifeLeftOnly_DrawnAsTheWeapon()
         {
             var (parts, report) = Load(Assassin(0, 1201));
@@ -66,7 +65,7 @@ namespace Uninarok.Units.Tests
             Assert.That(report.Hands.Weapon, Is.EqualTo(WeaponSource.Left));
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void UnitLoaderHands_KnifeAndShield_Both()
         {
             var (parts, report) = Load(Assassin(1201, 2101));
@@ -76,7 +75,7 @@ namespace Uninarok.Units.Tests
             Assert.That(report.Hands.DrawShield, Is.True);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void UnitLoaderHands_Katar_Alone()
         {
             var look = Assassin(0, 0);
@@ -89,7 +88,7 @@ namespace Uninarok.Units.Tests
             Assert.That(report.Hands.DrawShield, Is.False);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void UnitLoaderHands_ShieldOnly()
         {
             var (parts, report) = Load(Assassin(0, 2101, job: (int)PlayerJob.JOB_SWORDMAN));
@@ -99,7 +98,7 @@ namespace Uninarok.Units.Tests
             Assert.That(report.Hands.Weapon, Is.EqualTo(WeaponSource.None));
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void UnitLoaderHands_SmallLeftValue_IsAShield()
         {
             var look = UnitTestData.Swordsman();
@@ -113,7 +112,7 @@ namespace Uninarok.Units.Tests
             Assert.That(report.Hands.Left.Kind, Is.EqualTo(HandKind.Shield));
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void UnitLoaderHands_SwordsmanTwoWeapons_RightOnly_NotMissing()
         {
             var look = UnitTestData.Swordsman();
@@ -129,7 +128,7 @@ namespace Uninarok.Units.Tests
             Assert.That(report.Hands.LeftNotDrawn, Is.True);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void UnitLoaderHands_ReportNamesTypeAndHands()
         {
             var (_, report) = Load(Assassin(1201, 1201));
@@ -137,7 +136,7 @@ namespace Uninarok.Units.Tests
             Assert.That(line.Text, Does.Contain("right").And.Contain("left").And.Contain("1201").And.Contain("type 25"));
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void UnitLoaderHands_UnknownLeftItem_MissingWithReason()
         {
             var (parts, report) = Load(Assassin(1201, 2220));
@@ -151,7 +150,7 @@ namespace Uninarok.Units.Tests
         }
 
         // R15: the combined sprite may be missing for some job or sex of the family.
-        [Test, Ignore(Pending)]
+        [Test]
         public void UnitLoaderHands_AssassinFamilySweep_CombinedOrMissingWithReason()
         {
             var missing = new System.Text.StringBuilder();
@@ -204,7 +203,7 @@ namespace Uninarok.Units.Tests
 
         void Step(float seconds) => UnitSystem.StepOne(_view, seconds, Quaternion.Euler(50f, 0f, 0f));
 
-        [Test, Ignore("pending T10.6")]
+        [Test]
         public void UnitLoaderHands_ChangeLeftHandWhileShown_KeepsFrame()
         {
             var look = UnitTestData.Swordsman();
