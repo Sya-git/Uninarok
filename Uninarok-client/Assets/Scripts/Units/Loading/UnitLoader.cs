@@ -135,8 +135,42 @@ namespace Uninarok.Units
                 Equipment(PartSlot.HeadMid, EquipmentKind.Headgear, _look.HeadMid, 0, baseJob);
                 Equipment(PartSlot.HeadTop, EquipmentKind.Headgear, _look.HeadTop, 0, baseJob);
                 Equipment(PartSlot.Garment, EquipmentKind.Garment, _look.Garment, 0, baseJob);
-                Equipment(PartSlot.Weapon, EquipmentKind.Weapon, _look.Weapon, _look.WeaponItem, baseJob);
-                Equipment(PartSlot.Shield, EquipmentKind.Shield, _look.Shield, _look.ShieldItem, baseJob);
+                Hands(baseJob);
+            }
+
+            // Both hands through the one rule (PLAN-0009 4.11; FR-17): the weapon part and the shield part follow its result.
+            void Hands(PlayerJob baseJob)
+            {
+                var hands = WeaponHands.Of(_look.JobId, _look.RightValue, _look.LeftValue, _source.Catalog, _source.Tables);
+                _report.Hands = hands;
+                if (hands.Right.Kind == HandKind.Unknown) UnknownHand(PartSlot.Weapon, "right", hands.Right.Value);
+                if (hands.Left.Kind == HandKind.Unknown) UnknownHand(PartSlot.Shield, "left", hands.Left.Value);
+
+                switch (hands.Weapon)
+                {
+                    case WeaponSource.Right:
+                        Equipment(PartSlot.Weapon, EquipmentKind.Weapon, _look.Weapon, _look.WeaponItem, baseJob, hands.Describe());
+                        break;
+                    case WeaponSource.Left:
+                        Equipment(PartSlot.Weapon, EquipmentKind.Weapon, hands.Left.ViewId, _look.ShieldItem, baseJob, hands.Describe());
+                        break;
+                    case WeaponSource.Both:
+                        string tag = hands.Describe();
+                        string what = $"Weapon type {hands.WeaponType} [{tag}]";
+                        if (!_source.Catalog.TryFindEquipment(EquipmentKind.Weapon, hands.WeaponType, 0, out var combined))
+                            _report.Missing(PartSlot.Weapon, $"{what} is not in the catalog");
+                        else Acquire<EquipmentEntry>(combined, entry => Equipment(PartSlot.Weapon, entry, what, baseJob));
+                        break;
+                }
+                if (hands.DrawShield) Equipment(PartSlot.Shield, EquipmentKind.Shield, _look.Shield, _look.ShieldItem, baseJob);
+            }
+
+            // A hand the catalog cannot classify: its item is of another kind, or not in the item table (FR-1).
+            void UnknownHand(PartSlot slot, string side, int value)
+            {
+                string what = $"{side} item {value}";
+                if (_source.Catalog.TryGetItemView(value, out var kind, out _) && kind != EquipmentKind.None) _report.Missing(slot, $"{what} is a {kind}");
+                else _report.Missing(slot, $"{what} is not in the catalog");
             }
 
             // A job without a body of its own (baby, high, transcendent) uses its base job's sprites, as the client does.
@@ -207,7 +241,7 @@ namespace Uninarok.Units
                 return $", {what} {colour}";
             }
 
-            void Equipment(PartSlot slot, EquipmentKind kind, int viewId, int itemId, PlayerJob baseJob)
+            void Equipment(PartSlot slot, EquipmentKind kind, int viewId, int itemId, PlayerJob baseJob, string hands = null)
             {
                 if (viewId <= 0 && itemId <= 0) return; // none
                 EquipmentEntryReference reference;
@@ -230,6 +264,7 @@ namespace Uninarok.Units
                         return;
                     }
                 }
+                if (hands != null) what += $" [{hands}]";
                 Acquire<EquipmentEntry>(reference, entry => Equipment(slot, entry, what, baseJob));
             }
 

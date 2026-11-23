@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Uninarok.Catalog;
 using Uninarok.Networking.Data;
 using Uninarok.RoImport.Core.Output;
@@ -44,7 +46,10 @@ namespace Uninarok.Units.Editor
         [SerializeField] AccountSex _sex = AccountSex.SEX_MALE;
         [SerializeField] int _bodyStyle, _hairStyle = 2, _hairColour = 3, _clothColour;
         [SerializeField] Equipment _top = new Equipment(IdMode.ItemId, 2220), _mid, _low = new Equipment(IdMode.ItemId, 2218);
-        [SerializeField] Equipment _garment = new Equipment(IdMode.ViewId, 1), _weapon = new Equipment(IdMode.ItemId, 1101), _shield = new Equipment(IdMode.ItemId, 2101);
+        [SerializeField] Equipment _garment = new Equipment(IdMode.ViewId, 1);
+        // The hands as typed (D35): the value is a view id or an item id by its size; the mode is not used.
+        [SerializeField, FormerlySerializedAs("_weapon")] Equipment _right = new Equipment(IdMode.ItemId, 1101);
+        [SerializeField, FormerlySerializedAs("_shield")] Equipment _left = new Equipment(IdMode.ItemId, 2101);
 
         [SerializeField] int _animation;
         [SerializeField] PlayMode _mode = PlayMode.Loop;
@@ -55,12 +60,24 @@ namespace Uninarok.Units.Editor
         [SerializeField] bool _grid, _ground = true, _shadow = true, _ridingEdits;
         [SerializeField] float _yaw, _pitch = 50f, _distance = 12f;
 
+        // Preset bar (PLAN-0009 4.12, FR-18). _preset is the selected preset's name; _presetName is the name field.
+        [SerializeField] string _preset = "";
+        [SerializeField] string _presetName = "";
+
+        UnitComposerPresetStore _store;
+        string[] _presetLabels = { "(none)" };
+        int _presetIndex;
+        string _presetMessage;
+        MessageType _presetMessageType = MessageType.Info;
+
         UnitPreviewStage _stage;
         ItemSpriteTable _items;
         string _problem;
         bool _ended;
         double _lastTime;
-        Vector2 _left, _right;
+        Vector2 _leftScroll, _rightScroll;
+        LoadReport _handsReport;
+        string _handsText = "";
         Texture2D _gridImage;
         int _gridKey;
 
@@ -79,6 +96,9 @@ namespace Uninarok.Units.Editor
         {
             _lastTime = EditorApplication.timeSinceStartup;
             EditorApplication.update += OnUpdate;
+            _store ??= UnitComposerPresetStore.ForProject();
+            _store.Reload();
+            RebuildPresetLabels();
         }
 
         void OnDisable()
@@ -126,10 +146,9 @@ namespace Uninarok.Units.Editor
             var look = new UnitLook
             {
                 Kind = UnitKind.Player, JobId = (int)_class, Sex = _sex, BodyStyle = _bodyStyle, HairStyle = _hairStyle, HairColour = _hairColour, ClothColour = _clothColour,
-                HeadTop = ViewOf(_top), HeadMid = ViewOf(_mid), HeadBottom = ViewOf(_low), Garment = ViewOf(_garment), Weapon = ViewOf(_weapon), Shield = ViewOf(_shield),
+                HeadTop = ViewOf(_top), HeadMid = ViewOf(_mid), HeadBottom = ViewOf(_low), Garment = ViewOf(_garment),
             };
-            if (_weapon.Mode == IdMode.ItemId) look.WeaponItem = _weapon.Id;
-            if (_shield.Mode == IdMode.ItemId) look.ShieldItem = _shield.Id;
+            ComposerHands.Apply(ref look, _right.Id, _left.Id);
             return look;
         }
 
@@ -158,6 +177,204 @@ namespace Uninarok.Units.Editor
 
         bool IsPlayerLook => Look().Kind == UnitKind.Player;
 
+        // ---- presets (PLAN-0009 4.12, FR-18) ----
+
+        /// <summary>True when the selected preset is a user preset: Save, Rename and Delete are offered only then (never for a starter).</summary>
+        internal bool CanModifySelected
+        {
+            get
+            {
+                if (_store == null || string.IsNullOrEmpty(_preset)) return false;
+                return _store.IsTaken(_preset) && !_store.IsStarter(_preset);
+            }
+        }
+
+        internal string SelectedPreset => _preset;
+        internal string PresetMessage => _presetMessage;
+        internal UnitPreviewStage Stage => _stage;
+        internal IReadOnlyList<string> PresetLabels => _presetLabels;
+
+        internal UnitComposerPresetStore Store
+        {
+            get => _store;
+            set
+            {
+                _store = value;
+                _store?.Reload();
+                RebuildPresetLabels();
+            }
+        }
+
+        // The popup labels and the selected index; rebuilt only when the list changes (Reload, Save, Rename, Delete, pick).
+        void RebuildPresetLabels()
+        {
+            var all = _store.All;
+            var labels = new string[all.Count + 1];
+            labels[0] = "(none)";
+            _presetIndex = 0;
+            for (int i = 0; i < all.Count; i++)
+            {
+                labels[i + 1] = all[i].Starter ? all[i].Preset.Name + " (starter)" : all[i].Preset.Name;
+                if (string.Equals(all[i].Preset.Name, _preset, StringComparison.OrdinalIgnoreCase)) _presetIndex = i + 1;
+            }
+            _presetLabels = labels;
+            if (_presetIndex == 0) _preset = "";
+        }
+
+        void Message(string text, MessageType type)
+        {
+            _presetMessage = text;
+            _presetMessageType = type;
+        }
+
+        void PresetBar()
+        {
+            EditorGUILayout.LabelField("Preset", EditorStyles.boldLabel);
+            if (_store == null) return;
+            if (_store.Problem != null) EditorGUILayout.HelpBox(_store.Problem, MessageType.Warning);
+            int picked = EditorGUILayout.Popup(_presetIndex, _presetLabels);
+            if (picked != _presetIndex) PickPreset(picked == 0 ? "" : _store.All[picked - 1].Preset.Name);
+            _presetName = EditorGUILayout.TextField("Name", _presetName);
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                if (GUILayout.Button("Save as new")) SaveAsNew();
+                using (new EditorGUI.DisabledScope(!CanModifySelected))
+                {
+                    if (GUILayout.Button("Save")) SaveSelected();
+                    if (GUILayout.Button("Rename")) RenameSelected();
+                    if (GUILayout.Button("Delete")) DeleteSelected();
+                }
+            }
+            if (_presetMessage != null) EditorGUILayout.HelpBox(_presetMessage, _presetMessageType);
+            EditorGUILayout.Space();
+        }
+
+        ComposerLookFields CurrentFields() => new ComposerLookFields
+        {
+            Kind = _kind, UnitJob = _unitJob, Class = (int)_class, Sex = _sex,
+            BodyStyle = _bodyStyle, HairStyle = _hairStyle, HairColour = _hairColour, ClothColour = _clothColour,
+            Top = ToHand(_top), Mid = ToHand(_mid), Low = ToHand(_low), Garment = ToHand(_garment), Right = ToHand(_right), Left = ToHand(_left),
+            Animation = _animation, Mode = _mode, Facing = _facing,
+        };
+
+        static PresetHand ToHand(Equipment e) => new PresetHand { ByItem = e.Mode == IdMode.ItemId, Id = e.Id };
+
+        static Equipment FromHand(PresetHand h) => new Equipment(h.ByItem ? IdMode.ItemId : IdMode.ViewId, h.Id);
+
+        /// <summary>
+        /// Picks a preset by name ("" for none): copies its look, animation, play mode and facing, shows the look and restarts the
+        /// animation at frame 0. Camera, head facing, speed, toggles and play state are not touched. No dialogs.
+        /// </summary>
+        internal void PickPreset(string name)
+        {
+            _presetMessage = null;
+            _preset = name ?? "";
+            RebuildPresetLabels();
+            if (_presetIndex == 0) return;
+            var preset = _store.All[_presetIndex - 1].Preset;
+            _presetName = preset.Name;
+            if (!EnsureStage()) return;
+
+            var problems = new List<string>();
+            var f = ComposerPresets.ToFields(preset, problems);
+            _kind = f.Kind; _unitJob = f.UnitJob; _class = (PlayerJob)f.Class; _sex = f.Sex;
+            _bodyStyle = f.BodyStyle; _hairStyle = f.HairStyle; _hairColour = f.HairColour; _clothColour = f.ClothColour;
+            _top = FromHand(f.Top); _mid = FromHand(f.Mid); _low = FromHand(f.Low); _garment = FromHand(f.Garment); _right = FromHand(f.Right); _left = FromHand(f.Left);
+            _animation = f.Animation; _mode = f.Mode; _facing = f.Facing;
+            ApplyLook();
+            PlayAnimation();
+            foreach (var row in _stage.Rows())
+                if (!row.Found) problems.Add($"{row.Slot}: {row.Resolution}");
+            if (problems.Count > 0)
+            {
+                string text = $"[Unit Composer] preset '{preset.Name}': {problems.Count} problem{(problems.Count == 1 ? "" : "s")}: {string.Join("; ", problems)}";
+                Debug.LogWarning(text);
+                Message(text, MessageType.Warning);
+            }
+            Repaint();
+        }
+
+        UnitComposerPreset CurrentPreset(string name) => ComposerPresets.Build(name, CurrentFields());
+
+        void SaveAsNew()
+        {
+            string name = _presetName?.Trim();
+            if (string.IsNullOrEmpty(name))
+            {
+                Message("Type a name for the preset first.", MessageType.Warning);
+                return;
+            }
+            if (_store.IsStarter(name))
+            {
+                Message($"'{name}' is the name of a starter preset; starters cannot be replaced. Choose another name.", MessageType.Warning);
+                return;
+            }
+            var preset = CurrentPreset(name);
+            var result = _store.Save(preset, false);
+            if (result == SaveResult.NeedsConfirm)
+            {
+                if (!EditorUtility.DisplayDialog("Overwrite preset", $"A preset named '{name}' exists. Overwrite it?", "Overwrite", "Cancel")) return;
+                result = _store.Save(preset, true);
+            }
+            FinishSave(result, name);
+        }
+
+        void SaveSelected()
+        {
+            if (!CanModifySelected) return;
+            if (!EditorUtility.DisplayDialog("Overwrite preset", $"Overwrite the preset '{_preset}' with the current look?", "Overwrite", "Cancel")) return;
+            FinishSave(_store.Save(CurrentPreset(_preset), true), _preset);
+        }
+
+        void FinishSave(SaveResult result, string name)
+        {
+            if (result == SaveResult.Saved)
+            {
+                _preset = name;
+                _presetName = name;
+                RebuildPresetLabels();
+                Message($"Saved '{name}'.", MessageType.Info);
+            }
+            else Message($"Could not save '{name}'.", MessageType.Warning);
+        }
+
+        void RenameSelected()
+        {
+            if (!CanModifySelected) return;
+            string to = _presetName?.Trim();
+            if (string.IsNullOrEmpty(to))
+            {
+                Message("Type the new name first.", MessageType.Warning);
+                return;
+            }
+            if (_store.IsStarter(to))
+            {
+                Message($"'{to}' is the name of a starter preset. Choose another name.", MessageType.Warning);
+                return;
+            }
+            if (_store.Rename(_preset, to))
+            {
+                _preset = to;
+                RebuildPresetLabels();
+                Message($"Renamed to '{to}'.", MessageType.Info);
+            }
+            else Message($"Could not rename to '{to}' (the name is taken or the file cannot be written).", MessageType.Warning);
+        }
+
+        void DeleteSelected()
+        {
+            if (!CanModifySelected) return;
+            if (!EditorUtility.DisplayDialog("Delete preset", $"Delete the preset '{_preset}'?", "Delete", "Cancel")) return;
+            string name = _preset;
+            if (_store.Delete(name))
+            {
+                _preset = "";
+                RebuildPresetLabels();
+                Message($"Deleted '{name}'.", MessageType.Info);
+            }
+            else Message($"Could not delete '{name}'.", MessageType.Warning);
+        }
+
         // ---- GUI ----
 
         void OnGUI()
@@ -170,9 +387,10 @@ namespace Uninarok.Units.Editor
             if (_problem != null) EditorGUILayout.HelpBox(_problem, MessageType.Info);
             using (new EditorGUILayout.HorizontalScope())
             {
-                using (var scroll = new EditorGUILayout.ScrollViewScope(_left, GUILayout.Width(330)))
+                using (var scroll = new EditorGUILayout.ScrollViewScope(_leftScroll, GUILayout.Width(330)))
                 {
-                    _left = scroll.scrollPosition;
+                    _leftScroll = scroll.scrollPosition;
+                    PresetBar();
                     Inputs();
                     Playback();
                     CameraInputs();
@@ -205,8 +423,8 @@ namespace Uninarok.Units.Editor
                 _mid = Field("Mid headgear", _mid);
                 _low = Field("Low headgear", _low);
                 _garment = Field("Garment", _garment);
-                _weapon = Field("Weapon", _weapon);
-                _shield = Field("Shield", _shield);
+                _right.Id = EditorGUILayout.IntField(new GUIContent("Right hand", "As the server sends it: a view id (below 500) or an item id (500 or more)"), _right.Id);
+                _left.Id = EditorGUILayout.IntField(new GUIContent("Left hand", "As the server sends it: a view id (a shield) or an item id"), _left.Id);
             }
             if (!EditorGUI.EndChangeCheck()) return;
             if (IsPlayerLook != wasPlayer) _animation = 0;
@@ -368,12 +586,25 @@ namespace Uninarok.Units.Editor
 
         int _gridImageKey;
 
+        // The report's hands line (D35); Describe allocates, so it is rebuilt only when the report is a new one.
+        string HandsLine()
+        {
+            var report = _stage.View.Report;
+            if (report != _handsReport)
+            {
+                _handsReport = report;
+                _handsText = report != null && IsPlayerLook ? report.Hands.Describe() : "";
+            }
+            return _handsText;
+        }
+
         void PartsList()
         {
+            EditorGUILayout.LabelField("Hands", HandsLine(), EditorStyles.wordWrappedLabel);
             EditorGUILayout.LabelField("Parts (slot order; “order” is back to front in this frame)", EditorStyles.boldLabel);
-            using (var scroll = new EditorGUILayout.ScrollViewScope(_right, GUILayout.Height(210)))
+            using (var scroll = new EditorGUILayout.ScrollViewScope(_rightScroll, GUILayout.Height(210)))
             {
-                _right = scroll.scrollPosition;
+                _rightScroll = scroll.scrollPosition;
                 foreach (var row in _stage.Rows())
                     using (new EditorGUILayout.HorizontalScope())
                     {

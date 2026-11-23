@@ -147,3 +147,72 @@ Head: placed at `bodyAnchor − headAnchor` (anchor 0 of the frame shown of each
 | Weapon base types | 72 (view ids 31 and up; SPEC-0011 T4.6, rebuilt 2026-11-23: `Updated 1, Warnings 0`) |
 
 `JOBID` is defined in `skillinfoz/jobinheritlist.lub` and `pcJobTbl` in `admin/pcidentity.lub`; `JTtbl` must also answer the NPC constants (`JTtbl.JT_EDDGA3` in the shadow table).
+
+## 9. Hands (FR-17)
+
+The both-hands rule is `Uninarok.Units.WeaponHands` (PLAN-0009 §4.11, D31 to D34), defined once: the loader calls `WeaponHands.Of` directly, combat calls it through `CatalogWeaponTypes.HandsOf` (SPEC-0011 FR-15). It is a decision of the spec, not something read in the client's data. The server sends the right hand in the weapon field and the left hand in the shield field, each the item's `ViewSprite` when it has one, else its item id (SPEC-0009 §6).
+
+### 9.1 Classification of one hand (`Right`, `Left`)
+
+| Value | Right hand | Left hand |
+|---|---|---|
+| 0 | none | none |
+| 1 to 499 (a view id) | weapon of type `CompositionTables.WeaponTypeOf(value)` | shield of that view id (ambiguous, counted as a shield: §9.3) |
+| 500 or more, item table kind `Weapon` | weapon of type `WeaponTypeOf(item's view id)` | weapon of type `WeaponTypeOf(item's view id)` |
+| 500 or more, item table kind `Shield` | unknown (a shield only goes in the left hand) | shield of the item's view id |
+| 500 or more, any other kind, or not in the item table | unknown | unknown |
+
+The kind of an item id comes from `SpriteCatalog.TryGetItemView` (the client's item table), never from the number (D32). With no catalog or no composition tables (not loaded yet), every item id is unknown and every type is 0. An unknown hand counts as empty for the type and is listed as missing by the loader (FR-1). `Right`, `Left` and `Of` allocate nothing and throw nothing; lookups are binary searches.
+
+### 9.2 Both hands together (`Combine`)
+
+`job` is the look's job id, not its sprite base job. The assassin family is `JobFamilies.IsAssassinFamily`: 12, 4013, 4035, 4059, 4065, 4101.
+
+| Right | Left | Weapon type | Weapon drawn from | Shield drawn |
+|---|---|---|---|---|
+| weapon | none | right type | Right | no |
+| none | weapon | left type | Left (its single-weapon sprite, D33) | no |
+| weapon | weapon, assassin family, `CombinedType ≠ 0` | 25 to 30 | Both (the combined entry) | no |
+| weapon | weapon, any other job, or no combined pair | right type | Right, left weapon not drawn | no |
+| weapon | shield | right type | Right | yes |
+| katar (type 16) | anything | 16 | Right (the katar sprite alone) | no |
+| none | shield | 0 | none | yes |
+| none / unknown | none / unknown | 0 | none | no |
+
+Combined types, either order: short sword (1) + short sword 25, sword (2) + sword 26, axe (6) + axe 27, short sword + sword 28, short sword + axe 29, sword + axe 30 (sprite-catalog §3.8).
+
+### 9.3 Why a small left value is a shield (R14)
+
+**Confirmed** on the Hercules tables in the repository (`Hercules-2026.09/db/`, 2026-11-23, T10.4): no weapon has a `ViewSprite`, so the server always sends a weapon's item id (500 or more), and a left value below 500 can only be a shield's view id.
+
+| Table | Active entries | `IT_WEAPON` entries | Weapons with `ViewSprite` | Entries with `ViewSprite` (any type) |
+|---|---:|---:|---:|---:|
+| `db/re/item_db.conf` | 13,182 | 1,064 | 0 | 2,282 |
+| `db/pre-re/item_db.conf` | 7,311 | 708 | 0 | 803 |
+| `db/item_db2.conf` | 0 (its 38 examples are commented out, none a weapon) | 0 | 0 | 0 |
+
+Method: a script that strips `/* */` and `//` comments, splits each table into its top-level `{ … }` entries, and counts entries with `Type: "IT_WEAPON"` and a `ViewSprite:` line. Example of the shield side: item 2101 Guard is `IT_ARMOR` with `ViewSprite: 1`, so left value 1 is Guard. If a server's own item table ever gives a weapon a small `ViewSprite`, that weapon in the left hand shows as a shield.
+
+### 9.4 What the loader draws (`UnitLoader.Player`, T10.6)
+
+`UnitLook.RightValue` is `WeaponItem` when given, else `Weapon`; `LeftValue` is `ShieldItem` when given, else `Shield` (an item id tells the kind). The loader calls `WeaponHands.Of(JobId, RightValue, LeftValue, …)` and draws:
+
+| Weapon drawn from | Weapon part |
+|---|---|
+| Right | `Equipment(Weapon, look.Weapon, look.WeaponItem)`, with its trail |
+| Left | the single-weapon sprite of the left item (`hands.Left.ViewId`, `look.ShieldItem`), with its trail |
+| Both | the combined entry of type 25 to 30 (`TryFindEquipment(Weapon, WeaponType, 0)`), resolved for job and sex with the base job fallback, with its trail |
+
+The shield part is drawn only when `DrawShield`; otherwise the shield slot stays empty. The weapon line of `LoadReport` ends with `[HandsResult.Describe()]` (right and left hand, type, `left weapon not drawn` when so); this is a found line, not a warning. An unknown hand is a missing line on its slot (right: Weapon, left: Shield) with its reason: `right item N is a Headgear`, or `left item N is not in the catalog`. `LoadReport.Hands` carries the `HandsResult`.
+
+## 10. Starter presets
+
+The four starter composer presets of FR-18 (`Assets/Scripts/Units/Editor/Presets/UnitComposerStarterPresets.json`, plan §4.12) use these item ids. Checked against `db/re/item_db.conf` on 2026-11-23:
+
+| Item id | `AegisName` / `Name` | `Type` | Used by |
+|---:|---|---|---|
+| 1201 | Knife | `IT_WEAPON` | "Swordsman, dagger" (right), "Assassin, two knives" (right and left) |
+| 1401 | Javelin | `IT_WEAPON` | "Swordsman, spear" (right) |
+| 1601 | Rod | `IT_WEAPON` | "Novice, rod" (right) |
+
+Classes are `PlayerJob` values: Novice 0, Swordsman 1, Assassin 12 (all male). Fields not stated by the plan keep the composer's defaults: `UnitJob` 0 (unused for a player), `BodyStyle` 0, `ClothColour` 0; hair style 2 and hair colour 3 as the window defaults.

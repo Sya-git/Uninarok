@@ -1,0 +1,157 @@
+{
+  "Version": 1,
+  "Presets": [
+    {
+      "Name": "Swordsman, dagger",
+      "Kind": 0,
+      "UnitJob": 0,
+      "Class": 1,
+      "Sex": 1,
+      "BodyStyle": 0,
+      "HairStyle": 2,
+      "HairColour": 3,
+      "ClothColour": 0,
+      "Top": {
+        "ByItem": false,
+        "Id": 0
+      },
+      "Mid": {
+        "ByItem": false,
+        "Id": 0
+      },
+      "Low": {
+        "ByItem": false,
+        "Id": 0
+      },
+      "Garment": {
+        "ByItem": false,
+        "Id": 0
+      },
+      "Right": {
+        "ByItem": true,
+        "Id": 1201
+      },
+      "Left": {
+        "ByItem": false,
+        "Id": 0
+      },
+      "Animation": "Idle",
+      "Mode": 0,
+      "Facing": 4
+    },
+    {
+      "Name": "Swordsman, spear",
+      "Kind": 0,
+      "UnitJob": 0,
+      "Class": 1,
+      "Sex": 1,
+      "BodyStyle": 0,
+      "HairStyle": 2,
+      "HairColour": 3,
+      "ClothColour": 0,
+      "Top": {
+        "ByItem": false,
+        "Id": 0
+      },
+      "Mid": {
+        "ByItem": false,
+        "Id": 0
+      },
+      "Low": {
+        "ByItem": false,
+        "Id": 0
+      },
+      "Garment": {
+        "ByItem": false,
+        "Id": 0
+      },
+      "Right": {
+        "ByItem": true,
+        "Id": 1401
+      },
+      "Left": {
+        "ByItem": false,
+        "Id": 0
+      },
+      "Animation": "Idle",
+      "Mode": 0,
+      "Facing": 4
+    },
+    {
+      "Name": "Novice, rod",
+      "Kind": 0,
+      "UnitJob": 0,
+      "Class": 0,
+      "Sex": 1,
+      "BodyStyle": 0,
+      "HairStyle": 2,
+      "HairColour": 3,
+      "ClothColour": 0,
+      "Top": {
+        "ByItem": false,
+        "Id": 0
+      },
+      "Mid": {
+        "ByItem": false,
+        "Id": 0
+      },
+      "Low": {
+        "ByItem": false,
+        "Id": 0
+      },
+      "Garment": {
+        "ByItem": false,
+        "Id": 0
+      },
+      "Right": {
+        "ByItem": true,
+        "Id": 1601
+      },
+      "Left": {
+        "ByItem": false,
+        "Id": 0
+      },
+      "Animation": "Idle",
+      "Mode": 0,
+      "Facing": 4
+    },
+    {
+      "Name": "Assassin, two knives",
+      "Kind": 0,
+      "UnitJob": 0,
+      "Class": 12,
+      "Sex": 1,
+      "BodyStyle": 0,
+      "HairStyle": 2,
+      "HairColour": 3,
+      "ClothColour": 0,
+      "Top": {
+        "ByItem": false,
+        "Id": 0
+      },
+      "Mid": {
+        "ByItem": false,
+        "Id": 0
+      },
+      "Low": {
+        "ByItem": false,
+        "Id": 0
+      },
+      "Garment": {
+        "ByItem": false,
+        "Id": 0
+      },
+      "Right": {
+        "ByItem": true,
+        "Id": 1201
+      },
+      "Left": {
+        "ByItem": true,
+        "Id": 1201
+      },
+      "Animation": "Idle",
+      "Mode": 0,
+      "Facing": 4
+    }
+  ]
+}

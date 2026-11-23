@@ -13,8 +13,6 @@ namespace Uninarok.World.View
     /// </summary>
     public sealed class CatalogWeaponTypes : IWeaponTypes, IJobBases
     {
-        const int FirstItemId = 500;
-
         readonly IUnitAssetSource _source;
         readonly HashSet<int> _reported = new HashSet<int>();
 
@@ -25,15 +23,14 @@ namespace Uninarok.World.View
             if (weapon == 0) return 0;
             var tables = _source.Tables;
             if (tables == null) return 0;
-            int view = weapon;
-            if (weapon >= FirstItemId)
-            {
-                var catalog = _source.Catalog;
-                if (catalog == null || !catalog.TryGetItemView(weapon, out var kind, out view) || kind != EquipmentKind.Weapon) return Unknown(weapon);
-            }
-            int type = tables.WeaponTypeOf(view);
-            return type != 0 || view == 0 ? type : Unknown(weapon);
+            var hand = WeaponHands.Right(weapon, _source.Catalog, tables);
+            // An item that is no weapon, or a view id without a type, is unknown; a weapon item whose view id is 0 is a bare hand.
+            if (hand.Kind == HandKind.Unknown || (hand.Kind == HandKind.Weapon && hand.WeaponType == 0 && hand.ViewId != 0)) return Unknown(weapon);
+            return hand.WeaponType;
         }
+
+        /// <summary>Both hands as one weapon type, by the rule display and combat share (SPEC-0009 FR-17).</summary>
+        public HandsResult HandsOf(int job, int right, int left) => WeaponHands.Of(job, right, left, _source.Catalog, _source.Tables);
 
         public int BaseJobOf(int job)
         {
