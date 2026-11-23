@@ -98,7 +98,7 @@
 - [x] **T4.1** `CombatSettings` with the first values, and `combat-reference.md`. (FR-4, FR-6, FR-7, FR-14)
   *Done when:* `Settings/World/CombatSettings.asset` exists; every value of plan §4.5 to §4.9 is a field of it or a table row, and a row of `combat-reference.md` with its source.
 
-- [ ] **T4.2** Tests for `CombatTimeline` (plan §4.6). (FR-4, FR-5, FR-9, FR-10)
+- [x] **T4.2** Tests for `CombatTimeline` (plan §4.6). (FR-4, FR-5, FR-9, FR-10)
   *Done when:* every `CombatTimeline_*` test of plan §6.1 exists, compiles and is ignored as pending.
 
 - [ ] **T4.3** `CombatTimeline`: hit moments and motions. (FR-4)
