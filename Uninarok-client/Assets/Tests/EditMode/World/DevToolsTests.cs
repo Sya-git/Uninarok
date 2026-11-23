@@ -47,6 +47,30 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(2, _rig.Client.SentCount(PacketIds.REQUEST_ACT));
         }
 
+        // SPEC-0011 T7.3 (FR-2; PLAN-0011 4.10)
+        [Test]
+        public void NoCtrl_TogglesAPlainClickToContinuous_AndSaysSo()
+        {
+            const uint monster = 0x068EB5EC;
+            var line = _go.AddComponent<DevCommandLine>();
+            line.Register(() => _rig.Session.Own, () => _rig.Session.Combat);
+            _rig.Client.Deliver(WorldSessionTests.Stand(monster, 151, 200));
+            var combat = _rig.Session.Combat;
+
+            Assert.AreEqual("/noctrl on: a click attacks without end", line.Execute("/noctrl"));
+            Assert.IsTrue(combat.NoCtrl);
+            combat.Attack(monster, false); // a plain click
+            Assert.AreEqual(7, _rig.Client.Sent[_rig.Client.Sent.Count - 1].Bytes[6], "continuous");
+            Assert.IsTrue(combat.Continuous);
+            combat.Cancel();
+
+            Assert.AreEqual("/noctrl off: ctrl or a held button attacks without end", line.Execute("/NOCTRL"));
+            Assert.IsFalse(combat.NoCtrl);
+            combat.Attack(monster, false);
+            Assert.AreEqual(0, _rig.Client.Sent[_rig.Client.Sent.Count - 1].Bytes[6], "single again");
+            Assert.AreEqual("/noctrl takes nothing", line.Execute("/noctrl 1"));
+        }
+
         // FR-20
         [Test]
         public void Drop_SendsTheSlotTheServerNamed()

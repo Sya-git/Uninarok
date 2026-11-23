@@ -161,7 +161,7 @@
 - [x] **T7.2** `OwnInput` and the attack cursor (plan §4.10). (FR-2, FR-8, FR-10)
   *Done when:* input tests pass for click, ctrl, hold, shift, player, NPC, item, ground while attacking, and dead; SPEC-0010's input tests too; the attack cursor shows over a monster (frames checked as pictures).
 
-- [ ] **T7.3** `/noctrl`. (FR-2)
+- [x] **T7.3** `/noctrl`. (FR-2)
   *Done when:* a test shows that it toggles a plain click to continuous and back, and says so.
 
 - [ ] **T7.4** Tests, then implementation: `RestartPrompt`. (FR-8)
