@@ -232,5 +232,5 @@ Rework and new work for plan §4.6, §4.7, §6.1, §7 and §8 (D18, D20 to D27).
 - [x] **T10.7** [core] Dual-wield replay: `WorldSession_CombatReplay_DualWield` replays `fixtures/combat-dual.bin` into a session with the timeline and the real `CatalogWeaponTypes` (`NeedsData`). The assassin's own attack motions are `Attack2` while only the left hand holds a knife, `Attack3` once both hands hold knives, and those blows carry `LeftDamage`. (FR-5, FR-15)
   *Done when:* the test passes on the committed fixture, and its motion sequence is written in the test with the blow numbers it is read from (the capture's server lines are listed in `fixtures/README.md`).
 
-- [ ] **T10.8** [quick] Rework of **T5.4** (wiring): `WorldBootstrap.UseAssets` sets `timeline.Weapons` and `timeline.Jobs` from one `CatalogWeaponTypes` instance (plan §7). Only the assignments change; no other line of the bootstrap is touched. (FR-15)
+- [x] **T10.8** [quick] Rework of **T5.4** (wiring): `WorldBootstrap.UseAssets` sets `timeline.Weapons` and `timeline.Jobs` from one `CatalogWeaponTypes` instance (plan §7). Only the assignments change; no other line of the bootstrap is touched. (FR-15)
   *Done when:* `WorldBootstrap.cs` assigns both members from the same instance (grep shows both lines); the project compiles; Logs/Editor.log has no new warning after a refresh.
