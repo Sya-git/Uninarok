@@ -101,7 +101,7 @@
 - [x] **T4.2** Tests for `CombatTimeline` (plan §4.6). (FR-4, FR-5, FR-9, FR-10)
   *Done when:* every `CombatTimeline_*` test of plan §6.1 exists, compiles and is ignored as pending.
 
-- [ ] **T4.3** `CombatTimeline`: hit moments and motions. (FR-4)
+- [x] **T4.3** `CombatTimeline`: hit moments and motions. (FR-4)
   *Done when:* the tests of plan §6.1's FR-4 row pass.
 
 - [ ] **T4.4** `CombatTimeline`: kinds of blow and numbers. (FR-5, FR-6)

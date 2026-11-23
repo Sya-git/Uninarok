@@ -70,7 +70,7 @@ namespace Uninarok.World.Tests
 
         // ---- FR-4: motions and hit moments ----
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void CombatTimeline_AttackLasts500_HitAt500_Hurt300()
         {
             Add(Hit(P, M, T, 10));
@@ -97,7 +97,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(MotionKind.Standby, KindOf(_p), "until it does something else");
         }
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void CombatTimeline_EnduredHasNumberNoHurt()
         {
             Add(Hit(P, M, T, 25, endured: true));
@@ -106,19 +106,20 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(MotionKind.None, KindOf(_m));
         }
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void CombatTimeline_MissNoHurt()
         {
             Add(Hit(M, P, T, 0));
+            At(T);
+            Assert.AreEqual(MotionKind.Attack, KindOf(_m), "a monster's attack plays though it misses");
             At(T + 500);
             var numbers = NumbersNow();
             Assert.AreEqual(1, numbers.Count);
             Assert.AreEqual((NumberKind.Miss, P, true), (numbers[0].Kind, numbers[0].TargetId, numbers[0].OnPlayer));
             Assert.AreEqual(MotionKind.None, KindOf(_p));
-            Assert.AreEqual(MotionKind.Attack, KindOf(_m), "a monster's attack plays though it misses");
         }
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void CombatTimeline_WalkKeepsPosition()
         {
             _model.Walk(M, 11, 10, 16, 10, T, T);
@@ -140,7 +141,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(MotionKind.None, KindOf(_q), "a walk that starts ends an attack motion");
         }
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void CombatTimeline_NewBlowRestarts()
         {
             Add(Hit(P, M, T, 10));
@@ -155,7 +156,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(2, NumbersNow().Count, "both blows hit");
         }
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void CombatTimeline_SlowMonster1320_HitAt1320()
         {
             Add(Hit(M, P, T, 40, attackMs: 1320, hurtMs: 288));
@@ -168,7 +169,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual((MotionKind.Hurt, T + 1320), (KindOf(_p), _timeline.MotionOf(_p).Starts));
         }
 
-        [Test, Ignore("pending T4.3")]
+        [Test]
         public void CombatTimeline_SelfDamage()
         {
             Add(Hit(P, P, T, 5, attackMs: 0, hurtMs: 0));
