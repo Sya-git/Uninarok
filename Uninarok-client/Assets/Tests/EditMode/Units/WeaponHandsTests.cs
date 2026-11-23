@@ -83,6 +83,29 @@ namespace Uninarok.Units.Tests
         }
     }
 
+    // TASKS-0009 T10.3 (FR-17; PLAN-0009 4.11). Real catalog.
+    [Category("NeedsData")]
+    public class WeaponHandsClassifyTests
+    {
+        [Test, Ignore("pending T10.4")]
+        public void WeaponHands_Classify_LeftByItemKind()
+        {
+            var source = UnitTestData.CatalogOrIgnore();
+            var catalog = source.Catalog;
+            var tables = source.Tables;
+
+            var knife = WeaponHands.Left(1201, catalog, tables);
+            Assert.That(knife.Kind, Is.EqualTo(HandKind.Weapon), "left 1201");
+            Assert.That(knife.WeaponType, Is.EqualTo(1), "left 1201 type");
+
+            Assert.That(WeaponHands.Left(2101, catalog, tables).Kind, Is.EqualTo(HandKind.Shield), "left 2101");
+            Assert.That(WeaponHands.Left(1, catalog, tables).Kind, Is.EqualTo(HandKind.Shield), "left 1 (view id)");
+            Assert.That(WeaponHands.Left(2220, catalog, tables).Kind, Is.EqualTo(HandKind.Unknown), "left 2220 (headgear)");
+            Assert.That(WeaponHands.Left(9999999, catalog, tables).Kind, Is.EqualTo(HandKind.Unknown), "left 9999999");
+            Assert.That(WeaponHands.Right(2101, catalog, tables).Kind, Is.EqualTo(HandKind.Unknown), "right 2101");
+        }
+    }
+
     public class JobFamiliesTests
     {
         [Test]
