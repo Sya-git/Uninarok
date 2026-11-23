@@ -164,7 +164,7 @@
 - [x] **T7.3** `/noctrl`. (FR-2)
   *Done when:* a test shows that it toggles a plain click to continuous and back, and says so.
 
-- [ ] **T7.4** Tests, then implementation: `RestartPrompt`. (FR-8)
+- [x] **T7.4** Tests, then implementation: `RestartPrompt`. (FR-8)
   *Done when:* the `RestartPrompt_*` tests pass.
 
 - [ ] **T7.5** `RestartPromptView` in UI Toolkit. (FR-8)

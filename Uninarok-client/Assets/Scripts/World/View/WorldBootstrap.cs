@@ -184,12 +184,17 @@ namespace Uninarok.World.View
         void LateUpdate()
         {
             var model = Session?.Model;
-            if (model == null) return;
+            if (model == null)
+            {
+                Session?.Restart.Update(Clock.Now); // out of a map: closed
+                return;
+            }
             using var marker = UpdateMarker.Auto();
             uint now = Clock.Now;
             model.Advance(now);
             Session.Combat.Tick(now);         // SPEC-0011, PLAN-0011 §2
             Session.Timeline?.Advance(now);
+            Session.Restart.Update(now);
             if (_presenter != null && _map != null)
             {
                 _presenter.Sync(model);

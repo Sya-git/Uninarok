@@ -90,6 +90,7 @@ namespace Uninarok.World
             _onPickupAnswer = OnPickupAnswer;
             Own = new OwnCharacter(this, client, _flow);
             Combat = new OwnCombat(this, client, _flow);
+            Restart = new RestartPrompt(this, client, _flow);
 
             _flow.StateChanged += OnStateChanged;
             _flow.MapLoadRequested += OnMapLoadRequested;
@@ -106,6 +107,9 @@ namespace Uninarok.World
         /// <summary>The own character's attacks and pickups (SPEC-0011 FR-2, FR-3, FR-10).</summary>
         public OwnCombat Combat { get; }
 
+        /// <summary>The own character's death prompt (SPEC-0011 FR-8), without its view.</summary>
+        public RestartPrompt Restart { get; }
+
         /// <summary>What is shown of each blow, and when (SPEC-0011 FR-4 to FR-6, FR-9, FR-14); null until <see cref="UseCombat"/>.</summary>
         public CombatTimeline Timeline { get; private set; }
 
@@ -114,6 +118,7 @@ namespace Uninarok.World
         {
             if (settings == null) throw new ArgumentNullException(nameof(settings));
             Combat.Use(settings);
+            Restart.TimeoutMs = settings.RestartTimeoutMs;
             Timeline = new CombatTimeline(settings, slots);
             Timeline.Use(Model);
         }
