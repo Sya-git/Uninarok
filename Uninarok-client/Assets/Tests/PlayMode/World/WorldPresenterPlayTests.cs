@@ -504,6 +504,74 @@ namespace Uninarok.World.PlayTests
             Assert.AreEqual(1, overlay.DrawnBars, "no bar while the own character is dead");
         }
 
+        // ---- SPEC-0011 T6.5 (FR-12; PLAN-0011 6.1): 100 numbers and 300 units, bars and arrows, at 0 B per frame ----
+
+        [UnityTest, Category("NeedsData")]
+        public IEnumerator CombatOverlay_ZeroAllocation_100Numbers300Units()
+        {
+            const uint First = 1000;
+            for (uint i = 0; i < 300; i++)
+            {
+                int x = 5 + (int)(i % 30) * 3, y = 5 + (int)(i / 30) * 9;
+                if (i % 3 == 0) Novice(First + i, x, y);
+                else
+                {
+                    Poring(First + i, x, y);
+                    _model.SetHp(First + i, 5 + (int)(i % 4), 10); // hurt: a bar each
+                }
+            }
+            _model.OwnId = First;
+            _presenter.Sync(_model);
+            yield return Loaded(First + 299);
+            var overlay = Overlay(out var camera, out _);
+            LookAt(camera, _presenter.ViewOf(First + 150).transform.position, 0f);
+            camera.transform.position -= camera.transform.forward * 120f; // the whole field in view
+
+            CombatSettings settings = null;
+#if UNITY_EDITOR
+            settings = UnityEditor.AssetDatabase.LoadAssetAtPath<CombatSettings>("Assets/Settings/World/CombatSettings.asset");
+#endif
+            var timeline = new CombatTimeline(settings, _model.Capacity) { Weapons = new BowWeapons() };
+            timeline.Use(_model);
+            overlay.Use(_model, new OwnStatus { Hp = 50, MaxHp = 100, Sp = 10, MaxSp = 20 }, timeline, _presenter, settings);
+            _presenter.Timeline = timeline;
+            _model.SetLook(First, LookType.Weapon, 11, 0); // the own character shoots arrows
+
+            const uint T = 10_000;
+            for (uint i = 0; i < 110; i++)
+            {
+                uint poring = First + 1 + i % 199;
+                if ((poring - First) % 3 == 0) poring++;
+                if (i < 100) // a hundred monster blows on the own character, shown at T + 400
+                    timeline.Add(new Blow(poring, First, T, 400, 200, 100 + (int)i * 37, 0, 1, i % 4 == 0 ? BlowKind.Critical : BlowKind.Normal, false, 0));
+                else         // ten arrows of the own character
+                    timeline.Add(new Blow(First, poring, T, 2000, 200, 55, 0, 1, BlowKind.Normal, false, 0));
+            }
+            uint now = T + 395; // the numbers from T + 400; the arrows launched at T + 667 (6 x 24 x 2000 / 432)
+            Action frames = () =>
+            {
+                for (int f = 0; f < 60; f++)
+                {
+                    now += 5;
+                    _model.Advance(now);
+                    timeline.Advance(now);
+                    _presenter.Sync(_model);
+                    overlay.Draw(camera);
+                }
+            };
+            frames();
+            Assert.GreaterOrEqual(overlay.DrawnNumbers, 100, "100 numbers on the screen");
+            Assert.GreaterOrEqual(overlay.DrawnBars, 150, "the hurt porings' bars and the own one");
+            Assert.Greater(overlay.DrawnArrows, 0, "and arrows");
+            Assert.AreEqual(300, _presenter.ShownCount);
+            Assert.That(() => frames(), UnityEngine.TestTools.Constraints.Is.Not.AllocatingGCMemory());
+        }
+
+        sealed class BowWeapons : IWeaponTypes
+        {
+            public int TypeOf(int weapon) => weapon;
+        }
+
         [TestCase(0, 1, 0, 2)] // job, sex, server style, head file
         [TestCase(0, 0, 0, 2)]
         [TestCase(0, 1, 2, 1)]

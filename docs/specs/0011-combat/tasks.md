@@ -150,7 +150,7 @@
 - [x] **T6.4** Convert `sprite/npc/skel_archer_arrow`; `ProjectileView`. (FR-14)
   *Done when:* an archer's and an archer skeleton's arrow fly to their targets on the local server, turned along their flight at four camera turns (screenshots).
 
-- [ ] **T6.5** `CombatOverlay_ZeroAllocation_100Numbers300Units`. (FR-12)
+- [x] **T6.5** `CombatOverlay_ZeroAllocation_100Numbers300Units`. (FR-12)
   *Done when:* it passes.
 
 ## Phase 7: Input and restart
