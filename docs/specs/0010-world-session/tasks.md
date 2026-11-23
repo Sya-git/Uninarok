@@ -256,10 +256,11 @@
 
 ## Phase 9: Verify and close
 
-- [ ] **T9.1** Owner: second-client and side-by-side checks. (FR-1, FR-9, FR-13, FR-19)
+- [x] **T9.1** Owner: second-client and side-by-side checks. (FR-1, FR-9, FR-13, FR-19)
   Entry on prontera; turns, commands and sitting seen by a second client; the turn controls against the original client.
   *Done when:* each check is recorded in `evidence/` with its result.
   *Open (2026-11-22):* done with two Multiplayer Play Mode players: entry, turns (head first, then the body), `/bangbang`, `/doridori`, sitting and walking seen by the other client. The owner compared (2026-11-22): the shadow (PLAN-0009 D27; here 105,93,56 over 165,145,78, the original 108,98,58 over 178,157,83; `evidence/t9.1-shadow.png`) is right, the dead monster time of 5 s is accepted (it is `DeadMonsterLingerMs` in `WorldSettings`, as the owner asked), the cell cursor is right and the mouse cursor was stretched and too fast (fixed, D34). Left for the owner, against the original client: the fall and the shadow of an item (D37); both mouse cursors (T8.3) and the hair styles (D27) are right (owner, 2026-11-22). The place of a dropped item is right (owner, 2026-11-22).
+  *Result (2026-11-22):* the owner accepted the last ones, the fall and the shadow of an item (D37); every check of this task and of T0.4 is done. Evidence: `t6.3-*`, `t6.4-*`, `t8.1-*`, `t8.3-*`, `t8.5-*`, `t9.1-*`; the rest is the owner's word as recorded above.
 
 - [x] **T9.2** Cost at 300 walking units (plan §6). (FR-17)
   100 players (dev bots or replay) and 200 monsters walking on prt_fild08, development build, owner's PC.
