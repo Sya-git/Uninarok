@@ -41,7 +41,7 @@
 
 ## Phase 1: Packets
 
-- [ ] **T1.1** Write the new packet docs and update the existing ones. (FR-1, FR-2, FR-3, FR-5, FR-8, FR-10, FR-11)
+- [x] **T1.1** Write the new packet docs and update the existing ones. (FR-1, FR-2, FR-3, FR-5, FR-8, FR-10, FR-11)
   New: `ATTACK_TOO_FAR`, `ATTACK_RANGE`, `ACTION_FAILURE`, `LONG_PARAMETER_CHANGE`, `EXP_GAIN`, `RESURRECTION`, `STOP_ATTACK`. Existing: `DAMAGE` (types, times), `UNIT_ACT` (action 1), `PARAMETER_CHANGE` (vars), `ITEM_PICKUP_ACK` (results), `UNIT_HP` (never sent), `UNIT_MOVE_ENTRY` (HP re-sent, not at full), `REQUEST_ACT`, `PICKUP_ITEM`, `RESTART`.
   *Done when:* every doc follows Packet-Implementation.md with T0.1's layout; `INDEX.md` and `CATALOG.md` list them.
 

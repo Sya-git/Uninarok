@@ -11,7 +11,7 @@
 | **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no; layout from `packets_struct.h` (`packet_unit_walking`) |
 | **Allocates** | no |
 
-**Hercules usage:** Sent by `clif_set_unit_walking` (when a walking unit enters view, and by `clif_move` when its walk speed changed).
+**Hercules usage:** Sent by `clif_set_unit_walking` (when a walking unit enters view, and by `clif_move` when its walk speed changed). From PACKETVER 20131223 it is also how a monster's HP reaches the client: `mob_damage` and `mob_heal` re-send it to the area after each change while `clif_show_monster_hp_bar` holds (HP below max HP, `show_monster_hp_bar` set, not a boss, Emperium or guardian); the killing blow is re-sent with `HP` 0. A heal to full HP sends nothing (SPEC-0011 H10). In all three entry packets `maxHP` and `HP` are `-1` when that rule does not hold (checked 2026-11-22, SPEC-0011 T1.1).
 
 **Description:** A unit that is already walking comes into view. Same as `UNIT_STAND_ENTRY` but with a walk path and start time instead of a position.
 
@@ -49,8 +49,8 @@
 | ySize | `byte` | 1 byte | Collision height hint. |
 | clevel | `short` | 2 bytes | Base level. |
 | font | `short` | 2 bytes | Chat font. |
-| maxHP | `int` | 4 bytes | Max HP. |
-| HP | `int` | 4 bytes | Current HP. |
+| maxHP | `int` | 4 bytes | Max HP; `-1` when not shown. |
+| HP | `int` | 4 bytes | Current HP; `-1` when not shown. |
 | isBoss | `byte` | 1 byte | Boss flag. |
 | body | `ushort` | 2 bytes | Body style. |
 | name | fixed ASCII string | 24 bytes | Unit name. |

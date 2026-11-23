@@ -11,7 +11,7 @@
 | **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no; layout from `packets_struct.h` (`packet_monster_hp`) |
 | **Allocates** | no |
 
-**Hercules usage:** Sent by `clif_monster_hp_bar`.
+**Hercules usage:** Sent by `clif_monster_hp_bar` only under `#if PACKETVER >= 20120404 && PACKETVER < 20131223` (`mob.cpp`). **Never sent at PACKETVER 20220406**: monster HP comes in `UNIT_MOVE_ENTRY` (`0x09FD`) instead (checked 2026-11-22, SPEC-0011 T1.1). Not implemented.
 
 **Description:** Current and maximum HP of a monster (HP bar).
 

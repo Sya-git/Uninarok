@@ -26,8 +26,8 @@
 | `0x0121` | ZC_NOTIFY_CARTITEM_COUNTINFO | 14 | size verified | curCount, maxCount, curWeight, maxWeight |  |
 | `0x012C` | cart_additem_ack | 3 | size verified | result |  |
 | `0x0131` | ZC_STORE_ENTRY | 86 | MISMATCH struct 1506 / table 86 | packetType, makerAID, storeName[MESSAGE_SIZE] |  |
-| `0x0139` | ZC_ATTACK_FAILURE_FOR_DISTANCE | 16 | size verified | targetAID, targetXPos, targetYPos, xPos, yPos, currentAttRange |  |
-| `0x013A` | ZC_ATTACK_RANGE | 4 | size verified | currentAttRange |  |
+| `0x0139` | ZC_ATTACK_FAILURE_FOR_DISTANCE | 16 | size verified | targetAID, targetXPos, targetYPos, xPos, yPos, currentAttRange | [ATTACK_TOO_FAR](In/MapServer/ATTACK_TOO_FAR.md) |
+| `0x013A` | ZC_ATTACK_RANGE | 4 | size verified | currentAttRange | [ATTACK_RANGE](In/MapServer/ATTACK_RANGE.md) |
 | `0x0147` | ZC_AUTORUN_SKILL | 39 | size verified | packetType, skill_id, skill_type, skill_lv, skill_sp, skill_range, skill_name[NAME_LENGTH], up_flag |  |
 | `0x014C` | ZC_MYGUILD_BASIC_INFO | -1 | variable (layout not auto-sized) | PacketLength, ... |  |
 | `0x0160` | ZC_POSITION_INFO | -1 | variable (layout not auto-sized) | PacketLength, ..., positionID, right, ranking, payRate |  |
@@ -175,7 +175,7 @@
 | `0x0BA4` | ZC_PROPERTY_HOMUN | 85 | size verified | packetType, name[NAME_LENGTH], flags, level, hunger, intimacy, atk2, matk, hit, crit, def, mdef, flee, amot... |  |
 | `0x0BAE` | ZC_ACK_TAKEOFF_EQUIP_ALL | 3 | size verified | result |  |
 
-Packets that Hercules builds by hand in `clif.cpp` (without a struct) are not listed here, for example `PLAYER_MOVE` (0x0087), `UNIT_VANISH` (0x0080), `UNIT_STOP_MOVE` (0x0088), `ITEM_DISAPPEAR` (0x00A1); the ones the client needs first are documented individually. Find others with `WFIFOW(fd, 0) = 0x....` or `// ZC_...` comments in `clif.cpp`.
+Packets that Hercules builds by hand in `clif.cpp` (without a struct) are not listed here, for example `PLAYER_MOVE` (0x0087), `UNIT_VANISH` (0x0080), `UNIT_STOP_MOVE` (0x0088), `ITEM_DISAPPEAR` (0x00A1), `ACTION_FAILURE` (0x013B), `RESURRECTION` (0x0148), `EXP_GAIN` (0x0ACC), and `LONG_PARAMETER_CHANGE` (0x0ACB, declared with `DEFINE_PACKET_ID`); the ones the client needs are documented individually and listed in [`INDEX.md`](INDEX.md). Find others with `WFIFOW(fd, 0) = 0x....` or `// ZC_...` comments in `clif.cpp`.
 
 ## Client to server (map server): 303 handlers
 
@@ -222,7 +222,7 @@ One row per Hercules handler: the ID registered for PACKETVER 20220406 (the shuf
 | `0x0103` |  | pRemovePartyMember | 2,6 | 30 |  |
 | `0x0108` |  | pPartyMessage | 2,4 | -1 |  |
 | `0x0112` |  | pSkillUp | 2 | 4 |  |
-| `0x0118` |  | pStopAttack | 0 | 2 |  |
+| `0x0118` |  | pStopAttack | 0 | 2 | [STOP_ATTACK](Out/MapServer/STOP_ATTACK.md) |
 | `0x011B` |  | pUseSkillMap | 2,4 | 20 |  |
 | `0x011D` |  | pRequestMemo | 0 | 2 |  |
 | `0x0126` |  | pPutItemToCart | 2,4 | 8 |  |
