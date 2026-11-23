@@ -58,8 +58,10 @@ Rules:
 - A job, a weapon type or a sex (other than 0 female or 1 male) that is not listed gives 1.
 - Units that are not players always play `Attack`.
 - The job is the one whose sprites are used. Baby, high and transcendent jobs, and the third jobs that roBrowserLegacy copies from a base job, are looked up by that base job: the caller maps them, T5.4.
-- Not listed: Druid and its jobs, whose ids are not known here.
-- With two weapons, the two-weapon row is used: assassin only.
+- `AttackMotions.NumberOf(rowJob, sex, weaponType)` takes the row job and row sex of "Job families" below and the type of both hands (`WeaponHands.Combine`); the two-weapon rows 25 to 30 are matched by that combined type (assassin family only), there is no second-hand flag (D21).
+- Taekwon (4046) has one row for every weapon type → 2: owner-observed in the original client, 2026-11-23 (D22); roBrowserLegacy has no row. Its family (Star Gladiator, Star and Sky Emperor) uses it.
+- No row, so 1 for every weapon: Gangsi 4050, Death Knight 4051 (spec: deliberately), Dark Collector 4052, Wedding 22, Xmas 26, Summer 27 and the other outfit jobs (owner, 2026-11-23, D26).
+- Druid (4351) rows: roBrowserLegacy's `DRUID` entry (0 → 0, 1 → 1, 6, 7, 8, 9 → 2 in its numbering; its comment: daggers in ATTACK2, axes and clubs in ATTACK3), copied from roBrowserLegacy, not run (D27).
 
 Weapon types (`Weapon_IDs`):
 
@@ -106,6 +108,8 @@ Weapon types (`Weapon_IDs`):
 | Soul Linker (4049) | female | 0→1; 1→2; 10, 23 → 3 |
 | Soul Linker (4049) | male | 0→1; 10, 23 → 2; 1→3 |
 | Summoner (4218) | either | 0→1; 10, 23 → 2 |
+| Taekwon (4046) | either | every type → 2 |
+| Druid (4351) | either | 0→1; 1→2; 6, 7, 8, 9 → 3 |
 
 Two more lead facts, not used here:
 - roBrowserLegacy also shortens the attack of monks with knuckles or bare hands (5 frames from frame 0), and of summoners with bare hands (4 frames).

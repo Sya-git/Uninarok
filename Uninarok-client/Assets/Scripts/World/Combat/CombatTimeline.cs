@@ -351,7 +351,7 @@ namespace Uninarok.World
             var weapons = Weapons;
             int right = weapons != null ? weapons.TypeOf(e.Look.Weapon) : 0;
             int job = Jobs != null ? Jobs.BaseJobOf(e.Look.Job) : e.Look.Job;
-            return (byte)AttackMotions.NumberOf(job, e.Look.Sex, right, false);
+            return (byte)AttackMotions.NumberOf(job, e.Look.Sex, right);
         }
 
         int LifeOf(NumberKind kind) => NumberMotion.LifeMs(kind, _settings);

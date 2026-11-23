@@ -5,7 +5,8 @@ namespace Uninarok.World
     /// <summary>
     /// Which of the three attack animations a player plays, and its hit frame (SPEC-0011 FR-4; PLAN-0011 4.7, D7). Rows in code,
     /// listed in <c>docs/specs/0011-combat/combat-reference.md</c>. Lead: roBrowserLegacy <c>src/DB/Jobs/WeaponAction.js</c>
-    /// (read 2026-11-23), its job constants as Hercules job ids. Pure.
+    /// (read 2026-11-23), its job constants as Hercules job ids, its motions 0 to 2 as 1 to 3. Rows are by row job (FR-15:
+    /// <c>JobFamilies.RowJobOf</c>, D20) and by the type of both hands (<c>WeaponHands</c>, D21). Pure, no allocation.
     /// </summary>
     public static class AttackMotions
     {
@@ -13,6 +14,7 @@ namespace Uninarok.World
         public const float DefaultHitFrame = 6f;
 
         const byte Any = 2;
+        const byte AnyWeapon = 0xFF;   // a row for every weapon type, matched after the exact rows (D22)
 
         // Weapon types (Weapon_IDs).
         const byte None = 0, ShortSword = 1, Sword = 2, TwoHandSword = 3, Spear = 4, TwoHandSpear = 5, Axe = 6, TwoHandAxe = 7, Mace = 8,
@@ -95,26 +97,30 @@ namespace Uninarok.World
             0xD1, 0x0F, 1, None, 1,  0xD1, 0x0F, 1, Rod, 2,  0xD1, 0x0F, 1, TwoHandRod, 2,  0xD1, 0x0F, 1, ShortSword, 3,
             // Summoner 4218
             0x7A, 0x10, Any, None, 1,  0x7A, 0x10, Any, Rod, 2,  0x7A, 0x10, Any, TwoHandRod, 2,
+            // Taekwon 4046 and its family: Attack2 for every weapon (owner-observed, D22; roBrowserLegacy has no row)
+            0xCE, 0x0F, Any, AnyWeapon, 2,
+            // Druid 4351 (roBrowserLegacy, copied untested, D27): daggers Attack2, axes and maces Attack3
+            0xFF, 0x10, Any, None, 1,  0xFF, 0x10, Any, ShortSword, 2,  0xFF, 0x10, Any, Axe, 3,  0xFF, 0x10, Any, TwoHandAxe, 3,
+            0xFF, 0x10, Any, Mace, 3,  0xFF, 0x10, Any, TwoHandMace, 3,
+            // No row (Attack1 by the default): Gangsi 4050, Death Knight 4051, Dark Collector 4052, Wedding 22, Xmas 26,
+            // Summer 27 and the other outfit jobs (spec FR-15, D26).
         };
 
         /// <summary>
-        /// 1 to 3: <c>Attack1</c> to <c>Attack3</c>. <paramref name="job"/> is the job whose sprites the player uses (the base job of
-        /// baby, high and transcendent jobs). A sex other than 0 or 1, or a job or weapon not listed: 1. With a second hand the row
-        /// of the two weapons is used (short sword and short sword, sword and sword, axe and axe) when there is one.
+        /// 1 to 3: <c>Attack1</c> to <c>Attack3</c>. <paramref name="rowJob"/> is the job whose row the player uses
+        /// (<c>JobFamilies.RowJobOf</c>), <paramref name="sex"/> the row's sex (<c>JobFamilies.RowSexOf</c>) and
+        /// <paramref name="weaponType"/> the type of both hands (0 to 30; 25 to 30 are two weapons, <c>WeaponHands.Combine</c>).
+        /// A sex other than 0 or 1, or a job or weapon not listed: 1.
         /// </summary>
-        public static int NumberOf(int job, byte sex, int weaponType, bool secondHand)
+        public static int NumberOf(int rowJob, byte sex, int weaponType)
         {
             if (sex > 1) return 1;
-            if (secondHand)
-            {
-                int pair = weaponType == ShortSword ? ShortSwordShortSword : weaponType == Sword ? SwordSword : weaponType == Axe ? AxeAxe : -1;
-                if (pair >= 0 && TryFind(job, sex, pair, out int n)) return n;
-            }
-            return TryFind(job, sex, weaponType, out int number) ? number : 1;
+            if (TryFind(rowJob, sex, weaponType, out int number)) return number;
+            return TryFind(rowJob, sex, AnyWeapon, out number) ? number : 1;
         }
 
         /// <summary>The attack motion's hit frame: 6 for every row so far (lead; T0.3 shots 1, 11, 13).</summary>
-        public static float HitFrameOf(int job, byte sex, int weaponType) => DefaultHitFrame;
+        public static float HitFrameOf(int rowJob, byte sex, int weaponType) => DefaultHitFrame;
 
         static bool TryFind(int job, byte sex, int weaponType, out int number)
         {
