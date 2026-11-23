@@ -8,13 +8,15 @@
                 { "name": "Walk", "type": "Button", "id": "6f0f3a54-2a0c-4b0e-9d57-0a4f7b1c1a11", "expectedControlType": "Button", "processors": "", "interactions": "", "initialStateCheck": false },
                 { "name": "TurnModifier", "type": "Button", "id": "6f0f3a54-2a0c-4b0e-9d57-0a4f7b1c1a12", "expectedControlType": "Button", "processors": "", "interactions": "", "initialStateCheck": false },
                 { "name": "Sit", "type": "Button", "id": "6f0f3a54-2a0c-4b0e-9d57-0a4f7b1c1a13", "expectedControlType": "Button", "processors": "", "interactions": "", "initialStateCheck": false },
-                { "name": "Position", "type": "Value", "id": "6f0f3a54-2a0c-4b0e-9d57-0a4f7b1c1a14", "expectedControlType": "Vector2", "processors": "", "interactions": "", "initialStateCheck": true }
+                { "name": "Position", "type": "Value", "id": "6f0f3a54-2a0c-4b0e-9d57-0a4f7b1c1a14", "expectedControlType": "Vector2", "processors": "", "interactions": "", "initialStateCheck": true },
+                { "name": "AttackModifier", "type": "Button", "id": "6f0f3a54-2a0c-4b0e-9d57-0a4f7b1c1a15", "expectedControlType": "Button", "processors": "", "interactions": "", "initialStateCheck": false }
             ],
             "bindings": [
                 { "name": "", "id": "6f0f3a54-2a0c-4b0e-9d57-0a4f7b1c1a21", "path": "<Mouse>/leftButton", "interactions": "", "processors": "", "groups": "", "action": "Walk", "isComposite": false, "isPartOfComposite": false },
                 { "name": "", "id": "6f0f3a54-2a0c-4b0e-9d57-0a4f7b1c1a22", "path": "<Keyboard>/shift", "interactions": "", "processors": "", "groups": "", "action": "TurnModifier", "isComposite": false, "isPartOfComposite": false },
                 { "name": "", "id": "6f0f3a54-2a0c-4b0e-9d57-0a4f7b1c1a23", "path": "<Keyboard>/insert", "interactions": "", "processors": "", "groups": "", "action": "Sit", "isComposite": false, "isPartOfComposite": false },
-                { "name": "", "id": "6f0f3a54-2a0c-4b0e-9d57-0a4f7b1c1a24", "path": "<Mouse>/position", "interactions": "", "processors": "", "groups": "", "action": "Position", "isComposite": false, "isPartOfComposite": false }
+                { "name": "", "id": "6f0f3a54-2a0c-4b0e-9d57-0a4f7b1c1a24", "path": "<Mouse>/position", "interactions": "", "processors": "", "groups": "", "action": "Position", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "6f0f3a54-2a0c-4b0e-9d57-0a4f7b1c1a25", "path": "<Keyboard>/ctrl", "interactions": "", "processors": "", "groups": "", "action": "AttackModifier", "isComposite": false, "isPartOfComposite": false }
             ]
         }
     ],

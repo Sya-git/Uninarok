@@ -1,0 +1,2 @@
+2000000 Player (own) at 161,330: rect (x:-0.25, y:-0.15, width:0.50, height:1.01) screen (960.00, 576.62) -> none, mouse Default
+110024012 Monster (poring) at 165,340: rect (x:-0.25, y:-0.05, width:0.53, height:0.44) screen (1151.85, 894.88) -> 110024012, mouse Attack

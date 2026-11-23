@@ -8,6 +8,8 @@ namespace Uninarok.World.View
     public enum MouseCursorKind : byte
     {
         Default = 0,
+        /// <summary>A monster is under the mouse (SPEC-0011 FR-2).</summary>
+        Attack = 5,
         /// <summary>The ground under the mouse is not walkable.</summary>
         NoWalk = 13,
     }
