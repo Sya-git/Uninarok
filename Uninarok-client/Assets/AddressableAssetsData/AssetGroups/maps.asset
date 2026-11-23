@@ -15,8 +15,20 @@ MonoBehaviour:
   m_GroupName: maps
   m_GUID: 12cac2395925a1646987797976425c61
   m_SerializeEntries:
+  - m_GUID: 1f5da885e0752c2499d3b9e4ef47707f
+    m_Address: map/int_land
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+    m_FolderGuid: 
   - m_GUID: 22c30177193c6ed47a5aaa2644bcbd41
     m_Address: map/prt_fild08
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+    m_FolderGuid: 
+  - m_GUID: 24e9f55aca8d0234ca968a7c56d40722
+    m_Address: map/iz_int
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
