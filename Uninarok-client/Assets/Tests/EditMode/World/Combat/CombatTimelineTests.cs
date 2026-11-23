@@ -203,7 +203,6 @@ namespace Uninarok.World.Tests
         // type reaches the projectile rules. Job 4001 uses the Wizard row (9), male as female (row sex 0); a Rod there is Attack3
         // (a male Wizard's would be Attack2, the server's job has no row: Attack1).
         [Test]
-        [Ignore("pending T10.6")]
         public void CombatTimeline_AttackNumber_BothHandsAndRowJob()
         {
             var hands = new FakeHands { Type = 10 };

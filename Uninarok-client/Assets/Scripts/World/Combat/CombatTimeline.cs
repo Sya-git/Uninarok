@@ -154,32 +154,36 @@ namespace Uninarok.World
             var model = _model;
             if (model == null) return;
 
-            if (blow.AttackerId != blow.TargetId && blow.AttackMs > 0 && model.TryGetSlot(blow.AttackerId, out int attacker) &&
+            // D23: one both-hands type per blow, for the motion, the hit frame and the projectile.
+            bool known = model.TryGetSlot(blow.AttackerId, out int attacker);
+            int weapon = known ? WeaponTypeOf(model[attacker]) : 0;
+
+            if (blow.AttackerId != blow.TargetId && blow.AttackMs > 0 && known &&
                 attacker < _motions.Length && model[attacker].State != EntityState.Dead)
-                Start(model, attacker, MotionKind.Attack, blow.At, blow.AttackMs, AttackNumber(model[attacker]));
+                Start(model, attacker, MotionKind.Attack, blow.At, blow.AttackMs, AttackNumber(model[attacker], weapon));
 
             // H11: an attack time of 0 or less is at once.
             uint hit = unchecked(blow.At + (uint)Math.Max(0, blow.AttackMs));
             // 4.7: a player's number waits for its arrow.
-            if (AddProjectile(model, blow, out uint arrives)) hit = arrives;
+            if (AddProjectile(model, blow, weapon, out uint arrives)) hit = arrives;
             AddNumbers(blow, hit);
         }
 
         // FR-14: one projectile per blow, also a multi-hit, between the shown positions (taken again at the launch).
-        bool AddProjectile(WorldModel model, in Blow blow, out uint arrives)
+        // weapon: the both-hands type of the attacker (D23).
+        bool AddProjectile(WorldModel model, in Blow blow, int weapon, out uint arrives)
         {
             arrives = 0;
             if (blow.AttackerId == blow.TargetId || !model.TryGetSlot(blow.AttackerId, out int attacker) || !model.TryGetSlot(blow.TargetId, out int target))
                 return false;
             ref readonly var a = ref model[attacker];
             ref readonly var t = ref model[target];
-            int weapon = a.Kind == EntityKind.Player && Weapons != null ? Weapons.TypeOf(a.Look.Job, a.Look.Weapon, a.Look.Shield) : 0;
             var kind = ProjectileRules.Of(a.Kind, a.Look.Job, weapon);
             if (kind == ProjectileKind.None) return false;
 
             bool player = a.Kind == EntityKind.Player;
             float dx = t.PosX - a.PosX, dy = t.PosY - a.PosY;
-            float hitFrame = player ? AttackMotions.HitFrameOf(a.Look.Job, a.Look.Sex, weapon) : 0f;
+            float hitFrame = player ? AttackMotions.HitFrameOf(RowJobOf(a.Look.Job), RowSexOf(a.Look.Job, a.Look.Sex), weapon) : 0f;
             ProjectileRules.Times(blow, player, (float)Math.Sqrt(dx * dx + dy * dy), hitFrame, _settings.FlightMs, _settings.FlightFullCells,
                                   out uint launches, out uint lands, out bool waits);
             if (_projectileCount == _projectiles.Length) DropOldest(_projectiles, ref _projectileCount, "projectiles");
@@ -347,14 +351,31 @@ namespace Uninarok.World
         // FR-4: a hurt unless no damage, endured, a lucky dodge or no hurt time.
         static bool Hurts(in Blow blow) => blow.Damage > 0 && !blow.Endured && blow.Kind != BlowKind.LuckyDodge && blow.HurtMs > 0;
 
-        // 4.7: players by the row job, sex and the type of both hands; others always Attack. Row sex and one type per blow: T10.6.
-        byte AttackNumber(in Entity e)
+        // 4.7, D21: a player's type of both hands (the server's job, Look.Weapon, Look.Shield); others and no catalog: 0.
+        int WeaponTypeOf(in Entity e)
+        {
+            var weapons = Weapons;
+            return e.Kind == EntityKind.Player && weapons != null ? weapons.TypeOf(e.Look.Job, e.Look.Weapon, e.Look.Shield) : 0;
+        }
+
+        // FR-15 (D20, D24): the row job and row sex; without the catalog a job stands for itself.
+        int RowJobOf(int job)
+        {
+            var jobs = Jobs;
+            return jobs != null ? jobs.RowJobOf(job) : job;
+        }
+
+        byte RowSexOf(int job, byte sex)
+        {
+            var jobs = Jobs;
+            return jobs != null ? jobs.RowSexOf(job, sex) : sex;
+        }
+
+        // 4.7: players by the row job, row sex and the blow's type of both hands (D23); others always Attack.
+        byte AttackNumber(in Entity e, int weapon)
         {
             if (e.Kind != EntityKind.Player) return 1;
-            var weapons = Weapons;
-            int type = weapons != null ? weapons.TypeOf(e.Look.Job, e.Look.Weapon, e.Look.Shield) : 0;
-            int job = Jobs != null ? Jobs.RowJobOf(e.Look.Job) : e.Look.Job;
-            return (byte)AttackMotions.NumberOf(job, e.Look.Sex, type);
+            return (byte)AttackMotions.NumberOf(RowJobOf(e.Look.Job), RowSexOf(e.Look.Job, e.Look.Sex), weapon);
         }
 
         int LifeOf(NumberKind kind) => NumberMotion.LifeMs(kind, _settings);
