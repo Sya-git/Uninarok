@@ -133,7 +133,7 @@
 - [x] **T5.3** Presenter: motions, base animation, death after the hit. (FR-4, FR-9, FR-10)
   *Done when:* `WorldPresenter_PlaysMotionThenBase` and `_DeathAfterHurt` pass, `WorldPresenter_ReadsOnly` and the zero-allocation test too.
 
-- [ ] **T5.4** `CatalogWeaponTypes` and the wiring in `WorldBootstrap` (order of plan §2, §5). (FR-4, FR-14)
+- [x] **T5.4** `CatalogWeaponTypes` and the wiring in `WorldBootstrap` (order of plan §2, §5). (FR-4, FR-14)
   *Done when:* a view id, an item id and an unknown value give their types (test); on the local server attacks and hurts of monsters and players are seen (clip).
 
 ## Phase 6: Drawing

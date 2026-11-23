@@ -21,6 +21,8 @@ namespace Uninarok.World.View
     {
         public RoCamera CameraRig;
         public WorldSettings Settings;
+        /// <summary><c>Settings/World/CombatSettings.asset</c> (SPEC-0011); without it the own combat uses its defaults and no blow is shown.</summary>
+        public CombatSettings Combat;
         /// <summary><c>sprite_unit.mat</c>.</summary>
         public Material UnitMaterial;
 
@@ -67,6 +69,8 @@ namespace Uninarok.World.View
             Clock = new ServerClock(clock);
             // Before this component listens: the session ends the old world first.
             Session = new WorldSession(client, flow, Clock, Settings);
+            if (Combat != null) Session.UseCombat(Combat);
+            else Debug.LogWarning("[World] no combat settings: blows are not shown");
             _flow.MapLoadRequested += OnMapLoadRequested;
             _flow.StateChanged += OnStateChanged;
         }
@@ -91,12 +95,20 @@ namespace Uninarok.World.View
         internal void UseAssets(AddressablesUnitAssetSource source)
         {
             _assets = source;
-            UsePresenter(new WorldPresenter(new UnitLoader(source), UnitMaterial, transform, Settings));
+            var timeline = Session?.Timeline;
+            if (timeline != null)
+            {
+                var types = new CatalogWeaponTypes(source);
+                timeline.Weapons = types;
+                timeline.Jobs = types;
+            }
+            UsePresenter(new WorldPresenter(new UnitLoader(source), UnitMaterial, transform, Settings) { Timeline = timeline });
         }
 
         internal void UsePresenter(WorldPresenter presenter)
         {
             _presenter = presenter;
+            if (presenter != null && presenter.Timeline == null) presenter.Timeline = Session?.Timeline;
             if (_map != null) ShowMap();
         }
 
@@ -168,6 +180,8 @@ namespace Uninarok.World.View
             using var marker = UpdateMarker.Auto();
             uint now = Clock.Now;
             model.Advance(now);
+            Session.Combat.Tick(now);         // SPEC-0011, PLAN-0011 §2
+            Session.Timeline?.Advance(now);
             if (_presenter != null && _map != null)
             {
                 _presenter.Sync(model);

@@ -70,6 +70,12 @@ namespace Uninarok.World
         int TypeOf(int weapon);
     }
 
+    /// <summary>The job whose sprites and attack rows a job uses: baby, high and transcendent jobs give their base job (D18).</summary>
+    public interface IJobBases
+    {
+        int BaseJobOf(int job);
+    }
+
     /// <summary>
     /// What is shown of each blow, and when (SPEC-0011 FR-4 to FR-6, FR-9, FR-10, FR-14; PLAN-0011 4.6): motions, numbers and
     /// projectiles from the blows of the model, later than the packets (D2). It reads the model and never changes it. Arrays are
@@ -127,6 +133,9 @@ namespace Uninarok.World
 
         /// <summary>Until the catalog is loaded every weapon type is 0.</summary>
         public IWeaponTypes Weapons { get; set; }
+
+        /// <summary>Until the catalog is loaded every job stands for itself.</summary>
+        public IJobBases Jobs { get; set; }
 
         /// <summary>The world whose units the blows are of; a new map's model forgets everything.</summary>
         public void Use(WorldModel model)
@@ -341,7 +350,8 @@ namespace Uninarok.World
             if (e.Kind != EntityKind.Player) return 1;
             var weapons = Weapons;
             int right = weapons != null ? weapons.TypeOf(e.Look.Weapon) : 0;
-            return (byte)AttackMotions.NumberOf(e.Look.Job, e.Look.Sex, right, false);
+            int job = Jobs != null ? Jobs.BaseJobOf(e.Look.Job) : e.Look.Job;
+            return (byte)AttackMotions.NumberOf(job, e.Look.Sex, right, false);
         }
 
         int LifeOf(NumberKind kind)

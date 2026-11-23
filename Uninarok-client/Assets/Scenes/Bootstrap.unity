@@ -335,6 +335,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Uninarok.World.View::Uninarok.World.View.WorldBootstrap
   CameraRig: {fileID: 1493915940}
   Settings: {fileID: 11400000, guid: 2fedfc7384612594eb7b2f18cc7af076, type: 2}
+  Combat: {fileID: 11400000, guid: 78817477a6a7bc84d888d68e2a02ecb9, type: 2}
   UnitMaterial: {fileID: 2100000, guid: 7564f1b793a26a9468149218c26c83af, type: 2}
 --- !u!114 &1746140162
 MonoBehaviour:
