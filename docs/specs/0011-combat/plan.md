@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [spec.md](spec.md) (SPEC-0011, approved 2026-11-22; revision approved 2026-11-23: FR-4 amended, FR-15 added) |
-| **Status** | Approved (owner, 2026-11-23: revision for FR-4 and FR-15: §2 diagram, §3, §4.6, §4.7, §6.1, §7, §8 D18 and D20 to D27, §9, §10; earlier version approved by the owner 2026-11-22) |
+| **Status** | Implementing (approved by the owner; owner, 2026-11-23: revision for FR-4 and FR-15: §2 diagram, §3, §4.6, §4.7, §6.1, §7, §8 D18 and D20 to D27, §9, §10; earlier version approved by the owner 2026-11-22) |
 | **Audience** | Architects, senior developers, AI agents |
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. Packets and flow are [PLAN-0001](../0001-networking-core/plan.md) (packet rules normative in [Packet-Implementation.md](../0001-networking-core/Packets/Packet-Implementation.md)); animations and unit display [PLAN-0009](../0009-unit-display/plan.md); the world model, the server clock, the own character, picking and the presenter [PLAN-0010](../0010-world-session/plan.md). This plan adds four things to them: **combat state in the world model**, **the own character's combat rules**, **a timeline that turns each blow into motions, numbers and projectiles**, and **what draws those**.

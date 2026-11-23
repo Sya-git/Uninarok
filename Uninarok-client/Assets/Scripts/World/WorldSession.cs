@@ -137,6 +137,12 @@ namespace Uninarok.World
         /// <summary>EXP gained by the own character: variable (1 base, 2 job) and amount (SPEC-0011 FR-11).</summary>
         public event Action<int, long> ExpGained;
 
+        /// <summary>The server said the own character is too far from this target (SPEC-0011 FR-11).</summary>
+        public event Action<uint> TooFarAnswered;
+
+        /// <summary>The server answered a pickup: item id and result as received, 0 is success (SPEC-0011 FR-11).</summary>
+        public event Action<uint, byte> PickupAnswered;
+
         void Raise(in Blow blow) => BlowReceived?.Invoke(blow);
 
         void RaiseExp(int varId, long amount) => ExpGained?.Invoke(varId, amount);
@@ -401,11 +407,16 @@ namespace Uninarok.World
         {
             Status.SetAttackRange(p.Range);
             Combat.OnTooFar(p, _clock.Now);
+            TooFarAnswered?.Invoke(p.TargetId);
         }
 
         void OnActionFailure(in ACTION_FAILURE p) => Combat.OnActionFailure(p.Type);
 
-        void OnPickupAnswer(in ITEM_PICKUP_ACK p) => Combat.OnPickupAnswer(p.Result, _clock.Now);
+        void OnPickupAnswer(in ITEM_PICKUP_ACK p)
+        {
+            Combat.OnPickupAnswer(p.Result, _clock.Now);
+            PickupAnswered?.Invoke(p.ItemId, p.Result);
+        }
 
         void OnResurrection(in RESURRECTION p) => Model?.SetState(p.UnitId, EntityState.Standing);
 

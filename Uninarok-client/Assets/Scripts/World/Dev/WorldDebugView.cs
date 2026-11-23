@@ -218,6 +218,8 @@ namespace Uninarok.World.Dev
             line.Use(world, go.GetComponent<OwnInput>());
             if (!go.TryGetComponent<WorldDebugView>(out var view)) view = go.AddComponent<WorldDebugView>();
             view.Use(world);
+            if (!go.TryGetComponent<CombatDebugView>(out var combat)) combat = go.AddComponent<CombatDebugView>();
+            combat.Use(world);
             // Before the connection: the items are listed at entry.
             var client = NetworkClient.Instance != null ? NetworkClient.Instance : Object.FindAnyObjectByType<NetworkClient>();
             if (client == null) return;

@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) (rev. 2026-11-23) → [spec.md](spec.md) (rev. 2026-11-23) |
-| **Status** | Approved (owner, 2026-11-23: revision with phase 10 for FR-15 and the plan's revision; checked tasks unchanged; earlier version approved by the owner 2026-11-22) |
+| **Status** | Implementing (approved by the owner; owner, 2026-11-23: revision with phase 10 for FR-15 and the plan's revision; checked tasks unchanged; earlier version approved by the owner 2026-11-22) |
 
 **How to use this file**
 - Work on branch `feature/0011-combat`. Do tasks **in order**, except T0.3 and T0.4: they wait for the owner and do not block phases 1 to 8; phase 9 does not close without them.
@@ -176,7 +176,7 @@
 
 ## Phase 8: Dev tools
 
-- [ ] **T8.1** `CombatDebugView` (plan §4.12). (FR-11)
+- [x] **T8.1** `CombatDebugView` (plan §4.12). (FR-11)
   *Done when:* `CombatDebugView_ListsBlowsAsReceived` passes; during a fight its numbers equal the packet trace (screenshot and trace).
 
 - [ ] **T8.2** Release check. (FR-8, FR-11)
