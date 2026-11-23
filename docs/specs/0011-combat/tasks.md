@@ -119,7 +119,7 @@
 - [x] **T4.8** Tests, then implementation: `ProjectileRules` and the timeline's projectiles. (FR-13, FR-14)
   *Done when:* the `ProjectileRules_*` tests pass, with a blow of each of the cases (bow, archer monster, other, none) through the timeline.
 
-- [ ] **T4.9** `Combat_ZeroAllocation_100Fighting`. (FR-12)
+- [x] **T4.9** `Combat_ZeroAllocation_100Fighting`. (FR-12)
   *Done when:* it passes: 0 B over 600 frames after warm-up.
 
 ## Phase 5: Units and presenter

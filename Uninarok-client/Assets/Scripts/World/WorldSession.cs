@@ -106,6 +106,18 @@ namespace Uninarok.World
         /// <summary>The own character's attacks and pickups (SPEC-0011 FR-2, FR-3, FR-10).</summary>
         public OwnCombat Combat { get; }
 
+        /// <summary>What is shown of each blow, and when (SPEC-0011 FR-4 to FR-6, FR-9, FR-14); null until <see cref="UseCombat"/>.</summary>
+        public CombatTimeline Timeline { get; private set; }
+
+        /// <summary>The combat values: the own character's rules and a timeline for every map from now on (PLAN-0011 §5, D17).</summary>
+        public void UseCombat(CombatSettings settings, int slots = 2048)
+        {
+            if (settings == null) throw new ArgumentNullException(nameof(settings));
+            Combat.Use(settings);
+            Timeline = new CombatTimeline(settings, slots);
+            Timeline.Use(Model);
+        }
+
         public ServerClock Clock => _clock;
         public WorldSettings Settings => _settings;
 
@@ -131,6 +143,7 @@ namespace Uninarok.World
         {
             EndMap();
             Model = new WorldModel(grid, _settings);
+            Timeline?.Use(Model);
             AddOwn();
         }
 
@@ -190,6 +203,7 @@ namespace Uninarok.World
         public void EndMap()
         {
             Combat.Cancel();
+            Timeline?.Use(null);
             var model = Model;
             if (model == null) return;
             if (model.TryGetSlot(model.OwnId, out int slot))
@@ -324,11 +338,22 @@ namespace Uninarok.World
 
         void OnLook(in UNIT_LOOK_CHANGE p) => Model?.SetLook(p.UnitId, (LookType)p.Type, unchecked((int)p.Value), unchecked((int)p.Value2));
 
-        // Sitting and standing; the other actions are the combat spec's.
+        // Sitting, standing and picking up (SPEC-0011 FR-10: a player faces the item and bends down once).
         void OnAct(in UNIT_ACT p)
         {
             if (p.Action == ActSit) Model?.SetState(p.UnitId, EntityState.Sitting);
             else if (p.Action == ActStand) Model?.SetState(p.UnitId, EntityState.Standing);
+            else if (p.Action == UNIT_ACT.PickUp && Model != null)
+            {
+                if (Model.TryGetSlot(p.UnitId, out int unit) && Model.TryGetSlot(p.TargetId, out int item) && Model[item].IsItem)
+                {
+                    ref readonly var u = ref Model[unit];
+                    ref readonly var i = ref Model[item];
+                    if (u.Kind == EntityKind.Player && !u.Walking && (u.CellX != i.CellX || u.CellY != i.CellY))
+                        Model.Turn(p.UnitId, (UninarokDirection)OwnCharacter.DirectionTo(u.CellX, u.CellY, i.CellX, i.CellY), HeadDirection.Straight);
+                }
+                Timeline?.AddPickUp(p.UnitId, p.TargetId, _clock.Now);
+            }
         }
 
         void OnItem(in ITEM_ENTRY p) => Model?.AddItem(p.ItemObjectId, (int)p.ItemId, p.Identified, p.X, p.Y, p.SubX, p.SubY, p.Amount);
@@ -357,6 +382,7 @@ namespace Uninarok.World
             var blow = Blow.From(p, _clock.Now);
             Model.Strike(blow);
             Combat.OnBlow(blow, blow.At);
+            Timeline?.Add(blow);
             Raise(blow);
         }
 
