@@ -110,7 +110,7 @@ namespace Uninarok.Units.Tests
     {
         // Expected row job per id (PLAN-0011 4.7 family table, FR-15). Ids up to 4242: Hercules class.h and class_hidden.h.
         // Ids above 4242: roBrowserLegacy JobConst.js / WeaponAction.js, copied untested (D27). Ids absent here map to themselves.
-        static readonly (int Row, int[] Ids)[] Families =
+        static (int Row, int[] Ids)[] Families => new (int Row, int[] Ids)[]
         {
             (0, new[] { 4001, 4023 }),
             (1, new[] { 4002, 4024 }), (2, new[] { 4003, 4025 }), (3, new[] { 4004, 4026 }),
@@ -148,11 +148,11 @@ namespace Uninarok.Units.Tests
         };
 
         // Soul Reaper, Soul Reaper baby, HAETAE_SOUL_REAPER, HAETAE_SOUL_REAPER_B, Soul Ascetic and its riding variant.
-        static readonly int[] SoulReaperFamily = { 4240, 4242, 4246, 4248, 4303, 4310 };
+        static int[] SoulReaperFamily => new[] { 4240, 4242, 4246, 4248, 4303, 4310 };
 
         // Themselves: no row (Attack1). Gangsi, Death Knight, Dark Collector, outfit jobs, WEREWOLF/WERERAPTOR (proposal),
         // range markers and an unlisted id; also the first classes and rows that stand for themselves.
-        static readonly int[] OwnRow = { 0, 1, 7, 12, 17, 22, 26, 27, 4046, 4049, 4050, 4051, 4052, 4218, 4249, 4331, 4350, 4351, 4356, 4357, 4361, 9999 };
+        static int[] OwnRow => new[] { 0, 1, 7, 12, 17, 22, 26, 27, 4046, 4049, 4050, 4051, 4052, 4218, 4249, 4331, 4350, 4351, 4356, 4357, 4361, 9999 };
 
         [Test]
         public void JobFamilies_RowJobOf_Table()
