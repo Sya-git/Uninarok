@@ -119,8 +119,14 @@ namespace Uninarok.World
             return TryFind(rowJob, sex, AnyWeapon, out number) ? number : 1;
         }
 
-        /// <summary>The attack motion's hit frame: 6 for every row so far (lead; T0.3 shots 1, 11, 13).</summary>
-        public static float HitFrameOf(int rowJob, byte sex, int weaponType) => DefaultHitFrame;
+        /// <summary>The whip's hit frame (footage B, shot 13: the number 84 ms after the whip unfurls at an attack time of 380 ms).</summary>
+        public const float WhipHitFrame = 4f;
+
+        /// <summary>
+        /// The attack motion's hit frame: 6 for every row (lead; the bow confirmed at 5.8, footage B), 4 for the whip (footage B).
+        /// Only a projectile's launch uses it (4.7).
+        /// </summary>
+        public static float HitFrameOf(int rowJob, byte sex, int weaponType) => weaponType == Whip ? WhipHitFrame : DefaultHitFrame;
 
         static bool TryFind(int job, byte sex, int weaponType, out int number)
         {

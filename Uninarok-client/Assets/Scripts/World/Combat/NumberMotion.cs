@@ -28,8 +28,8 @@ namespace Uninarok.World
         {
             switch (kind)
             {
-                case NumberKind.Miss:
-                case NumberKind.Lucky: return settings.MessageMs;
+                case NumberKind.Miss: return settings.MessageMs;
+                case NumberKind.Lucky: return settings.LuckyMs;
                 case NumberKind.Total: return settings.TotalMs;
                 default: return settings.NumberMs;
             }
@@ -44,22 +44,33 @@ namespace Uninarok.World
             switch (kind)
             {
                 case NumberKind.Miss:
-                case NumberKind.Lucky:
+                    // Footage A (D31): a constant rise, no drift, constant size.
                     pose.Height = settings.MessageHeightStart + (settings.MessageHeightEnd - settings.MessageHeightStart) * t;
                     pose.Scale = settings.MessageScale;
                     break;
+                case NumberKind.Lucky:
+                    pose.Height = settings.LuckyHeightStart + (settings.LuckyHeightEnd - settings.LuckyHeightStart) * t;
+                    pose.Scale = settings.MessageScale;
+                    break;
                 case NumberKind.Total:
+                    // Footage C (D32): each update grows quickly, then stays.
                     pose.Height = settings.TotalHeight;
-                    pose.Scale = settings.TotalScale;
+                    float grow = Share(t * settings.TotalMs, settings.TotalGrowMs);
+                    pose.Scale = settings.TotalScaleStart + (settings.TotalScale - settings.TotalScaleStart) * grow;
                     break;
                 default:
-                    pose.X = settings.NumberDriftX * t;
+                    // Footage A: x decelerates; the scale goes start -> end smooth-step over NumberShrinkMs and stays there.
+                    pose.X = settings.NumberDriftX * (float)Math.Sin(Math.PI / 2 * t);
                     pose.Y = -settings.NumberDriftY * t;
                     pose.Height = settings.NumberHeightBase + settings.NumberHeightAmplitude * (float)Math.Sin(-Math.PI / 2 + Math.PI * (0.5 + 1.5 * t));
-                    pose.Scale = settings.NumberScaleStart + (settings.NumberScaleEnd - settings.NumberScaleStart) * t;
+                    float s = Share(t * settings.NumberMs, settings.NumberShrinkMs);
+                    pose.Scale = settings.NumberScaleStart + (settings.NumberScaleEnd - settings.NumberScaleStart) * (s * s * (3f - 2f * s));
                     break;
             }
             return pose;
         }
+
+        // How far through a phase of durationMs an age is, 0 to 1; a phase of 0 or less is over at once.
+        static float Share(float ageMs, int durationMs) => durationMs <= 0 ? 1f : Math.Min(1f, Math.Max(0f, ageMs / durationMs));
     }
 }

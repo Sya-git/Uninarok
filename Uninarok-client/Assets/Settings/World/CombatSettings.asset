@@ -25,7 +25,7 @@ MonoBehaviour:
   PickupRetryMs: 400
   TargetMarkSingleMs: 0
   StandbyMs: -1
-  MultiHitMs: 200
+  MultiHitMs: 100
   LeftHandMs: 350
   HurtBeforeDeathMs: 250
   PlayerHurtBeforeDeathMs: 0
@@ -35,18 +35,24 @@ MonoBehaviour:
   ProjectilePool: 32
   NumberMs: 1500
   NumberScaleStart: 4
-  NumberScaleEnd: 0
-  NumberDriftX: 4
+  NumberScaleEnd: 1
+  NumberShrinkMs: 400
+  NumberDriftX: 3.1
   NumberDriftY: 4
   NumberHeightBase: 2
   NumberHeightAmplitude: 5
-  MessageMs: 800
+  MessageMs: 1500
   MessageScale: 0.5
-  MessageHeightStart: 3.5
-  MessageHeightEnd: 7
-  TotalMs: 3000
+  MessageHeightStart: 0.4
+  MessageHeightEnd: 3.5
+  LuckyMs: 800
+  LuckyHeightStart: 3.5
+  LuckyHeightEnd: 7
+  TotalMs: 2500
   TotalHeight: 7
-  TotalScale: 2
+  TotalScale: 1.5
+  TotalScaleStart: 0.6
+  TotalGrowMs: 100
   DigitSpacingPx: 2
   NumberOnMonster: {r: 1, g: 1, b: 1, a: 1}
   NumberOnPlayer: {r: 1, g: 0, b: 0, a: 1}

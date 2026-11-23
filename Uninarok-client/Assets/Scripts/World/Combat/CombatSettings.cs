@@ -42,9 +42,9 @@ namespace Uninarok.World
         [Header("Timeline (4.6)")]
         [Tooltip("A player stands in Standby after an attack or a hurt for this long, in ms; −1: until it does something else; 0: off.")]
         [Min(-1)] public int StandbyMs = -1;
-        [Tooltip("The i-th hit of a multi-hit is shown i times this after the hit moment, in ms.")]
-        [Min(0)] public int MultiHitMs = 200;
-        [Tooltip("The second hand's number is shown this after the hit moment, in ms.")]
+        [Tooltip("The i-th hit of a multi-hit is shown i times this after the hit moment, in ms (footage: 100, T9.3).")]
+        [Min(0)] public int MultiHitMs = 100;
+        [Tooltip("The second hand's number is shown this after the hit moment (the first part), in ms.")]
         [Min(0)] public int LeftHandMs = 350;
         [Tooltip("A monster's death is shown at least this after its last hit moment, in ms (H9).")]
         [Min(0)] public int HurtBeforeDeathMs = 250;
@@ -64,22 +64,31 @@ namespace Uninarok.World
         [Header("Numbers (4.8)")]
         [Tooltip("Life of a normal or critical number, in ms.")]
         [Min(1)] public int NumberMs = 1500;
-        [Tooltip("Scale of a normal or critical number at its start and at its end.")]
-        public float NumberScaleStart = 4f, NumberScaleEnd = 0f;
-        [Tooltip("How far a number drifts over its life, in cells (+x, then −y).")]
-        public float NumberDriftX = 4f, NumberDriftY = 4f;
+        [Tooltip("Scale of a normal or critical number at its start and after its shrink (it then stays there).")]
+        public float NumberScaleStart = 4f, NumberScaleEnd = 1f;
+        [Tooltip("A number shrinks from NumberScaleStart to NumberScaleEnd over this, smooth-step, in ms (footage: about 0.4 s).")]
+        [Min(0)] public int NumberShrinkMs = 400;
+        [Tooltip("How far a number drifts over its life, in cells: x decelerating (sin(π t / 2)), y linear (+x, then −y).")]
+        public float NumberDriftX = 3.1f, NumberDriftY = 4f;
         [Tooltip("Height of a number: base + amplitude · sin(−π/2 + π(0.5 + 1.5 t)), in cells.")]
         public float NumberHeightBase = 2f, NumberHeightAmplitude = 5f;
-        [Tooltip("Life of a miss or lucky picture, in ms.")]
-        [Min(1)] public int MessageMs = 800;
+        [Tooltip("Life of a miss picture, in ms (shown over the unit that missed, D31).")]
+        [Min(1)] public int MessageMs = 1500;
         [Tooltip("Scale of a miss or lucky picture.")]
         public float MessageScale = 0.5f;
-        [Tooltip("Height of a miss or lucky picture at its start and at its end, in cells.")]
-        public float MessageHeightStart = 3.5f, MessageHeightEnd = 7f;
+        [Tooltip("Height of a miss picture at its start and at its end, in cells (a constant rise).")]
+        public float MessageHeightStart = 0.4f, MessageHeightEnd = 3.5f;
+        [Tooltip("Life of a lucky picture, in ms.")]
+        [Min(1)] public int LuckyMs = 800;
+        [Tooltip("Height of a lucky picture at its start and at its end, in cells.")]
+        public float LuckyHeightStart = 3.5f, LuckyHeightEnd = 7f;
         [Tooltip("Life of a multi-hit's total, in ms.")]
-        [Min(1)] public int TotalMs = 3000;
-        [Tooltip("Height and scale of a multi-hit's total (no lead: T0.3 shot 5).")]
-        public float TotalHeight = 7f, TotalScale = 2f;
+        [Min(1)] public int TotalMs = 2500;
+        [Tooltip("Height and scale of a multi-hit's total.")]
+        public float TotalHeight = 7f, TotalScale = 1.5f;
+        [Tooltip("A total (each update of it) grows from TotalScaleStart to TotalScale over TotalGrowMs, in ms.")]
+        public float TotalScaleStart = 0.6f;
+        [Min(0)] public int TotalGrowMs = 100;
         [Tooltip("Space between digits, in pixels of the digit sprites.")]
         [Min(0)] public float DigitSpacingPx = 2f;
         public Color NumberOnMonster = Color.white;

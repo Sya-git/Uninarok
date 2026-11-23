@@ -73,8 +73,15 @@ namespace Uninarok.World
         }
 
         /// <summary>
-        /// Player: launched at the hit frame (<c>hitFrame × 24 × attackMT / 432</c> after the blow), the number waits for the arrival.
-        /// Monster: launched at the hit moment (<c>attackMT</c>), the number does not wait.
+        /// When a player's number shows (D33): <paramref name="launches"/> + the full flight (<c>FlightMs</c>, 192), whatever the
+        /// distance; the arrow itself is gone earlier for a near target (footage B: 11 frames after the launch at 1.2 to 13 cells).
+        /// </summary>
+        public static uint NumberAt(uint launches, int flightMs) => unchecked(launches + (uint)Math.Max(1, flightMs));
+
+        /// <summary>
+        /// Player: launched at the hit frame (<c>hitFrame × 24 × attackMT / 432</c> after the blow); <paramref name="arrives"/> is
+        /// when the arrow is gone, the number waits until <see cref="NumberAt"/>. Monster: launched at the hit moment
+        /// (<c>attackMT</c>), the number does not wait.
         /// </summary>
         public static void Times(in Blow blow, bool player, float cells, float hitFrame, out uint launches, out uint arrives, out bool numberWaits) =>
             Times(blow, player, cells, hitFrame, DefaultFlightMs, DefaultFullCells, out launches, out arrives, out numberWaits);

@@ -115,8 +115,39 @@ namespace Uninarok.World.Tests
             At(T + 500);
             var numbers = NumbersNow();
             Assert.AreEqual(1, numbers.Count);
-            Assert.AreEqual((NumberKind.Miss, P, true), (numbers[0].Kind, numbers[0].TargetId, numbers[0].OnPlayer));
+            // D31 (footage A): the miss is shown over the unit that missed, white over a monster.
+            Assert.AreEqual((NumberKind.Miss, M, false), (numbers[0].Kind, numbers[0].TargetId, numbers[0].OnPlayer), "over the monster that missed");
+            Assert.AreEqual((11f, 10f), (numbers[0].X, numbers[0].Y), "where the attacker is shown at the hit moment");
             Assert.AreEqual(MotionKind.None, KindOf(_p));
+
+            // The own miss: red, over the own character.
+            _timeline.Clear();
+            Add(Hit(P, M, T + 1000, 0));
+            At(T + 1500);
+            numbers = NumbersNow();
+            Assert.AreEqual(1, numbers.Count);
+            Assert.AreEqual((NumberKind.Miss, P, true), (numbers[0].Kind, numbers[0].TargetId, numbers[0].OnPlayer), "over the own character, red");
+            Assert.AreEqual((10f, 10f), (numbers[0].X, numbers[0].Y));
+            Assert.AreEqual(MotionKind.None, KindOf(_m), "no hurt on the target");
+
+            // A pending miss does not hold the death of the unit that missed (FR-9).
+            _timeline.Clear();
+            Add(Hit(M, P, T + 2000, 0));
+            _model.Vanish(M, VanishReason.Died, T + 2100);
+            At(T + 2100);
+            Assert.IsFalse(_timeline.HoldsDeath(_m, T + 2100), "a miss is not a hit on the attacker");
+            At(T + 2500);
+            Assert.IsFalse(_timeline.HoldsDeath(_m, T + 2500), "nor is its picture");
+        }
+
+        [Test]
+        public void CombatTimeline_LuckyOverTheDodgingUnit()
+        {
+            Add(Hit(M, P, T, 0, kind: BlowKind.LuckyDodge));
+            At(T + 500);
+            var numbers = NumbersNow();
+            Assert.AreEqual(1, numbers.Count);
+            Assert.AreEqual((NumberKind.Lucky, P), (numbers[0].Kind, numbers[0].TargetId), "lucky stays over the target");
         }
 
         [Test]
@@ -259,22 +290,68 @@ namespace Uninarok.World.Tests
             }
         }
 
+        static int TotalsOf(List<DamageNumber> numbers, out int value)
+        {
+            int count = 0;
+            value = -1;
+            foreach (var n in numbers)
+                if (n.Kind == NumberKind.Total)
+                {
+                    count++;
+                    value = n.Value;
+                }
+            return count;
+        }
+
+        // FR-5, D32 (footage C): parts 100 ms apart; the total shows the running sum from the first part and is replaced by each
+        // following number of the blow.
         [Test]
         public void CombatTimeline_DoubleAttack300_150_150_300()
         {
             Add(Hit(P, M, T, 300, kind: BlowKind.MultiHit, hits: 2));
             At(T + 500);
             var numbers = NumbersNow();
-            Assert.AreEqual(1, numbers.Count);
-            Assert.AreEqual((150, NumberKind.Normal), (numbers[0].Value, numbers[0].Kind));
-            At(T + 699);
-            Assert.AreEqual(1, NumbersNow().Count);
-            At(T + 700);
+            Assert.AreEqual(2, numbers.Count, "the first part and the running total");
+            Assert.That(numbers.Exists(n => n.Kind == NumberKind.Normal && n.Value == 150 && n.Starts == T + 500));
+            Assert.AreEqual(1, TotalsOf(numbers, out int total));
+            Assert.AreEqual(150, total, "the total starts with the first part");
+            At(T + 599);
+            Assert.AreEqual(2, NumbersNow().Count);
+            At(T + 600);
             numbers = NumbersNow();
-            Assert.AreEqual(3, numbers.Count, "the second part and the total, 200 ms later");
-            Assert.That(numbers.Exists(n => n.Kind == NumberKind.Normal && n.Value == 150 && n.Starts == T + 700));
-            Assert.That(numbers.Exists(n => n.Kind == NumberKind.Total && n.Value == 300 && n.Starts == T + 700));
-            Assert.AreEqual((MotionKind.Hurt, T + 700), (KindOf(_m), _timeline.MotionOf(_m).Starts), "each part starts its own hurt");
+            Assert.AreEqual(3, numbers.Count, "two parts and one total, 100 ms later");
+            Assert.That(numbers.Exists(n => n.Kind == NumberKind.Normal && n.Value == 150 && n.Starts == T + 600));
+            Assert.AreEqual(1, TotalsOf(numbers, out total), "the total is replaced, not added");
+            Assert.AreEqual(300, total);
+            Assert.That(numbers.Exists(n => n.Kind == NumberKind.Total && n.Starts == T + 600), "a new total that grows again");
+            Assert.AreEqual((MotionKind.Hurt, T + 600), (KindOf(_m), _timeline.MotionOf(_m).Starts), "each part starts its own hurt");
+        }
+
+        // D32 (footage C: 549, 1098, then 1261 with the left hand): the second hand is part of the running total.
+        [Test]
+        public void CombatTimeline_DoubleAttackDualWield_TotalIncludesLeftHand()
+        {
+            Add(Hit(P, M, T, 1098, kind: BlowKind.MultiHit, hits: 2, left: 163));
+            At(T + 500);
+            Assert.AreEqual(1, TotalsOf(NumbersNow(), out int total));
+            Assert.AreEqual(549, total);
+            At(T + 600);
+            Assert.AreEqual(1, TotalsOf(NumbersNow(), out total));
+            Assert.AreEqual(1098, total);
+            At(T + 849);
+            TotalsOf(NumbersNow(), out total);
+            Assert.AreEqual(1098, total, "until the second hand lands");
+            At(T + 850);
+            var numbers = NumbersNow();
+            Assert.That(numbers.Exists(n => n.Kind == NumberKind.Normal && n.Value == 163 && n.Starts == T + 850), "the second hand 350 ms after the first part");
+            Assert.AreEqual(1, TotalsOf(numbers, out total));
+            Assert.AreEqual(1261, total, "the total ends equal to the blow's damage of both hands");
+
+            // A newer blow's total replaces the older one at once.
+            Add(Hit(P, M, T + 1000, 40, kind: BlowKind.MultiHit, hits: 2));
+            At(T + 1500);
+            Assert.AreEqual(1, TotalsOf(NumbersNow(), out total));
+            Assert.AreEqual(20, total);
         }
 
         [Test]
@@ -282,8 +359,8 @@ namespace Uninarok.World.Tests
         {
             // FR-5, D28: the parts always, the total only when the target is not a player.
             Add(Hit(P, M, T, 300, kind: BlowKind.MultiHit, hits: 2));
-            Add(Hit(M, Q, T, 300, kind: BlowKind.MultiHit, hits: 2));
-            At(T + 700);
+            Add(Hit(M, Q, T, 300, kind: BlowKind.MultiHit, hits: 2, left: 30));
+            At(T + 850);
             int totalsOnM = 0, partsOnM = 0, totalsOnQ = 0, partsOnQ = 0;
             foreach (var n in _timeline.Numbers)
             {
@@ -292,7 +369,7 @@ namespace Uninarok.World.Tests
                 else if (n.TargetId == Q) { if (total) totalsOnQ++; else partsOnQ++; }
             }
             Assert.AreEqual((2, 1), (partsOnM, totalsOnM), "over a monster: the parts and a total");
-            Assert.AreEqual((2, 0), (partsOnQ, totalsOnQ), "over a player: the parts and no total");
+            Assert.AreEqual((3, 0), (partsOnQ, totalsOnQ), "over a player: the parts, the second hand and no total");
         }
 
         [Test]
@@ -316,20 +393,22 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(1, NumbersNow().Count);
             At(T + 850);
             var numbers = NumbersNow();
-            Assert.AreEqual(2, numbers.Count);
-            Assert.That(numbers.Exists(n => n.Value == 40 && n.Starts == T + 850), "the second hand 350 ms later");
+            Assert.AreEqual(2, numbers.Count, "no total without a multi-hit (footage C: 532 + 168 showed none)");
+            Assert.That(numbers.Exists(n => n.Value == 40 && n.Starts == T + 850), "the second hand 350 ms after the first");
         }
 
         [Test]
         public void CombatTimeline_SplitAlwaysSums()
         {
             _settings.MultiHitMs = 0;
+            _settings.LeftHandMs = 0;
+            foreach (int left in new[] { 0, 13 })
             foreach (int damage in new[] { 1, 7, 97, 1000, 12345 })
             {
                 for (short hits = 1; hits <= 100; hits++)
                 {
                     _timeline.Clear();
-                    Add(Hit(P, M, T, damage, kind: BlowKind.MultiHit, hits: hits));
+                    Add(Hit(P, M, T, damage, kind: BlowKind.MultiHit, hits: hits, left: left));
                     At(T + 500);
                     int sum = 0, parts = 0, total = -1;
                     foreach (var n in _timeline.Numbers)
@@ -341,9 +420,12 @@ namespace Uninarok.World.Tests
                             parts++;
                         }
                     }
-                    Assert.AreEqual(damage, sum, $"{damage} in {hits}");
-                    Assert.AreEqual(damage < hits ? 1 : hits, parts, $"{damage} in {hits}: a total smaller than the hits is one number");
-                    if (parts > 1) Assert.AreEqual(damage, total, $"{damage} in {hits}");
+                    string what = $"{damage} in {hits}, left {left}";
+                    Assert.AreEqual(damage + left, sum, what + ": the parts and the second hand sum to the blow");
+                    int split = damage < hits ? 1 : hits;
+                    Assert.AreEqual(split + (left > 0 ? 1 : 0), parts, what + ": a total smaller than the hits is one number");
+                    if (split > 1) Assert.AreEqual(damage + left, total, what + ": the running total ends equal to the blow");
+                    else Assert.AreEqual(-1, total, what + ": no total without parts");
                 }
             }
         }

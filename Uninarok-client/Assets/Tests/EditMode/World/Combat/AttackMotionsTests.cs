@@ -122,6 +122,18 @@ namespace Uninarok.World.Tests
                 Assert.AreEqual(6f, AttackMotions.HitFrameOf(job, Male, 1), $"hit frame, job {job}");
         }
 
+        // T9.3 (footage B): the bow's hit frame 6 confirmed (5.8 measured); the whip's about 4.
+        [Test]
+        public void AttackMotions_HitFrame_BowSixWhipFour()
+        {
+            foreach (int job in RowJobs)
+                foreach (byte sex in new[] { Female, Male })
+                    for (int type = 0; type <= MaxType; type++)
+                        Assert.AreEqual(type == 14 ? 4f : 6f, AttackMotions.HitFrameOf(job, sex, type), $"job {job} sex {sex} type {type}");
+            Assert.AreEqual(4f, AttackMotions.HitFrameOf(20, Female, 14), "dancer, whip");
+            Assert.AreEqual(6f, AttackMotions.HitFrameOf(20, Female, 11), "dancer, bow");
+        }
+
         [Test]
         public void AttackMotions_JobFamilies_EveryWeaponType()
         {

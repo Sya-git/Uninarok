@@ -396,7 +396,7 @@ namespace Uninarok.World.View
                 switch (n.Kind)
                 {
                     case NumberKind.Miss:
-                        Picture(Miss, at, right, up, pose.Scale, c32); // tinted as a number over its target (owner's footage, T0.3)
+                        Picture(Miss, at, right, up, pose.Scale, c32); // over the unit that missed, tinted as a number over it (D31)
                         break;
                     case NumberKind.Lucky:
                         Picture(LuckyBack, at, right, up, pose.Scale, white);

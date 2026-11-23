@@ -31,11 +31,14 @@ namespace Uninarok.World
         Critical,
         Miss,
         Lucky,
-        /// <summary>The sum of a multi-hit, with its last part.</summary>
+        /// <summary>The running sum of a multi-hit, from its first part, replaced by each later number of the blow (D32).</summary>
         Total,
     }
 
-    /// <summary>A number or a message shown over a unit (FR-5, FR-6): from when, over whom, where the unit was shown then.</summary>
+    /// <summary>
+    /// A number or a message shown over a unit (FR-5, FR-6): from when, over whom (the blow's target; for a miss its attacker,
+    /// D31), where the unit was shown then.
+    /// </summary>
     public struct DamageNumber
     {
         public uint Starts;
@@ -164,16 +167,16 @@ namespace Uninarok.World
 
             // H11: an attack time of 0 or less is at once.
             uint hit = unchecked(blow.At + (uint)Math.Max(0, blow.AttackMs));
-            // 4.7: a player's number waits for its arrow.
-            if (AddProjectile(model, blow, weapon, out uint arrives)) hit = arrives;
+            // 4.7, D33: a player's number waits launch + FlightMs.
+            if (AddProjectile(model, blow, weapon, out uint numberAt)) hit = numberAt;
             AddNumbers(blow, hit);
         }
 
         // FR-14: one projectile per blow, also a multi-hit, between the shown positions (taken again at the launch).
         // weapon: the both-hands type of the attacker (D23).
-        bool AddProjectile(WorldModel model, in Blow blow, int weapon, out uint arrives)
+        bool AddProjectile(WorldModel model, in Blow blow, int weapon, out uint numberAt)
         {
-            arrives = 0;
+            numberAt = 0;
             if (blow.AttackerId == blow.TargetId || !model.TryGetSlot(blow.AttackerId, out int attacker) || !model.TryGetSlot(blow.TargetId, out int target))
                 return false;
             ref readonly var a = ref model[attacker];
@@ -192,7 +195,8 @@ namespace Uninarok.World
                 Launches = launches, Arrives = lands, AttackerId = blow.AttackerId, TargetId = blow.TargetId,
                 FromX = a.PosX, FromY = a.PosY, ToX = t.PosX, ToY = t.PosY, Kind = kind,
             };
-            if (waits) arrives = lands;
+            // D33 (footage B): the number at launch + the full flight, whatever the distance; the arrow is gone at `lands`.
+            if (waits) numberAt = ProjectileRules.NumberAt(launches, _settings.FlightMs);
             return waits;
         }
 
@@ -229,29 +233,38 @@ namespace Uninarok.World
         {
             if (blow.Damage < 0) return; // heals are SPEC-0012's
             bool hurts = Hurts(blow);
+            // Lucky over the dodging unit (the target); a miss over the unit that missed, the attacker (D31, footage A).
             if (blow.Kind == BlowKind.LuckyDodge) Pend(hit, blow.TargetId, 0, NumberKind.Lucky, false, 0);
-            else if (blow.IsMiss) Pend(hit, blow.TargetId, 0, NumberKind.Miss, false, 0);
-            else if (blow.Damage > 0)
+            else if (blow.IsMiss) Pend(hit, blow.AttackerId, 0, NumberKind.Miss, false, 0);
+            // D28, D32: a running total for a split multi-hit over a target that is not a player, the second hand included.
+            bool totals = false;
+            int sum = 0;
+            if (!blow.IsMiss && blow.Kind != BlowKind.LuckyDodge && blow.Damage > 0)
             {
                 var kind = blow.Kind == BlowKind.Critical ? NumberKind.Critical : NumberKind.Normal;
                 int hits = blow.Kind == BlowKind.MultiHit ? blow.Hits : 1;
                 if (hits <= 1 || blow.Damage < hits) Pend(hit, blow.TargetId, blow.Damage, kind, hurts, blow.HurtMs);
                 else
                 {
-                    // Each part damage / n, the remainder on the last: they always sum to the total.
+                    totals = !TargetIsPlayer(blow.TargetId);
+                    // Each part damage / n, the remainder on the last: they always sum to the blow's damage.
                     int part = blow.Damage / hits;
                     for (int i = 0; i < hits; i++)
                     {
                         uint at = unchecked(hit + (uint)(i * Math.Max(0, _settings.MultiHitMs)));
-                        bool last = i == hits - 1;
-                        Pend(at, blow.TargetId, last ? blow.Damage - part * (hits - 1) : part, kind, hurts, blow.HurtMs);
-                        if (last && !TargetIsPlayer(blow.TargetId)) Pend(at, blow.TargetId, blow.Damage, NumberKind.Total, false, 0); // D28: no total over a player
+                        int value = i == hits - 1 ? blow.Damage - part * (hits - 1) : part;
+                        sum += value;
+                        Pend(at, blow.TargetId, value, kind, hurts, blow.HurtMs);
+                        if (totals) Pend(at, blow.TargetId, sum, NumberKind.Total, false, 0);
                     }
                 }
             }
             if (blow.LeftDamage > 0)
-                Pend(unchecked(hit + (uint)Math.Max(0, _settings.LeftHandMs)), blow.TargetId, blow.LeftDamage, NumberKind.Normal,
-                     !blow.Endured && blow.HurtMs > 0, blow.HurtMs);
+            {
+                uint at = unchecked(hit + (uint)Math.Max(0, _settings.LeftHandMs));
+                Pend(at, blow.TargetId, blow.LeftDamage, NumberKind.Normal, !blow.Endured && blow.HurtMs > 0, blow.HurtMs);
+                if (totals) Pend(at, blow.TargetId, (int)Math.Min(int.MaxValue, (long)sum + blow.LeftDamage), NumberKind.Total, false, 0);
+            }
         }
 
         bool TargetIsPlayer(uint id) => _model != null && _model.TryGetSlot(id, out int slot) && _model[slot].Kind == EntityKind.Player;
@@ -321,7 +334,7 @@ namespace Uninarok.World
         {
             int count = 0;
             for (int i = 0; i < _hitCount; i++)
-                if (_hits[i].TargetId == id) count++;
+                if (_hits[i].TargetId == id && _hits[i].Kind != NumberKind.Miss) count++; // a miss is over its attacker (D31)
             return count;
         }
 
@@ -388,17 +401,19 @@ namespace Uninarok.World
             _hits[_hitCount++] = new PendingHit { At = at, TargetId = targetId, Value = value, Kind = kind, Hurts = hurts, HurtMs = hurtMs };
         }
 
-        // The hit moment: the number where the target is shown now, and its hurt. No number without a known target.
+        // The hit moment: the number where its unit (the target; for a miss the attacker, D31) is shown now, and the target's
+        // hurt. No number without a known unit.
         void Show(WorldModel model, in PendingHit hit)
         {
             if (!model.TryGetSlot(hit.TargetId, out int target)) return;
             ref readonly var t = ref model[target];
+            if (hit.Kind == NumberKind.Total && !ReplaceTotal(hit)) return;
             if (_numberCount == _numbers.Length) DropOldest(_numbers, ref _numberCount, "numbers");
             _numbers[_numberCount++] = new DamageNumber
             {
                 Starts = hit.At, TargetId = hit.TargetId, Value = hit.Value, Kind = hit.Kind, OnPlayer = t.Kind == EntityKind.Player, X = t.PosX, Y = t.PosY,
             };
-            if (target >= _motions.Length) return;
+            if (target >= _motions.Length || hit.Kind == NumberKind.Miss) return; // a miss is no hit on the unit it is over
             bool deathShown = t.State == EntityState.Dead && DeathShown(target, t);
             _lastHitAt[target] = hit.At;
             _lastHitGeneration[target] = t.Generation;
@@ -406,6 +421,22 @@ namespace Uninarok.World
             if (!hit.Hurts || deathShown) return;
             if (_generations[target] == t.Generation && ServerClock.Diff(hit.At, _motions[target].Starts) < 0 && _motions[target].Kind != MotionKind.None) return;
             Start(model, target, MotionKind.Hurt, hit.At, hit.HurtMs, 0);
+        }
+
+        // D32: one total per unit on screen. A newer one (or, at the same moment, the larger running sum) replaces it in place;
+        // an older one that comes late in the same Advance is dropped. False: drop the new one.
+        bool ReplaceTotal(in PendingHit hit)
+        {
+            for (int i = 0; i < _numberCount; i++)
+            {
+                ref readonly var n = ref _numbers[i];
+                if (n.Kind != NumberKind.Total || n.TargetId != hit.TargetId) continue;
+                int diff = ServerClock.Diff(hit.At, n.Starts);
+                if (diff < 0 || (diff == 0 && hit.Value < n.Value)) return false;
+                _numbers[i] = _numbers[--_numberCount];
+                return true;
+            }
+            return true;
         }
 
         void Start(WorldModel model, int slot, MotionKind kind, uint starts, int durationMs, byte attackNumber)
