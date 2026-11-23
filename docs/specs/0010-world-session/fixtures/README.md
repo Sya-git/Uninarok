@@ -10,7 +10,7 @@ The paths Hercules itself finds between random cells, written by the plugin `uni
 | `paths-izlude.bin` | izlude, 268 × 300 | 1002 | 10,000 | same |
 | `paths-prt_fild08.bin` | prt_fild08, 400 × 400 | 1003 | 10,000 | same |
 
-Made on 2026-11-22, per map (from `Hercules-2026.09/`; the server runs in minimal mode, needs no database and exits):
+Made on 2026-11-22, per map; made again with the same seeds on 2026-11-22 for SPEC-0011 T0.2 (flag 32; every other byte unchanged; in sight: prontera 4,800, izlude 4,224, prt_fild08 7,937) (from `Hercules-2026.09/`; the server runs in minimal mode, needs no database and exits):
 
 ```powershell
 bin/map-server.exe --load-plugin uninarok_pathdump --uninarok-paths prontera,1001,10000,../docs/specs/0010-world-session/fixtures/paths-prontera.bin
@@ -20,7 +20,7 @@ Results of the runs: prontera 6,791 found, 371 without a path to a passable cell
 
 Build: `ninja plugin.uninarok_pathdump` in `Hercules-2026.09/build` (Visual Studio environment), then copy `build/src/plugins/uninarok_pathdump/uninarok_pathdump.dll` to `bin/herc-plugins/`. The plugin is not in `conf/plugins.conf`: a normal start does not load it.
 
-Format (little-endian): `UNPF`, version 1 (`u32`), map name (16 B), width, height (`u16`), seed, pairs (`u32`), FNV-1a over one byte per cell, 1 = passable (`u32`). Per pair: x0, y0, x1, y1 (`u16`), flags (`u8`: 1 destination passable, 2 A* found, 4 easy path found, 8 straight line free, 16 the server accepts the walk: 17 cells, 14 without a straight line), A* length, easy length (`u8`), the A* steps, the easy steps (directions 0 to 7, one byte each).
+Format (little-endian): `UNPF`, version 1 (`u32`), map name (16 B), width, height (`u16`), seed, pairs (`u32`), FNV-1a over one byte per cell, 1 = passable (`u32`). Per pair: x0, y0, x1, y1 (`u16`), flags (`u8`: 1 destination passable, 2 A* found, 4 easy path found, 8 straight line free, 16 the server accepts the walk: 17 cells, 14 without a straight line, 32 line of sight free: `path->search_long` with `CELL_CHKWALL`, the attack check of `battle_check_range`, added for SPEC-0011 T0.2), A* length, easy length (`u8`), the A* steps, the easy steps (directions 0 to 7, one byte each).
 
 ## Recorded sessions: `world-*.bin`, `world-*.view.txt` (T0.5, FR-3, FR-18)
 
@@ -32,7 +32,7 @@ What the map server sent to the dev character `DevHero` (a test account of the l
 | `world-prt_fild08` | nine minutes on prt_fild08: a script walks the character (273 walks) among the map's monsters, spawned zombies, wolves and skeletons chase and hit it; `@killmonster` kills them twice and their items drop |
 | `world-warp` | enters prontera on 156,40, walks into the south warp and stands on prt_fild08 |
 
-`<name>.view.txt` is the last look the plugin took at the player before the session ended: `A tick account map x y`, then per entity in view `U id type class x y walking state` (type 1 player, 2 monster, 32 item, 128 NPC; class is the item id of an item), then `E count`. No file holds the account name or the password (searched for both).
+`<name>.view.txt` is the last look the plugin took at the player before the session ended: `A tick account map x y`, then per entity in view `U id type class x y walking state` (type 1 player, 2 monster, 32 item, 128 NPC; class is the item id of an item), then `E count`. From SPEC-0011 T0.2 the plugin also writes, once a second before each `A` line, `S tick account hp max_hp sp max_sp base_level job_level base_exp job_exp next_base_exp next_job_exp` (the player's own status), and a monster's `U` line ends with `hp max_hp`; the files above are older and have neither. No file holds the account name or the password (searched for both).
 
 ## Walk log: `walklog-prt_fild08.txt` (T3.8, FR-6, FR-10)
 

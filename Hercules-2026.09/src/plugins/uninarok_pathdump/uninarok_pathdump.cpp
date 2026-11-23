@@ -5,8 +5,8 @@
  * Pair mode: writes the paths the server's own path->search finds between random cells of a map, then exits.
  *   bin/map-server.exe --load-plugin uninarok_pathdump --uninarok-paths <map>,<seed>,<pairs>,<file>
  *
- * Walk log mode (a normal server run): appends every walk that starts, with the path the server chose, and once a second what
- * each player has in view.
+ * Walk log mode (a normal server run): appends every walk that starts, with the path the server chose, and once a second each
+ * player's status and what it has in view, with the HP of monsters.
  *   bin/map-server.exe --load-plugin uninarok_pathdump --uninarok-walklog <file>
  *
  * Test rights: gives a local test account group 99 while it is on the map, to be able to warp it.
@@ -79,7 +79,8 @@ static void put32(FILE *fp, uint32 v)
 /**
  * File (little-endian): "UNPF", version 1 (u32), map name (16 B), xs, ys (u16), seed (u32), pairs (u32), FNV-1a of one byte per
  * cell, 1 = passable (u32). Per pair: x0 y0 x1 y1 (u16), flags (u8: 1 destination passable, 2 A* found, 4 easy path found,
- * 8 straight line free, 16 unit_walk_toxy accepts the walk), A* length (u8), easy length (u8), A* steps, easy steps (u8 each).
+ * 8 straight line free, 16 unit_walk_toxy accepts the walk, 32 line of sight free: path->search_long with CELL_CHKWALL, the
+ * attack check of battle_check_range, SPEC-0011), A* length (u8), easy length (u8), A* steps, easy steps (u8 each).
  **/
 static bool dump_paths(const char *mapname, uint32 seed, int pairs, const char *file)
 {
@@ -121,7 +122,7 @@ static bool dump_paths(const char *mapname, uint32 seed, int pairs, const char *
 	put32(fp, hash);
 
 	const int limit = 17, limit_obstructed = 14; // max_walk_path (conf/map/battle/client.conf) and OFFICIAL_WALKPATH
-	int count[5] = { 0 };
+	int count[6] = { 0 };
 	xorshift_state = seed != 0 ? seed : 1;
 	for (int i = 0; i < pairs; i++) {
 		int x0, y0, x1, y1;
@@ -139,6 +140,7 @@ static bool dump_paths(const char *mapname, uint32 seed, int pairs, const char *
 		bool found = path->search(&astar, NULL, id, x0, y0, x1, y1, 0, CELL_CHKNOPASS);
 		bool found_easy = path->search(&easy, NULL, id, x0, y0, x1, y1, 1, CELL_CHKNOPASS);
 		bool straight = path->search_long(NULL, NULL, id, x0, y0, x1, y1, CELL_CHKNOPASS);
+		bool sight = path->search_long(NULL, NULL, id, x0, y0, x1, y1, CELL_CHKWALL);
 		int len = found ? astar.path_len : 0;
 		int len_easy = found_easy ? easy.path_len : 0;
 		bool accepted = found && len <= limit && (straight || len <= limit_obstructed);
@@ -147,7 +149,7 @@ static bool dump_paths(const char *mapname, uint32 seed, int pairs, const char *
 		put16(fp, y0);
 		put16(fp, x1);
 		put16(fp, y1);
-		put8(fp, (passable ? 1 : 0) | (found ? 2 : 0) | (found_easy ? 4 : 0) | (straight ? 8 : 0) | (accepted ? 16 : 0));
+		put8(fp, (passable ? 1 : 0) | (found ? 2 : 0) | (found_easy ? 4 : 0) | (straight ? 8 : 0) | (accepted ? 16 : 0) | (sight ? 32 : 0));
 		put8(fp, len);
 		put8(fp, len_easy);
 		fwrite(astar.path, 1, len, fp);
@@ -157,10 +159,11 @@ static bool dump_paths(const char *mapname, uint32 seed, int pairs, const char *
 		count[2] += passable && !found;
 		count[3] += found && !accepted;
 		count[4] += accepted;
+		count[5] += sight;
 	}
 	fclose(fp);
-	ShowStatus("uninarok_pathdump: %s %dx%d cells %08x, %d pairs: %d found, %d easy, %d without a path to a passable cell, %d too long, %d accepted -> %s\n",
-		mapname, md->xs, md->ys, hash, pairs, count[0], count[1], count[2], count[3], count[4], file);
+	ShowStatus("uninarok_pathdump: %s %dx%d cells %08x, %d pairs: %d found, %d easy, %d without a path to a passable cell, %d too long, %d accepted, %d in sight -> %s\n",
+		mapname, md->xs, md->ys, hash, pairs, count[0], count[1], count[2], count[3], count[4], count[5], file);
 	return true;
 }
 
@@ -190,7 +193,8 @@ static int logged_walk_toxy_sub(struct block_list *bl)
 }
 
 /**
- * U id type class x y walking state
+ * U id type class x y walking state [hp max_hp]
+ *   hp and max_hp for monsters only (SPEC-0011)
  **/
 static int log_in_view(struct block_list *bl, va_list ap)
 {
@@ -213,13 +217,20 @@ static int log_in_view(struct block_list *bl, va_list ap)
 			return 0;
 	}
 	struct unit_data *ud = bl->type == BL_ITEM ? NULL : unit->bl2ud(bl); // it asserts on items
-	fprintf(walk_log, "U %d %d %d %d %d %d %d\n", bl->id, (int)bl->type, cls, bl->x, bl->y,
+	fprintf(walk_log, "U %d %d %d %d %d %d %d", bl->id, (int)bl->type, cls, bl->x, bl->y,
 		ud != NULL && ud->walktimer != INVALID_TIMER ? 1 : 0, vd != NULL ? (int)vd->dead_sit : 0);
+	if (bl->type == BL_MOB) {
+		const struct status_data *st = status->get_status_data(bl);
+		fprintf(walk_log, " %u %u", (unsigned int)st->hp, (unsigned int)st->max_hp);
+	}
+	fputc('\n', walk_log);
 	(*n)++;
 	return 1;
 }
 
 /**
+ * S tick account hp max_hp sp max_sp base_level job_level base_exp job_exp next_base_exp next_job_exp
+ *   the player's own status: the server's truth for SPEC-0011's replay tests
  * A tick account map x y, the U lines of what is in the player's view, then E count
  **/
 static int log_views(int tid, int64 tick, int id, intptr_t data)
@@ -231,6 +242,11 @@ static int log_views(int tid, int64 tick, int id, intptr_t data)
 		if (sd->bl.prev == NULL)
 			continue;
 		int n = 0;
+		fprintf(walk_log, "S %u %d %u %u %u %u %d %d %llu %llu %llu %llu\n", (unsigned int)timer->gettick(), sd->bl.id,
+			(unsigned int)sd->battle_status.hp, (unsigned int)sd->battle_status.max_hp, (unsigned int)sd->battle_status.sp,
+			(unsigned int)sd->battle_status.max_sp, sd->status.base_level, sd->status.job_level,
+			(unsigned long long)sd->status.base_exp, (unsigned long long)sd->status.job_exp,
+			(unsigned long long)pc->nextbaseexp(sd), (unsigned long long)pc->nextjobexp(sd));
 		fprintf(walk_log, "A %u %d %s %d %d\n", (unsigned int)timer->gettick(), sd->bl.id, map->list[sd->bl.m].name, sd->bl.x, sd->bl.y);
 		map->foreachinarea(log_in_view, sd->bl.m, sd->bl.x - AREA_SIZE, sd->bl.y - AREA_SIZE, sd->bl.x + AREA_SIZE, sd->bl.y + AREA_SIZE, BL_ALL, &sd->bl, &n);
 		fprintf(walk_log, "E %d\n", n);

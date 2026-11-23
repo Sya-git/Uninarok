@@ -27,7 +27,7 @@
   ID, size and layout in `packets_struct.h`/`clif.cpp`; the samples in SPEC-0010's captures; the result codes of `ITEM_PICKUP_ACK`; that `0x00B1` is not sent.
   *Done when:* a results table is in plan §4.1 (a Decisions note for any difference).
 
-- [ ] **T0.2** Extend the plugin `uninarok_pathdump`. (FR-1, FR-3, FR-13)
+- [x] **T0.2** Extend the plugin `uninarok_pathdump`. (FR-1, FR-3, FR-13)
   HP and max HP per monster in the view lines, one `S` line per second with the player's HP, SP, levels and EXP; a line-of-sight flag (`path->search_long`, `CELL_CHKWALL`) per pair in the path fixtures, which are made again with the same seeds.
   *Done when:* the plugin builds and loads; the three path files differ from the committed ones only in the new flag and SPEC-0010's pathfinder tests still pass on them; a sample of the new lines is in the report; `docs/specs/0010-world-session/fixtures/README.md` describes both formats.
 
