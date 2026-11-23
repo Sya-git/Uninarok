@@ -76,6 +76,36 @@ namespace Uninarok.Units.PlayTests
             Assert.That(Quaternion.Angle(output.transform.rotation, rotation), Is.LessThan(0.1f), "turn and tilt kept");
         }
 
+        // D30: a sprite that is sampled at another part of a pixel in every frame shimmers.
+        [UnityTest]
+        public IEnumerator RoCamera_CatchingUp_KeepsWhatItFollowsOnWholePixels()
+        {
+            _camera.Turn(37f);
+            for (int i = 0; i < 400 && Mathf.Abs(Mathf.DeltaAngle(_camera.Yaw, 37f)) > 0.001f; i++) yield return null;
+            var output = _camera.OutputCamera;
+            foreach (bool align in new[] { false, true })
+            {
+                var settings = Object.Instantiate(_camera.Settings);
+                settings.AlignToPixels = align;
+                _camera.Settings = settings;
+                _camera.SnapToTarget();
+                yield return null;
+                _camera.Target += new Vector3(1.3f, 0.2f, -0.9f);
+                float worst = 0f, moved = 0f;
+                for (int i = 0; i < 45; i++)
+                {
+                    yield return null;
+                    var at = (Vector2)output.WorldToScreenPoint(_camera.Target) - new Vector2(output.pixelWidth, output.pixelHeight) * 0.5f;
+                    moved = Mathf.Max(moved, at.magnitude);
+                    worst = Mathf.Max(worst, Mathf.Abs(at.x - Mathf.Round(at.x)), Mathf.Abs(at.y - Mathf.Round(at.y)));
+                }
+                Assert.That(moved, Is.GreaterThan(10f), "it was behind");
+                if (align) Assert.That(worst, Is.LessThan(0.05f), "whole pixels");
+                else Assert.That(worst, Is.GreaterThan(0.2f), "the check sees it without the alignment");
+                Object.Destroy(settings);
+            }
+        }
+
         [UnityTest]
         public IEnumerator RoCamera_MovingTheTarget_MovesTheCameraWithIt()
         {

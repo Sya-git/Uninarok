@@ -27,12 +27,13 @@ namespace Uninarok.Networking.Tests
         private static readonly ServerEndpoint LoginServer = new ServerEndpoint("127.0.0.1", 6900, default, 0, 0, 0);
 
         private static DevAutoLoginSettings Settings(int serverIndex = 0, byte slot = 0, int attempts = 1, string name = "DevHero",
-                                                     byte createSlot = 2, ushort hairColor = 3, ushort hairStyle = 7, uint job = 4001, AccountSex sex = AccountSex.SEX_FEMALE)
+                                                     byte createSlot = 2, ushort hairColor = 3, ushort hairStyle = 7, uint job = 4001, AccountSex sex = AccountSex.SEX_FEMALE, bool withoutWorld = false)
             => new DevAutoLoginSettings
             {
                 ServerIndex = serverIndex,
                 CharacterSlot = slot,
                 MaxLoginAttempts = attempts,
+                CompleteMapLoadWithoutWorld = withoutWorld,
                 Draft = new CharacterDraft(new FixedString32Bytes(name), createSlot, hairColor, hairStyle, job, sex),
             };
 
@@ -234,9 +235,27 @@ namespace Uninarok.Networking.Tests
         // ---- map ----
 
         [Test]
-        public void Authenticated_FinishesTheMapLoad_Once()
+        public void Authenticated_LeavesTheMapLoadToTheWorld()
         {
+            // SPEC-0010 FR-1 (PLAN-0010 section 7): whoever loads the scene calls MapLoaded
             Make(Settings());
+            _driver.Start();
+            LoginAccepted();
+            CharServerReady(withCharacter: true);
+            _client.Deliver(TestPackets.MapAccepted(1, "prontera", new byte[] { 10, 0, 0, 2 }, 6122));
+            _client.RaiseConnected(ConnectionRole.Map);
+            _client.Deliver(TestPackets.AuthenticationAccepted());
+
+            Assert.AreEqual(FlowState.LoadingMap, _flow.State);
+            Assert.AreEqual(0, _client.SentCount(PacketIds.MAP_LOADED));
+            _flow.MapLoaded();
+            Assert.AreEqual(FlowState.InGame, _flow.State);
+        }
+
+        [Test]
+        public void Authenticated_WithoutAWorld_FinishesTheMapLoad_Once()
+        {
+            Make(Settings(withoutWorld: true));
             _driver.Start();
             LoginAccepted();
             CharServerReady(withCharacter: true);
@@ -247,6 +266,23 @@ namespace Uninarok.Networking.Tests
 
             Assert.AreEqual(FlowState.InGame, _flow.State);
             Assert.AreEqual(1, _client.SentCount(PacketIds.MAP_LOADED));
+        }
+
+        [Test]
+        public void WithoutAWorld_AMapChangeRightAfterMapLoaded_IsFinishedToo()
+        {
+            // Hercules moves a character that a login script warped while it was loading (MAP_CHANGE after MAP_LOADED)
+            Make(Settings(withoutWorld: true));
+            _driver.Start();
+            LoginAccepted();
+            CharServerReady(withCharacter: true);
+            _client.Deliver(TestPackets.MapAccepted(1, "prontera", new byte[] { 10, 0, 0, 2 }, 6122));
+            _client.RaiseConnected(ConnectionRole.Map);
+            _client.Deliver(TestPackets.AuthenticationAccepted());
+            _client.Deliver(new Packets.In.Map.MAP_CHANGE(new byte[20]));
+
+            Assert.AreEqual(FlowState.InGame, _flow.State);
+            Assert.AreEqual(2, _client.SentCount(PacketIds.MAP_LOADED));
         }
 
         // ---- failure and retries (FR-11) ----
@@ -323,6 +359,13 @@ namespace Uninarok.Networking.Tests
         }
 
         // ---- credentials source ----
+
+        [TestCase(null, null)]
+        [TestCase("host", null)]
+        [TestCase("login:", null)]
+        [TestCase("host,login:second", "second")]
+        public void Credentials_TheAccountOfAPlayersTag(string tags, string user) =>
+            Assert.AreEqual(user, DevCredentialsSource.UserOf(tags?.Split(',')));
 
         [Test]
         public void Parse_ReadsUserAndPassword()

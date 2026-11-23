@@ -149,6 +149,35 @@ namespace Uninarok.Units
             _loader.Load(look, _parts, OnLoaded);
         }
 
+        /// <summary>
+        /// Forgets the look and shows nothing (PLAN-0010 D13): its assets are released and the next <see cref="SetLook"/> never
+        /// shows this one in between. Facing, animation and speed go back to their defaults.
+        /// </summary>
+        public void Clear()
+        {
+            _loader?.Release(_parts);
+            _hasLook = false;
+            _look = default;
+            _report = null;
+            for (int i = 0; i < _actors.Length; i++)
+            {
+                if (_actors[i] == null) continue;
+                _actors[i].Hide();
+                _actors[i].Data = null;
+                if (_palettes[i] == null) continue;
+                _palettes[i] = null;
+                SpritePalette.Clear(_actors[i]);
+            }
+            Facing = UninarokDirection.South;
+            HeadFacing = HeadFacing.Straight;
+            Speed = 1f;
+            Play(PcAnimation.Idle);
+            _hiddenSlots = 0;
+            _animatedIdle = false;
+            ShowNothing();
+            if (_shadow != null) _shadow.Apply(_parts);
+        }
+
         void OnLoaded(UnitParts parts, LoadReport report)
         {
             _report = report;
@@ -334,6 +363,7 @@ namespace Uninarok.Units
                 if (!position.Equals(_actorPositions[slot])) _actorTransforms[slot].localPosition = _actorPositions[slot] = position;
                 actor.SortingBase = p.Order * OrdersPerPart;
                 actor.Tint = p.Tint;
+                actor.SetGround(position.y * _parts.Scale, _parts.Scale);
                 actor.ShowFrame(animation, direction, _partFrames[slot]);
             }
             for (int i = 0; i < _actors.Length; i++)

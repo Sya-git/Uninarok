@@ -28,6 +28,15 @@
             "Dependencies": []
         },
         {
+            "Source": "texture/grid.tga",
+            "SourceHash": "c78e343d6b47299d5010872ac3ba8940f7a60fa243f9b6c124443082068d49f7",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/grid.png"
+            ],
+            "Dependencies": []
+        },
+        {
             "Source": "texture/izlude/iz_rookie001.bmp",
             "SourceHash": "2f856e78bff658bf1d688a05483819cb68046ad0d02dc289f16cd7aea7de793d",
             "Rules": 2,

@@ -1,0 +1,27 @@
+{
+    "name": "Uninarok.World.View",
+    "rootNamespace": "Uninarok.World.View",
+    "references": [
+        "Uninarok.World",
+        "Uninarok.Units",
+        "Uninarok.CameraRig",
+        "Uninarok.Map",
+        "Uninarok.SpriteCatalog",
+        "Uninarok.Sprites",
+        "Uninarok.Networking",
+        "Uninarok.Networking.Core",
+        "Unity.Collections",
+        "Unity.InputSystem",
+        "Unity.Addressables",
+        "Unity.ResourceManager"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

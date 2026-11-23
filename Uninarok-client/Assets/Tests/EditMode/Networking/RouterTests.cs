@@ -92,6 +92,14 @@ namespace Uninarok.Networking.Tests
                 PacketIds.MAP_ENTER_REQUEST_ACCEPTED,
                 PacketIds.MAP_ENTRY_REFUSAL, PacketIds.SERVER_HEARTBEAT_RESPONSE, PacketIds.MAP_ENTRY_ACCEPTANCE,
                 PacketIds.AUTHENTICATION_ACCEPTED,
+                // SPEC-0010
+                PacketIds.UNIT_VANISH, PacketIds.UNIT_MOVE, PacketIds.PLAYER_MOVE, PacketIds.UNIT_STOP_MOVE, PacketIds.UNIT_SLIDE,
+                PacketIds.UNIT_MOVE_ENTRY, PacketIds.UNIT_NEW_ENTRY, PacketIds.UNIT_STAND_ENTRY,
+                PacketIds.UNIT_DIRECTION, PacketIds.UNIT_LOOK_CHANGE, PacketIds.UNIT_ACT, PacketIds.PARAMETER_CHANGE,
+                PacketIds.ITEM_ENTRY, PacketIds.ITEM_FALL_ENTRY, PacketIds.ITEM_DISAPPEAR,
+                PacketIds.MAP_CHANGE, PacketIds.MAP_SERVER_CHANGE,
+                PacketIds.INVENTORY_LIST_NORMAL, PacketIds.INVENTORY_LIST_EQUIP, PacketIds.ITEM_PICKUP_ACK, PacketIds.DROP_ITEM_ACK,
+                PacketIds.OWN_MESSAGE,
             };
             var handled = GeneratedPacketRouter.HandledIds.ToArray();
             CollectionAssert.AreEquivalent(expected, handled);

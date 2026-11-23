@@ -6,7 +6,7 @@
 
 | ID | Hercules name | Size | Check | Fields | Doc |
 |---|---|---:|---|---|---|
-| `0x00B0` | ZC_PAR_CHANGE | 8 | size verified | varID, count |  |
+| `0x00B0` | ZC_PAR_CHANGE | 8 | size verified | varID, count |[PARAMETER_CHANGE](In/MapServer/PARAMETER_CHANGE.md) |
 | `0x00B4` | ZC_SAY_DIALOG | -1 | variable (layout not auto-sized) | PacketLength, NpcID, ... |  |
 | `0x00B4` | ZC_SAY_DIALOG2 | -1 | variable (layout not auto-sized) | PacketLength, NpcID, ... |  |
 | `0x00B5` | ZC_WAIT_DIALOG | 6 | size verified | NpcID |  |

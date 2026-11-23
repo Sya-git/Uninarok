@@ -1,0 +1,36 @@
+{
+    "name": "Uninarok.World.Tests",
+    "rootNamespace": "Uninarok.World.Tests",
+    "references": [
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "Uninarok.Networking",
+        "Uninarok.Networking.Core",
+        "Uninarok.Networking.Tests",
+        "Uninarok.Map",
+        "Uninarok.World",
+        "Uninarok.World.View",
+        "Uninarok.Sprites",
+        "Uninarok.World.Dev",
+        "Uninarok.Units",
+        "Uninarok.CameraRig",
+        "Unity.Collections",
+        "Unity.InputSystem",
+        "Unity.InputSystem.TestFramework"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

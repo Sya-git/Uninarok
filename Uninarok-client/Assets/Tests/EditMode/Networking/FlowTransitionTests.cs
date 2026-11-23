@@ -612,6 +612,214 @@ namespace Uninarok.Networking.Tests
             Assert.AreEqual(FailureCode.ConnectTimeout, _flow.Failure.Value.Code);
         }
 
+        // ---- map change on the same map server (SPEC-0010 FR-15, PLAN-0010 4.8) ----
+
+        private static MAP_CHANGE MapChange()
+        {
+            var b = new byte[MAP_CHANGE.Size - 2];
+            System.Text.Encoding.ASCII.GetBytes("prt_fild08.gat").CopyTo(b, 0);
+            b[16] = 170;
+            b[18] = 0x7B; b[19] = 0x01;      // 379
+            return new MAP_CHANGE(b);
+        }
+
+        [Test]
+        public void NetworkFlow_MapChange_LoadingMapThenInGame()
+        {
+            ToInGame();
+            _client.Status = ConnectionStatus.Connected;
+            string host = _flow.Context.Map.Host;
+            ushort port = _flow.Context.Map.Port;
+            int requests = 0;
+            FlowState seenIn = FlowState.Idle;
+            _flow.MapLoadRequested += () => { requests++; seenIn = _flow.State; };
+            _client.ClearRecords();
+
+            _client.Deliver(MapChange());
+
+            Assert.AreEqual(FlowState.LoadingMap, _flow.State);
+            Assert.AreEqual((1, FlowState.LoadingMap), (requests, seenIn));
+            Assert.AreEqual("prt_fild08.gat", _flow.Context.Map.MapName.ToString());
+            Assert.AreEqual((host, port), (_flow.Context.Map.Host, _flow.Context.Map.Port), "the same server");
+            Assert.AreEqual((170, 379), ((int)_flow.Context.Entry.Position.X, (int)_flow.Context.Entry.Position.Y));
+            Assert.AreEqual(UninarokDirection.North, _flow.Context.Entry.Position.Direction, "PLAN-0010 D14");
+            Assert.AreEqual(0, _client.DisconnectCalls);
+
+            _clock.AdvanceSeconds(10.1);
+            _flow.Tick();
+            Assert.AreEqual(0, _client.SentCount(PacketIds.HEARTBEAT_REQUEST), "no heartbeat while the map loads");
+
+            _flow.MapLoaded();
+            Assert.AreEqual(FlowState.InGame, _flow.State);
+            Assert.AreEqual(1, _client.SentCount(PacketIds.MAP_LOADED), "MAP_LOADED again");
+            Assert.AreEqual(1, _client.SentCount(PacketIds.HEARTBEAT_REQUEST), "and the heartbeat with it");
+            _clock.AdvanceSeconds(10_000);
+            _flow.Tick();
+            Assert.AreEqual(FlowState.InGame, _flow.State, "no deadline left");
+        }
+
+        [Test]
+        public void MapChange_WhileLoading_AsksForTheNewMap_AndRestartsTheDeadline()
+        {
+            ToInGame();
+            int requests = 0;
+            _flow.MapLoadRequested += () => requests++;
+            _client.Deliver(MapChange());
+            _clock.AdvanceSeconds(_settings.MapLoadSeconds - 1);
+            _client.Deliver(MapChange());
+            Assert.AreEqual(2, requests);
+            _clock.AdvanceSeconds(_settings.MapLoadSeconds - 1);
+            _flow.Tick();
+            Assert.AreEqual(FlowState.LoadingMap, _flow.State);
+        }
+
+        [Test]
+        public void MapChange_LoadDeadline_AndDisconnect_FailTheFlow()
+        {
+            ToInGame();
+            _client.Deliver(MapChange());
+            _clock.AdvanceSeconds(_settings.MapLoadSeconds + 1);
+            _flow.Tick();
+            Assert.AreEqual(FlowState.Failed, _flow.State);
+            Assert.AreEqual(FailureCode.ReplyTimeout, _flow.Failure.Value.Code);
+
+            SetUp();
+            ToInGame();
+            _client.Deliver(MapChange());
+            _client.RaiseDisconnected(new CloseInfo(CloseReason.RemoteClosed, "gone"), ConnectionRole.Map);
+            Assert.AreEqual(FlowState.Failed, _flow.State);
+            Assert.AreEqual(FailureCode.RemoteClosed, _flow.Failure.Value.Code);
+        }
+
+        [Test]
+        public void MapLoadRequested_OnFirstEntry_ComesWithTheAuthentication()
+        {
+            int requests = 0;
+            SetUp();
+            _flow.MapLoadRequested += () => requests++;
+            ToInGame();
+            Assert.AreEqual(1, requests);
+        }
+
+        private static MAP_CHANGE MapChange(string map, int x, int y)
+        {
+            var b = new byte[MAP_CHANGE.Size - 2];
+            System.Text.Encoding.ASCII.GetBytes(map).CopyTo(b, 0);
+            b[16] = (byte)x; b[17] = (byte)(x >> 8);
+            b[18] = (byte)y; b[19] = (byte)(y >> 8);
+            return new MAP_CHANGE(b);
+        }
+
+        [Test]
+        public void MapChange_ToTheVeryEntry_RightAfterIt_IsDropped_Once([Values(false, true)] bool afterMapLoaded)
+        {
+            // Hercules pc_authok: the real captures hold it after every AUTHENTICATION_ACCEPTED (PLAN-0010 D23)
+            int requests = 0;
+            _flow.MapLoadRequested += () => requests++;
+            ToAuthenticated();
+            var entry = _flow.Context.Entry;
+            string map = _flow.Context.Map.MapName.ToString();
+            Assert.AreEqual(1, requests);
+            if (afterMapLoaded) _flow.MapLoaded();
+            var state = _flow.State;
+            _client.Deliver(MapChange(map, entry.Position.X, entry.Position.Y));
+            Assert.AreEqual((1, state), (requests, _flow.State), "nothing to load");
+            Assert.AreEqual((entry.StartTick, entry.Position.Direction), (_flow.Context.Entry.StartTick, _flow.Context.Entry.Position.Direction));
+            if (!afterMapLoaded) _flow.MapLoaded();
+
+            _client.Deliver(MapChange(map, entry.Position.X, entry.Position.Y));
+            Assert.AreEqual((2, FlowState.LoadingMap), (requests, _flow.State), "a second one is a warp to the same cell");
+        }
+
+        [Test]
+        public void MapChange_Elsewhere_RightAfterTheEntry_IsAMapChange()
+        {
+            int requests = 0;
+            _flow.MapLoadRequested += () => requests++;
+            ToAuthenticated();
+            _client.Deliver(MapChange("prt_fild08.gat", 1, 2));
+            Assert.AreEqual(2, requests);
+            Assert.AreEqual("prt_fild08.gat", _flow.Context.Map.MapName.ToString());
+        }
+
+        [Test]
+        public void MapChange_AfterAMapServerChange_IsNeverTheEcho()
+        {
+            ToInGame();
+            _client.Deliver(MapServerChange());
+            _client.RaiseConnected();
+            _client.Deliver(new AUTHENTICATION_ACCEPTED(new byte[] { 0x04, 0x03, 0x02, 0x01, 0x25, 0x8C, 0x84, 0x05, 0x05, 0x00, 0x00 }));
+            _flow.MapLoaded();
+            _client.Deliver(MapChange("prt_fild08.gat", 150, 200));
+            Assert.AreEqual(FlowState.LoadingMap, _flow.State);
+        }
+
+        // ---- move to another map server (SPEC-0010 FR-15, PLAN-0010 4.8) ----
+
+        private static MAP_SERVER_CHANGE MapServerChange()
+        {
+            var b = new byte[MAP_SERVER_CHANGE.Size - 2];
+            System.Text.Encoding.ASCII.GetBytes("prt_fild08.gat").CopyTo(b, 0);
+            b[16] = 170;
+            b[18] = 0x7B; b[19] = 0x01;                                    // 379
+            b[20] = 10; b[21] = 0; b[22] = 0; b[23] = 9;                   // 10.0.0.9
+            b[24] = 0xC9; b[25] = 0xC3;                                    // 50121
+            return new MAP_SERVER_CHANGE(b);
+        }
+
+        [Test]
+        public void NetworkFlow_MapServerChange_Reconnects()
+        {
+            ToInGame();
+            byte[] firstEntry = null;
+            foreach (var s in _client.Sent)
+                if (s.Id == PacketIds.REQUEST_ENTER_MAP) firstEntry = s.Bytes;
+            int requests = 0;
+            _flow.MapLoadRequested += () => requests++;
+            _client.ClearRecords();
+
+            _client.Deliver(MapServerChange());
+
+            CollectionAssert.AreEqual(new[] { "Disconnect", "Connect Map 10.0.0.9:50121" }, _client.Actions, "the old connection is dropped silently, then the new one opens");
+            Assert.AreEqual(FlowState.ConnectingToMap, _flow.State);
+            Assert.AreEqual(1, _client.Dispatcher.HandlerCount<AUTHENTICATION_ACCEPTED>(), "the zone manager is entered again, once");
+
+            _client.RaiseConnected();
+            Assert.AreEqual(FlowState.LoadingMap, _flow.State);
+            Assert.AreEqual(1, _client.SentCount(PacketIds.REQUEST_ENTER_MAP));
+            var entry = _client.Sent[0].Bytes;
+            for (int i = 0; i < entry.Length; i++)
+                if (i < 18 || i > 21) Assert.AreEqual(firstEntry[i], entry[i], $"byte {i}: same account, character, auth code and sex (18-21 is the timestamp)");
+            Assert.AreEqual(0, requests);
+
+            _client.Deliver(new AUTHENTICATION_ACCEPTED(new byte[] { 0x04, 0x03, 0x02, 0x01, 0x25, 0x8C, 0x84, 0x05, 0x05, 0x00, 0x00 }));
+            Assert.AreEqual(1, requests);
+            Assert.AreEqual((150, 200), ((int)_flow.Context.Entry.Position.X, (int)_flow.Context.Entry.Position.Y), "from here the first-entry path");
+            _flow.MapLoaded();
+            Assert.AreEqual(FlowState.InGame, _flow.State);
+            Assert.AreEqual("prt_fild08.gat", _flow.Context.Map.MapName.ToString());
+            Assert.AreEqual(1, _client.SentCount(PacketIds.MAP_LOADED));
+        }
+
+        [Test]
+        public void MapServerChange_ConnectTimeout_AndRefusal_FailTheFlow()
+        {
+            ToInGame();
+            _client.Deliver(MapServerChange());
+            _clock.AdvanceSeconds(_settings.ConnectSeconds + 1);
+            _flow.Tick();
+            Assert.AreEqual(FlowState.Failed, _flow.State);
+            Assert.AreEqual(FailureCode.ConnectTimeout, _flow.Failure.Value.Code);
+
+            SetUp();
+            ToInGame();
+            _client.Deliver(MapServerChange());
+            _client.RaiseConnected();
+            _client.Deliver(new MAP_ENTRY_REFUSAL(new byte[] { 3 }));
+            Assert.AreEqual(FlowState.Failed, _flow.State);
+            Assert.AreEqual(FailureCode.MapRefused, _flow.Failure.Value.Code);
+        }
+
         // ---- keepalives are driven by Tick (FR-14) ----
 
         [Test]

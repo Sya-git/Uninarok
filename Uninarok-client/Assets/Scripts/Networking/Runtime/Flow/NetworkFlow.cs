@@ -52,6 +52,8 @@ namespace Uninarok.Networking.Flow
             Character.MapEnterRefused += OnMapEnterRefused;
             Zone.Authenticated += OnAuthenticated;
             Zone.EnterRefused += OnEnterRefused;
+            Zone.MapChangeOrdered += OnMapChangeOrdered;
+            Zone.MapServerChangeOrdered += OnMapServerChangeOrdered;
         }
 
         public FlowState State { get; private set; } = FlowState.Idle;
@@ -62,6 +64,12 @@ namespace Uninarok.Networking.Flow
         public ZoneManager Zone { get; }
 
         public event Action<FlowState> StateChanged;
+
+        /// <summary>
+        /// The game must load <c>Context.Map</c> and call <see cref="MapLoaded"/>: raised in <c>LoadingMap</c> once the map server
+        /// accepted the entry, and again for every map change, also one that arrives while a map is still loading (PLAN-0010 D15).
+        /// </summary>
+        public event Action MapLoadRequested;
 
         // ---- commands (main thread). Each validates the current state; otherwise it warns and is ignored. ----
 
@@ -148,6 +156,8 @@ namespace Uninarok.Networking.Flow
             Character.MapEnterRefused -= OnMapEnterRefused;
             Zone.Authenticated -= OnAuthenticated;
             Zone.EnterRefused -= OnEnterRefused;
+            Zone.MapChangeOrdered -= OnMapChangeOrdered;
+            Zone.MapServerChangeOrdered -= OnMapServerChangeOrdered;
 
             DeactivateManager();
         }
@@ -270,6 +280,36 @@ namespace Uninarok.Networking.Flow
             if (State != FlowState.LoadingMap) return;
             _authenticated = true;
             StartDeadline(_settings.MapLoadSeconds);                // the client's own scene load
+            RequestMapLoad();
+        }
+
+        // The server moved the player on this map server (SPEC-0010 FR-15): load the map, then MAP_LOADED again.
+        private void OnMapChangeOrdered()
+        {
+            if (State != FlowState.InGame && !(State == FlowState.LoadingMap && _authenticated)) return;
+            _authenticated = true;
+            _connectionUp = true;
+            StartDeadline(_settings.MapLoadSeconds);
+            SetState(FlowState.LoadingMap);
+            RequestMapLoad();
+        }
+
+        // The server moved the player to another map server (SPEC-0010 FR-15): the character server handed the session over, so
+        // the entry is the first one again, with the same account, character and auth code.
+        private void OnMapServerChangeOrdered()
+        {
+            if (State != FlowState.InGame && !(State == FlowState.LoadingMap && _authenticated)) return;
+            _client.Disconnect();                                   // silent: the old server is done with us
+            Activate(Zone, ConnectionRole.Map);
+            _authenticated = false;
+            BeginConnecting(FlowState.ConnectingToMap);
+            _client.Connect(Context.Map.Host, Context.Map.Port, ConnectionRole.Map);
+        }
+
+        private void RequestMapLoad()
+        {
+            try { MapLoadRequested?.Invoke(); }
+            catch (Exception e) { NetLog.HandlerError(e); }          // as StateChanged
         }
 
         private void OnEnterRefused(byte code)

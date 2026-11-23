@@ -30,9 +30,36 @@ namespace Uninarok.Networking.Packets
         public const ushort MAP_ENTRY_REFUSAL = 0x0074;              // in
         public const ushort MAP_LOADED = 0x007D;                     // out
         public const ushort SERVER_HEARTBEAT_RESPONSE = 0x007F;      // in
+        public const ushort UNIT_VANISH = 0x0080;                    // in
+        public const ushort UNIT_MOVE = 0x0086;                      // in
+        public const ushort PLAYER_MOVE = 0x0087;                    // in
+        public const ushort UNIT_STOP_MOVE = 0x0088;                 // in
+        public const ushort UNIT_ACT = 0x008A;                       // in
+        public const ushort OWN_MESSAGE = 0x008E;                    // in
+        public const ushort MAP_CHANGE = 0x0091;                     // in
+        public const ushort UNIT_DIRECTION = 0x009C;                 // in
+        public const ushort ITEM_ENTRY = 0x009D;                     // in
+        public const ushort ITEM_DISAPPEAR = 0x00A1;                 // in
+        public const ushort DROP_ITEM_ACK = 0x00AF;                  // in
+        public const ushort PARAMETER_CHANGE = 0x00B0;               // in
+        public const ushort GLOBAL_CHAT = 0x00F3;                    // out
+        public const ushort UNIT_LOOK_CHANGE = 0x01D7;               // in
+        public const ushort UNIT_SLIDE = 0x01FF;                     // in
         public const ushort MAP_ENTRY_ACCEPTANCE = 0x0283;           // in
         public const ushort AUTHENTICATION_ACCEPTED = 0x02EB;        // in
+        public const ushort REQUEST_MOVE = 0x035F;                   // out
         public const ushort HEARTBEAT_REQUEST = 0x0360;              // out
+        public const ushort CHANGE_DIRECTION = 0x0361;               // out
+        public const ushort DROP_ITEM = 0x0363;                      // out
         public const ushort REQUEST_ENTER_MAP = 0x0436;              // out
+        public const ushort REQUEST_ACT = 0x0437;                    // out
+        public const ushort UNIT_MOVE_ENTRY = 0x09FD;                // in
+        public const ushort UNIT_NEW_ENTRY = 0x09FE;                 // in
+        public const ushort UNIT_STAND_ENTRY = 0x09FF;               // in
+        public const ushort MAP_SERVER_CHANGE = 0x0AC7;              // in
+        public const ushort ITEM_FALL_ENTRY = 0x0ADD;                // in
+        public const ushort INVENTORY_LIST_NORMAL = 0x0B09;          // in
+        public const ushort INVENTORY_LIST_EQUIP = 0x0B39;           // in
+        public const ushort ITEM_PICKUP_ACK = 0x0B41;                // in
     }
 }

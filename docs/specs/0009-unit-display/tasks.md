@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Implemented (2026-11-22; approved by the owner 2026-11-21) |
+| **Status** | Implemented (2026-11-22; approved by the owner 2026-11-21; Phase 9, FR-16, approved 2026-11-22) |
 
 **How to use this file**
 - Start only when SPEC-0008 is implemented and merged into `main` (its catalog facade, entries and editor lookup are what this spec builds on). Work on branch `feature/0009-unit-display`.
@@ -207,3 +207,34 @@ Reference set (spec §5, OQ-5), used by every check below: novice male; swordsma
 - [x] **T8.3** Close the spec. (all)
   *Done when:* spec success criteria checked and reported; sprite-catalog.md §1 points the composition rows to SPEC-0009; the two BACKLOG items of plan §7 are removed (closed) and leftovers added; spec, plan and tasks status `Implemented`.
   *Result (2026-11-22):* success criteria: reference set compared by the owner (T8.1); FR-14 met in the stress mode, in the editor (T8.2, T8.5: 1.97 ms max in the last run); camera matches the original client (T6.4, owner's word, no screenshot pairs). sprite-catalog.md §1 points to SPEC-0009; the two BACKLOG items are removed and the leftovers added. Not done: a full player build (the release scripts were compiled). Tests: Units PlayMode 16 of 16; Units, CameraRig, Sprites, SpriteCatalog, Map and Networking EditMode 665 of 666 (the one failure is the line endings of a SPEC-0001 fixture, BACKLOG); the full RoImport suite, 1,146 tests: two failed on MCP noise or load and pass alone, three model and map batch tests run past their 180 s timeout on this PC, alone too (214 to 485 s; BACKLOG), the rest pass.
+
+## Phase 9: Depth by height (added 2026-11-22)
+
+Works on the branch `feature/0010-world-session` (the owner reported it while reviewing SPEC-0010).
+
+- [x] **T9.1** Add the tests of the heights, pending T9.2. (FR-16, FR-14)
+  `SpriteActor_SetGround_WritesTheHeightInZScale`, `_SameValue_WritesNothing`, `_Off_KeepsZScale1`; `UnitView_LayerHeights_AreFromThePivot_AtTheDisplayScale`.
+  *Done when:* they compile and are listed as ignored.
+  *Result (2026-11-22):* Sprites EditMode 35 pass, 3 ignored; Units EditMode 97 pass, 1 ignored ("pending T9.2"); no new warnings. `SetGround` is an empty method here, so the tests compile.
+
+- [x] **T9.2** Write each layer's height in its z scale (plan §4.10). (FR-16, FR-14)
+  `SpriteActor.SetGround`, `UnitView.Write`, `GroundItemView`.
+  *Done when:* the tests of T9.1 pass, the Sprites and Units EditMode tests pass, and a unit's picture is the same as before (the shader does not read the height yet).
+  *Result (2026-11-22):* Sprites EditMode 38 of 38, Units EditMode 98 of 98; no new warnings. Swordsman at the wall of prontera 128,86 (tilt 65°): 0 pixels differ between the heights (z scale up to 17.04) and z scale 1. `GroundScaleZ` is public, for the ground item still (plan §4.10).
+
+- [x] **T9.3** Add the render tests, pending T9.4. (FR-16, FR-10)
+  `UnitDepth_BackToAWall_IsWhole_4Turns_MinMaxTilt` (prontera; iz_int when imported), `_BehindABox_IsHiddenAsAnUprightPlane`, `_TwoUnits_SameOrderAsBefore`, `_TallUnitAtTheNearestZoom_IsNotClipped`, `_Shadow_IsUnchanged`, `_GroundItemAtAWall_IsWhole`.
+  *Done when:* run without the ignore mark, the cut cases (wall, box, ground item) fail with today's shader; they are committed as ignored.
+  *Result (2026-11-22):* run without the ignore mark on the shader of T9.2: both wall tests (prontera 221,221: 3,111 of 3,871 pixels; iz_int 61,45: 2,949), the box (1,989 of 3,871) and the ground item (1,376 of 4,000) fail; order, clipping and shadow pass, as they must before and after. The clipping test is `UnitDepth_TallUnitNearTheCamera_IsNotClipped`: 2.5, 4 and 23 u away, tilts 20° to 90°.
+
+- [x] **T9.4** Compute the upright depth in `Uninarok/RoSprite`. (FR-16, FR-10)
+  *Done when:* the tests of T9.3 and `UnitView_FeetOnGround_SlopeOfPrtFild08_MinMaxTilt` pass; no new warnings; materials without a bias render as before.
+  *Result (2026-11-22):* Units PlayMode 22 of 22 (with `UnitView_FeetOnGround_SlopeOfPrtFild08_MinMaxTilt` and `UnitSystem_ZeroGcAllocPerFrame_300Units`), `UnitDepth_GroundItemAtAWall_IsWhole` passes; no compiler or shader warnings. Without a bias the shader takes the same path as before. Preview scenes, 160 cells per turn beside something not walkable (fewer on iz_int), tilts 50° and 65°, pixels visible before and after: prontera 2,590,638 → 3,000,963 of 4,441,390, iz_int 1,252,821 → 1,573,093 of 1,928,594; no sample worse.
+
+- [x] **T9.5** Measure the cost in the stress mode, with and without the heights. (FR-14, FR-16)
+  *Done when:* unit update 2 ms or less and 0 B per frame at 100 players and 200 monsters on prontera; batches, set passes and frame time of both are recorded here.
+  *Result (2026-11-22):* stress mode, prontera, 300 units, in the editor: unit update 0.52 ms mean, 1.20 ms max over 600 frames (T8.5: 0.73 and 1.97). 0 B per frame: `UnitSystem_ZeroGcAllocPerFrame_300Units` passes (T9.4 run). Units frozen, heights and z scale 1 in turn, 3 times 200 frames each (982 layers enabled of 2,378): set passes 371 and 369 to 371, draw calls 1,703 and 1,682 to 1,697 (a little less is culled), frame 16.67 ms both (vsync), render 14.63 to 14.70 and 14.62 to 14.71 ms. `UnityStats` has no batch count in this version. The sandbox readout of garbage (67 KB per frame) is the whole editor frame, not the unit update.
+
+- [x] **T9.6** Evidence and close. (FR-16)
+  *Done when:* screenshots on prontera next to a wall and indoors on iz_int are in `evidence/` (before and after, both tilts); the Sprites, Units and World tests pass; the owner checked the images; statuses are `Implemented`.
+  *Result (2026-11-22):* evidence/t9.6-prontera-turn90.png, t9.6-prontera-turn180.png, t9.6-iz_int-turn0.png, t9.6-iz_int-turn270.png (left before, right after; tilt 50° above, 65° below; game view angle, nearest zoom, preview scenes). Sprites EditMode 38 of 38, Units EditMode 98 of 98, Units PlayMode 22 of 22, World EditMode 160 of 160, World PlayMode 44 of 44. The owner checked the images and approved them (2026-11-22). Not seen in play against a server.

@@ -6,7 +6,7 @@
 | **Hercules packet name** | struct `packet_idle_unit` |
 | **Packet ID** | `0x09FF` |
 | **Declared size** | Variable (`Size = -1`); Hercules 20220406 always sends 108 bytes |
-| **Status** | documented |
+| **Status** | verified |
 | **Frequency** | hot |
 | **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no; layout from `packets_struct.h` (`packet_idle_unit`) |
 | **Allocates** | no |
@@ -21,7 +21,7 @@
 | PacketLength | `ushort` | 2 bytes | Total packet length including this header. |
 | objecttype | `byte` | 1 byte | Unit kind (see `UNIT_MOVE_ENTRY`). |
 | AID | `uint` | 4 bytes | Account ID or object ID. |
-| GID | `uint` | 4 bytes | Object ID. |
+| GID | `uint` | 4 bytes | Character ID of a player; `0` for every other unit. |
 | speed | `short` | 2 bytes | Walk speed. |
 | bodyState | `short` | 2 bytes | Body state. |
 | healthState | `short` | 2 bytes | Health state. |
@@ -35,7 +35,7 @@
 | accessory3 | `ushort` | 2 bytes | Mid head sprite. |
 | headpalette | `short` | 2 bytes | Hair colour. |
 | bodypalette | `short` | 2 bytes | Body colour. |
-| headDir | `short` | 2 bytes | Head direction. |
+| headDir | `short` | 2 bytes | Head direction: `0` straight, `1` right, `2` left. |
 | robe | `ushort` | 2 bytes | Garment sprite. |
 | GUID | `uint` | 4 bytes | Guild ID. |
 | GEmblemVer | `short` | 2 bytes | Emblem version. |
@@ -46,7 +46,7 @@
 | PosDir | `UninarokPosition` | 3 bytes | Tile and facing. [`UninarokPosition`](../../../../../data/UninarokPosition.md). |
 | xSize | `byte` | 1 byte | Collision width hint. |
 | ySize | `byte` | 1 byte | Collision height hint. |
-| state | `byte` | 1 byte | Unit state (`0` standing, `1` dead, `2` sitting). |
+| state | `byte` | 1 byte | Unit state (`0` standing, `1` dead or feigning death, `2` sitting; `vd->dead_sit`). |
 | clevel | `short` | 2 bytes | Base level. |
 | font | `short` | 2 bytes | Chat font. |
 | maxHP | `int` | 4 bytes | Max HP. |

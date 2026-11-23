@@ -196,6 +196,7 @@ namespace Uninarok.Networking.Tests
                 Flow.MapLoaded();
                 Assert.AreEqual(FlowState.InGame, Flow.State);
                 Assert.AreEqual(new byte[] { 0x7D, 0x00 }, LoopbackServer.ReadExactly(mapPeer, 2), "MAP_LOADED");
+                Assert.AreEqual(new byte[] { 0x60, 0x03 }, new Span<byte>(LoopbackServer.ReadExactly(mapPeer, 6), 0, 2).ToArray(), "the first heartbeat (PLAN-0010 D6)");
 
                 // 5. the server stops: the flow ends in Disconnected, never Failed
                 LogAssert.Expect(LogType.Warning, new Regex("server closed"));

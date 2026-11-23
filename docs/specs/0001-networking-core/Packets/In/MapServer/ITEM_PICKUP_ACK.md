@@ -6,9 +6,9 @@
 | **Hercules packet name** | `ZC_ITEM_PICKUP_ACK` |
 | **Packet ID** | `0x0B41` |
 | **Declared size** | 70 bytes total, including the 2-byte packet ID |
-| **Status** | documented |
+| **Status** | implemented |
 | **Frequency** | warm |
-| **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Capture: no; layout from `packets_struct.h` (`PACKET_ZC_ITEM_PICKUP_ACK`) |
+| **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406 (checked 2026-11-16). Real server 2026-11-22 (Hercules built for 20220406): sent and received on the local server, decoded with nothing left over (SPEC-0010 T8.5). Capture: no; layout from `packets_struct.h` (`PACKET_ZC_ITEM_PICKUP_ACK`) |
 | **Allocates** | no |
 
 **Hercules usage:** Sent by `clif_additem` (also when an item is added to the inventory by other means).

@@ -18,7 +18,7 @@ namespace Uninarok.RoImport.Editor.Pipeline
         /// <summary>A copy whose members can be set for one batch without changing the caller's options.</summary>
         internal RoImportOptions Clone() => (RoImportOptions)MemberwiseClone();
 
-        /// <summary>Test hook: the Addressables settings of a catalog run; null: the project's (PLAN-0008 4.6).</summary>
+        /// <summary>Test hook: the Addressables settings of a catalog run (PLAN-0008 4.6) or of map scenes (PLAN-0010 D33); null: the project's.</summary>
         internal UnityEditor.AddressableAssets.Settings.AddressableAssetSettings CatalogAddressables;
 
         /// <summary>Convert even items the ledger says are current.</summary>
@@ -197,10 +197,12 @@ namespace Uninarok.RoImport.Editor.Pipeline
         internal sealed class Session : IDisposable
         {
             readonly RoHashCache _hashes;
+            readonly RoImportOptions _options;
 
             public Session(RoImportOptions options, RoReport report = null)
             {
                 options = options ?? new RoImportOptions();
+                _options = options;
                 report = report ?? new RoReport();
                 IRoSource source = options.Source;
                 if (source == null)
@@ -228,7 +230,13 @@ namespace Uninarok.RoImport.Editor.Pipeline
                 _hashes?.Save();
             }
 
-            public void Dispose() => Save();
+            public void Dispose()
+            {
+                Save();
+                // The map scenes of the project are loadable without another step (PLAN-0010 D33); another output folder is not the game's.
+                if (Context.MapsConverted && (_options.Roots == null || _options.CatalogAddressables != null))
+                    global::Uninarok.RoImport.Editor.Map.RoMapSceneAddressables.Ensure(_options.CatalogAddressables ?? UnityEditor.AddressableAssets.AddressableAssetSettingsDefaultObject.GetSettings(true), Context.Roots);
+            }
         }
     }
 }

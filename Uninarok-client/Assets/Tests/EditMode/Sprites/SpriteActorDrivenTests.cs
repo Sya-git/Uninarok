@@ -76,6 +76,50 @@ namespace Uninarok.Sprites.Tests
             CollectionAssert.AreEqual(new[] { "atk", "x.wav", "atk" }, events);
         }
 
+        // ---- FR-16 (TASKS-0009 T9.1; PLAN-0009 4.10, D28): the layer's height above the ground point in its z scale ----
+
+        static float HeightOf(SpriteActor a, int layer, float scale) => a.LayerRenderers[layer].transform.localScale.z * scale - SpriteActor.HeightOffset;
+
+        [Test]
+        public void SpriteActor_SetGround_WritesTheHeightInZScale()
+        {
+            var a = Driven();
+            a.SetGround(0.75f, 2f);
+            a.ShowFrame(0, 0, 0);       // slot 0 at (10, -20) px: 2 units up, 4 at scale 2
+            Assert.That(HeightOf(a, 0, 2f), Is.EqualTo(4.75f).Within(1e-4f));
+            a.ShowFrame(0, 0, 1);       // the layers are at -20 and -5 px: 2 and 0.5 units up
+            Assert.That(HeightOf(a, 0, 2f), Is.EqualTo(4.75f).Within(1e-4f));
+            Assert.That(HeightOf(a, 1, 2f), Is.EqualTo(1.75f).Within(1e-4f));
+            var scale = a.LayerRenderers[0].transform.localScale;
+            Assert.That(new Vector2(scale.x, scale.y), Is.EqualTo(new Vector2(2f, 0.5f)), "the layer's own scale stays");
+        }
+
+        [Test]
+        public void SpriteActor_SetGround_SameValue_WritesNothing()
+        {
+            var a = Driven();
+            a.SetGround(1f, 1f);
+            a.ShowFrame(0, 0, 0);
+            int applied = a.ApplyCount;
+            a.SetGround(1f, 1f);
+            a.ShowFrame(0, 0, 0);
+            Assert.That(a.ApplyCount, Is.EqualTo(applied));
+            a.SetGround(1.25f, 1f);
+            a.ShowFrame(0, 0, 0);
+            Assert.That(a.ApplyCount, Is.EqualTo(applied + 1), "another height is written, on the same frame");
+            Assert.That(HeightOf(a, 0, 1f), Is.EqualTo(3.25f).Within(1e-4f));
+        }
+
+        [Test]
+        public void SpriteActor_SetGround_Off_KeepsZScale1()
+        {
+            var a = Driven();
+            a.ShowFrame(0, 0, 0);
+            a.ShowFrame(0, 0, 1);
+            Assert.That(a.LayerRenderers[0].transform.localScale.z, Is.EqualTo(1f));
+            Assert.That(a.LayerRenderers[1].transform.localScale.z, Is.EqualTo(1f));
+        }
+
         [Test]
         public void SpriteActor_Driven_MissingActionDrawsNothing_AndComesBack()
         {

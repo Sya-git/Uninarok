@@ -2,6 +2,7 @@ using NUnit.Framework;
 using UnityEngine;
 using Uninarok.Map;
 using Uninarok.Networking.Data;
+using Uninarok.Sprites;
 using Uninarok.Units.Editor;
 
 namespace Uninarok.Units.Tests
@@ -65,6 +66,37 @@ namespace Uninarok.Units.Tests
             Assert.That(_view.transform.position, Is.EqualTo(new Vector3(3f, 1f, 2f)));
             Assert.That(_view.ActorOf(PartSlot.Head).LayerRenderers[0].enabled, Is.False, "the head is gone");
             Assert.That(hair != null, Is.True);
+        }
+
+        // TASKS-0009 T9.1 (FR-16; PLAN-0009 4.10): what the shader reads is where the layer really is above the ground point.
+        [Test]
+        public void UnitView_LayerHeights_AreFromThePivot_AtTheDisplayScale()
+        {
+            foreach (var look in new[] { UnitTestData.Swordsman(), UnitLook.ForJob((int)PlayerJob.JOB_BABY_SWORDMAN), UnitLook.ForJob(1002) })
+            {
+                _view.SetLook(look);
+                _view.Play(PcAnimation.Walk);
+                int checkedLayers = 0;
+                for (int frame = 0; frame < 12; frame++)
+                {
+                    Step(0.06f);
+                    foreach (PartSlot slot in System.Enum.GetValues(typeof(PartSlot)))
+                    {
+                        if ((int)slot >= UnitParts.SlotCount) continue;
+                        var actor = _view.ActorOf(slot);
+                        if (actor == null) continue;
+                        foreach (var r in actor.LayerRenderers)
+                        {
+                            if (!r.enabled) continue;
+                            float height = Vector3.Dot(r.transform.position - _view.transform.position, _view.Pivot.up);
+                            Vector3 axis = r.transform.localToWorldMatrix.GetColumn(2);
+                            Assert.That(axis.magnitude - SpriteActor.HeightOffset, Is.EqualTo(height).Within(1e-3f), $"{look.JobId} {slot} frame {frame}");
+                            checkedLayers++;
+                        }
+                    }
+                }
+                Assert.That(checkedLayers, Is.GreaterThan(5));
+            }
         }
 
         [Test]

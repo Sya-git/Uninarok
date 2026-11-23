@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [spec.md](spec.md) (SPEC-0009, approved 2026-11-21) |
-| **Status** | Implemented (2026-11-22; approved by the owner 2026-11-21) |
+| **Status** | Implemented (2026-11-22; approved by the owner 2026-11-21; §4.10, FR-16, approved 2026-11-22) |
 | **Audience** | Architects, senior developers, AI agents |
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. One sprite (sheets, animations, palettes, `SpriteActor`, `SpriteSystem`, `Uninarok/RoSprite`) is [PLAN-0007](../0007-spr-act-pal-sprites/plan.md); finding sprites by id (`SpriteCatalog`, entries, the lub reader) is [PLAN-0008](../0008-sprite-catalog/plan.md); map scenes and `MapData` are PLAN-0005/0006. This plan adds the layer above them: **a look (ids) → loaded parts → one composed, camera-facing unit**, plus the camera that looks at it. The composition rules taken from the client's tables are documented in [composition-reference.md](composition-reference.md) (written in T0.2, normative for its topic, updated in the same commit as the code that uses it).
@@ -342,6 +342,36 @@ Satisfies FR-15.
 - **Evidence:** "Save image" writes the current view (or the 8-direction grid) as PNG to a chosen folder (default `docs/specs/0009-unit-display/evidence/`).
 - **Lookup parity:** the composer uses `UnitLoader` and `UnitComposer` unchanged; only the asset source differs (D10).
 
+### 4.10 Depth by height: `Uninarok/RoSprite`, `SpriteActor`, `UnitView`, `GroundItemView`
+
+Satisfies FR-16 (and keeps FR-10, FR-14). Depth only, like D7: nothing moves on screen.
+
+- **Why units are cut.** The pivot takes the camera's full rotation, so a pixel at height h on the picture lies h × sin(tilt) behind its ground point. At tilt 65° a head 1.6 u up is 1.45 u back: inside the wall behind the unit.
+- **Rule (shader, per vertex).** Where `_DepthBias` is not 0 and the camera is a perspective one, the depth is the **nearer** of two:
+  1. the plain bias of D7: `positionVS.z + _DepthBias`;
+  2. the **upright plane**: where the vertex's view ray meets the vertical plane through the ground point that faces the camera. In view space, with n = the camera's forward made horizontal and G = the ground point: `s = dot(n, G) / dot(n, positionVS)`, `z = positionVS.z * s`.
+
+  The upright depth never goes past the near plane (`_ProjectionParams.y` with a small margin), or a tall unit close to the camera would be clipped. It is skipped when the ray does not meet the plane in front of the camera (`s <= 0`) and when n is too short (looking straight down); then only rule 1 applies. Rule 1 alone also serves orthographic cameras.
+- **Nearer of the two, not the sum:** where the plane is the nearer one it is exact, so the bias is not added to it. Near the feet (and below the ground point, where the plane would go away from the camera) the 0.5 u of D7 stays. A quad that crosses the change between the two is interpolated, which adds at most the bias itself.
+- **Ground point.** G is needed only up to a move along the camera's right axis, so one number per layer is enough: the height H of the layer's origin above the pivot along the camera's up axis, in world units. `G = layerOriginVS - (0, H, 0)`; the layer's origin is the translation of its own matrix.
+- **How H reaches the shader (D28).** The layer's local **z scale**, unused by flat sprites: `zScale = (H + 16) / S`, where S is the unit's display scale; the shader reads `H = length(third column of the object matrix) - 16`. The 16 keeps it positive. A renderer that was never told (z scale 1, as the shadow) reads H = -15: the plane lies far behind, rule 1 wins, it renders as today. So the shadow and other users of the shader need no change.
+
+```csharp
+public sealed class SpriteActor                               // Uninarok.Sprites
+{
+    /// The actor's height above its ground point (world units) and its display scale: layers write z scale from it.
+    /// Off (z scale 1) until it is called.
+    public void SetGround(float height, float scale);
+    public const float HeightOffset = 16f;                     // the same number in RoSprite.shader
+    public static float GroundScaleZ(float height, float scale); // for a renderer without an actor (ground item still)
+}
+```
+
+- `SetGround` marks the actor dirty only when a value changed; `Apply` then writes `localScale` of the layers whose z changed (`Written` gets `ScaleZ`). No allocation, no property block, no per-frame work for a unit that does not change frame: H depends neither on the camera nor on where the unit is.
+- `UnitView.Write` calls `SetGround` with the placement's height and `parts.Scale` before `ShowFrame`. `GroundItemView` calls `SetGround(0, 1)` for an animation and sets the z scale of the still directly.
+- **Draw order** does not change: it comes from the sorting groups and orders; units do not write depth. The z scale makes a layer's culling bounds thicker (a sprite's 0.2 u of depth becomes 3.3 u along the view), so a unit leaves the view a little later; the bounds' centre, used for sorting, stays.
+- **Views not drawn from the output camera** (Scene view): the plane is computed for that camera and the billboards face another, so depth there is approximate. Not a game case.
+
 ## 5. Threading and lifecycle
 
 - Everything runs on the main thread (Unity API rule). Addressables completions arrive on the main thread.
@@ -370,6 +400,7 @@ EditMode (`Tests/EditMode/Units`, `CameraRig`, `RoImport/Catalog/Composition`):
 | `RoCamera_DampingMatchesRoBrowser_At30_60_144Fps` (Cinemachine `Damper` vs `min(1, 0.012 × dtMs)`, within 2 % over 1 s) | FR-12 |
 | `RoCamera_TiltOrbitsVertically_CameraHeightGrowsWithTilt_WithinLimits` | FR-12 |
 | `SpriteActor_Driven_NotAdvancedBySystem_WritesOnlyOnChange` | FR-5, FR-14 |
+| `SpriteActor_SetGround_WritesTheHeightInZScale`, `_SameValue_WritesNothing`, `_Off_KeepsZScale1`, `UnitView_LayerHeights_AreFromThePivot_AtTheDisplayScale` | FR-16, FR-14 |
 
 PlayMode (`Tests/PlayMode/Units`):
 
@@ -379,13 +410,14 @@ PlayMode (`Tests/PlayMode/Units`):
 | `UnitSystem_ZeroGcAllocPerFrame_300Units` (ProfilerRecorder over 300 frames after warm-up) | FR-14 |
 | `UnitSystem_AllPartsSwitchSectorSameFrame` (slow camera turn, part directions compared every frame) | FR-6 |
 | `UnitView_FeetOnGround_SlopeOfPrtFild08_MinMaxTilt` (screen-space foot vs ground point, depth test passes) | FR-10 |
+| `UnitDepth_BackToAWall_IsWhole_4Turns_MinMaxTilt` (prontera, and iz_int when imported: a swordsman on cells where a wall cut it before), `_BehindABox_IsHiddenAsAnUprightPlane`, `_TwoUnits_SameOrderAsBefore`, `_TallUnitNearTheCamera_IsNotClipped`, `_Shadow_IsUnchanged`, `_GroundItemAtAWall_IsWhole` (World PlayMode) | FR-16 |
 
 Manual (evidence in `evidence/`, linked from tasks): reference set vs reference viewer in the composer (8 directions, 4 camera turns); camera side by side with the original client (T6.4); stress mode timing on the owner's PC (FR-14 numbers).
 
 ## 7. Migration and compatibility
 
 - `SpriteActor` gains `Driven` (default false): existing actors (map, preview window, catalog lookup) behave as before. `SpriteSystem` skips driven actors.
-- `Uninarok/RoSprite` gains `_DepthBias` (default 0): every existing material renders as before; the unit material sets 0.5.
+- `Uninarok/RoSprite` gains `_DepthBias` (default 0): every existing material renders as before; the unit material sets 0.5. With FR-16 a renderer looks as before unless its material has a bias and its layers carry a height (§4.10).
 - The catalog import gets a Composition category; existing categories and their outputs are unchanged.
 - `InputSystem_Actions.inputactions` gets a `Camera` map; existing maps unchanged.
 - `Packages/manifest.json` gets `com.unity.cinemachine` (T0.1).
@@ -422,6 +454,10 @@ Manual (evidence in `evidence/`, linked from tasks): reference set vs reference 
 | D24 | A job without a body in the catalog uses the sprites of its base job in the client's `LAYER_ALL_TABLE_LIST` (already imported); baby classes have display scale 0.8, which multiplies the shadow too | Baby and high rows in `class-bodies.csv` (a full catalog import for data the tables already have); the shadow table's 0.75/0.82 as body scale | Owner report (2026-11-22): baby classes drew nothing. The cause also hid the high first classes (4001 to 4007) and the `_T` classes. 0.8 is roBrowser's `EntityView` (`isBaby(job) ? 4 : 5`), which sizes the shadow with it. The owner's size comparison image (2026-11-22) agrees |
 | D25 | The `UnitSystem` driver is `HideInHierarchy` only, and only the current driver ticks (another one destroys itself) | `HideAndDontSave`, as the `SpriteSystem` driver | Owner report (2026-11-22): animations too fast in the sandbox. A `DontSave` object survives leaving play mode, so each session added a tick per frame (4 measured); the composer steps its own unit and was right |
 | D26 | A garment in front of the body goes **under the head** while the view shows the face: directions 0, 1, 7, and 6 in every animation but idle, walk and sit (`UnitComposer.ShowsFace`) | Priority 400 or the top layer in every direction (§4.5 rule 4) | Owner report (2026-11-22): acolyte male, Attack2, from frame 5 the wings covered the head. The tables only say behind or in front of the body; the attack views come in two groups (0, 1, 6, 7 and 2 to 5), as their rows do. Seen from behind (2 to 5) the rule is unchanged |
+| D27 | The shadow's alpha is 0.69 | 0.45 (first candidate); 0.5, the ACT's value | `shadow.act` gives its layer alpha 0x80 and the client blends in gamma space: ground 178,157,83 under the sprite's 35 grey becomes 106,96,59 (the owner's picture of the original: 108,98,58). We blend in linear space, where 0.69 gives the same over mid-bright ground (0.64 to 0.72 from dark to bright). |
+| D28 | The layer's height above the ground point travels in its local z scale (§4.10) | `MeshRenderer.SetShaderUserValue` (not on `SpriteRenderer` in 6000.7.0b7); a property block per layer (leaves the SRP batcher); `renderingLayerMask` (reaches the shader too, but is a rendering filter); the pivot's position (changes every frame while walking); a yaw-only stretched billboard (perspective enlarges the head) | Checked 2026-11-22 with an in-memory shader: z scale arrives unchanged with and without a property block and instancing. One number that depends neither on the camera nor on the unit's place, written with the frame. |
+| D29 | Exact intersection of the view ray and the vertical plane; the nearer of it and D7's bias | `h * tan(tilt)` (an approximation off the screen centre under perspective); adding the bias to the plane | Prototype 2026-11-22, swordsman, about 300 random samples per map (cells may repeat) beside something not walkable, tilts 50° and 65°, pixels visible: prontera 168,724 → 201,428 of 290,504, iz_int 178,845 → 232,295 of 288,210, no sample worse. The sum would let a unit show 0.5 u through walls along its whole height. |
+| D30 | (owner, 2026-11-22) While the camera catches up, `RoCamera` moves the camera target by less than a pixel across the view, so that what it follows is a whole number of pixels from the centre of the screen (`RoCameraSettings.AlignToPixels`). The eased place is kept apart, so nothing adds up | MSAA (273 of 2009 pixels of a sprite change between sub-pixel places, as without it); bilinear sheets (they change less, and blur); snapping the camera itself to a grid of the world | A texel is 1.46 pixels wide at the default view and the sheets are sampled without filter, so the columns that are two pixels wide move when the sprite moves by part of a pixel. Pixels that change from frame to frame while following: 112 sideways and 281 diagonally before, 0 and 9 with the followed unit on whole pixels. In game (int_land, 1920 x 1080, up to 54 pixels behind) it was never more than 0.001 pixel off. A unit that walks past is not helped. |
 
 ## 9. Risks
 
@@ -436,6 +472,8 @@ Manual (evidence in `evidence/`, linked from tasks): reference set vs reference 
 | R7 | Addressables handles leaking on rapid look changes. | Versioned loads, ref-counted source, a test that loads/changes/destroys 1,000 times and checks counts return to zero. |
 | R8 | Cinemachine on the Unity 6000.7 beta: version may warn or behave differently; its damping formula may differ from the one assumed (4.605 / dampTime). | T0.1 adds and compiles it with no warnings and reads `Damper` in the installed source; if the formula differs, the damp times are recomputed (one setting each); a test compares the Cinemachine curve with roBrowser's at 30, 60 and 144 fps. |
 | R9 | The `viewpointtable.txt` copies found are community copies of the client file (header comment partly unreadable, Korean bytes mangled); the client in our data may differ. | Limits are settings, not constants; T6.4 checks them on screen against the original client. |
+| R10 | Different z scales may cost draw batches, or a later Unity version may treat a layer's matrix differently. | Phase 9 compares batches and frame time with and without the heights in the stress mode; the `UnitDepth_*` tests fail if the channel breaks; fallback (plan change first) is `renderingLayerMask`. |
+| R11 | A steep tilt makes the upright picture tall (1.6 u at 65° stands 3.8 u high), so a unit close behind a low object is hidden less or more than the eye expects. | It is what a vertical picture there does, which is FR-16; the owner checks the evidence images. |
 
 ## 10. Traceability
 
@@ -456,3 +494,4 @@ Manual (evidence in `evidence/`, linked from tasks): reference set vs reference 
 | FR-13 | 3, 4.8 (D11) | `EntitySandbox_Loads_*`; release build check |
 | FR-14 | 4.6, 4.8 | `UnitSystem_ZeroGcAllocPerFrame_300Units`; stress mode timing on owner's PC |
 | FR-15 | 4.9 (D10) | composer acceptance run with evidence images |
+| FR-16 | 4.10 (D28, D29) | `UnitDepth_*`, `SpriteActor_SetGround_*`; prontera, iz_int and stress evidence |

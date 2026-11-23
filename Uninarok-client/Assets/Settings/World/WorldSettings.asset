@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f5e1016dc0b37f479b102ed89b3cd71, type: 3}
+  m_Name: WorldSettings
+  m_EditorClassIdentifier: Uninarok.World::Uninarok.World.WorldSettings
+  MaxWalkPath: 17
+  MaxWalkPathObstructed: 14
+  CellStackLimit: 1
+  WarpKeepsDirection: 0
+  HoldRepeatMs: 500
+  DeadMonsterLingerMs: 5000
+  WalkCorrectionMs: 500
+  ItemFallHeight: 1.95
+  ItemRiseSpeed: 3.2
+  ItemFallGravity: 37.5
+  ItemShadowScale: 0.4
+  WalkAnimationSpeed: 150
