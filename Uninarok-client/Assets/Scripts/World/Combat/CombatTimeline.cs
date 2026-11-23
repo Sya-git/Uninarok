@@ -143,7 +143,7 @@ namespace Uninarok.World
 
             if (blow.AttackerId != blow.TargetId && blow.AttackMs > 0 && model.TryGetSlot(blow.AttackerId, out int attacker) &&
                 attacker < _motions.Length && model[attacker].State != EntityState.Dead)
-                Start(model, attacker, MotionKind.Attack, blow.At, blow.AttackMs, 1);
+                Start(model, attacker, MotionKind.Attack, blow.At, blow.AttackMs, AttackNumber(model[attacker]));
 
             // H11: an attack time of 0 or less is at once.
             uint hit = unchecked(blow.At + (uint)Math.Max(0, blow.AttackMs));
@@ -270,6 +270,16 @@ namespace Uninarok.World
 
         // FR-4: a hurt unless no damage, endured, a lucky dodge or no hurt time.
         static bool Hurts(in Blow blow) => blow.Damage > 0 && !blow.Endured && blow.Kind != BlowKind.LuckyDodge && blow.HurtMs > 0;
+
+        // 4.7: players by job, sex and weapon type; others always Attack. Dual wield is not told apart here: a shield's view id
+        // reads as a weapon type, so the second hand waits for the catalog's item kinds (T5.4).
+        byte AttackNumber(in Entity e)
+        {
+            if (e.Kind != EntityKind.Player) return 1;
+            var weapons = Weapons;
+            int right = weapons != null ? weapons.TypeOf(e.Look.Weapon) : 0;
+            return (byte)AttackMotions.NumberOf(e.Look.Job, e.Look.Sex, right, false);
+        }
 
         int LifeOf(NumberKind kind)
         {

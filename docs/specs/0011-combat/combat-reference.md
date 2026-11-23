@@ -46,8 +46,70 @@ Each row is one setting or one table row. **Source** is where the first value co
 | launch (monster) | at the hit moment; the number does not wait | lead: `ArrowFlight.js` | shot 12 |
 | `ProjectileHeight` | 1 cell | **no lead**: a first value only | shots 11, 12 |
 | `ProjectilePool` | 32 | plan choice | not displayed |
-| attack motion and hit frame rows | T4.7 | lead: `WeaponAction.js` | shots 1, 13 |
+| attack motion rows | the table below (`AttackMotions`) | lead: `src/DB/Jobs/WeaponAction.js` | shots 1, 13 |
+| hit frame | 6 for every row | lead, plan §4.7; `WeaponAction.js` has no frames | shots 1, 11, 13 |
 | projectile by attacker rows | T4.8 | lead: spec §6 | shots 11 to 13 |
+
+## Attack animation (plan §4.7, `AttackMotions`)
+
+Lead: roBrowserLegacy `src/DB/Jobs/WeaponAction.js` (read 2026-11-23). Its job constants are given as Hercules job ids here. **1, 2, 3** stand for `Attack1`, `Attack2`, `Attack3` (the file's 0, 1, 2).
+
+Rules:
+- A job, a weapon type or a sex (other than 0 female or 1 male) that is not listed gives 1.
+- Units that are not players always play `Attack`.
+- The job is the one whose sprites are used. Baby, high and transcendent jobs, and the third jobs that roBrowserLegacy copies from a base job, are looked up by that base job: the caller maps them, T5.4.
+- Not listed: Druid and its jobs, whose ids are not known here.
+- With two weapons, the two-weapon row is used: assassin only.
+
+Weapon types (`Weapon_IDs`):
+
+| # | Type | # | Type | # | Type |
+|---|---|---|---|---|---|
+| 0 | bare hand | 9 | two-handed mace | 18 | rifle |
+| 1 | short sword | 10 | rod | 19 | gatling gun |
+| 2 | sword | 11 | bow | 20 | shotgun |
+| 3 | two-handed sword | 12 | knuckle | 21 | grenade launcher |
+| 4 | spear | 13 | instrument | 22 | shuriken |
+| 5 | two-handed spear | 14 | whip | 23 | two-handed rod |
+| 6 | axe | 15 | book | 25 to 30 | two weapons |
+| 7 | two-handed axe | 16 | katar | | |
+| 8 | mace | 17 | handgun | | |
+
+| Job (id) | Sex | Rows (weapon type → animation) |
+|---|---|---|
+| Novice (0) | female | 0→1; 10, 23, 2, 3, 6, 7, 8, 9 → 2; 1→3 |
+| Novice (0) | male | 0→1; 1→2; 10, 23, 2, 3, 6, 7, 8, 9 → 3 |
+| Swordman (1) | either | 0→1; 1, 2, 3, 6, 7, 8, 9 → 2; 4, 5 → 3 |
+| Magician (2) | either | 0→1; 10, 23 → 2; 1→3 |
+| Archer (3) | either | 0→1; 11→2; 1→3 |
+| Acolyte (4) | either | 0→1; 10, 23, 8, 9 → 2 |
+| Merchant (5) | either | 0→1; 8, 9, 6, 7, 2, 3 → 2; 1→3 |
+| Thief (6) | either | 0→1; 2, 3, 1 → 2; 11→3 |
+| Knight (7), on a peco (13), Crusader (14) | either | 0→1; 1, 2, 3, 6, 7, 8, 9 → 2; 4, 5 → 3 |
+| Priest (8) | either | 0→1; 10, 23, 8, 9 → 2; 15→3 |
+| Wizard (9) | female | 0→1; 1→2; 10, 23 → 3 |
+| Wizard (9) | male | 0→1; 10, 23 → 2; 1→3 |
+| Blacksmith (10) | either | 0→1; 1→2; 2, 3, 6, 7, 8, 9 → 3 |
+| Hunter (11) | either | 0→1; 1→2; 11→3 |
+| Assassin (12) | either | 0→1; 6, 2, 1 → 2; 25 to 30, 16 → 3 |
+| Monk (15) | either | 0→1; 10, 23, 8, 9 → 2; 12→3 |
+| Sage (16) | either | 0→1; 1→2; 10, 23, 15 → 3 |
+| Rogue (17) | either | 0→1; 2, 3, 1 → 2; 11→3 |
+| Alchemist (18) | either | 0→1; 1→2; 3, 2, 6, 7, 8, 9 → 3 |
+| Bard (19) | either | 0→1; 1, 13 → 2; 11→3 |
+| Dancer (20) | either | 0, 1 → 1; 14→2; 11→3 |
+| Crusader on a peco (21) | either | 0→1; 1, 2, 3, 6, 7, 8 → 2; 4, 5 → 3 (no row for 9) |
+| Super Novice (23) | female | 0→1; 10, 23, 6, 7, 8, 9, 2 → 2; 1→3 |
+| Super Novice (23) | male | 0→1; 1→2; 10, 23, 6, 7, 8, 9, 2 → 3 |
+| Gunslinger (24) | either | 0, 17, 20 → 2; 19, 18, 21 → 3 |
+| Ninja (25) | either | 0→1; 1→2; 22→3 |
+| Soul Linker (4049) | female | 0→1; 1→2; 10, 23 → 3 |
+| Soul Linker (4049) | male | 0→1; 10, 23 → 2; 1→3 |
+| Summoner (4218) | either | 0→1; 10, 23 → 2 |
+
+Two more lead facts, not used here:
+- roBrowserLegacy also shortens the attack of monks with knuckles or bare hands (5 frames from frame 0), and of summoners with bare hands (4 frames).
+- `UnitClock.FitMs` (plan §4.9) fits every attack to `attackMT`, so this is a T0.3 question.
 
 ## Numbers (plan §4.8)
 

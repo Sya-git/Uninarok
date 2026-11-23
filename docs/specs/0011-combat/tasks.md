@@ -113,7 +113,7 @@
 - [x] **T4.6** Weapon types in the composition tables (plan §4.7). (FR-4, FR-14)
   *Done when:* builder tests pass (Main Gauche → short sword, a bow, an unknown id → 0); the asset is rebuilt and only it changed.
 
-- [ ] **T4.7** Tests, then implementation: `AttackMotions` (plan §4.7, D7). (FR-4)
+- [x] **T4.7** Tests, then implementation: `AttackMotions` (plan §4.7, D7). (FR-4)
   *Done when:* `AttackMotions_Rows` passes; the rows are in `combat-reference.md`.
 
 - [ ] **T4.8** Tests, then implementation: `ProjectileRules` and the timeline's projectiles. (FR-13, FR-14)
