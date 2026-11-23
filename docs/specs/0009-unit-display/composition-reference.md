@@ -204,3 +204,15 @@ Method: a script that strips `/* */` and `//` comments, splits each table into i
 | Both | the combined entry of type 25 to 30 (`TryFindEquipment(Weapon, WeaponType, 0)`), resolved for job and sex with the base job fallback, with its trail |
 
 The shield part is drawn only when `DrawShield`; otherwise the shield slot stays empty. The weapon line of `LoadReport` ends with `[HandsResult.Describe()]` (right and left hand, type, `left weapon not drawn` when so); this is a found line, not a warning. An unknown hand is a missing line on its slot (right: Weapon, left: Shield) with its reason: `right item N is a Headgear`, or `left item N is not in the catalog`. `LoadReport.Hands` carries the `HandsResult`.
+
+## 10. Starter presets
+
+The four starter composer presets of FR-18 (`Assets/Scripts/Units/Editor/Presets/UnitComposerStarterPresets.json`, plan §4.12) use these item ids. Checked against `db/re/item_db.conf` on 2026-11-23:
+
+| Item id | `AegisName` / `Name` | `Type` | Used by |
+|---:|---|---|---|
+| 1201 | Knife | `IT_WEAPON` | "Swordsman, dagger" (right), "Assassin, two knives" (right and left) |
+| 1401 | Javelin | `IT_WEAPON` | "Swordsman, spear" (right) |
+| 1601 | Rod | `IT_WEAPON` | "Novice, rod" (right) |
+
+Classes are `PlayerJob` values: Novice 0, Swordsman 1, Assassin 12 (all male). Fields not stated by the plan keep the composer's defaults: `UnitJob` 0 (unused for a player), `BodyStyle` 0, `ClothColour` 0; hair style 2 and hair colour 3 as the window defaults.
