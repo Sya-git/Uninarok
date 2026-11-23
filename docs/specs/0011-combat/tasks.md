@@ -104,7 +104,7 @@
 - [x] **T4.3** `CombatTimeline`: hit moments and motions. (FR-4)
   *Done when:* the tests of plan §6.1's FR-4 row pass.
 
-- [ ] **T4.4** `CombatTimeline`: kinds of blow and numbers. (FR-5, FR-6)
+- [x] **T4.4** `CombatTimeline`: kinds of blow and numbers. (FR-5, FR-6)
   *Done when:* the tests of plan §6.1's FR-5 row pass.
 
 - [ ] **T4.5** `CombatTimeline`: death after the hit, pickup motion. (FR-9, FR-10)

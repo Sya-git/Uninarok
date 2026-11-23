@@ -135,9 +135,37 @@ namespace Uninarok.World
 
             // H11: an attack time of 0 or less is at once.
             uint hit = unchecked(blow.At + (uint)Math.Max(0, blow.AttackMs));
+            AddNumbers(blow, hit);
+        }
+
+        // FR-5, the table of 4.6.
+        void AddNumbers(in Blow blow, uint hit)
+        {
             if (blow.Damage < 0) return; // heals are SPEC-0012's
-            if (blow.Damage == 0) Pend(hit, blow.TargetId, 0, NumberKind.Miss, false, 0);
-            else Pend(hit, blow.TargetId, blow.Damage, NumberKind.Normal, Hurts(blow), blow.HurtMs);
+            bool hurts = Hurts(blow);
+            if (blow.Kind == BlowKind.LuckyDodge) Pend(hit, blow.TargetId, 0, NumberKind.Lucky, false, 0);
+            else if (blow.IsMiss) Pend(hit, blow.TargetId, 0, NumberKind.Miss, false, 0);
+            else if (blow.Damage > 0)
+            {
+                var kind = blow.Kind == BlowKind.Critical ? NumberKind.Critical : NumberKind.Normal;
+                int hits = blow.Kind == BlowKind.MultiHit ? blow.Hits : 1;
+                if (hits <= 1 || blow.Damage < hits) Pend(hit, blow.TargetId, blow.Damage, kind, hurts, blow.HurtMs);
+                else
+                {
+                    // Each part damage / n, the remainder on the last: they always sum to the total.
+                    int part = blow.Damage / hits;
+                    for (int i = 0; i < hits; i++)
+                    {
+                        uint at = unchecked(hit + (uint)(i * Math.Max(0, _settings.MultiHitMs)));
+                        bool last = i == hits - 1;
+                        Pend(at, blow.TargetId, last ? blow.Damage - part * (hits - 1) : part, kind, hurts, blow.HurtMs);
+                        if (last) Pend(at, blow.TargetId, blow.Damage, NumberKind.Total, false, 0);
+                    }
+                }
+            }
+            if (blow.LeftDamage > 0)
+                Pend(unchecked(hit + (uint)Math.Max(0, _settings.LeftHandMs)), blow.TargetId, blow.LeftDamage, NumberKind.Normal,
+                     !blow.Endured && blow.HurtMs > 0, blow.HurtMs);
         }
 
         /// <summary>A unit picked up an item (UNIT_ACT 1): a player bends down once (FR-10).</summary>

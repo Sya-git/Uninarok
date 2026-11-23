@@ -186,7 +186,7 @@ namespace Uninarok.World.Tests
 
         // ---- FR-5: which numbers ----
 
-        [Test, Ignore("pending T4.4")]
+        [Test]
         public void CombatTimeline_Kinds()
         {
             var rows = new (Blow blow, NumberKind? kind)[]
@@ -216,7 +216,7 @@ namespace Uninarok.World.Tests
             }
         }
 
-        [Test, Ignore("pending T4.4")]
+        [Test]
         public void CombatTimeline_DoubleAttack300_150_150_300()
         {
             Add(Hit(P, M, T, 300, kind: BlowKind.MultiHit, hits: 2));
@@ -234,7 +234,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual((MotionKind.Hurt, T + 700), (KindOf(_m), _timeline.MotionOf(_m).Starts), "each part starts its own hurt");
         }
 
-        [Test, Ignore("pending T4.4")]
+        [Test]
         public void CombatTimeline_DualWield_TwoNumbers()
         {
             Add(Hit(P, M, T, 100, left: 40));
@@ -248,7 +248,7 @@ namespace Uninarok.World.Tests
             Assert.That(numbers.Exists(n => n.Value == 40 && n.Starts == T + 850), "the second hand 350 ms later");
         }
 
-        [Test, Ignore("pending T4.4")]
+        [Test]
         public void CombatTimeline_SplitAlwaysSums()
         {
             _settings.MultiHitMs = 0;
