@@ -171,7 +171,7 @@
   First check UI Toolkit input with a button in an empty panel in Bootstrap (plan §9).
   *Done when:* `RestartPromptView_TwoButtons` passes; mouse and Esc work in game; labels from T0.4, or marked as provisional until it is done.
 
-- [ ] **T7.6** Own death end to end. (FR-8)
+- [x] **T7.6** Own death end to end. (FR-8)
   *Done when:* on the local server: death to monsters, prompt, clicks and turns send nothing (trace), close and Esc, return to the save point alive with input, `@raise` stands the character up in place and closes the prompt (evidence).
 
 ## Phase 8: Dev tools
