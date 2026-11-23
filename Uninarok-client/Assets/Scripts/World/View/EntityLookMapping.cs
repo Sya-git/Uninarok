@@ -12,7 +12,7 @@ namespace Uninarok.World.View
 
         // The server sends the view id, or the item id of an item without one (T0.2). Weapon and shield views end at 102 and 4, items
         // start at 501; by item, the catalog also finds the sprite of its type (D22).
-        static bool IsItem(int value) => value >= 500;
+        static bool IsItem(int value) => WeaponHands.IsItemId(value);
 
         // The client numbers the first hair styles in its own order (D27): the head file of each style id, by sex. The ids after are
         // the file numbers, as all of a doram's.
