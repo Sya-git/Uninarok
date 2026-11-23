@@ -14,8 +14,6 @@ namespace Uninarok.Units.Tests
     // TASKS-0009 T11.1 (FR-18; PLAN-0009 4.12, D37 to D39): the preset store, on temporary folders and synthetic presets.
     public class UnitComposerPresetStoreTests
     {
-        const string Pending = "pending T11.2";
-
         [Serializable] class FileModel { public int Version = 1; public List<UnitComposerPreset> Presets = new List<UnitComposerPreset>(); }
 
         string _dir, _user, _starters;
@@ -56,7 +54,7 @@ namespace Uninarok.Units.Tests
 
         UnitComposerPresetStore NewStore() => new UnitComposerPresetStore(_user, _starters);
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void UnitComposerPresetStore_SaveReload_AllFields_NoCameraFrameOrPlayState()
         {
             WriteStarters();
@@ -71,7 +69,7 @@ namespace Uninarok.Units.Tests
                 || f.Contains("speed") || f.Contains("tilt") || f.Contains("distance")), Is.False);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void UnitComposerPresetStore_StartersListed_AndReadOnly()
         {
             WriteStarters("Starter A", "Starter B");
@@ -87,7 +85,7 @@ namespace Uninarok.Units.Tests
             Assert.That(File.ReadAllText(_starters), Does.Not.Contain("Mine"), "the starter file is never written");
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void UnitComposerPresetStore_NamesUniqueAcrossKinds_CaseInsensitive()
         {
             WriteStarters("Starter A");
@@ -102,7 +100,7 @@ namespace Uninarok.Units.Tests
             Assert.That(s.All.Select(x => x.Preset.Name).Count(n => n == "Other"), Is.EqualTo(1));
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void UnitComposerPresetStore_SaveOverUserName_NeedsConfirm_StarterNameRefused()
         {
             WriteStarters("Starter A");
@@ -118,7 +116,7 @@ namespace Uninarok.Units.Tests
             Assert.That(s.Save(Make("  "), false), Is.EqualTo(SaveResult.Refused));
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void UnitComposerPresetStore_Rename_KeepsLook()
         {
             WriteStarters();
@@ -130,7 +128,7 @@ namespace Uninarok.Units.Tests
             Assert.That(JsonUtility.ToJson(p), Is.EqualTo(JsonUtility.ToJson(Full("New"))));
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void UnitComposerPresetStore_Delete_GoneAfterReload()
         {
             WriteStarters();
@@ -144,7 +142,7 @@ namespace Uninarok.Units.Tests
             Assert.That(NewStore().All.Select(x => x.Preset.Name), Is.EqualTo(new[] { "B" }));
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void UnitComposerPresetStore_UnreadableFile_OneWarning_KeptAside()
         {
             WriteStarters("Starter A");
@@ -166,7 +164,7 @@ namespace Uninarok.Units.Tests
             // LogAssert fails the test on any further unexpected warning.
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void UnitComposerPresetStore_UserFileUnderUserSettings()
         {
             // ForProject points at <project>/UserSettings/Uninarok/UnitComposerPresets.json (D37). The real file is
