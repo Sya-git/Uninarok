@@ -167,7 +167,7 @@ namespace Uninarok.World.Tests
             }
         }
 
-        [Test, Ignore("pending T3.4")]
+        [Test]
         public void OwnCombat_GroundClick_StopsThenWalks()
         {
             Monster(MonsterA, 151, 200);
@@ -193,7 +193,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(1, Sent.Count);
         }
 
-        [Test, Ignore("pending T3.4")]
+        [Test]
         public void OwnCombat_Cancel_SitMapChangeDeath()
         {
             Monster(MonsterA, 151, 200);
@@ -270,11 +270,11 @@ namespace Uninarok.World.Tests
             Assert.IsTrue(_rig.Get(Own).Walking, "still walking");
             Assert.AreEqual(AttackBytes(MonsterA, Continuous), Last, "asked on the own server cell, while walking");
             Assert.AreEqual(CombatState.Attacking, Combat.State);
-            Run(2000);
+            Run(1000); // the rest of the walk, within the silence of 1,500 ms
             Assert.AreEqual(1, Count(PacketIds.REQUEST_MOVE), "no walk after the request");
         }
 
-        [Test, Ignore("pending T3.4")]
+        [Test]
         public void OwnCombat_TooFar_ApproachesAgainAndCloser()
         {
             Range(3);
@@ -310,7 +310,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(AttackBytes(MonsterB, Single), Last, "a single attack is asked for again too");
         }
 
-        [Test, Ignore("pending T3.4")]
+        [Test]
         public void OwnCombat_Silence_AsksAgainThenGivesUp()
         {
             Monster(MonsterB, 152, 200);
@@ -364,7 +364,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(sent, Sent.Count);
         }
 
-        [Test, Ignore("pending T3.4")]
+        [Test]
         public void OwnCombat_NoAmmo_Idle()
         {
             Range(9);

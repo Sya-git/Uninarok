@@ -87,7 +87,7 @@
 - [x] **T3.3** `OwnCombat`: attack and approach. (FR-2, FR-3)
   *Done when:* the click, approach, target-moves and target-dies tests pass.
 
-- [ ] **T3.4** `OwnCombat`: too far, silence, no ammunition, ground click, cancel. (FR-2, FR-3, FR-8)
+- [x] **T3.4** `OwnCombat`: too far, silence, no ammunition, ground click, cancel. (FR-2, FR-3, FR-8)
   *Done when:* the remaining attack tests pass, SPEC-0010's `OwnCharacter_*` tests too.
 
 - [ ] **T3.5** `OwnCombat`: pickup. (FR-10)

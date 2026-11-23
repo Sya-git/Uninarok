@@ -43,6 +43,12 @@ namespace Uninarok.World
         /// <summary>At most one walk request towards the target this often (PLAN-0011 4.5, lead).</summary>
         public int ApproachRepeatMs { get; set; } = 200;
 
+        /// <summary>While attacking, no own blow for this long (at least; 2 × the last attack motion + 500) asks again (H1, H6).</summary>
+        public int AttackSilenceMs { get; set; } = 1500;
+
+        /// <summary>Requests in a row without an own blow before the attack is given up.</summary>
+        public int AttackRetries { get; set; } = 3;
+
         readonly WorldSession _session;
         readonly INetworkClient _client;
         readonly NetworkFlow _flow;
@@ -58,6 +64,10 @@ namespace Uninarok.World
         // The last walk request towards the target: when, and the target's cell then.
         uint _askedAt;
         int _askedX, _askedY;
+        // The watchdog: since when the server is silent, the last own attack motion, the requests without a blow.
+        uint _silentSince;
+        int _lastAttackMs;
+        int _retries;
 
         internal OwnCombat(WorldSession session, INetworkClient client, NetworkFlow flow)
         {
@@ -97,13 +107,15 @@ namespace Uninarok.World
             {
                 _caution = 0;
                 _requested = false;
+                _lastAttackMs = 0;
             }
+            _retries = 0;
             _target = id;
             _continuous = continuous;
             uint now = _session.Clock.Now;
             if (InRange(model, own))
             {
-                SendAttack();
+                SendAttack(now);
                 return AttackResult.Sent;
             }
             if (Approach(model, own, now))
@@ -119,7 +131,7 @@ namespace Uninarok.World
         public bool PickUp(uint itemId) => throw new NotImplementedException("T3.5");
 
         /// <summary>Sit, map change, death: forgets the target or the item, sends nothing.</summary>
-        public void Cancel() => throw new NotImplementedException("T3.4");
+        public void Cancel() => Idle();
 
         /// <summary>Once per frame after the model's <c>Advance</c>, with the server time.</summary>
         public void Tick(uint now)
@@ -130,12 +142,16 @@ namespace Uninarok.World
                 Idle();
                 return;
             }
-            if (_state != CombatState.Approaching) return;
+            if (_state == CombatState.Attacking)
+            {
+                Watch(model, own, now);
+                return;
+            }
 
             // H4: the server keeps a request made while walking, so it is asked for as soon as the own server cell is in range.
             if (InRange(model, own))
             {
-                SendAttack();
+                SendAttack(now);
                 return;
             }
             ref readonly var t = ref model[target];
@@ -149,12 +165,29 @@ namespace Uninarok.World
             var model = _session.Model;
             if (model == null || blow.AttackerId != model.OwnId || blow.TargetId != _target) return;
             _caution = 0;
+            _retries = 0;
+            _silentSince = now;
+            _lastAttackMs = blow.AttackMs;
             if (!_continuous) Idle();
             else _state = CombatState.Attacking; // also when the server ran a request it kept from a walk (H4)
         }
 
-        internal void OnTooFar(in ATTACK_TOO_FAR p, uint now) => throw new NotImplementedException("T3.4");
-        internal void OnActionFailure(int type) => throw new NotImplementedException("T3.4");
+        // 0x0139 for the current target: closer by one cell for it, at most range − 1 (D4); a single blow is asked for again too.
+        internal void OnTooFar(in ATTACK_TOO_FAR p, uint now)
+        {
+            if ((_state != CombatState.Approaching && _state != CombatState.Attacking) || p.TargetId != _target) return;
+            if (!_session.Own.TryGet(out var model, out int own)) return;
+            _caution = Math.Min(_caution + 1, Math.Max(0, _session.Status.AttackRange - 1));
+            Resume(model, own, now);
+        }
+
+        // 0x013B: type 0, no arrows; the server will not attack (H6, D9).
+        internal void OnActionFailure(int type)
+        {
+            if (type != ACTION_FAILURE.NoArrows || (_state != CombatState.Approaching && _state != CombatState.Attacking)) return;
+            Idle();
+            NetLog.Info("attack stopped: no arrows (ZC_ACTION_FAILURE 0)");
+        }
         internal void OnPickupAnswer(int result, uint now) => throw new NotImplementedException("T3.5");
 
         // ---- rules ----
@@ -178,11 +211,36 @@ namespace Uninarok.World
             return AttackRange.CanStrike(model.Pathfinder, o.CellX, o.CellY, t.CellX, t.CellY, Range, t.Walking);
         }
 
-        void SendAttack()
+        void SendAttack(uint now)
         {
             if (!_client.Send(new REQUEST_ACT(_target, _continuous ? REQUEST_ACT.AttackRepeat : REQUEST_ACT.Attack))) return;
             _requested = true;
             _state = CombatState.Attacking;
+            _silentSince = now;
+        }
+
+        // In range: ask now; else walk; no way there: idle.
+        void Resume(WorldModel model, int own, uint now)
+        {
+            if (InRange(model, own)) SendAttack(now);
+            else if (Approach(model, own, now)) _state = CombatState.Approaching;
+            else Idle();
+        }
+
+        // H1, H6: the server drops an attack without a word (no line of sight, weight, a status). The client reacts to the silence,
+        // not to its own idea of the target's cell (D5).
+        void Watch(WorldModel model, int own, uint now)
+        {
+            int limit = Math.Max(AttackSilenceMs, 2 * _lastAttackMs + 500);
+            if (ServerClock.Diff(now, _silentSince) < limit) return;
+            if (++_retries > AttackRetries)
+            {
+                Idle();
+                NetLog.Info($"attack given up: no blow after {AttackRetries} more requests");
+                return;
+            }
+            _silentSince = now;
+            Resume(model, own, now);
         }
 
         // A* to the target's cell; the walk goes to the first cell of that path from which a standing target is in range. An
@@ -237,6 +295,7 @@ namespace Uninarok.World
             _target = 0;
             _requested = false;
             _caution = 0;
+            _retries = 0;
         }
     }
 }

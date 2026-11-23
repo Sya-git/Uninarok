@@ -54,6 +54,7 @@ namespace Uninarok.World
         readonly PacketHandler<ATTACK_RANGE> _onAttackRange;
         readonly PacketHandler<ATTACK_TOO_FAR> _onTooFar;
         readonly PacketHandler<RESURRECTION> _onResurrection;
+        readonly PacketHandler<ACTION_FAILURE> _onActionFailure;
 
         public WorldSession(INetworkClient client, NetworkFlow flow, ServerClock clock, WorldSettings settings)
         {
@@ -84,6 +85,7 @@ namespace Uninarok.World
             _onAttackRange = OnAttackRange;
             _onTooFar = OnTooFar;
             _onResurrection = OnResurrection;
+            _onActionFailure = OnActionFailure;
             Own = new OwnCharacter(this, client, _flow);
             Combat = new OwnCombat(this, client, _flow);
 
@@ -185,6 +187,7 @@ namespace Uninarok.World
         /// <summary>Empties the world: map change, disconnect (FR-3). The handlers stay.</summary>
         public void EndMap()
         {
+            Combat.Cancel();
             var model = Model;
             if (model == null) return;
             if (model.TryGetSlot(model.OwnId, out int slot))
@@ -251,6 +254,7 @@ namespace Uninarok.World
             _subscriptions.Add(_onAttackRange);
             _subscriptions.Add(_onTooFar);
             _subscriptions.Add(_onResurrection);
+            _subscriptions.Add(_onActionFailure);
             _subscriptions.Add(_onStand);
             _subscriptions.Add(_onNew);
             _subscriptions.Add(_onMoveEntry);
@@ -304,8 +308,13 @@ namespace Uninarok.World
 
         void OnSlide(in UNIT_SLIDE p) => Model?.Slide(p.UnitId, p.X, p.Y);
 
-        void OnVanish(in UNIT_VANISH p) =>
-            Model?.Vanish(p.UnitId, p.Type <= (byte)VanishReason.FeignedDeath ? (VanishReason)p.Type : VanishReason.OutOfSight, _clock.Now);
+        void OnVanish(in UNIT_VANISH p)
+        {
+            if (Model == null) return;
+            var reason = p.Type <= (byte)VanishReason.FeignedDeath ? (VanishReason)p.Type : VanishReason.OutOfSight;
+            if (p.UnitId == Model.OwnId && reason == VanishReason.Died) Combat.Cancel(); // SPEC-0011 FR-8
+            Model.Vanish(p.UnitId, reason, _clock.Now);
+        }
 
         void OnDirection(in UNIT_DIRECTION p) =>
             Model?.Turn(p.UnitId, (UninarokDirection)p.Direction, p.HeadDirection <= 2 ? (HeadDirection)p.HeadDirection : HeadDirection.Straight);
@@ -354,7 +363,13 @@ namespace Uninarok.World
 
         void OnAttackRange(in ATTACK_RANGE p) => Status.SetAttackRange(p.Range);
 
-        void OnTooFar(in ATTACK_TOO_FAR p) => Status.SetAttackRange(p.Range);
+        void OnTooFar(in ATTACK_TOO_FAR p)
+        {
+            Status.SetAttackRange(p.Range);
+            Combat.OnTooFar(p, _clock.Now);
+        }
+
+        void OnActionFailure(in ACTION_FAILURE p) => Combat.OnActionFailure(p.Type);
 
         void OnResurrection(in RESURRECTION p) => Model?.SetState(p.UnitId, EntityState.Standing);
 
