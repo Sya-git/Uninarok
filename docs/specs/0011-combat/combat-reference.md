@@ -165,6 +165,9 @@ Not in the lead: the projectile's height, and whether it follows a moving target
 | `MessageScale` | 0.5 | lead: `Damage.js` | shot 3 |
 | `MessageHeightStart`, `MessageHeightEnd` | 3.5 → 7 cells | lead: `Damage.js` | shot 3 |
 | `TotalMs` | 3,000 ms, above the target | lead: `Damage.js` | shot 5 |
+| `TotalHeight`, `TotalScale` | 7 cells, 2 | **no lead**: a first value only | shot 5 |
+| miss and lucky pictures | `msg` 0 (miss), 4 and 5 (lucky); the miss tinted like a number: white over a monster, red over a player | lead, plan §4.8; the tint from the owner's footage notes (2026-11-22) | shot 3 |
+| critical background | `msg` 3 behind the digits, at half the number's scale | lead, plan §4.8 | shot 2 |
 | `DigitSpacingPx` | 2 px | lead: `Damage.js` | shot 1 |
 | `NumberOnMonster` | white | lead: `Damage.js` | shot 1 |
 | `NumberOnPlayer` | red | lead: `Damage.js` | shot 4 |

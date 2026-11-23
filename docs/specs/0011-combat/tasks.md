@@ -141,7 +141,7 @@
 - [x] **T6.1** `Uninarok/Overlay` shader and `QuadMesh`. (FR-6, FR-7, FR-12)
   *Done when:* a test mesh of 512 quads is written each frame at 0 B and shows its texture and colours (screenshot).
 
-- [ ] **T6.2** Tests, then implementation: `NumberMotion` and the numbers of `CombatOverlay`. (FR-6)
+- [x] **T6.2** Tests, then implementation: `NumberMotion` and the numbers of `CombatOverlay`. (FR-6)
   *Done when:* `NumberMotion_Table` passes; each kind is seen on the local server or from test packets (screenshots).
 
 - [ ] **T6.3** HP and SP bars of `CombatOverlay`. (FR-7)

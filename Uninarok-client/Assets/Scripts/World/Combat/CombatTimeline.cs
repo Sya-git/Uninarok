@@ -354,16 +354,7 @@ namespace Uninarok.World
             return (byte)AttackMotions.NumberOf(job, e.Look.Sex, right, false);
         }
 
-        int LifeOf(NumberKind kind)
-        {
-            switch (kind)
-            {
-                case NumberKind.Miss:
-                case NumberKind.Lucky: return _settings.MessageMs;
-                case NumberKind.Total: return _settings.TotalMs;
-                default: return _settings.NumberMs;
-            }
-        }
+        int LifeOf(NumberKind kind) => NumberMotion.LifeMs(kind, _settings);
 
         void Pend(uint at, uint targetId, int value, NumberKind kind, bool hurts, int hurtMs)
         {

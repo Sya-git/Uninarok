@@ -33,6 +33,7 @@ namespace Uninarok.World.View
         MapSceneLoader _scenes;
         AddressablesUnitAssetSource _assets;
         WorldPresenter _presenter;
+        CombatOverlay _overlay;
         MapData _map;
         bool _mapReady;        // a model runs, with or without a map to show it on
         int _loads;
@@ -109,6 +110,11 @@ namespace Uninarok.World.View
         {
             _presenter = presenter;
             if (presenter != null && presenter.Timeline == null) presenter.Timeline = Session?.Timeline;
+            if (presenter != null && Combat != null && Session != null)
+            {
+                if (_overlay == null) _overlay = gameObject.AddComponent<CombatOverlay>();
+                _overlay.Use(Session, presenter, Combat);
+            }
             if (_map != null) ShowMap();
         }
 
@@ -155,6 +161,7 @@ namespace Uninarok.World.View
             if (CameraRig != null) CameraRig.Follow = null;
             _presenter?.ReleaseAll();
             if (_presenter != null) _presenter.Map = null;
+            if (_overlay != null) _overlay.Clear();
             _map = null;
             if (!_mapReady) return;
             _mapReady = false;

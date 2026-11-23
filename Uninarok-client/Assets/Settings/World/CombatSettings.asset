@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 261c3086ca8a8134db681ec75c5eb369, type: 3}
   m_Name: CombatSettings
   m_EditorClassIdentifier: Uninarok.World::Uninarok.World.CombatSettings
+  Digits: {fileID: 11400000, guid: efd2d9bb19bdbe346ad4ef940b373ef0, type: 2}
+  Messages: {fileID: 11400000, guid: 76a7e8605bb6b9242a2eff5ccfd0eb7f, type: 2}
+  Arrow: {fileID: 0}
+  OverlayShader: {fileID: 4800000, guid: dbeebc657a8519941937f94fe7964821, type: 3}
   ApproachRepeatMs: 200
   AttackSilenceMs: 1500
   AttackSilenceMotions: 2
@@ -39,6 +43,8 @@ MonoBehaviour:
   MessageHeightStart: 3.5
   MessageHeightEnd: 7
   TotalMs: 3000
+  TotalHeight: 7
+  TotalScale: 2
   DigitSpacingPx: 2
   NumberOnMonster: {r: 1, g: 1, b: 1, a: 1}
   NumberOnPlayer: {r: 1, g: 0, b: 0, a: 1}

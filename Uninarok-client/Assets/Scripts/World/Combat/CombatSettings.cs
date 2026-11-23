@@ -1,4 +1,5 @@
 using UnityEngine;
+using Uninarok.Sprites;
 
 namespace Uninarok.World
 {
@@ -10,6 +11,16 @@ namespace Uninarok.World
     [CreateAssetMenu(menuName = "Uninarok/Combat Settings", fileName = "CombatSettings")]
     public sealed class CombatSettings : ScriptableObject
     {
+        [Header("Sprites and shader (4.8; PLAN-0010 D29)")]
+        [Tooltip("sprite/이팩트/숫자: frames 0 to 9 are the digits.")]
+        public SpriteAnimation Digits;
+        [Tooltip("sprite/이팩트/msg: 0 miss, 1 guard, 2 critical, 3 critical background, 4 lucky background, 5 lucky.")]
+        public SpriteAnimation Messages;
+        [Tooltip("sprite/npc/skel_archer_arrow (T6.4).")]
+        public SpriteAnimation Arrow;
+        [Tooltip("Uninarok/Overlay.")]
+        public Shader OverlayShader;
+
         [Header("Own combat (4.5)")]
         [Tooltip("At most one walk request towards the target this often, in ms.")]
         [Min(50)] public int ApproachRepeatMs = 200;
@@ -63,6 +74,8 @@ namespace Uninarok.World
         public float MessageHeightStart = 3.5f, MessageHeightEnd = 7f;
         [Tooltip("Life of a multi-hit's total, in ms.")]
         [Min(1)] public int TotalMs = 3000;
+        [Tooltip("Height and scale of a multi-hit's total (no lead: T0.3 shot 5).")]
+        public float TotalHeight = 7f, TotalScale = 2f;
         [Tooltip("Space between digits, in pixels of the digit sprites.")]
         [Min(0)] public float DigitSpacingPx = 2f;
         public Color NumberOnMonster = Color.white;
