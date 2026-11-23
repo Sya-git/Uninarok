@@ -96,6 +96,13 @@ namespace Uninarok.World
         // Per slot: the entity generation the motion belongs to, and whether the unit walked when its motion started.
         readonly int[] _generations;
         readonly bool[] _walkedAtStart;
+        // Per slot: the last hit moment shown on the unit, and the generation it was shown on (FR-9).
+        readonly uint[] _lastHitAt;
+        readonly int[] _lastHitGeneration;
+        readonly bool[] _hasLastHit;
+        // Per slot: the death is shown (the hold is over), for that generation; a later hit neither hurts nor holds it again.
+        readonly bool[] _deathShown;
+        readonly int[] _deathGeneration;
         int _hitCount, _numberCount, _projectileCount;
         int _version;
         bool _warnedFull;
@@ -111,6 +118,11 @@ namespace Uninarok.World
             _motions = new UnitMotion[slots];
             _generations = new int[slots];
             _walkedAtStart = new bool[slots];
+            _lastHitAt = new uint[slots];
+            _lastHitGeneration = new int[slots];
+            _hasLastHit = new bool[slots];
+            _deathShown = new bool[slots];
+            _deathGeneration = new int[slots];
         }
 
         /// <summary>Until the catalog is loaded every weapon type is 0.</summary>
@@ -169,7 +181,14 @@ namespace Uninarok.World
         }
 
         /// <summary>A unit picked up an item (UNIT_ACT 1): a player bends down once (FR-10).</summary>
-        public void AddPickUp(uint id, uint itemId, uint now) => throw new NotImplementedException("T4.5");
+        public void AddPickUp(uint id, uint itemId, uint now)
+        {
+            var model = _model;
+            if (model == null || !model.TryGetSlot(id, out int slot) || slot >= _motions.Length) return;
+            ref readonly var e = ref model[slot];
+            if (e.Kind != EntityKind.Player || e.State != EntityState.Standing) return; // monsters that loot have no such animation
+            Start(model, slot, MotionKind.PickUp, now, 0, 0);
+        }
 
         /// <summary>Shows what is due at this server time and ends what is over.</summary>
         public void Advance(uint now)
@@ -201,7 +220,35 @@ namespace Uninarok.World
         public ref readonly UnitMotion MotionOf(int slot) => ref _motions[slot];
 
         /// <summary>FR-9: the unit is dead in the model but a hit that came before its death notice is not shown yet.</summary>
-        public bool HoldsDeath(int slot, uint now) => throw new NotImplementedException("T4.5");
+        /// <remarks>
+        /// True while a hit on it is pending, and until <c>HurtBeforeDeathMs</c> (players: <c>PlayerHurtBeforeDeathMs</c>) after its
+        /// last hit moment (H9). It delays neither the model nor the removal.
+        /// </remarks>
+        public bool HoldsDeath(int slot, uint now)
+        {
+            var model = _model;
+            if (model == null || slot < 0 || slot >= _motions.Length) return false;
+            ref readonly var e = ref model[slot];
+            if (e.Id == 0 || e.State != EntityState.Dead || DeathShown(slot, e)) return false;
+            return PendingOn(e.Id) > 0 || InHold(slot, e, now);
+        }
+
+        bool DeathShown(int slot, in Entity e) => _deathShown[slot] && _deathGeneration[slot] == e.Generation;
+
+        int PendingOn(uint id)
+        {
+            int count = 0;
+            for (int i = 0; i < _hitCount; i++)
+                if (_hits[i].TargetId == id) count++;
+            return count;
+        }
+
+        bool InHold(int slot, in Entity e, uint now)
+        {
+            if (!_hasLastHit[slot] || _lastHitGeneration[slot] != e.Generation) return false;
+            int hold = e.Kind == EntityKind.Player ? _settings.PlayerHurtBeforeDeathMs : _settings.HurtBeforeDeathMs;
+            return ServerClock.Diff(now, _lastHitAt[slot]) < hold;
+        }
 
         /// <summary>The numbers shown now.</summary>
         public ReadOnlySpan<DamageNumber> Numbers => new ReadOnlySpan<DamageNumber>(_numbers, 0, _numberCount);
@@ -215,6 +262,8 @@ namespace Uninarok.World
             Array.Clear(_motions, 0, _motions.Length);
             Array.Clear(_generations, 0, _generations.Length);
             Array.Clear(_walkedAtStart, 0, _walkedAtStart.Length);
+            Array.Clear(_hasLastHit, 0, _hasLastHit.Length);
+            Array.Clear(_deathShown, 0, _deathShown.Length);
         }
 
         // ---- rules ----
@@ -249,7 +298,12 @@ namespace Uninarok.World
             {
                 Starts = hit.At, TargetId = hit.TargetId, Value = hit.Value, Kind = hit.Kind, OnPlayer = t.Kind == EntityKind.Player, X = t.PosX, Y = t.PosY,
             };
-            if (!hit.Hurts || target >= _motions.Length || t.State == EntityState.Dead) return;
+            if (target >= _motions.Length) return;
+            bool deathShown = t.State == EntityState.Dead && DeathShown(target, t);
+            _lastHitAt[target] = hit.At;
+            _lastHitGeneration[target] = t.Generation;
+            _hasLastHit[target] = true;
+            if (!hit.Hurts || deathShown) return;
             if (_generations[target] == t.Generation && ServerClock.Diff(hit.At, _motions[target].Starts) < 0 && _motions[target].Kind != MotionKind.None) return;
             Start(model, target, MotionKind.Hurt, hit.At, hit.HurtMs, 0);
         }
@@ -271,10 +325,17 @@ namespace Uninarok.World
         // What ends a motion (4.6): its time, a walk that starts (not under a hurt), sitting, death, another unit in the slot.
         void Keep(WorldModel model, int slot, uint now)
         {
+            ref readonly var e = ref model[slot];
+            if (e.State != EntityState.Dead) _deathShown[slot] = false;
+            else if (!DeathShown(slot, e) && !HoldsDeath(slot, now))
+            {
+                _deathShown[slot] = true;
+                _deathGeneration[slot] = e.Generation;
+            }
             ref readonly var m = ref _motions[slot];
             if (m.Kind == MotionKind.None) return;
-            ref readonly var e = ref model[slot];
-            if (e.Id == 0 || e.Generation != _generations[slot] || e.State == EntityState.Sitting || e.State == EntityState.Dead)
+            if (e.Id == 0 || e.Generation != _generations[slot] || e.State == EntityState.Sitting ||
+                (e.State == EntityState.Dead && !HoldsDeath(slot, now)))
             {
                 End(slot);
                 return;

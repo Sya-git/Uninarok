@@ -278,7 +278,7 @@ namespace Uninarok.World.Tests
 
         // ---- FR-9, FR-10: death after the hit, pickup ----
 
-        [Test, Ignore("pending T4.5")]
+        [Test]
         public void CombatTimeline_DeathHeldUntilHit()
         {
             Add(Hit(P, M, T, 50));
@@ -305,7 +305,7 @@ namespace Uninarok.World.Tests
             Assert.IsFalse(_timeline.HoldsDeath(n, T + 3570));
         }
 
-        [Test, Ignore("pending T4.5")]
+        [Test]
         public void CombatTimeline_MonsterHurt250()
         {
             Add(Hit(P, M, T, 50, hurtMs: 400));
@@ -316,7 +316,7 @@ namespace Uninarok.World.Tests
             Assert.IsFalse(_timeline.HoldsDeath(_q, T + 750), "not dead");
         }
 
-        [Test, Ignore("pending T4.5")]
+        [Test]
         public void CombatTimeline_OwnDeath()
         {
             Add(Hit(M, P, T, 500, attackMs: 600));
@@ -329,7 +329,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(MotionKind.None, KindOf(_p), "death ends every motion");
         }
 
-        [Test, Ignore("pending T4.5")]
+        [Test]
         public void CombatTimeline_PickUpMotion()
         {
             _model.AddItem(9001, 501, true, 11, 11, 6, 6, 1);

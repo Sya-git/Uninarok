@@ -107,7 +107,7 @@
 - [x] **T4.4** `CombatTimeline`: kinds of blow and numbers. (FR-5, FR-6)
   *Done when:* the tests of plan §6.1's FR-5 row pass.
 
-- [ ] **T4.5** `CombatTimeline`: death after the hit, pickup motion. (FR-9, FR-10)
+- [x] **T4.5** `CombatTimeline`: death after the hit, pickup motion. (FR-9, FR-10)
   *Done when:* the `_DeathHeldUntilHit`, `_MonsterHurt250`, `_OwnDeath` and `_PickUpMotion` tests pass.
 
 - [ ] **T4.6** Weapon types in the composition tables (plan §4.7). (FR-4, FR-14)
