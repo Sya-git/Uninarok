@@ -2,8 +2,8 @@
 
 | | |
 |---|---|
-| **Implements** | [spec.md](spec.md) (SPEC-0011, approved 2026-11-22) |
-| **Status** | Approved (owner, 2026-11-22) |
+| **Implements** | [spec.md](spec.md) (SPEC-0011, approved 2026-11-22; revision approved 2026-11-23: FR-4 amended, FR-15 added) |
+| **Status** | Approved (owner, 2026-11-23: revision for FR-4 and FR-15: §2 diagram, §3, §4.6, §4.7, §6.1, §7, §8 D18 and D20 to D27, §9, §10; earlier version approved by the owner 2026-11-22) |
 | **Audience** | Architects, senior developers, AI agents |
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. Packets and flow are [PLAN-0001](../0001-networking-core/plan.md) (packet rules normative in [Packet-Implementation.md](../0001-networking-core/Packets/Packet-Implementation.md)); animations and unit display [PLAN-0009](../0009-unit-display/plan.md); the world model, the server clock, the own character, picking and the presenter [PLAN-0010](../0010-world-session/plan.md). This plan adds four things to them: **combat state in the world model**, **the own character's combat rules**, **a timeline that turns each blow into motions, numbers and projectiles**, and **what draws those**.
@@ -40,15 +40,25 @@
 
 Satisfies FR-1 to FR-14.
 
-```
- packets ─► WorldSession ──► WorldModel (Entity: + Hp, MaxHp, TargetId, LastBlow)  ◄── read ── WorldPresenter
-               │  │  └─────► OwnStatus  (HP, SP, levels, EXP, range)               ◄── read ── CombatOverlay (bars), dev HUD
-               │  └────────► CombatTimeline ◄── AttackMotions, ProjectileRules (pure tables)
-               │               pending hits → unit motions, numbers, projectiles   ◄── read ── WorldPresenter (motions)
-               │                                                                   ◄── read ── CombatOverlay (numbers, projectiles)
-               └── event BlowReceived(in Blow) ────────────────────────────────────────────── dev HUD
- input: OwnInput ─► UnitPicker ─► OwnCombat (idle / approaching / attacking / fetching) ─► REQUEST_ACT, STOP_ATTACK, PICKUP_ITEM, REQUEST_MOVE
-        RestartPromptView ─► RestartPrompt (pure) ─► RESTART
+```mermaid
+flowchart LR
+    Packets["packets"] --> Session["WorldSession"]
+    Session --> Model["WorldModel (Entity: + Hp, MaxHp, TargetId, LastBlow)"]
+    Session --> Status["OwnStatus (HP, SP, levels, EXP, range)"]
+    Session --> Timeline["CombatTimeline: pending hits → unit motions, numbers, projectiles"]
+    Tables["AttackMotions, ProjectileRules (pure tables)"] --> Timeline
+    Session -- "event BlowReceived(in Blow)" --> Hud["dev HUD"]
+    Presenter["WorldPresenter"] -. "read" .-> Model
+    Presenter -. "read (motions)" .-> Timeline
+    Overlay["CombatOverlay"] -. "read (bars)" .-> Status
+    Hud -. "read" .-> Status
+    Overlay -. "read (numbers, projectiles)" .-> Timeline
+    subgraph Input["input"]
+        OwnInput["OwnInput"] --> Picker["UnitPicker"] --> Combat["OwnCombat (idle / approaching / attacking / fetching)"]
+        PromptView["RestartPromptView"] --> Prompt["RestartPrompt (pure)"]
+    end
+    Combat --> Out1["REQUEST_ACT, STOP_ATTACK, PICKUP_ITEM, REQUEST_MOVE"]
+    Prompt --> Out2["RESTART"]
 ```
 
 Per frame, in `WorldBootstrap.LateUpdate` (order 10, as before): `WorldModel.Advance(now)` → **`OwnCombat.Tick(now)`** → **`CombatTimeline.Advance(now)`** → `RestartPrompt.Update()` → `WorldPresenter.Sync` (base animation, or the timeline's motion when one plays). After the camera (`RoCamera` 50, brain 100) and the units (900): **`CombatOverlay` (950)** writes the number and bar meshes and places the projectiles with the final camera.
@@ -62,7 +72,7 @@ Satisfies FR-13 (placement) and the dev-only rule.
 | `Uninarok.Networking` (changed) | `Assets/Scripts/Networking/Runtime/Packets/` | new packets (§4.1), `PacketIds` |
 | `Uninarok.World` (changed) | `Assets/Scripts/World/Combat/` | `Blow`, `BlowKind`, `OwnStatus`, `AttackRange`, `OwnCombat`, `CombatTimeline`, `UnitMotion`, `DamageNumber`, `NumberMotion`, `Projectile`, `ProjectileRules`, `AttackMotions`, `IWeaponTypes`, `RestartPrompt`, `CombatSettings` |
 | | `Assets/Scripts/World/` | `Entity`, `WorldModel`, `WorldSession`, `OwnCharacter`, `WalkGrid`, `HerculesPathfinder` (additions) |
-| `Uninarok.Units` (changed) | `Assets/Scripts/Units/` | `UnitClock.FitMs`, `UnitView.PlayFor`, `UnitView.PickRect`, weapon types in `CompositionTables` |
+| `Uninarok.Units` (changed) | `Assets/Scripts/Units/` | `UnitClock.FitMs`, `UnitView.PlayFor`, `UnitView.PickRect`, weapon types in `CompositionTables`; `Rules/JobFamilies.cs`: the job family table of FR-15 (`RowJobOf`, §4.7, D20), the place PLAN-0009 §4.11 and R16 reserve for it |
 | `Uninarok.World.View` (changed) | `Assets/Scripts/World/View/Combat/` | `UnitPicker`, `CombatOverlay`, `QuadMesh`, `DamageNumberMesh`, `UnitBarMesh`, `ProjectileView`, `CatalogWeaponTypes`; `OwnInput`, `MouseCursor`, `GroundItemView`, `WorldPresenter`, `WorldBootstrap` (additions) |
 | `Uninarok.World.UI` (new) | `Assets/Scripts/World/UI/` | `RestartPromptView` (UI Toolkit). References `Uninarok.World`, `Uninarok.World.View`, `Unity.InputSystem` |
 | `Uninarok.World.Dev` (changed) | `Assets/Scripts/World/Dev/` | `CombatDebugView`, `/noctrl` in `DevCommandLine` |
@@ -236,7 +246,7 @@ public sealed class OwnCombat
 
 ### 4.6 Timeline: `CombatTimeline`
 
-Satisfies FR-4, FR-5, FR-6 (what and when), FR-9, FR-10 (motion), FR-12, FR-13, FR-14 (when).
+Satisfies FR-4, FR-5, FR-6 (what and when), FR-9, FR-10 (motion), FR-12, FR-13, FR-14 (when), FR-15 (the attack number it stores).
 
 ```csharp
 public enum MotionKind : byte { None, Attack, Hurt, PickUp, Standby }
@@ -250,7 +260,7 @@ public struct Projectile { public uint Launches, Arrives; public uint AttackerId
 public sealed class CombatTimeline
 {
     public CombatTimeline(CombatSettings settings, int slots, int hits = 1024, int numbers = 512, int projectiles = 128);
-    public void Use(WorldModel model);  public IWeaponTypes Weapons { get; set; }
+    public void Use(WorldModel model);  public IWeaponTypes Weapons { get; set; }  public IJobRows Jobs { get; set; }   // §4.7
     public void Add(in Blow blow);  public void AddPickUp(uint id, uint itemId, uint now);
     public void Advance(uint now);
     public ref readonly UnitMotion MotionOf(int slot);
@@ -262,7 +272,7 @@ public sealed class CombatTimeline
 
 - **Storage**: arrays allocated once; pending hits, numbers and projectiles are compact arrays with swap removal; `UnitMotion` per model slot with the slot's `Generation` (a reused slot has no motion). Full: the oldest entry is dropped, one warning per session.
 - **Hit moment** (FR-4, D3): `At + AttackMs`, for every attacker. For a blow with a projectile the original client waits for: the projectile's arrival (§4.7). `AttackMs ≤ 0` (H11): at once.
-- **Attack motion** at `At`, when the attacker is known, alive, differs from the target and `AttackMs > 0`: `Attack`, `DurationMs = AttackMs`, `AttackNumber` from `AttackMotions` (§4.7). It replaces whatever motion plays (FR-4: a new blow restarts it). After an attack or a hurt a player stands in `Standby` for `StandbyMs` *(lead: until it does something else; measured in T0.3; 0 turns it off)* (D11).
+- **Attack motion** at `At`, when the attacker is known, alive, differs from the target and `AttackMs > 0`: `Attack`, `DurationMs = AttackMs`, `AttackNumber` from `AttackMotions` by the job's row and both hands (§4.7, FR-15), computed once at `At` from the look the model has then. It replaces whatever motion plays (FR-4: a new blow restarts it). After an attack or a hurt a player stands in `Standby` for `StandbyMs` *(lead: until it does something else; measured in T0.3; 0 turns it off)* (D11).
 - **At each hit moment**: the number starts (kind, value, the target's shown position then), and the target plays `Hurt` for `HurtMs` unless: no damage, endured, lucky dodge, `HurtMs ≤ 0`, the target's death already shown. A hurt replaces an attack, standby or pickup motion. Walking goes on underneath: the model is not touched, so a walking unit keeps its path position and shows its walk again when the hurt ends.
 - **Which numbers** (FR-5):
 
@@ -284,13 +294,30 @@ public sealed class CombatTimeline
 
 ### 4.7 Attack motion and projectile rules: `AttackMotions`, `ProjectileRules`, `IWeaponTypes`
 
-Satisfies FR-4 (which animation), FR-13, FR-14.
+Satisfies FR-4 (which animation: the one FR-15 chooses), FR-13, FR-14, FR-15. Revised 2026-11-23 for FR-15 (D20 to D23; D18 superseded).
 
 ```csharp
-public interface IWeaponTypes { int TypeOf(int weapon); }                        // server's weapon value → base type 0..30
+// Uninarok.World (pure)
+public interface IWeaponTypes { int TypeOf(int job, int right, int left); }      // both hands the server sends (Look.Weapon, Look.Shield) → one type 0..30
+public interface IJobRows     { int RowJobOf(int job); byte RowSexOf(int job, byte sex); }   // replaces IJobBases.BaseJobOf (D20); RowSexOf: D24
 public static class AttackMotions
-{   public static int NumberOf(int job, byte sex, int weaponType, bool secondHand);   // 1..3: PcAnimation Attack1..3
-    public static float HitFrameOf(int job, byte sex, int weaponType); }              // the motion's hit frame, in frames of 24 ms at 432 ms
+{   public static int NumberOf(int rowJob, byte sex, int weaponType);               // 1..3: PcAnimation Attack1..3; secondHand removed (D21)
+    public static float HitFrameOf(int rowJob, byte sex, int weaponType); }         // the motion's hit frame, in frames of 24 ms at 432 ms
+
+// Uninarok.Units (pure, existing class of PLAN-0009 §4.11, extended)
+public static class JobFamilies
+{   public const int Taekwon = 4046;                                                // the row job of the Taekwon and Star Gladiator family
+    public static int RowJobOf(int job);                                            // the job id whose attack row `job` uses; `job` itself when none
+    public static byte RowSexOf(int job, byte sex);                                 // male for the Soul Reaper family (D24); `sex` otherwise
+    public static bool IsAssassinFamily(int job); }                                 // now RowJobOf(job) == 12 (same answers for every PlayerJob id)
+
+// Uninarok.World.View (existing, changed)
+public sealed class CatalogWeaponTypes : IWeaponTypes, IJobRows
+{   public int TypeOf(int weapon);                                                  // unchanged: one value as a right hand (tests, trace)
+    public int TypeOf(int job, int right, int left);                                // HandsOf(job, right, left).WeaponType; unknown values traced once
+    public HandsResult HandsOf(int job, int right, int left);                       // unchanged: WeaponHands.Of (PLAN-0009 §4.11)
+    public int RowJobOf(int job);                                                   // JobFamilies.RowJobOf; BaseJobOf removed
+    public byte RowSexOf(int job, byte sex); }                                      // JobFamilies.RowSexOf
 public enum ProjectileKind : byte { None, Arrow, Other }
 public static class ProjectileRules
 {   public static ProjectileKind Of(EntityKind kind, int job, int weaponType);
@@ -298,8 +325,70 @@ public static class ProjectileRules
     public static void Times(in Blow blow, bool player, float cells, float hitFrame, out uint launches, out uint arrives, out bool numberWaits); }
 ```
 
-- **Weapon type.** The importer writes the client's `weapontable.lub` `Expansion_Weapon_IDs` (view id → base type), which `RoViewIdTables` reads already, into `CompositionTables` (two parallel sorted arrays). `CatalogWeaponTypes` (view assembly) maps the server's value: ≥ 500 → item → its view id (`ItemSpriteTable`, PLAN-0010 D22) → base type; else view id → base type; unknown → 0 (bare hand). Until the catalog is loaded `Weapons` is null and every type is 0: a projectile may be missing in the first second of a session, nothing else.
-- **Attack number** *(lead: `WeaponAction.js`, 0 to 2 → `Attack1` to `Attack3`)*: compact rows (job, sex or any, weapon type → number) in code as `ReadOnlySpan<byte>` data (no static mutable object, so no UAL warning). Missing row → `Attack1`. Units that are not players always play `Attack`. The rows and their source go into `combat-reference.md`.
+```mermaid
+flowchart LR
+    Blow["Blow (DAMAGE)"] --> Add["CombatTimeline.Add"]
+    Add -- "Look.Job, Look.Weapon, Look.Shield" --> Types["IWeaponTypes.TypeOf(job, right, left)"]
+    Types -- "CatalogWeaponTypes" --> Hands["WeaponHands.Of: Right / Left by SpriteCatalog.TryGetItemView, then Combine"]
+    Add -- "Look.Job" --> Rows["IJobRows.RowJobOf(job)"]
+    Rows -- "CatalogWeaponTypes" --> Families["JobFamilies.RowJobOf"]
+    Rows -- "RowSexOf(job, sex)" --> Number
+    Hands -- "weapon type 0..30" --> Number["AttackMotions.NumberOf(rowJob, rowSex, type)"]
+    Families -- "row job" --> Number
+    Number -- "1..3" --> Motion["UnitMotion.AttackNumber"]
+    Hands -- "weapon type" --> Proj["ProjectileRules.Of, HitFrameOf"]
+```
+
+- **Weapon type of one value.** The importer writes the client's `weapontable.lub` `Expansion_Weapon_IDs` (view id → base type), which `RoViewIdTables` reads already, into `CompositionTables` (two parallel sorted arrays). A value ≥ 500 is an item → its view id (`ItemSpriteTable`, PLAN-0010 D22) → base type; else view id → base type; unknown → 0 (bare hand). Unchanged; `CatalogWeaponTypes.TypeOf(int)` keeps doing it through `WeaponHands.Right`.
+- **Both hands** (FR-15 "Hands", D21). The timeline asks `Weapons.TypeOf(e.Look.Job, e.Look.Weapon, e.Look.Shield)` with the **server's** job id. `CatalogWeaponTypes` answers `WeaponHands.Of(job, right, left, catalog, tables).WeaponType`: the rule of PLAN-0009 §4.11, defined there once and shared with the unit display, so the motion and the drawn weapon cannot disagree. Nothing new is written for the hands: the left value's kind is the item table's (`SpriteCatalog.TryGetItemView(item, out EquipmentKind kind, out int viewId)`, inside `WeaponHands.Left`), a left value below 500 is a shield view id (ambiguous, counts as a shield), an item that the table does not have or of another kind is `Unknown` and counts as empty. The resulting type for each case of FR-15:
+
+| Right / left (server values) | `WeaponHands` result | Type for the motion | Example (row job → number) |
+|---|---|---|---|
+| weapon / none | `Right` | right type | Assassin, knife (1) → 2 |
+| none / weapon (item of kind weapon) | `Left` | left type, as the only weapon (also drawn, SPEC-0009) | Assassin, knife in the left hand → 2, not 1 |
+| weapon / weapon, assassin family | `Both` | `CombinedType`: 25 to 30 | Assassin Cross, two knives → 25 → 3 |
+| weapon / weapon, other job, or no pair | `Right` | right type | Swordman, two knives → 1 → 2 |
+| weapon / shield (item of kind shield, or a view id < 500) | `Right` | right type | as weapon / none |
+| two-handed weapon / none | `Right` | its type | Knight, two-handed sword (3) → 2 |
+| katar / anything | `Right` | 16 | Assassin, Guillotine Cross → 3 |
+| none / shield | `None` | 0 | bare hand → 1; Gunslinger family → 2 |
+| none / none | `None` | 0 | bare hand |
+
+  The `IsAssassinFamily` test inside `Combine` is answered by the family table below, so a derived assassin job (any id whose row job is 12) gets the two-weapon types. A shield never changes the type, so it never changes the motion. Drawing the second weapon beside the first is not done (spec FR-15; PLAN-0009 `LeftNotDrawn`).
+- **Job families** (FR-15, D20). `JobFamilies.RowJobOf(job)` in `Uninarok.Units` (where PLAN-0009 §4.11 and R16 put the families; `Uninarok.World` cannot reference `Uninarok.Units`, so the timeline reaches it through `IJobRows`, implemented by `CatalogWeaponTypes`). Data: sorted `(job, rowJob)` pairs of `ushort`, little endian, as `ReadOnlySpan<byte>` (no static field: no UAL warning), binary search, no allocation. Each entry also carries a flag byte (bit 0: the row is the male one for either sex, D24). Ids up to 4242 are Hercules's (`src/common/class.h`, `class_hidden.h`); ids above it are not in Hercules 2026.09 nor in `PlayerJob` and are copied from roBrowserLegacy untested (accepted by the owner, 2026-11-23, D27) (`DB/Jobs/JobConst.js` and the `WeaponAction[JobId.X] = WeaponAction[JobId.Y]` copies of `DB/Jobs/WeaponAction.js`), each with its constant name in a comment. The task reads roBrowserLegacy again for them; the table below is normative for the Hercules ids:
+
+| Row job | Job ids mapped to it |
+|---|---|
+| 0 Novice | 4001, 4023 |
+| 1 Swordman, 2 Mage, 3 Archer, 4 Acolyte, 5 Merchant, 6 Thief | high (4002 to 4007) and baby (4024 to 4029) of each |
+| 7 Knight | 4008, 4030, 4054, 4060, 4096; Dragon Knight (above 4242) |
+| 13 Knight on a peco (rows equal to 7) | 4014, 4036, 4080, 4081, 4088 to 4095, 4109 |
+| 14 Crusader | 4015, 4037, 4066, 4073, 4102; Imperial Guard |
+| 21 Crusader on a peco (no row for type 9) | 4022, 4044, 4082, 4083, 4110: **each mapped to 21 or 14 exactly as roBrowserLegacy's `WeaponAction.js` copies it** (owner, 2026-11-23, D25); the task records each id's choice in `combat-reference.md` |
+| 8 Priest | 4009, 4031, 4057, 4063, 4099; Cardinal |
+| 9 Wizard | 4010, 4032, 4055, 4061, 4097; Arch Mage |
+| 16 Sage | 4017, 4039, 4067, 4074, 4103; Elemental Master |
+| 10 Blacksmith | 4011, 4033, 4058, 4064, 4086, 4087, 4100, 4112; Meister |
+| 18 Alchemist | 4019, 4041, 4071, 4078, 4107; Biolo |
+| 11 Hunter | 4012, 4034, 4056, 4062, 4084, 4085, 4098, 4111; Windhawk |
+| 17 Rogue | 4018, 4040, 4072, 4079, 4108; Abyss Chaser |
+| 12 Assassin | 4013, 4035, 4059, 4065, 4101; Shadow Cross |
+| 15 Monk | 4016, 4038, 4070, 4077, 4106; Inquisitor |
+| 19 Bard | 4020, 4042, 4068, 4075, 4104; Troubadour |
+| 20 Dancer | 4021, 4043, 4069, 4076, 4105; Trouvere |
+| 23 Super Novice | 4045, 4190, 4191; Hyper Novice |
+| 24 Gunslinger | 4215, 4228, 4229; Night Watch |
+| 25 Ninja | 4211, 4212, 4222, 4223, 4224; their fourth jobs |
+| 4049 Soul Linker | 4227 |
+| 4218 Summoner (Doram) | 4220; Spirit Handler |
+| 4046 Taekwon: `Attack2` for every weapon | 4046, 4047, 4048, 4225, 4226, 4238, 4239, 4241; Sky Emperor and its variants |
+| 9 Wizard, **male** row for either sex (`RowSexOf`) | Soul Reaper 4240, 4242; Soul Ascetic (above 4242) (owner, 2026-11-23, D24) |
+| no row: `Attack1` | 4050 Gangsi, 4051 Death Knight (spec: deliberately); 4052 Dark Collector, 22 Wedding, 26 Xmas, 27 Summer and the other outfit jobs (owner, 2026-11-23: they do not usually attack, D26); any id not listed |
+
+  Second outfits, mounted and baby variants above 4242 follow the job they are a variant of. Druid and its jobs get **their own rows** in `AttackMotions` from roBrowserLegacy (FR-15: "with its own row where it has one"); their ids map to themselves or to the Druid row as roBrowserLegacy copies them. The table is the same for display: `IsAssassinFamily(job)` becomes `RowJobOf(job) == 12`, which keeps its answer for every id `PlayerJob` has (the six ids of PLAN-0009 §4.11) and adds the assassin ids above 4242 (PLAN-0009 R16).
+- **Attack number** *(lead: `WeaponAction.js`, 0 to 2 → `Attack1` to `Attack3`)*: compact rows (row job, sex or any, weapon type → number) in code as `ReadOnlySpan<byte>` data (no static mutable object, so no UAL warning). The timeline calls `NumberOf(Jobs?.RowJobOf(job) ?? job, Jobs?.RowSexOf(job, sex) ?? sex, type)` with the type of both hands (`RowSexOf` reads a flag of the same family table entry, so it costs one lookup); the two-weapon rows 25 to 30 are found by the combined type itself, so `secondHand` goes (D21). New rows: job 4046 with weapon `AnyWeapon` (0xFF) → 2, matched after the exact rows (D22); the Druid rows. Missing row → `Attack1`. Units that are not players always play `Attack`. With no catalog yet (`Weapons` and `Jobs` null) every type is 0 and the job stands for itself: no unit is drawn before the catalog either (`WorldBootstrap.UseAssets` sets both and creates the presenter), so nothing visible depends on it.
+- **One type per blow.** `Add` computes the both-hands type once and passes it to `AttackNumber`, `HitFrameOf` and `ProjectileRules.Of` (today `AddProjectile` reads the right hand alone). For a projectile it changes nothing in practice (a bow is two-handed; 25 to 30 have no projectile), and the three cannot disagree.
+- **Reference doc** (same commit as the `JobFamilies` and `AttackMotions` code): `combat-reference.md`, section "Attack animation": the rule "the caller maps them, T5.4" is replaced by the family table above with the ids above 4242 and their roBrowserLegacy names; the Taekwon family `Attack2` (owner-observed, 2026-11-23); Gangsi, Death Knight, Dark Collector and the outfit jobs without a row; the Druid rows; "with two weapons" becomes the hands table above, pointing to `composition-reference.md` "Hands" (PLAN-0009) for the rule itself; the Soul Reaper family on the male Wizard row (owner, 2026-11-23) and each mounted Crusader id's row as roBrowserLegacy copies it; the ids above 4242 marked "copied from roBrowserLegacy, not run" (accepted by the owner, 2026-11-23).
 - **Projectile by attacker** *(lead: spec §6)*: players with bow types → `Arrow`; monsters and mercenaries by a list of job ids → `Arrow`; the other monsters of that table → `Other`: **no sprite here, but the launch and hit moments are computed and kept** for SPEC-0013. Everything else → `None`. Guns, throwing weapons, whips and instruments are `None` until T0.3 says otherwise.
 - **Times** *(lead: `ArrowFlight.js`)*: flight `192 ms × min(1, cells / 8)`, at least 1 ms, `cells` the distance between the shown positions at the launch. Player: launch at `At + hitFrame × 24 × AttackMs / 432` (hit frame 6 for nearly all), the number at launch + 192 ms. Monster: launch at the hit moment, the number does not wait. The launch is computed, not taken from the sprite's `atk` event, so it is the same without assets (FR-13).
 - **Flight**: from the attacker's to the target's shown position at launch (whether it follows a moving target is a T0.3 question); linear in time, both ends at `ProjectileHeight` above the ground (T0.3). One projectile for each blow, also a multi-hit.
@@ -404,7 +493,13 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 | `CombatTimeline_AttackLasts500_HitAt500_Hurt300`, `_EnduredHasNumberNoHurt`, `_MissNoHurt`, `_WalkKeepsPosition`, `_NewBlowRestarts`, `_SlowMonster1320_HitAt1320`, `_SelfDamage` | FR-4 |
 | `CombatTimeline_Kinds` (each row of §4.6's table), `_DoubleAttack300_150_150_300`, `_DualWield_TwoNumbers`, `_SplitAlwaysSums` (1 to 100 hits) | FR-5 |
 | `CombatTimeline_DeathHeldUntilHit` (also a notice at 1,000 for a hit at 1,320), `_MonsterHurt250`, `_OwnDeath`, `_PickUpMotion` | FR-9, FR-10 |
-| `ProjectileRules_Players`, `_Monsters`, `_FlightTimes_2_5_9`, `_NumberWaits`; `AttackMotions_Rows` | FR-4, FR-14 |
+| `ProjectileRules_Players`, `_Monsters`, `_FlightTimes_2_5_9`, `_NumberWaits`; `AttackMotions_Rows` (changed: no `secondHand`, the rows 25 to 30 asked with the combined type) | FR-4, FR-14 |
+| **Revision 2026-11-23 (FR-15), test-first.** `JobFamilies_RowJobOf_Table` (EditMode/Units; table-driven over every id of `class.h` and `class_hidden.h` and the roBrowserLegacy ids above 4242: expected row job; Gangsi 4050, Death Knight 4051, Dark Collector 4052, Wedding 22, Xmas 26, Summer 27 and an unlisted id → themselves; each mounted Crusader id → the row roBrowserLegacy copies), `JobFamilies_RowSexOf_SoulReaperMale` (4240, 4242 and Soul Ascetic with either sex → male; every other id keeps its sex), `JobFamilies_IsAssassinFamily_EveryIdAndNotRogue` (extended with the assassin ids above 4242) | FR-15 |
+| `AttackMotions_JobFamilies_EveryWeaponType` (table-driven: for each derived id and each weapon type 0 to 30 and both sexes, `NumberOf(RowJobOf(id), …)` equals the number of its first-class row; Hyper Novice as Super Novice, the Druid and Doram rows their own), `_TaekwonFamily_Attack2EveryWeapon` (4046, 4047, 4048, 4225, 4226, 4238, 4239, 4241 and the ids above 4242), `_SoulReaper_MaleWizardRowEitherSex`, `_NoRowJobs_Attack1` (Gangsi, Death Knight, Dark Collector, Wedding, Xmas, Summer) | FR-15 |
+| `AttackMotions_Hands_EachCase` (one case per row of the §4.7 hands table, through the pure `WeaponHands.Combine` with synthetic `Hand`s, so no catalog: knife left only → 2 and `WeaponSource.Left`; two knives for 12, 4013, 4059 → 3; two knives for a swordman → 2; katar for Assassin 12 and Guillotine Cross 4059 → 3; shield with an empty right hand → 1, Gunslinger → 2; two-handed weapon), `_ShieldNeverChangesMotion` (every row job × right weapon type: weapon / shield equals weapon / none) | FR-15 |
+| `CatalogWeaponTypes_TypeOf_BothHands_IsHandsOf` (replaces `_BaseJobOf` lines of the existing test), `_LeftShieldViewId_IsShield` (left view id 1, which would read as a short sword, leaves the right type), `_RowJobOf_IsJobFamilies` — `NeedsData` (catalog and composition tables) | FR-15 |
+| `CombatTimeline_AttackNumber_BothHandsAndRowJob` (fake `IWeaponTypes` and `IJobRows`: the timeline passes the server's job, `Look.Weapon` and `Look.Shield`, and the row job and row sex; the same type reaches `ProjectileRules`) | FR-15 |
+| `WorldSession_CombatReplay_DualWield` (`combat-dual`: replayed into a session with the timeline and the real `CatalogWeaponTypes`; the assassin's own attack motions are `Attack2` while only the left hand holds a knife, `Attack3` once both hands hold knives, and those blows carry `LeftDamage`) — `NeedsData` (fixture and catalog) | FR-5, FR-15 |
 | `NumberMotion_Table` (pose at fixed times against `combat-reference.md`) | FR-6 |
 | `UnitClock_FitMs_LastsExactly_AnyFrameCount`; `UnitView_PlayFor_DirectionChangeKeepsTime` | FR-4 |
 | `RestartPrompt_OpensOnDeath`, `_CloseThenEsc`, `_SendsOnce`, `_ResurrectionCloses`, `_FeignedDeathDoesNotOpen`, `_TimeoutReopens` | FR-8 |
@@ -428,6 +523,7 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 - `UNIT_ACT` gets a field and `REQUEST_ACT` constants; their sizes stay.
 - `CompositionTables` gets two arrays: the composition tables asset is rebuilt once (`Tools/Ragnarok/Catalog/Composition`), no sprite is converted again. `sprite/npc/skel_archer_arrow` is converted with the importer as it is.
 - `WorldModel.Checksum` includes the new fields.
+- Revision 2026-11-23 (FR-15): `IWeaponTypes.TypeOf(int)` becomes `TypeOf(int job, int right, int left)`; the test fakes that implement it (`ProjectileRulesTests.SameTypes`, `WorldPresenterPlayTests.BowWeapons`) follow. `IJobBases.BaseJobOf` becomes `IJobRows.RowJobOf` and `RowSexOf`; `CatalogWeaponTypes.BaseJobOf` and its two asserts in `CatalogWeaponTypesTests` go; `WorldBootstrap.UseAssets` keeps setting `timeline.Jobs = types`. `AttackMotions.NumberOf` loses `secondHand`. `JobFamilies.IsAssassinFamily` keeps its answers for every `PlayerJob` id, so SPEC-0009's hands tests stay valid. No asset is rebuilt.
 - SPEC-0010's input tests stay valid: with no unit under the pointer nothing changes.
 - The working tree holds uncommitted imports of int_land and iz_int and a package change (2026-11-22); they are not part of this spec and stay out of its commits.
 
@@ -452,8 +548,21 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 | D15 | (T3.1) `LineOfSight` applies the server's edges itself (outside and the last row and column: no wall) and is false on an empty grid; `BlocksSight` is asked only inside; no sight check below a square distance of 2 | `BlocksSight` true outside deciding the edges (first draft) | `map_getcellp` returns `cellchk == CELL_CHKNOPASS` outside, false for `CELL_CHKWALL`, so the first draft would refuse lines along the edges that the server accepts; `battle_check_range` returns true for adjacent cells before the path check. `UnknownWalkGrid` allows only adjacent targets (no cells, no sight), which the server also accepts |
 | D16 | (T3.3) When the first cell in range is farther than one walk the server accepts, the approach walks to the farthest earlier cell of the path it does accept, and asks again when that walk ends | Refusing the attack as `NoPath`; walking to the target's cell | The plan did not say; a target 15 to 30 cells away in view is common for a bow, and the next walk request follows within `ApproachRepeatMs` |
 | D17 | (T4.9) `WorldSession.UseCombat(CombatSettings)` creates the timeline and gives `OwnCombat` its values; until it is called `Timeline` is null and `OwnCombat` uses the same values as its defaults. The session feeds the timeline: `Use` at each map, damage, and `UNIT_ACT` 1, which also turns a standing player towards the item | A `CombatSettings` parameter in the session's constructor | The constructor is used by SPEC-0010's bootstrap and every session test; the tests that need no display keep working unchanged |
-| D18 | (T5.4) `CombatTimeline.Jobs` (`IJobBases`, implemented by `CatalogWeaponTypes`) maps baby, high and transcendent jobs to the job of their sprites (`LAYER_ALL_TABLE_LIST`) before `AttackMotions` is asked; the second hand is not told apart yet (a shield's view id reads as a weapon type) and dual wield plays the one-weapon row until T9.3 checks fixture (d) | A `BaseJob` member in `IWeaponTypes`; reading the shield value as a second weapon | Without it a lord knight plays `Attack1`; the shield value is ambiguous at this PACKETVER and needs the dual-wield capture to settle |
+| D18 | **Superseded by D20 and D21 (revision 2026-11-23).** (T5.4) `CombatTimeline.Jobs` (`IJobBases`, implemented by `CatalogWeaponTypes`) maps baby, high and transcendent jobs to the job of their sprites (`LAYER_ALL_TABLE_LIST`) before `AttackMotions` is asked; the second hand is not told apart yet (a shield's view id reads as a weapon type) and dual wield plays the one-weapon row until T9.3 checks fixture (d) | A `BaseJob` member in `IWeaponTypes`; reading the shield value as a second weapon | Without it a lord knight plays `Attack1`; the shield value is ambiguous at this PACKETVER and needs the dual-wield capture to settle |
 | D19 | (T7.1) `UnitPicker.TryPick` takes the camera and the pointer's screen position instead of a ray | A ray alone | The plane of each view faces the camera, and `PickMinPx` is in screen pixels: both need the camera, which a ray does not carry |
+
+**Revision 2026-11-23** (spec revision: FR-4 amended to point to FR-15, FR-15 added; plan status back to Draft). What changed: §4.7 chooses the attack number from the job's family row and both hands; the timeline passes the server's job and both hand values; the family table joins `JobFamilies`; tests and `combat-reference.md` follow. Why: D18 mapped jobs to their **sprite** job (`LAYER_ALL_TABLE_LIST`), which never turns a third or fourth job into its first class (a rune knight has its own sprites, so it played `Attack1`), and it read only the right hand (`secondHand` always false), so a left-only knife played `Attack1` and two knives never played the two-weapon row. `combat-reference.md` said "the caller maps them, T5.4"; T5.4 wired the sprite mapping instead.
+
+| # | Chosen | Rejected | Why |
+|---|---|---|---|
+| D20 | The family table is `JobFamilies.RowJobOf` in `Uninarok.Units`, reached by the timeline through `IJobRows` (implemented by `CatalogWeaponTypes`); `IsAssassinFamily` is derived from it | (a) Keeping `BaseJobOf` (the sprite job); (b) the table inside `AttackMotions` in `Uninarok.World`; (c) `Uninarok.World` referencing `Uninarok.Units` | (a) gives the sprite job, not the row's (see above); (b) `WeaponHands` in `Uninarok.Units` needs the assassin family for the drawn weapon too, and two copies of one family list would drift (PLAN-0009 §4.11 and R16 reserve `JobFamilies` for it); (c) puts Addressables and the unit display under the pure core (D1 of PLAN-0010) |
+| D21 | Both hands through `IWeaponTypes.TypeOf(job, right, left)` = `WeaponHands.Of(…).WeaponType`; `AttackMotions` takes the resulting type, with the rows 25 to 30 found by the type itself | `NumberOf(…, secondHand)` with the right type only (as implemented); decoding the left hand in the timeline | `secondHand` cannot express a left-only weapon or a shield that must not count, and it guessed pairs from the right type; the hands rule exists once (PLAN-0009 D31, D32: item kinds by `TryGetItemView`) and the display uses it, so motion and drawn weapon agree by construction |
+| D22 | Taekwon and Star Gladiator family: one wildcard row (job 4046, any weapon → 2); Gangsi and Death Knight: no row | Copying a row per weapon type; following roBrowserLegacy (no row: `Attack1`) | The spec closes OQ-1 with the owner's observation (`Attack2` for every weapon); one row says exactly that |
+| D23 | One both-hands type per blow for the motion, the hit frame and the projectile | Keeping the right hand alone for `ProjectileRules` | One value cannot disagree with itself; no projectile case changes (bows are two-handed) |
+| D24 | (Owner, 2026-11-23) Soul Reaper (4240, 4242) and Soul Ascetic use the Wizard row, **male** variant for either sex: `RowSexOf` from a flag of the family entry | The Sage row (FR-15 also lists Soul Reaper under Sage); the Soul Linker row; whatever roBrowserLegacy copies; the Wizard row by the unit's own sex | Owner's answer to the spec issue of this revision (FR-15 named two families whose rows differ). A flag in the same table entry keeps one lookup and one source; a separate sex table would be a second list to keep in step |
+| D25 | (Owner, 2026-11-23) Mounted Crusader ids (4022, 4044, 4082, 4083, 4110) take row 21 or 14 exactly as roBrowserLegacy copies each | Always 21; always 14 | Owner's answer; the per-id choice and its source go into `combat-reference.md`; a correction from footage is a table change |
+| D26 | (Owner, 2026-11-23) Dark Collector, Wedding, Xmas, Summer (and the other outfit jobs): no row, `Attack1` by the default | A row per outfit copied from the job worn before | Owner's answer: they do not usually attack; the default already gives `Attack1`, so no data is added |
+| D27 | (Owner, 2026-11-23) Ids above 4242 are copied from roBrowserLegacy and accepted untested | Leaving them out until a server sends them | Owner accepts the risk (spec §6); they are marked in code and in `combat-reference.md`, and corrected like any lead |
 
 ## 9. Risks
 
@@ -466,6 +575,7 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 | UI Toolkit input beside the Input System package (no EventSystem in Bootstrap) | Checked first in the prompt's task with a button in an empty panel; fallback: an EventSystem in Bootstrap, recorded here. **Checked (T7.5, Unity 6000.7):** the panel gets the Input System's mouse and keyboard without an EventSystem, with simulated devices (`RestartPromptView_TwoButtons`) and with events queued on the real devices in game; no fallback needed |
 | The server's `attack_walk_delay` or `delay_battle_damage` changed by configuration | Spec §6: defaults assumed only where nothing is sent; both only move what is shown |
 | Weapon value forms (view id or item id) wrong for some weapons | PLAN-0010 D22 holds so far; unknown weapons fall back to bare hand and log one trace line per value |
+| (FR-15) A left-hand weapon the item table does not have counts as empty (`Unknown`), so it plays the right weapon's or the bare-hand motion | Same rule as the display (PLAN-0009 §4.11), traced once per value; the `combat-dual` replay checks the knives of the capture |
 
 ## 10. Traceability
 
@@ -474,7 +584,7 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 | FR-1 | 4.1, 4.2, 4.3 | `WorldSession_CombatReplay_*`, `OwnStatus_*`, `WorldModel_ZeroHpDoesNotKill` |
 | FR-2 | 4.1, 4.5, 4.9, 4.10 | `OwnCombat_Click_*` and following; `UnitPicker_*`; live check |
 | FR-3 | 4.1, 4.4, 4.5 | `AttackRange_*`, `OwnCombat_Approach_*`; 10 tries live, bow live |
-| FR-4 | 4.2, 4.6, 4.7, 4.9 | `CombatTimeline_*`, `UnitClock_FitMs_*` |
+| FR-4 | 4.2, 4.6, 4.7 (the motion FR-15 chooses), 4.9 | `CombatTimeline_*`, `UnitClock_FitMs_*`, `AttackMotions_Rows` |
 | FR-5 | 4.2, 4.6 | `Blow_From_*`, `CombatTimeline_Kinds` |
 | FR-6 | 4.6, 4.8 | `NumberMotion_Table`; side by side (shots 1 to 7) |
 | FR-7 | 4.2, 4.8 | `CombatOverlay_Bars*`; side by side (shot 10) |
@@ -485,3 +595,4 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 | FR-12 | 4.2, 4.6, 4.8, 4.10 | `Combat_ZeroAllocation_*`, `CombatOverlay_ZeroAllocation_*`; profiler capture |
 | FR-13 | 3, 4.4 to 4.7, 6 | the EditMode suite and the replay test |
 | FR-14 | 4.6, 4.7, 4.8 | `ProjectileRules_*`; side by side (shots 11 to 13) |
+| FR-15 | 3, 4.6, 4.7 (hands table, family table, reference doc), 7, 8 (D20 to D27) | `JobFamilies_RowJobOf_Table`, `JobFamilies_RowSexOf_SoulReaperMale`, `JobFamilies_IsAssassinFamily_*`, `AttackMotions_JobFamilies_*`, `_TaekwonFamily_*`, `_SoulReaper_*`, `_NoRowJobs_Attack1`, `AttackMotions_Hands_*`, `_ShieldNeverChangesMotion`, `CatalogWeaponTypes_TypeOf_BothHands_*`, `_LeftShieldViewId_IsShield`, `CombatTimeline_AttackNumber_*`, `WorldSession_CombatReplay_DualWield`; `combat-reference.md` "Attack animation" |

@@ -2,8 +2,8 @@
 
 | | |
 |---|---|
-| **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Approved (owner, 2026-11-22) |
+| **Implements** | [plan.md](plan.md) (rev. 2026-11-23) → [spec.md](spec.md) (rev. 2026-11-23) |
+| **Status** | Approved (owner, 2026-11-23: revision with phase 10 for FR-15 and the plan's revision; checked tasks unchanged; earlier version approved by the owner 2026-11-22) |
 
 **How to use this file**
 - Work on branch `feature/0011-combat`. Do tasks **in order**, except T0.3 and T0.4: they wait for the owner and do not block phases 1 to 8; phase 9 does not close without them.
@@ -203,3 +203,31 @@
 - [ ] **T9.6** Spec §5 run and close the spec. (all)
   Bootstrap to prt_fild08, 20 monsters with continuous attack, their loot, death, save point.
   *Done when:* no more than one too-far reply per target; own HP, SP and EXP equal `@stats` and `@exp`; every monster's last bar equals its HP; no unit is left behind; spec, plan and tasks are set to `Implemented`; leftovers are in `BACKLOG.md`.
+
+## Phase 10: Revision 2026-11-23 (FR-15): job families and both hands
+
+Rework and new work for plan §4.6, §4.7, §6.1, §7 and §8 (D18, D20 to D27). Do after T9.5 and **before T9.6**: the spec does not close without this phase. Checked tasks keep their commits; each rework is a new task that names the task it redoes. Test-first: a tests task is committed with `[Ignore("pending Tn.m")]`, and the implementation task removes it. T10.3 and T10.4 are one commit each, because a changed signature must compile with its callers and its tests.
+
+- [ ] **T10.1** [core] Tests for `JobFamilies` in `EditMode/Units`: `JobFamilies_RowJobOf_Table`, `JobFamilies_RowSexOf_SoulReaperMale`, and `JobFamilies_IsAssassinFamily_EveryIdAndNotRogue` extended with the assassin ids above 4242 (plan §6.1, §4.7 family table). Committed with `[Ignore("pending T10.2")]`. (FR-15)
+  *Done when:* the three tests exist and compile and are ignored; the rest of the `Units` suite passes unchanged.
+
+- [ ] **T10.2** [critical] `JobFamilies`: the sorted `(job, rowJob, flag)` table as a `ReadOnlySpan<byte>` (no static field), `RowJobOf`, `RowSexOf` (flag bit 0, D24), `IsAssassinFamily` = `RowJobOf(job) == 12`. Ids above 4242 copied from roBrowserLegacy (`DB/Jobs/JobConst.js`, `WeaponAction.js`), each with its constant name in a comment; the mounted Crusader choices of D25 recorded per id. Removes the ignore of T10.1. Reference: `combat-reference.md`, "Attack animation": the family table (plan §4.7), the ids above 4242 marked "copied from roBrowserLegacy, not run" (D27), the Soul Reaper male row (D24), the Taekwon `Attack2` rule (D22). (FR-15, FR-4)
+  *Done when:* the three `JobFamilies_*` tests pass; the `WeaponHands` and `IsAssassinFamily` tests of SPEC-0009 pass unchanged; `combat-reference.md` has the family table; Logs/Editor.log has no new warning (UAL0010 checked).
+
+- [ ] **T10.3** [critical] Rework of **T4.7** (`AttackMotions`): `NumberOf(rowJob, sex, weaponType)` without `secondHand` (D21); rows 25 to 30 found by the combined type; job 4046 with any weapon → `Attack2` (D22); no row for Gangsi, Death Knight, Dark Collector, Wedding, Xmas, Summer (D26); Druid rows from roBrowserLegacy; `HitFrameOf` takes the same arguments. `AttackMotionsTests` rewritten to plan §6.1's FR-15 list: `AttackMotions_Rows` (changed), `_JobFamilies_EveryWeaponType`, `_TaekwonFamily_Attack2EveryWeapon`, `_SoulReaper_MaleWizardRowEitherSex`, `_NoRowJobs_Attack1`, `_Hands_EachCase`, `_ShieldNeverChangesMotion`. The one call in `CombatTimeline` drops `secondHand` so the project compiles. Reference: the attack-number rows in `combat-reference.md`. One commit (signature and its tests). (FR-4, FR-15)
+  *Done when:* the `AttackMotions_*` tests pass (`_Hands_EachCase` through `WeaponHands.Combine` with synthetic hands); `_ShieldNeverChangesMotion` passes for every row job × weapon type 0 to 30; the `CombatTimeline` tests of T4.3 and T4.8 still pass; the rows in `combat-reference.md` equal the test's table.
+
+- [ ] **T10.4** [critical] Rework of **T5.4** (interfaces and `CatalogWeaponTypes`): `IWeaponTypes.TypeOf(job, right, left)` (plan §4.7); `IJobBases` replaced by `IJobRows` (`RowJobOf`, `RowSexOf`). `CatalogWeaponTypes` implements both: `TypeOf(job, right, left)` = `HandsOf(job, right, left).WeaponType` with unknown values traced once; `RowJobOf` and `RowSexOf` from `JobFamilies`; `BaseJobOf` and its two asserts in `CatalogWeaponTypesTests` removed. The test fakes migrated (`ProjectileRulesTests.SameTypes`, `WorldPresenterPlayTests.BowWeapons`, and any other fake of either interface). `CombatTimeline.Weapons` and `Jobs` typed to the new interfaces, and `Add` asks `TypeOf(job, right, left)`; the rest of the timeline follows in T10.6. Tests in `CatalogWeaponTypesTests`: `CatalogWeaponTypes_TypeOf_BothHands_IsHandsOf`, `_LeftShieldViewId_IsShield`, `_RowJobOf_IsJobFamilies` (`NeedsData`). `combat-reference.md`: "the caller maps them" sentence replaced by a pointer to the hands table (plan §4.7) and `composition-reference.md` "Hands". One commit (interface, implementation, fakes). (FR-15, FR-4)
+  *Done when:* the project compiles; the `CatalogWeaponTypes_*` tests pass (or are reported as not run if their data is absent, which blocks the task); the `ProjectileRules` and `WorldPresenter` tests pass; `BaseJobOf` and `IJobBases` are gone from `Assets` (grep); `git status` shows no asset changed (no rebuild, plan §7).
+
+- [ ] **T10.5** [core] Tests, then implementation (part 1): `CombatTimeline_AttackNumber_BothHandsAndRowJob` with fake `IWeaponTypes` and `IJobRows`: the server's job, `Look.Weapon` and `Look.Shield` reach `TypeOf`; the row job and row sex reach `NumberOf`; the same type reaches `ProjectileRules`. Committed with `[Ignore("pending T10.6")]`. (FR-15, FR-4)
+  *Done when:* the test exists, compiles and is ignored; the rest of the `Combat` suite passes unchanged.
+
+- [ ] **T10.6** [critical] Rework of **T4.3** and **T4.8** (`CombatTimeline` both hands): `Add` computes the both-hands type once per blow and passes it to `AttackNumber` (`NumberOf(Jobs?.RowJobOf(job) ?? job, Jobs?.RowSexOf(job, sex) ?? sex, type)`), `HitFrameOf` and `ProjectileRules.Of`; `AddProjectile` takes the same type, not the right hand alone (D23). Removes the ignore of T10.5. (FR-4, FR-14, FR-15)
+  *Done when:* `CombatTimeline_AttackNumber_BothHandsAndRowJob` passes; the `ProjectileRules_*` and `CombatTimeline_*` tests of T4.3 and T4.8 pass; `Combat_ZeroAllocation_100Fighting` (T4.9) still passes at 0 B over 600 frames.
+
+- [ ] **T10.7** [core] Dual-wield replay: `WorldSession_CombatReplay_DualWield` replays `fixtures/combat-dual.bin` into a session with the timeline and the real `CatalogWeaponTypes` (`NeedsData`). The assassin's own attack motions are `Attack2` while only the left hand holds a knife, `Attack3` once both hands hold knives, and those blows carry `LeftDamage`. (FR-5, FR-15)
+  *Done when:* the test passes on the committed fixture, and its motion sequence is written in the test with the blow numbers it is read from (the capture's server lines are listed in `fixtures/README.md`).
+
+- [ ] **T10.8** [quick] Rework of **T5.4** (wiring): `WorldBootstrap.UseAssets` sets `timeline.Weapons` and `timeline.Jobs` from one `CatalogWeaponTypes` instance (plan §7). Only the assignments change; no other line of the bootstrap is touched. (FR-15)
+  *Done when:* `WorldBootstrap.cs` assigns both members from the same instance (grep shows both lines); the project compiles; Logs/Editor.log has no new warning after a refresh.
