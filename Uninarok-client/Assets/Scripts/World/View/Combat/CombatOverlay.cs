@@ -19,10 +19,14 @@ namespace Uninarok.World.View
         const int Miss = 0, CriticalBack = 3, LuckyBack = 4, Lucky = 5;
 
         WorldSession _session;
+        // Without a session (tests): these.
+        WorldModel _model;
+        OwnStatus _status;
+        CombatTimeline _timeline;
         WorldPresenter _presenter;
         CombatSettings _settings;
-        QuadMesh _digits, _messages;
-        Material _digitMaterial, _messageMaterial;
+        QuadMesh _digits, _messages, _bars;
+        Material _digitMaterial, _messageMaterial, _barMaterial;
         readonly Rect[] _digitUv = new Rect[10];
         readonly Vector2[] _digitPx = new Vector2[10];
         readonly Rect[] _messageUv = new Rect[6];
@@ -33,6 +37,24 @@ namespace Uninarok.World.View
 
         /// <summary>Numbers drawn in the last frame (tests, dev HUD).</summary>
         internal int DrawnNumbers { get; private set; }
+
+        /// <summary>Bars drawn in the last frame.</summary>
+        internal int DrawnBars { get; private set; }
+
+        internal QuadMesh BarMesh => _bars;
+
+        CombatTimeline Timeline => _session != null ? _session.Timeline : _timeline;
+        WorldModel Model => _session != null ? _session.Model : _model;
+        OwnStatus Status => _session != null ? _session.Status : _status;
+
+        /// <summary>Without a session: a model, a status and a timeline of their own (tests).</summary>
+        internal void Use(WorldModel model, OwnStatus status, CombatTimeline timeline, WorldPresenter presenter, CombatSettings settings)
+        {
+            Use(null, presenter, settings);
+            _model = model;
+            _status = status;
+            _timeline = timeline;
+        }
 
         public void Use(WorldSession session, WorldPresenter presenter, CombatSettings settings)
         {
@@ -48,6 +70,9 @@ namespace Uninarok.World.View
             }
             _digits ??= new QuadMesh("Combat Digits", settings.NumberCapacity * settings.MaxDigits);
             _messages ??= new QuadMesh("Combat Messages", settings.NumberCapacity * 2);
+            _bars ??= new QuadMesh("Combat Bars", settings.BarCapacity * 5);
+            if (_barMaterial == null)
+                _barMaterial = new Material(settings.OverlayShader) { name = "Combat Bars", mainTexture = Texture2D.whiteTexture, hideFlags = HideFlags.DontSave };
             _digitMaterial = MakeMaterial(settings.OverlayShader, settings.Digits);
             _messageMaterial = MakeMaterial(settings.OverlayShader, settings.Messages);
             for (int d = 0; d < 10; d++) Read(settings.Digits, DigitSlot(settings.Digits, d), out _digitUv[d], out _digitPx[d]);
@@ -65,7 +90,9 @@ namespace Uninarok.World.View
             _digits?.End();
             _messages?.Begin();
             _messages?.End();
-            DrawnNumbers = 0;
+            _bars?.Begin();
+            _bars?.End();
+            DrawnNumbers = DrawnBars = 0;
         }
 
         static Material MakeMaterial(Shader shader, SpriteAnimation sprites)
@@ -97,17 +124,106 @@ namespace Uninarok.World.View
         void LateUpdate()
         {
             if (!_ready) return;
-            var timeline = _session?.Timeline;
-            var map = _presenter?.Map;
-            var camera = UnitSystemCamera();
+            Draw(UnitSystemCamera());
+            var p = new RenderParams(_barMaterial) { layer = gameObject.layer, shadowCastingMode = ShadowCastingMode.Off };
+            if (_bars.Count > 0) Graphics.RenderMesh(p, _bars.Mesh, 0, Matrix4x4.identity);
+            p.material = _digitMaterial;
+            if (_digits.Count > 0) Graphics.RenderMesh(p, _digits.Mesh, 0, Matrix4x4.identity);
+            p.material = _messageMaterial;
+            if (_messages.Count > 0) Graphics.RenderMesh(p, _messages.Mesh, 0, Matrix4x4.identity);
+        }
+
+        /// <summary>Writes the meshes for this camera (each frame; tests call it directly).</summary>
+        internal void Draw(Camera camera)
+        {
+            if (!_ready) return;
+            var timeline = Timeline;
+            var map = _presenter != null ? _presenter.Map : null;
             _digits.Begin();
             _messages.Begin();
-            DrawnNumbers = 0;
-            if (timeline != null && map != null && camera != null) DrawNumbers(timeline, map, camera.transform);
+            _bars.Begin();
+            DrawnNumbers = DrawnBars = 0;
+            if (map != null && camera != null)
+            {
+                DrawBars(map, camera);
+                if (timeline != null) DrawNumbers(timeline, map, camera.transform);
+            }
             _digits.End();
             _messages.End();
-            if (_digits.Count > 0) Graphics.RenderMesh(new RenderParams(_digitMaterial) { layer = gameObject.layer, shadowCastingMode = ShadowCastingMode.Off }, _digits.Mesh, 0, Matrix4x4.identity);
-            if (_messages.Count > 0) Graphics.RenderMesh(new RenderParams(_messageMaterial) { layer = gameObject.layer, shadowCastingMode = ShadowCastingMode.Off }, _messages.Mesh, 0, Matrix4x4.identity);
+            _bars.End();
+        }
+
+        // ---- bars (FR-7) ----
+
+        // The own character always, from the status; a monster that is shown, not dead, with 0 < HP < max HP.
+        void DrawBars(MapData map, Camera camera)
+        {
+            var model = Model;
+            if (model == null) return;
+            for (int slot = 0; slot < model.SlotLimit; slot++)
+            {
+                ref readonly var e = ref model[slot];
+                if (e.Id == 0) continue;
+                bool own = e.Id == model.OwnId;
+                if (!own && (e.Kind != EntityKind.Monster || e.State == EntityState.Dead || e.Hp <= 0 || e.MaxHp <= 0 || e.Hp >= e.MaxHp)) continue;
+                if (own && e.State == EntityState.Dead) continue;
+                var view = _presenter.ViewOf(e.Id);
+                if (view == null || !view.gameObject.activeInHierarchy) continue;
+                if (!BarTop(camera, view.transform.position, map.CellSize, out var top)) continue;
+                if (own)
+                {
+                    var status = Status;
+                    if (status == null) continue;
+                    float hp = Share(status.Hp, status.MaxHp);
+                    Bar(camera, top, _settings.HpSpBarPx, hp, hp < _settings.BarLowShare ? _settings.OwnHpLow : _settings.OwnHp, true,
+                        Share(status.Sp, status.MaxSp), _settings.OwnSp);
+                }
+                else
+                {
+                    float hp = Share(e.Hp, e.MaxHp);
+                    Bar(camera, top, _settings.HpBarPx, hp, hp < _settings.BarLowShare ? _settings.MonsterHpLow : _settings.MonsterHp, false, 0f, default);
+                }
+                DrawnBars++;
+            }
+        }
+
+        static float Share(long value, long max) => max > 0 ? Mathf.Clamp01(value / (float)max) : 0f;
+
+        // The bar's top centre on the screen, on whole pixels: BarBelowFeet cells under the feet.
+        bool BarTop(Camera camera, Vector3 feet, float cellSize, out Vector2 top)
+        {
+            var p = camera.WorldToScreenPoint(feet - Vector3.up * (_settings.BarBelowFeet * cellSize));
+            top = new Vector2(Mathf.Round(p.x), Mathf.Round(p.y));
+            return p.z > camera.nearClipPlane;
+        }
+
+        // A frame of 1 px around the HP row (and the SP row under it, 1 px apart), each row its filled part then its empty part.
+        void Bar(Camera camera, Vector2 top, Vector2Int size, float hp, Color hpColour, bool withSp, float sp, Color spColour)
+        {
+            float left = top.x - Mathf.Floor(size.x * 0.5f), y = top.y;
+            ScreenRect(camera, left, y - size.y, size.x, size.y, _settings.BarFrame);
+            float inner = size.x - 2f;
+            float row = withSp ? Mathf.Floor((size.y - 3f) * 0.5f) : size.y - 2f;
+            Row(camera, left + 1f, y - 1f - row, inner, row, hp, hpColour);
+            if (withSp) Row(camera, left + 1f, y - 2f - 2f * row, inner, row, sp, spColour);
+        }
+
+        void Row(Camera camera, float x, float y, float width, float height, float share, Color colour)
+        {
+            float filled = Mathf.Round(width * share);
+            if (filled > 0f) ScreenRect(camera, x, y, filled, height, colour);
+            if (filled < width) ScreenRect(camera, x + filled, y, width - filled, height, _settings.BarEmpty);
+        }
+
+        // A rectangle in screen pixels (bottom-left x, y), just in front of the near plane.
+        void ScreenRect(Camera camera, float x, float y, float width, float height, Color colour)
+        {
+            float z = camera.nearClipPlane + 0.01f;
+            var a = camera.ScreenToWorldPoint(new Vector3(x, y, z));
+            var b = camera.ScreenToWorldPoint(new Vector3(x + width, y, z));
+            var c = camera.ScreenToWorldPoint(new Vector3(x + width, y + height, z));
+            var d = camera.ScreenToWorldPoint(new Vector3(x, y + height, z));
+            _bars.Quad(a, b, c, d, new Rect(0f, 0f, 1f, 1f), colour);
         }
 
         static Camera UnitSystemCamera() => Units.UnitSystem.Camera != null ? Units.UnitSystem.Camera : Camera.main;
@@ -210,6 +326,8 @@ namespace Uninarok.World.View
         {
             _digits?.Dispose();
             _messages?.Dispose();
+            _bars?.Dispose();
+            if (_barMaterial != null) Destroy(_barMaterial);
             if (_digitMaterial != null) Destroy(_digitMaterial);
             if (_messageMaterial != null) Destroy(_messageMaterial);
         }

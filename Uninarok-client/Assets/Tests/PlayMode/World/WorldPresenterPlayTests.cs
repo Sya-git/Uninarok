@@ -404,6 +404,106 @@ namespace Uninarok.World.PlayTests
             UnityEngine.Object.Destroy(settings);
         }
 
+        // ---- SPEC-0011 T6.3 (FR-7; PLAN-0011 4.8): the bars under the feet, constant in screen pixels ----
+
+        CombatOverlay Overlay(out Camera camera, out OwnStatus status)
+        {
+            CombatSettings settings = null;
+#if UNITY_EDITOR
+            settings = UnityEditor.AssetDatabase.LoadAssetAtPath<CombatSettings>("Assets/Settings/World/CombatSettings.asset");
+#endif
+            if (settings == null) Assert.Ignore("no combat settings");
+            var cameraObject = new GameObject("Bar Camera");
+            cameraObject.transform.SetParent(_root.transform, false);
+            camera = cameraObject.AddComponent<Camera>();
+            camera.fieldOfView = 15f;
+            camera.nearClipPlane = 1f;
+            camera.targetTexture = new RenderTexture(1280, 720, 24);
+            camera.enabled = false;
+            status = new OwnStatus { Hp = 50, MaxHp = 100, Sp = 10, MaxSp = 20 };
+            var overlay = new GameObject("Overlay").AddComponent<CombatOverlay>();
+            overlay.transform.SetParent(_root.transform, false);
+            overlay.enabled = false; // drawn by the test
+            overlay.Use(_model, status, null, _presenter, settings);
+            return overlay;
+        }
+
+        static void LookAt(Camera camera, Vector3 target, float yaw)
+        {
+            camera.transform.rotation = Quaternion.Euler(50f, yaw, 0f);
+            camera.transform.position = target - camera.transform.forward * 40f;
+        }
+
+        static Rect ScreenRectOf(Camera camera, Mesh mesh, int quad)
+        {
+            var v = mesh.vertices;
+            float minX = float.MaxValue, minY = float.MaxValue, maxX = float.MinValue, maxY = float.MinValue;
+            for (int i = 0; i < 4; i++)
+            {
+                var s = camera.WorldToScreenPoint(v[quad * 4 + i]);
+                minX = Mathf.Min(minX, s.x);
+                maxX = Mathf.Max(maxX, s.x);
+                minY = Mathf.Min(minY, s.y);
+                maxY = Mathf.Max(maxY, s.y);
+            }
+            return Rect.MinMaxRect(minX, minY, maxX, maxY);
+        }
+
+        [UnityTest, Category("NeedsData")]
+        public IEnumerator CombatOverlay_BarsFollowAtFourTurns()
+        {
+            Poring(1, 13, 20);
+            _model.SetHp(1, 5, 10);
+            _presenter.Sync(_model);
+            yield return Loaded(1);
+            var overlay = Overlay(out var camera, out _);
+            var feet = _presenter.ViewOf(1).transform.position;
+            foreach (float yaw in new[] { 0f, 90f, 180f, 270f })
+            {
+                LookAt(camera, feet, yaw);
+                overlay.Draw(camera);
+                Assert.AreEqual(1, overlay.DrawnBars, $"yaw {yaw}");
+                var frame = ScreenRectOf(camera, overlay.BarMesh.Mesh, 0);
+                Assert.AreEqual(60f, frame.width, 0.05f, $"yaw {yaw}: 60 px wide at any turn");
+                Assert.AreEqual(5f, frame.height, 0.05f, $"yaw {yaw}: 5 px high");
+                var under = camera.WorldToScreenPoint(feet - Vector3.up * (0.5f * _map.CellSize));
+                Assert.AreEqual(Mathf.Round(under.y), frame.yMax, 0.05f, $"yaw {yaw}: half a cell under the feet");
+                Assert.AreEqual(Mathf.Round(under.x), frame.center.x, 1f, $"yaw {yaw}: centred under the feet");
+                Assert.AreEqual(Mathf.Round(frame.xMin), frame.xMin, 0.05f, "on whole pixels");
+                var fill = ScreenRectOf(camera, overlay.BarMesh.Mesh, 1);
+                Assert.AreEqual(29f, fill.width, 0.05f, "half of the 58 px inside");
+            }
+        }
+
+        [UnityTest, Category("NeedsData")]
+        public IEnumerator CombatOverlay_BarHiddenAtFullAndWhenDead()
+        {
+            Poring(1, 13, 20);
+            Poring(3, 15, 20);
+            Poring(4, 17, 20);
+            Poring(5, 19, 20);
+            Novice(2, 12, 22);
+            _model.OwnId = 2;
+            _model.SetHp(1, 5, 10);
+            _model.SetHp(3, 10, 10);  // full: nothing is sent at full, nothing shown
+            _model.SetHp(5, 5, 10);
+            _model.Vanish(5, VanishReason.Died, 0);
+            _presenter.Sync(_model);
+            yield return Loaded(1);
+            yield return Loaded(2);
+            var overlay = Overlay(out var camera, out var status);
+            LookAt(camera, _presenter.ViewOf(2).transform.position, 0f);
+            overlay.Draw(camera);
+            Assert.AreEqual(2, overlay.DrawnBars, "the hurt poring and the own character; not at full, unknown or dead");
+            Assert.AreEqual(3 + 5, overlay.BarMesh.Count, "a monster's frame and HP row; the own frame, HP and SP rows");
+
+            status.Hp = 0;
+            _model.Vanish(2, VanishReason.Died, 0);
+            _presenter.Sync(_model);
+            overlay.Draw(camera);
+            Assert.AreEqual(1, overlay.DrawnBars, "no bar while the own character is dead");
+        }
+
         [TestCase(0, 1, 0, 2)] // job, sex, server style, head file
         [TestCase(0, 0, 0, 2)]
         [TestCase(0, 1, 2, 1)]

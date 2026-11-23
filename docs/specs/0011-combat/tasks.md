@@ -144,7 +144,7 @@
 - [x] **T6.2** Tests, then implementation: `NumberMotion` and the numbers of `CombatOverlay`. (FR-6)
   *Done when:* `NumberMotion_Table` passes; each kind is seen on the local server or from test packets (screenshots).
 
-- [ ] **T6.3** HP and SP bars of `CombatOverlay`. (FR-7)
+- [x] **T6.3** HP and SP bars of `CombatOverlay`. (FR-7)
   *Done when:* `_BarsFollowAtFourTurns` and `_BarHiddenAtFullAndWhenDead` pass; a hit poring shows its bar, an MVP none, the own bars shrink and refill (screenshots).
 
 - [ ] **T6.4** Convert `sprite/npc/skel_archer_arrow`; `ProjectileView`. (FR-14)
