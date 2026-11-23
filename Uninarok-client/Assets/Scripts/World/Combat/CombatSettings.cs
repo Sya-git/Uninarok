@@ -34,6 +34,8 @@ namespace Uninarok.World
         [Min(0)] public int AttackRetries = 3;
         [Tooltip("A refused pickup is asked for once more after this, in ms.")]
         [Min(0)] public int PickupRetryMs = 400;
+        [Tooltip("The target mark of a single attack goes this long after its blow's hit moment, in ms (FR-16).")]
+        public int TargetMarkSingleMs = 0;
 
         [Header("Timeline (4.6)")]
         [Tooltip("A player stands in Standby after an attack or a hurt for this long, in ms; −1: until it does something else; 0: off.")]

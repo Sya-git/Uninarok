@@ -56,10 +56,14 @@ namespace Uninarok.World
         public int AttackSilenceMotions { get; set; } = 2;
         public int AttackSilencePadMs { get; set; } = 500;
 
+        /// <summary>The mark of a single attack goes this long after its blow's hit moment, in ms (FR-16; footage, T0.3).</summary>
+        public int TargetMarkSingleMs { get; set; }
+
         /// <summary>Takes the values of the settings (PLAN-0011 4.5); the defaults are the same values.</summary>
         public void Use(CombatSettings settings)
         {
             if (settings == null) return;
+            TargetMarkSingleMs = settings.TargetMarkSingleMs;
             ApproachRepeatMs = settings.ApproachRepeatMs;
             AttackSilenceMs = settings.AttackSilenceMs;
             AttackSilenceMotions = settings.AttackSilenceMotions;
@@ -88,6 +92,9 @@ namespace Uninarok.World
         int _lastAttackMs;
         int _retries;
         // The item asked for, whether a request waits for its answer, the failures, a retry due.
+        // A single attack's mark after its blow (the state is Idle then): the monster and the server time it goes (FR-16).
+        uint _markId;
+        uint _markUntil;
         uint _item;
         bool _pickUpSent;
         int _pickupFailures;
@@ -109,6 +116,16 @@ namespace Uninarok.World
         /// <summary>The attack goes on after each blow.</summary>
         public bool Continuous => _continuous;
 
+        /// <summary>
+        /// The monster that shows the target mark, or 0 (FR-16; PLAN-0011 4.5): the target while approaching or attacking, and after a
+        /// single attack's blow until its hit moment plus <see cref="TargetMarkSingleMs"/>. No allocation.
+        /// </summary>
+        public uint MarkedTarget(uint now)
+        {
+            if (_state == CombatState.Approaching || _state == CombatState.Attacking) return _target;
+            return _markId != 0 && ServerClock.Diff(now, _markUntil) < 0 ? _markId : 0;
+        }
+
         /// <summary><c>/noctrl</c>: plain clicks on a monster attack continuously.</summary>
         public bool NoCtrl { get; set; }
 
@@ -126,6 +143,7 @@ namespace Uninarok.World
             if (model[own].State == EntityState.Dead) return AttackResult.Dead;
             if (model[own].State == EntityState.Sitting) return AttackResult.Sitting;
             if (!IsAttackable(model, id, out _)) return AttackResult.NotAttackable;
+            _markId = 0;
 
             if (_state == CombatState.Attacking && _target == id && _continuous == continuous) return AttackResult.Sent;
             if (_target != id || _state == CombatState.Idle || _state == CombatState.Fetching)
@@ -221,7 +239,12 @@ namespace Uninarok.World
             _retries = 0;
             _silentSince = now;
             _lastAttackMs = blow.AttackMs;
-            if (!_continuous) Idle();
+            if (!_continuous)
+            {
+                Idle();
+                _markId = blow.TargetId; // the mark outlives the single attack until the blow's hit moment (FR-16)
+                _markUntil = unchecked(blow.At + (uint)blow.AttackMs + (uint)TargetMarkSingleMs);
+            }
             else _state = CombatState.Attacking; // also when the server ran a request it kept from a walk (H4)
         }
 
@@ -429,6 +452,7 @@ namespace Uninarok.World
         {
             _state = CombatState.Idle;
             _target = 0;
+            _markId = 0;
             _requested = false;
             _caution = 0;
             _retries = 0;

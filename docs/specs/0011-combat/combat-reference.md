@@ -22,6 +22,7 @@ Each row is one setting or one table row. **Source** is where the first value co
 | `AttackSilenceMotions`, `AttackSilencePadMs` | 2 × the last attack motion + 500 ms | plan choice: a slow attacker is not asked twice per blow | live, T9.1 |
 | `AttackRetries` | 3 | plan choice | live, T9.1 |
 | `PickupRetryMs` | 400 ms | plan choice: one step of lag | live, T9.1 |
+| `TargetMarkSingleMs` | 0 ms after the single blow's hit moment (`blow.At + AttackMs`); while approaching or in a continuous attack the mark stays | footage, `evidence/T0.3/README.md`, 3 samples | shot 17: the mark went 0.04 s and 0.12 s before the number and about 0.4 s after it; first value 0, to be refined with more single attacks |
 
 ## Timeline (plan §4.6)
 
