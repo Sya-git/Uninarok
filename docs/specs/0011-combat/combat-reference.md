@@ -31,7 +31,7 @@ Each row is one setting or one table row. **Source** is where the first value co
 | hurt motion | `attackedMT` of the blow | FR-4 | shots 1, 4 |
 | `StandbyMs` | −1 (until the player does something else) | lead, plan §4.6 and D11 | shots 1, 8 |
 | `MultiHitMs` | 200 ms between the parts | lead, plan §4.6 (roBrowserLegacy) | shot 5 |
-| multi-hit total | with the last part, as `Total` | lead, plan §4.6 (roBrowserLegacy) | shot 5 (where and how) |
+| multi-hit total | with the last part, as `Total`, only when the target is not a player; none over a player | owner, 2026-11-23 (D28); the rest lead, plan §4.6 | shot 5 (where and how) |
 | `LeftHandMs` | 350 ms | lead, plan §4.6 (roBrowserLegacy) | shot 6 |
 | `HurtBeforeDeathMs` | 250 ms (monsters) | H9: the death notice comes 250 ms after the damage | shot 8 |
 | `PlayerHurtBeforeDeathMs` | 0 ms | H9: a player's notice comes at once | shot 9 |
@@ -172,6 +172,7 @@ Not in the lead: the projectile's height, and whether it follows a moving target
 | `NumberOnMonster` | white | lead: `Damage.js` | shot 1 |
 | `NumberOnPlayer` | red | lead: `Damage.js` | shot 4 |
 | `NumberCritical` | (0.9, 0.9, 0.15), over the `msg` critical background | lead: `Damage.js` | shot 2 |
+| `NumberTotal` | (0.9, 0.9, 0.15): the multi-hit total, yellow-green; the parts keep `NumberOnMonster` / `NumberOnPlayer` | owner, 2026-11-23 (D28) | shot 5 |
 | number size | sprite pixels / pixels per unit × scale, in the world (zooms with it) | lead: `Damage.js` | shots 1, 10 (world or screen size) |
 | order | after the units, no depth test, newer over older | lead, plan §4.8 | shot 7 |
 | `NumberCapacity`, `MaxDigits` | 512 numbers, 10 digits | plan choice (FR-12) | not displayed |

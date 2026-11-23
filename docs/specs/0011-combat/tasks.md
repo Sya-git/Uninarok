@@ -200,13 +200,16 @@
   300 units, 100 fighting, 100 numbers on screen.
   *Done when:* a profiler capture in `evidence/` shows 0 B GC per frame from the combat update; its frame time is recorded (guide 0.5 ms).
 
+- [ ] **T9.7** [core] Multi-hit colours (D28; spec FR-5, FR-6 revision 2026-11-23). Tests first, one commit: `CombatTimeline_MultiHit_TotalOnlyOverNonPlayer` (a multi-hit over a monster has the parts and a `Total`; over a player the parts and no `Total`) and `CombatOverlay` colour choice (parts white over a monster, red over a player; `Total` in `CombatSettings.NumberTotal`, (0.9, 0.9, 0.15)). `CombatSettings.NumberTotal` and its asset value; `combat-reference.md` row already written. Done after phase 10; it does not wait for T9.6's run. (FR-5, FR-6)
+  *Done when:* the new tests pass, the existing `CombatTimeline_*` and overlay tests pass (a test that expected a total over a player is changed with a note); a screenshot of a multi-hit over a monster (white parts, yellow-green total) and over the own character (red parts, no total) is in `evidence/`.
+
 - [ ] **T9.6** Spec §5 run and close the spec. (all)
   Bootstrap to prt_fild08, 20 monsters with continuous attack, their loot, death, save point.
   *Done when:* no more than one too-far reply per target; own HP, SP and EXP equal `@stats` and `@exp`; every monster's last bar equals its HP; no unit is left behind; spec, plan and tasks are set to `Implemented`; leftovers are in `BACKLOG.md`.
 
 ## Phase 10: Revision 2026-11-23 (FR-15): job families and both hands
 
-Rework and new work for plan §4.6, §4.7, §6.1, §7 and §8 (D18, D20 to D27). Do after T9.5 and **before T9.6**: the spec does not close without this phase. Checked tasks keep their commits; each rework is a new task that names the task it redoes. Test-first: a tests task is committed with `[Ignore("pending Tn.m")]`, and the implementation task removes it. T10.3 and T10.4 are one commit each, because a changed signature must compile with its callers and its tests.
+Rework and new work for plan §4.6, §4.7, §6.1, §7 and §8 (D18, D20 to D27). Do **before T9.6**: the spec does not close without this phase (owner, 2026-11-23: run it now, before T9.1 to T9.5). Checked tasks keep their commits; each rework is a new task that names the task it redoes. Test-first: a tests task is committed with `[Ignore("pending Tn.m")]`, and the implementation task removes it. T10.3 and T10.4 are one commit each, because a changed signature must compile with its callers and its tests.
 
 - [ ] **T10.1** [core] Tests for `JobFamilies` in `EditMode/Units`: `JobFamilies_RowJobOf_Table`, `JobFamilies_RowSexOf_SoulReaperMale`, and `JobFamilies_IsAssassinFamily_EveryIdAndNotRogue` extended with the assassin ids above 4242 (plan §6.1, §4.7 family table). Committed with `[Ignore("pending T10.2")]`. (FR-15)
   *Done when:* the three tests exist and compile and are ignored; the rest of the `Units` suite passes unchanged.

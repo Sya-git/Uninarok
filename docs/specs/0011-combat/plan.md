@@ -282,7 +282,7 @@ public sealed class CombatTimeline
 | Critical | value as critical (0) |
 | no damage, not lucky | miss (0) |
 | Lucky dodge | lucky (0) |
-| Multi-hit, `n` hits | `n` numbers, the `i`-th at `i × MultiHitMs` (200, lead); then, with the last, the total as `Total` *(where and how: T0.3)* |
+| Multi-hit, `n` hits | `n` numbers, the `i`-th at `i × MultiHitMs` (200, lead); then, with the last, the total as `Total` **only when the target is not a player** (D28); the parts are `Normal` (white on a monster, red on a player) |
 | second hand (`LeftDamage` > 0), any kind | its own number at `LeftHandMs` (350, lead) |
 | damage < 0 | nothing (H11; heals are SPEC-0012's) |
 
@@ -408,7 +408,7 @@ public static class NumberMotion                       // pure, in Uninarok.Worl
 
 - **One mesh each** for digits, message sprites and bars: vertices in persistent `NativeArray`s, written with `Mesh.SetVertexBufferData` and `SetSubMesh`, validation and bounds recalculation off (fixed large bounds). Nothing per number or per bar is a GameObject (D6). Capacity: 512 numbers of at most 10 digits, 512 bars.
 - **Digits** come from the `숫자` animation's sprites (frame = digit), messages from `msg`; UVs and pixel sizes from the sprites' rects and the sheet texture, read once. Spacing 2 px *(lead)*. A number is laid out centred, in the plane that faces the camera, `pixels / PixelsPerUnit × scale` large, so it zooms with the world as a sprite does *(T0.3: world or screen size)*.
-- **Motion, first values** *(lead: `Damage.js`)*: normal and critical 1,500 ms, scale 4 → 0, drifting 4 cells to +x and 4 to −y over the life, height `2 + 5 · sin(−π/2 + π(0.5 + 1.5 t))`, alpha `1 − t`; miss and lucky over 800 ms, scale 0.5, rising 7 from 3.5; total 3,000 ms, above the target. Colours: on a monster white; on a player red; critical (0.9, 0.9, 0.15) over the `msg` critical background; miss and lucky are the `msg` pictures. Each is a row of `combat-reference.md`, measured in T0.3.
+- **Motion, first values** *(lead: `Damage.js`)*: normal and critical 1,500 ms, scale 4 → 0, drifting 4 cells to +x and 4 to −y over the life, height `2 + 5 · sin(−π/2 + π(0.5 + 1.5 t))`, alpha `1 − t`; miss and lucky over 800 ms, scale 0.5, rising 7 from 3.5; total 3,000 ms, above the target. Colours: on a monster white; on a player red; critical (0.9, 0.9, 0.15) over the `msg` critical background; the multi-hit `Total` in the same yellow-green, `NumberTotal` (D28); miss and lucky are the `msg` pictures. Each is a row of `combat-reference.md`, measured in T0.3.
 - **Order**: after the units, no depth test, newer over older *(lead; T0.3)*.
 - **Bars** (FR-7): under the feet, on whole pixels, constant size in screen pixels *(lead: `EntityLife.js`: 60 × 5 for HP, 60 × 9 with SP; frame `#10189c`, empty `#424242`, own HP `#10ef21`, below 25 % `#ff0000`, SP `#1863de`, monster `#ff00e7`, below 25 % `#ffff00`; 0.5 below the feet)*. The corners are computed in screen pixels from the projected feet and unprojected in front of the near plane, so turn, tilt and zoom need nothing more. Which units: the own character always, from `OwnStatus`; a monster that is shown, not dead, with `0 < Hp < MaxHp`.
 - **Projectile**: `ProjectileView`, a pooled object with one driven `SpriteActor` (`skel_archer_arrow`), turned in the camera plane along its flight on the screen, placed each frame from `CombatTimeline.Projectiles`; 32 made in advance.
@@ -563,6 +563,7 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 | D25 | (Owner, 2026-11-23) Mounted Crusader ids (4022, 4044, 4082, 4083, 4110) take row 21 or 14 exactly as roBrowserLegacy copies each | Always 21; always 14 | Owner's answer; the per-id choice and its source go into `combat-reference.md`; a correction from footage is a table change |
 | D26 | (Owner, 2026-11-23) Dark Collector, Wedding, Xmas, Summer (and the other outfit jobs): no row, `Attack1` by the default | A row per outfit copied from the job worn before | Owner's answer: they do not usually attack; the default already gives `Attack1`, so no data is added |
 | D27 | (Owner, 2026-11-23) Ids above 4242 are copied from roBrowserLegacy and accepted untested | Leaving them out until a server sends them | Owner accepts the risk (spec §6); they are marked in code and in `combat-reference.md`, and corrected like any lead |
+| D28 | (Owner, 2026-11-23) Multi-hit: parts white over a monster and red over a player; the `Total` only over a target that is not a player, in the yellow-green of the critical number (`NumberTotal` in `CombatSettings`, default (0.9, 0.9, 0.15)) | A total over a player too; a white total | The owner saw the client: the total is yellow-green, a hit on a player shows the parts alone in red. Timeline: no `Total` for a player target; overlay: colour by kind. Task T9.7 |
 
 ## 9. Risks
 
