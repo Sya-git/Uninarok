@@ -532,6 +532,21 @@ namespace Uninarok.World.PlayTests
             }
         }
 
+        [Test]
+        public void CombatOverlay_TargetMark_FloatFollowsTheActFrames()
+        {
+            var settings = ScriptableObject.CreateInstance<CombatSettings>();
+            try
+            {
+                Assert.AreEqual(0f, CombatOverlay.MarkBob(0, settings), "high at the start");
+                Assert.AreEqual(10f, CombatOverlay.MarkBob(1050, settings), 1f, "frame 10 of 21: 7 of 10 sprite px, 15 px at the lowest");
+                Assert.AreEqual(15f, CombatOverlay.MarkBob(550, settings), "the lowest frames (5 to 7)");
+                Assert.AreEqual(0f, CombatOverlay.MarkBob(2100, settings), "and high again after 2,100 ms");
+                Assert.AreEqual(CombatOverlay.MarkBob(300, settings), CombatOverlay.MarkBob(2400, settings), "periodic");
+            }
+            finally { UnityEngine.Object.DestroyImmediate(settings); }
+        }
+
         [UnityTest, Category("NeedsData")]
         public IEnumerator CombatOverlay_TargetMark_OnlyOneMark()
         {

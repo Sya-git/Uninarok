@@ -114,10 +114,12 @@ namespace Uninarok.World
         public Vector2Int TargetMarkSizePx = new Vector2Int(22, 15);
         [Tooltip("The mark's centre is this many screen pixels above the top of the unit's standing sprite.")]
         public int TargetMarkHeight = 66;
-        [Tooltip("The mark floats this many screen pixels up and down (0: none, as in the footage).")]
-        [Min(0)] public int TargetMarkBobPixels = 0;
-        [Tooltip("One float up and down takes this long, in ms.")]
-        [Min(1)] public int TargetMarkBobMs = 1000;
+        [Tooltip("How far down the mark floats at the lowest, in screen pixels (cursors.act action 3: 10 sprite px, shown 1.5 times larger = 15; the footage: 514 to 529).")]
+        [Min(0)] public int TargetMarkBobPixels = 15;
+        [Tooltip("One float, high to low to high, takes this long, in ms (cursors.act action 3: 21 frames of 100 ms).")]
+        [Min(1)] public int TargetMarkBobMs = 2100;
+        [Tooltip("The float frame by frame, evenly spaced over TargetMarkBobMs: how far below the top, in sprite px (cursors.act action 3, offset y + 80). The largest value is TargetMarkBobPixels.")]
+        public int[] TargetMarkBobFrames = { 0, 1, 3, 6, 9, 10, 10, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0, 0, 0 };
 
         [Header("Input and restart (4.10, 4.11)")]
         [Tooltip("A plain press on a monster still held after this attacks continuously, in ms.")]

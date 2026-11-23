@@ -17,7 +17,7 @@ A small **white faceted diamond pointing down** (a cut gem), about 22 x 15 px at
 Reading for a **single** attack: the mark goes at the hit moment of its own blow (the moment its number shows), between 0.12 s before and 0.4 s after (three samples: -0.04 s, -0.12 s, and about +0.4 s). First value `TargetMarkSingleMs` = 0 after the hit moment; to be refined with more single attacks.
 
 ## Where it floats
-- It follows the monster's position on screen frame by frame, and does not keep its own float: over a standing poring (4.7 to 5.0 s) its y is constant (514 px), and the small changes elsewhere follow the monster's own movement. **No independent bobbing was seen** (the picture is still).
+- It follows the monster's position on screen frame by frame, and also floats on its own: over a standing poring its y is 514 px at 4.6 to 5.0 s, 527 to 529 at 5.45 to 5.86 s and 515 again at 6.66 s, a slow float of about 15 px with a period of about 2.1 s, the same as `cursors.act` action 3 (10 sprite px x 1.5; found in T11.2). *(An earlier reading, "no independent bobbing", came from the 0.3 s of 4.7 to 5.0 s, where the mark is at the top of its float.)*
 - Height: **about 66 px above the top of the standing sprite** at the default view: poring (top 580, mark centre 514) and Roween (about 65 to 70). The mark is not tied to the *current* frame's top: over a Roween that rears up the mark stays at the standing height (`mark_roween_22-39-21_and_22-41-02.jpg`, left picture). The sprites are small, so this reads as "a fixed height above the feet, depending on the monster": about 93 px above the poring's feet and about 125 px above Roween's.
 - Size does not change with the monster.
 

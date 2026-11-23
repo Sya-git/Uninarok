@@ -224,14 +224,9 @@ namespace Uninarok.World.View
             var top = view.transform.position + camera.transform.up * view.StandingTop;
             var p = camera.WorldToScreenPoint(top);
             if (p.z <= camera.nearClipPlane) return;
-            float bob = 0f;
-            if (_settings.TargetMarkBobPixels > 0)
-            {
-                float phase = (now % (uint)_settings.TargetMarkBobMs) / (float)_settings.TargetMarkBobMs;
-                bob = _settings.TargetMarkBobPixels * 0.5f * (1f - Mathf.Cos(phase * 2f * Mathf.PI));
-            }
+            float bob = MarkBob(now, _settings);
             float w = _settings.TargetMarkSizePx.x, h = _settings.TargetMarkSizePx.y;
-            float cx = Mathf.Round(p.x), cy = Mathf.Round(p.y + _settings.TargetMarkHeight + bob);
+            float cx = Mathf.Round(p.x), cy = Mathf.Round(p.y + _settings.TargetMarkHeight - bob);
             float z = camera.nearClipPlane + 0.01f;
             float x0 = cx - Mathf.Floor(w * 0.5f), y0 = cy - Mathf.Floor(h * 0.5f);
             var a = camera.ScreenToWorldPoint(new Vector3(x0, y0, z));
@@ -240,6 +235,21 @@ namespace Uninarok.World.View
             var d = camera.ScreenToWorldPoint(new Vector3(x0, y0 + h, z));
             _mark.Quad(a, b, c, d, _markUv, new Color32(255, 255, 255, 255));
             DrawnMarks = 1;
+        }
+
+        /// <summary>
+        /// How far below its top the mark is at a server time, in whole screen pixels: the frames of <c>cursors.act</c> action 3 in
+        /// turn (SPEC-0011 FR-16, PLAN-0011 D30), scaled so the lowest frame is <c>TargetMarkBobPixels</c>.
+        /// </summary>
+        internal static float MarkBob(uint now, CombatSettings settings)
+        {
+            var frames = settings.TargetMarkBobFrames;
+            if (frames == null || frames.Length == 0 || settings.TargetMarkBobPixels <= 0 || settings.TargetMarkBobMs <= 0) return 0f;
+            int max = 0;
+            for (int i = 0; i < frames.Length; i++) if (frames[i] > max) max = frames[i];
+            if (max <= 0) return 0f;
+            int frame = (int)(now % (uint)settings.TargetMarkBobMs * (uint)frames.Length / (uint)settings.TargetMarkBobMs);
+            return Mathf.Round(settings.TargetMarkBobPixels * frames[frame] / (float)max);
         }
 
         // ---- projectiles (FR-14) ----
