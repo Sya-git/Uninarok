@@ -203,7 +203,7 @@ namespace Uninarok.World.Tests
 
         static RESURRECTION Raise(uint id) => new RESURRECTION(Hex(Le(id) + "0000"));
 
-        [Test, Ignore("pending T2.3")]
+        [Test]
         public void OwnStatus_FromCharInfoThenUpdates()
         {
             using var rig = new Rig().ToInGame(CharacterWith(40, 50, 10, 12, 5, 3, 7, 2));
@@ -237,7 +237,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(5, s.AttackRange, "the range of a too-far answer counts too");
         }
 
-        [Test, Ignore("pending T2.3")]
+        [Test]
         public void OwnStatus_BeforeTheMapIsLoaded()
         {
             using var rig = new Rig().ToLoadingMap(CharacterWith(40, 50, 10, 12, 5, 3, 7, 2));
@@ -248,7 +248,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(33, rig.Get(rig.Model.OwnId).Hp);
         }
 
-        [Test, Ignore("pending T2.3")]
+        [Test]
         public void OwnStatus_FakeHpWhileDead_StaysDead()
         {
             using var rig = new Rig().ToInGame(CharacterWith(40, 50, 10, 12, 5, 3, 7, 2));
@@ -259,7 +259,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(25L, rig.Session.Status.Hp);
         }
 
-        [Test, Ignore("pending T2.3")]
+        [Test]
         public void OwnStatus_KeptAcrossMaps()
         {
             using var rig = new Rig().ToInGame(CharacterWith(40, 50, 10, 12, 5, 3, 7, 2));
@@ -274,7 +274,7 @@ namespace Uninarok.World.Tests
 
         // ---- the session's handlers (FR-1, FR-9) ----
 
-        [Test, Ignore("pending T2.3")]
+        [Test]
         public void WorldSession_Hp_FromEachEntry()
         {
             using var rig = new Rig().ToInGame();
@@ -286,7 +286,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual((1000, 10000), (rig.Get(Poring + 2).Hp, rig.Get(Poring + 2).MaxHp));
         }
 
-        [Test, Ignore("pending T2.3")]
+        [Test]
         public void WorldSession_Damage_StrikesAndRaises()
         {
             using var rig = new Rig().ToInGame();
@@ -306,7 +306,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(17L, gained);
         }
 
-        [Test, Ignore("pending T2.3")]
+        [Test]
         public void WorldSession_Resurrection_StandsUp()
         {
             using var rig = new Rig().ToInGame();
@@ -316,7 +316,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(EntityState.Standing, rig.Get(own).State);
         }
 
-        [Test, Ignore("pending T2.3")]
+        [Test]
         public void WorldSession_ThousandDamageAndStatusPackets_AllocateNothing()
         {
             using var rig = new Rig().ToInGame();

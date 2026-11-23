@@ -66,7 +66,7 @@
 - [x] **T2.2** `Blow`, the `Entity` fields, `SetHp`, `Strike`, `ClearTargets`, `Feigning`, `RESURRECTION` in the model. (FR-1, FR-4, FR-9)
   *Done when:* the `Blow_*` and `WorldModel_*` tests of T2.1 pass, SPEC-0010's model tests too.
 
-- [ ] **T2.3** `OwnStatus` and the session's status, HP, damage and resurrection handlers (plan §4.2, §4.3). (FR-1, FR-5, FR-7, FR-9, FR-11)
+- [x] **T2.3** `OwnStatus` and the session's status, HP, damage and resurrection handlers (plan §4.2, §4.3). (FR-1, FR-5, FR-7, FR-9, FR-11)
   *Done when:* the `OwnStatus_*` tests pass; handling 1,000 damage and status packets after warm-up allocates 0 B.
 
 - [ ] **T2.4** `WorldSession_CombatReplay_*` on the captures of T1.5. (FR-1, FR-13)

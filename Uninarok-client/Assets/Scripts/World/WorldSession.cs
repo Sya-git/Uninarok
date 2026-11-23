@@ -46,6 +46,14 @@ namespace Uninarok.World
         readonly PacketHandler<ITEM_FALL_ENTRY> _onItemFall;
         readonly PacketHandler<ITEM_DISAPPEAR> _onItemGone;
         readonly PacketHandler<PARAMETER_CHANGE> _onParameter;
+        // SPEC-0011
+        bool _statusKnown;
+        readonly PacketHandler<DAMAGE> _onDamage;
+        readonly PacketHandler<LONG_PARAMETER_CHANGE> _onLongParameter;
+        readonly PacketHandler<EXP_GAIN> _onExpGain;
+        readonly PacketHandler<ATTACK_RANGE> _onAttackRange;
+        readonly PacketHandler<ATTACK_TOO_FAR> _onTooFar;
+        readonly PacketHandler<RESURRECTION> _onResurrection;
 
         public WorldSession(INetworkClient client, NetworkFlow flow, ServerClock clock, WorldSettings settings)
         {
@@ -70,6 +78,12 @@ namespace Uninarok.World
             _onItemFall = OnItemFall;
             _onItemGone = OnItemGone;
             _onParameter = OnParameter;
+            _onDamage = OnDamage;
+            _onLongParameter = OnLongParameter;
+            _onExpGain = OnExpGain;
+            _onAttackRange = OnAttackRange;
+            _onTooFar = OnTooFar;
+            _onResurrection = OnResurrection;
             Own = new OwnCharacter(this, client, _flow);
 
             _flow.StateChanged += OnStateChanged;
@@ -132,7 +146,11 @@ namespace Uninarok.World
             else if (entry.StartTick == 0 && _settings.WarpKeepsDirection) facing = _ownFacing; // D14
             Model.Upsert(context.AccountId, EntityKind.Player, _ownLook, _ownSpeed, entry.Position.X, entry.Position.Y, facing, HeadDirection.Straight, state);
             Model.OwnId = context.AccountId;
+            SetOwnHp();
         }
+
+        // The own entity has the HP of the status (SPEC-0011 FR-1, PLAN-0011 4.2).
+        void SetOwnHp() => Model?.SetHp(Model.OwnId, (int)Math.Min(Status.Hp, int.MaxValue), (int)Math.Min(Status.MaxHp, int.MaxValue));
 
         // The character server lists them; the selected slot, else the selected id.
         static CharInfo Selected(SessionContext context)
@@ -199,6 +217,8 @@ namespace Uninarok.World
                 {
                     _entered = false;
                     _ownSpeed = 0;
+                    _statusKnown = false;
+                    Status.Reset();
                 }
             }
         }
@@ -215,6 +235,18 @@ namespace Uninarok.World
 
         void Subscribe()
         {
+            // The character server's data, before the map server's first status packet (they can come while the map loads).
+            if (!_statusKnown && _flow.Context.AccountId != 0)
+            {
+                _statusKnown = true;
+                Status.From(Selected(_flow.Context));
+            }
+            _subscriptions.Add(_onDamage);
+            _subscriptions.Add(_onLongParameter);
+            _subscriptions.Add(_onExpGain);
+            _subscriptions.Add(_onAttackRange);
+            _subscriptions.Add(_onTooFar);
+            _subscriptions.Add(_onResurrection);
             _subscriptions.Add(_onStand);
             _subscriptions.Add(_onNew);
             _subscriptions.Add(_onMoveEntry);
@@ -239,6 +271,7 @@ namespace Uninarok.World
             if (Model == null) return;
             var look = Look(p.Job, p.HairStyle, p.Weapon, p.Shield, p.HeadBottom, p.HeadTop, p.HeadMid, p.HairColour, p.ClothColour, p.Robe, p.Sex, p.BodyStyle);
             Model.Upsert(p.UnitId, KindOf(p.ObjectType, p.CharacterId), look, p.Speed, p.Position.X, p.Position.Y, p.Position.Direction, (HeadDirection)p.HeadDirection, StateOf(p.State));
+            Model.SetHp(p.UnitId, p.Hp, p.MaxHp);
         }
 
         void OnNew(in UNIT_NEW_ENTRY p)
@@ -246,6 +279,7 @@ namespace Uninarok.World
             if (Model == null) return;
             var look = Look(p.Job, p.HairStyle, p.Weapon, p.Shield, p.HeadBottom, p.HeadTop, p.HeadMid, p.HairColour, p.ClothColour, p.Robe, p.Sex, p.BodyStyle);
             Model.Upsert(p.UnitId, KindOf(p.ObjectType, p.CharacterId), look, p.Speed, p.Position.X, p.Position.Y, p.Position.Direction, (HeadDirection)p.HeadDirection, EntityState.Standing);
+            Model.SetHp(p.UnitId, p.Hp, p.MaxHp);
         }
 
         void OnMoveEntry(in UNIT_MOVE_ENTRY p)
@@ -254,6 +288,8 @@ namespace Uninarok.World
             var look = Look(p.Job, p.HairStyle, p.Weapon, p.Shield, p.HeadBottom, p.HeadTop, p.HeadMid, p.HairColour, p.ClothColour, p.Robe, p.Sex, p.BodyStyle);
             Model.UpsertWalking(p.UnitId, KindOf(p.ObjectType, p.CharacterId), look, p.Speed, p.Move.SourceX, p.Move.SourceY, p.Move.DestX, p.Move.DestY,
                                 (HeadDirection)p.HeadDirection, p.MoveStartTime, _clock.Now);
+            // From PACKETVER 20131223 a monster's HP comes in this entry, re-sent after each change (SPEC-0011 H10).
+            Model.SetHp(p.UnitId, p.Hp, p.MaxHp);
         }
 
         void OnMove(in UNIT_MOVE p) => Model?.Walk(p.UnitId, p.Move.SourceX, p.Move.SourceY, p.Move.DestX, p.Move.DestY, p.StartTick, _clock.Now);
@@ -287,10 +323,35 @@ namespace Uninarok.World
 
         void OnParameter(in PARAMETER_CHANGE p)
         {
-            if (p.VarId != VarSpeed) return;
-            _ownSpeed = (short)Math.Clamp(p.Value, 1, short.MaxValue); // also before the map is loaded
-            Model?.SetSpeed(Model.OwnId, _ownSpeed);
+            if (p.VarId == VarSpeed)
+            {
+                _ownSpeed = (short)Math.Clamp(p.Value, 1, short.MaxValue); // also before the map is loaded
+                Model?.SetSpeed(Model.OwnId, _ownSpeed);
+                return;
+            }
+            // HP while dead is the restart HP (display_fake_hp_when_dead): it never stands the character up (SPEC-0011 FR-1).
+            if (Status.SetParameter(p.VarId, p.Value) && (p.VarId == OwnStatus.VarHp || p.VarId == OwnStatus.VarMaxHp)) SetOwnHp();
         }
+
+        // ---- combat (SPEC-0011, PLAN-0011 4.3) ----
+
+        void OnDamage(in DAMAGE p)
+        {
+            if (Model == null) return;
+            var blow = Blow.From(p, _clock.Now);
+            Model.Strike(blow);
+            Raise(blow);
+        }
+
+        void OnLongParameter(in LONG_PARAMETER_CHANGE p) => Status.SetLongParameter(p.VarId, p.Value);
+
+        void OnExpGain(in EXP_GAIN p) => RaiseExp(p.VarId, p.Amount);
+
+        void OnAttackRange(in ATTACK_RANGE p) => Status.SetAttackRange(p.Range);
+
+        void OnTooFar(in ATTACK_TOO_FAR p) => Status.SetAttackRange(p.Range);
+
+        void OnResurrection(in RESURRECTION p) => Model?.SetState(p.UnitId, EntityState.Standing);
 
         // ---- wire to model ----
 
