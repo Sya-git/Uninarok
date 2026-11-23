@@ -85,6 +85,7 @@ namespace Uninarok.World
             _onTooFar = OnTooFar;
             _onResurrection = OnResurrection;
             Own = new OwnCharacter(this, client, _flow);
+            Combat = new OwnCombat(this, client, _flow);
 
             _flow.StateChanged += OnStateChanged;
             _flow.MapLoadRequested += OnMapLoadRequested;
@@ -97,6 +98,9 @@ namespace Uninarok.World
 
         /// <summary>The rules of the own character.</summary>
         public OwnCharacter Own { get; }
+
+        /// <summary>The own character's attacks and pickups (SPEC-0011 FR-2, FR-3, FR-10).</summary>
+        public OwnCombat Combat { get; }
 
         public ServerClock Clock => _clock;
         public WorldSettings Settings => _settings;

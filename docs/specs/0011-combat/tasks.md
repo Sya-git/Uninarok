@@ -81,7 +81,7 @@
 - [x] **T3.1** Tests, then implementation: `IWalkGrid.BlocksSight`, `HerculesPathfinder.LineOfSight`, `AttackRange` (plan §4.4). (FR-3, FR-10, FR-13)
   *Done when:* the `AttackRange_*` and `LineOfSight_MatchesServer_<map>` tests pass (30,000 pairs), SPEC-0010's pathfinder tests too.
 
-- [ ] **T3.2** Tests for `OwnCombat` (plan §4.5). (FR-2, FR-3, FR-10)
+- [x] **T3.2** Tests for `OwnCombat` (plan §4.5). (FR-2, FR-3, FR-10)
   *Done when:* every `OwnCombat_*` test of plan §6.1 exists, compiles and is ignored as pending.
 
 - [ ] **T3.3** `OwnCombat`: attack and approach. (FR-2, FR-3)
