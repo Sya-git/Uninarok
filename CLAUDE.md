@@ -24,6 +24,7 @@ Subsystem rules (threading, allocation, packet formats and so on) live in that s
 - **Generated code:** never hand-edit generated files; change the generator or its inputs.
 - **Reference docs:** a doc that is normative for a topic (for example the packet reference of SPEC-0001) is updated in the same commit as the code it describes.
 - **Dependencies:** no new third-party libraries without a plan entry.
+- **Diagrams:** architecture and flow diagrams in specs, plans and reference docs are written in Mermaid (a `mermaid` code block), not ASCII art.
 - **Secrets:** never commit credentials. Dev-only credential fields must be stripped from release builds.
 
 ### Commands
