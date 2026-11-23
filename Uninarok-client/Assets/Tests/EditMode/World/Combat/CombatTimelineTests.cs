@@ -303,10 +303,10 @@ namespace Uninarok.World.Tests
             return count;
         }
 
-        // FR-5, D32 (footage C): parts 100 ms apart; the total shows the running sum from the first part and is replaced by each
-        // following number of the blow.
+        // FR-5, D32, D36 (roBrowserLegacy, no footage sample): without a second hand the parts are 200 ms apart; the total shows
+        // the running sum from the first part and is replaced by each following number of the blow.
         [Test]
-        public void CombatTimeline_DoubleAttack300_150_150_300()
+        public void CombatTimeline_DoubleAttackNoLeftHand300_150_150_300()
         {
             Add(Hit(P, M, T, 300, kind: BlowKind.MultiHit, hits: 2));
             At(T + 500);
@@ -315,15 +315,28 @@ namespace Uninarok.World.Tests
             Assert.That(numbers.Exists(n => n.Kind == NumberKind.Normal && n.Value == 150 && n.Starts == T + 500));
             Assert.AreEqual(1, TotalsOf(numbers, out int total));
             Assert.AreEqual(150, total, "the total starts with the first part");
-            At(T + 599);
+            At(T + 699);
             Assert.AreEqual(2, NumbersNow().Count);
-            At(T + 600);
+            At(T + 700);
             numbers = NumbersNow();
-            Assert.AreEqual(3, numbers.Count, "two parts and one total, 100 ms later");
-            Assert.That(numbers.Exists(n => n.Kind == NumberKind.Normal && n.Value == 150 && n.Starts == T + 600));
+            Assert.AreEqual(3, numbers.Count, "two parts and one total, 200 ms later");
+            Assert.That(numbers.Exists(n => n.Kind == NumberKind.Normal && n.Value == 150 && n.Starts == T + 700));
             Assert.AreEqual(1, TotalsOf(numbers, out total), "the total is replaced, not added");
             Assert.AreEqual(300, total);
-            Assert.That(numbers.Exists(n => n.Kind == NumberKind.Total && n.Starts == T + 600), "a new total that grows again");
+            Assert.That(numbers.Exists(n => n.Kind == NumberKind.Total && n.Starts == T + 700), "a new total that grows again");
+            Assert.AreEqual((MotionKind.Hurt, T + 700), (KindOf(_m), _timeline.MotionOf(_m).Starts), "each part starts its own hurt");
+        }
+
+        // D36: with a second hand the parts are 100 ms apart (footage C).
+        [Test]
+        public void CombatTimeline_DoubleAttackWithLeftHand_PartsAt0And100()
+        {
+            Add(Hit(P, M, T, 300, kind: BlowKind.MultiHit, hits: 2, left: 50));
+            At(T + 599);
+            Assert.AreEqual(1, NumbersNow().FindAll(n => n.Kind == NumberKind.Normal).Count);
+            At(T + 600);
+            var numbers = NumbersNow();
+            Assert.That(numbers.Exists(n => n.Kind == NumberKind.Normal && n.Value == 150 && n.Starts == T + 600), "part 2, 100 ms later");
             Assert.AreEqual((MotionKind.Hurt, T + 600), (KindOf(_m), _timeline.MotionOf(_m).Starts), "each part starts its own hurt");
         }
 
@@ -401,6 +414,7 @@ namespace Uninarok.World.Tests
         public void CombatTimeline_SplitAlwaysSums()
         {
             _settings.MultiHitMs = 0;
+            _settings.MultiHitNoLeftMs = 0;
             _settings.LeftHandMs = 0;
             foreach (int left in new[] { 0, 13 })
             foreach (int damage in new[] { 1, 7, 97, 1000, 12345 })

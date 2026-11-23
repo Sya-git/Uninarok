@@ -42,8 +42,10 @@ namespace Uninarok.World
         [Header("Timeline (4.6)")]
         [Tooltip("A player stands in Standby after an attack or a hurt for this long, in ms; −1: until it does something else; 0: off.")]
         [Min(-1)] public int StandbyMs = -1;
-        [Tooltip("The i-th hit of a multi-hit is shown i times this after the hit moment, in ms (footage: 100, T9.3).")]
+        [Tooltip("The i-th hit of a multi-hit WITH a second hand is shown i times this after the hit moment, in ms (footage + roBrowserLegacy: 100, D36).")]
         [Min(0)] public int MultiHitMs = 100;
+        [Tooltip("The same for a multi-hit WITHOUT a second hand, in ms (roBrowserLegacy Entity.js: 200, no footage sample, D36).")]
+        [Min(0)] public int MultiHitNoLeftMs = 200;
         [Tooltip("The second hand's number is shown this after the hit moment (the first part), in ms.")]
         [Min(0)] public int LeftHandMs = 350;
         [Tooltip("A monster's death is shown at least this after its last hit moment, in ms (H9).")]

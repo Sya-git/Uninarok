@@ -37,7 +37,8 @@ Footage (T0.3, read in T9.3 on 2026-11-23): **A** = `evidence/T0.3/measured-A.md
 | hit moment | `At + attackMT`, for every attacker | FR-4, D3 (not the server's cap of H8) | as lead (owner, 2026-11-23: the rule from the server's packets). Shot 1 (A, `22-32-58` f1059): the number and the hit effect on the same frame, 0.27 s after the click, consistent with `At + attackMT` (about 215 ms) plus a round trip, n = 1. Shot 16 (A, `22-47-07` f355 to f424): not visible, the Medusa's basic attacks all missed. Ranged and whip blows differ: see "Rules and surprises" 9 |
 | hurt motion | `attackedMT` of the blow | FR-4 | as lead: not visible in the owner's footage (A shot 1 f1059 to f1066: the poring is hidden by the 4x number and the hit effect; shot 4: the Archbishop overlaps the Medusa). C (Classic, `dual` f162 to f173) shows a flinch of about 200 ms, `attackedMT` unknown there |
 | `StandbyMs` | −1 (until the player does something else) | lead, plan §4.6 and D11 | as lead, consistent: A shot 1, `22-32-58` f1307 to f2080: the acolyte keeps the same pose for 14 s after the last blow (for the bare-handed acolyte this pose is also her idle). Shot 8: not visible |
-| `MultiHitMs` | **100 ms** between the parts (was 200, lead) | footage C, D32 | C shot 5: `dual` 549 / 549 at f162 and f168, 429 / 429 at f4719 and f4725: 6 frames at 60 fps in both |
+| `MultiHitMs` | **100 ms** between the parts of a blow **with** a second hand (`LeftDamage` > 0) (was 200, lead) | footage + roBrowserLegacy, D32, D36 | C shot 5: `dual` 549 / 549 at f162 and f168, 429 / 429 at f4719 and f4725: 6 frames at 60 fps in both |
+| `MultiHitNoLeftMs` | **200 ms** between the parts of a blow **without** a second hand | roBrowserLegacy Entity.js (no footage sample), D36 | none: every footage sample of a double attack is dual-wield |
 | multi-hit total | a **running total** from the first part: with each part, and with the second hand's number, a new `Total` replaces the one shown over that unit, its value the sum so far (parts and second hand); only when the target is not a player; a plain blow with a second hand has none (was: one total with the last part) | footage C, owner 2026-11-23 (D32); not over a player: owner (D28) | C shot 5: `dual` yellow 549 at f162 (with part 1), 1098 at f168, 1261 (= 549 + 549 + 163) at f184; second sample 429 (f4719), 858 (f4725), 1009 (f4740); plain 532 + 168 showed no total. Over a player: not visible (all samples on monsters), as D28 |
 | `LeftHandMs` | 350 ms after the first part (the hit moment) | lead, plan §4.6 (roBrowserLegacy) | as lead, confirmed from part 1 (the timeline counts from the hit moment, which is part 1): C shot 6, `dual` f162 to f182 (20 frames, 333 ms), f4719 to f4740 (21, 350 ms), plain blows 20 frames |
 | `HurtBeforeDeathMs` | 250 ms (monsters) | H9: the death notice comes 250 ms after the damage | as lead (H9): not measured, A `22-32-58` shot 8 (pupa killed about 55.5 s, sinks at 56.0 s) not framed |
@@ -268,13 +269,31 @@ Arrow picture (B, `B_arrowpicture_22-39-21_10.74s.jpg`, new, nothing to change):
 1. **A miss belongs to the attacker** (D31): the number goes over the target, the Miss over whoever missed; "LUCKY!!" over the unit that dodged.
 2. **A number's scale is 4 → 1, then fixed at 1** (D34), not 4 → 0.
 3. **A Miss lives about 1.5 s and rises at a constant speed** with no x drift (D34).
-4. **The multi-hit total is a running sum** from the first part, replaced at each part and at the second hand's number (D32); the parts are 100 ms apart.
+4. **The multi-hit total is a running sum** from the first part, replaced at each part and at the second hand's number (D32); the parts are 100 ms apart with a second hand, 200 ms without (D36).
 5. **A player's arrow number is at launch + 192 ms whatever the distance** (D33); the arrow vanishes earlier for a near target.
-6. **The attack cycle is the server's.** In the dual-dagger Short (C, ASPD 172) the cycle is about 533 ms, about 1.9 × the `amotion` formula (280 ms); at 188 ASPD (katar) about 2 ×. That is the server's `attackMT`: this client uses the packet's value, never a formula. No code.
+6. **The attack cycle is the server's.** In the dual-dagger Short (C, ASPD 172) the cycle is about 533 ms against an `amotion` of 280 ms. That is no surprise and not a doubled `attackMT`: the observed cycle is the server's `ADelay`, which is 2 × `amotion` (Hercules sends `amotion` as `attackMT`); at 188 ASPD (katar) the same. This client uses the packet's value, never a formula. No code.
 7. **Green numbers are heals** (A `22-47-07` f492): SPEC-0012's (BACKLOG); nothing is drawn for a negative damage here.
 8. **The white slash arc and sparkles at the hit** (A, B) are a hit effect: SPEC-0013's (plan §4.8), not drawn here.
 9. **Hit moment of ranged and whip blows.** The bow's number comes at `At + 0.56 × attackMT` (launch + 192, which this client does, D33); the whip's about 84 ms after the whip unfurls at `attackMT` 380 (B). The melee hit moment stays `At + attackMT` (FR-4, owner 2026-11-23); the whip's early number is a question for the spec (BACKLOG).
 10. **Katar (C, Classic only):** two criticals per attack, the small one 83 to 100 ms after the big one; here the second number is `LeftDamage` at `LeftHandMs` 350. Not in the owner's footage (BACKLOG).
+
+## roBrowserLegacy timing constants (D36)
+
+Source: roBrowserLegacy master, `src/Engine/MapEngine/Entity.js` `onEntityAction` (read 2026-11-23, quoted by a reader agent).
+
+| roBrowserLegacy | Value | Ours |
+|---|---|---|
+| `C_MULTIHIT_DELAY` (`PLUSATTACKED_MOTIONTIME`) | 200 ms | `MultiHitNoLeftMs` 200 (the gap without a left hand); half of it, 100, is `MultiHitMs` (with a left hand) |
+| single hit, number | at `attackMT` | hit moment `At + attackMT` (FR-4) |
+| single hit, left hand | `attackMT + 200 × 1.75` = 350 after the hit | `LeftHandMs` 350 |
+| multi-hit on a monster, part numbers | `attackMT` and `attackMT + C/2` (+100) with a left hand, `attackMT + C` (+200) without | `i × MultiHitMs` with a left hand, `i × MultiHitNoLeftMs` without |
+| multi-hit total | `attackMT + 200`, or `attackMT + 350` with a left hand | a running total at each part and at the second hand (D32); not the same rule, footage C decided it |
+| hurt of a multi-hit | triggered per hit at `attackMT + C × i` | each part starts its own hurt at its number's time |
+| death of a multi-hit | the last hit + 200 ms | `HurtBeforeDeathMs` 250 after the last hit moment (H9) |
+| `AVG_ATTACK_SPEED` | 432 ms (the default `attackMT`) | none: the packet's value is always used |
+| `MAX_ATTACKMT` | 864 ms (`attackMT` is clamped to it) | **none: this client does not clamp the hit moment** (plan D3, uncapped). A difference, no code |
+
+Attack speed enters only through `attackMT` (the packet's value, which sets the hit moment and the animation speed here); every gap above is a constant, not scaled by it.
 
 ## Owner's notes on the footage (2026-11-22)
 

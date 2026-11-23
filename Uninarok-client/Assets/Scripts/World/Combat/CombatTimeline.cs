@@ -249,9 +249,11 @@ namespace Uninarok.World
                     totals = !TargetIsPlayer(blow.TargetId);
                     // Each part damage / n, the remainder on the last: they always sum to the blow's damage.
                     int part = blow.Damage / hits;
+                    // D36: the gap depends on whether the blow has a second hand.
+                    int gap = Math.Max(0, blow.LeftDamage > 0 ? _settings.MultiHitMs : _settings.MultiHitNoLeftMs);
                     for (int i = 0; i < hits; i++)
                     {
-                        uint at = unchecked(hit + (uint)(i * Math.Max(0, _settings.MultiHitMs)));
+                        uint at = unchecked(hit + (uint)(i * gap));
                         int value = i == hits - 1 ? blow.Damage - part * (hits - 1) : part;
                         sum += value;
                         Pend(at, blow.TargetId, value, kind, hurts, blow.HurtMs);

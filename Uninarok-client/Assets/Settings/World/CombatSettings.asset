@@ -26,6 +26,7 @@ MonoBehaviour:
   TargetMarkSingleMs: 0
   StandbyMs: -1
   MultiHitMs: 100
+  MultiHitNoLeftMs: 200
   LeftHandMs: 350
   HurtBeforeDeathMs: 250
   PlayerHurtBeforeDeathMs: 0
