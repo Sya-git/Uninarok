@@ -504,6 +504,74 @@ namespace Uninarok.World.PlayTests
             Assert.AreEqual(1, overlay.DrawnBars, "no bar while the own character is dead");
         }
 
+        // ---- SPEC-0011 T11.2 (FR-16, FR-12; PLAN-0011 4.8, D29): the target mark above the standing sprite ----
+
+        [UnityTest, Category("NeedsData")]
+        public IEnumerator CombatOverlay_TargetMark_AboveHeadAtFourTurns()
+        {
+            Poring(1, 13, 20);
+            _presenter.Sync(_model);
+            yield return Loaded(1);
+            var overlay = Overlay(out var camera, out _);
+            overlay.MarkSource = _ => 1;
+            var view = _presenter.ViewOf(1);
+            Assert.Greater(view.StandingTop, 0f, "the standing sprite has a top");
+            foreach (float yaw in new[] { 0f, 90f, 180f, 270f })
+            {
+                LookAt(camera, view.transform.position, yaw);
+                overlay.Draw(camera);
+                Assert.AreEqual(1, overlay.DrawnMarks, $"yaw {yaw}");
+                var rect = ScreenRectOf(camera, overlay.MarkMesh.Mesh, 0);
+                Assert.AreEqual(22f, rect.width, 0.05f, $"yaw {yaw}: 22 px wide at any turn");
+                Assert.AreEqual(15f, rect.height, 0.05f, $"yaw {yaw}: 15 px high");
+                var top = camera.WorldToScreenPoint(view.transform.position + camera.transform.up * view.StandingTop);
+                Assert.AreEqual(Mathf.Round(top.y) + 66f, rect.center.y, 1f, $"yaw {yaw}: 66 px above the standing top");
+                Assert.AreEqual(Mathf.Round(top.x), rect.center.x, 1f, $"yaw {yaw}: centred over the unit");
+                Assert.AreEqual(Mathf.Round(rect.xMin), rect.xMin, 0.05f, "on whole pixels");
+                Assert.AreEqual(Mathf.Round(rect.yMin), rect.yMin, 0.05f, "on whole pixels");
+            }
+        }
+
+        [UnityTest, Category("NeedsData")]
+        public IEnumerator CombatOverlay_TargetMark_OnlyOneMark()
+        {
+            Poring(1, 13, 20);
+            Poring(3, 15, 20);
+            Poring(4, 17, 20);
+            _presenter.Sync(_model);
+            yield return Loaded(1);
+            var overlay = Overlay(out var camera, out _);
+            LookAt(camera, _presenter.ViewOf(3).transform.position, 0f);
+            overlay.MarkSource = _ => 3;
+            overlay.Draw(camera);
+            Assert.AreEqual(1, overlay.DrawnMarks);
+            Assert.AreEqual(1, overlay.MarkMesh.Count, "one quad for the three monsters in view");
+            overlay.MarkSource = _ => 0;
+            overlay.Draw(camera);
+            Assert.AreEqual(0, overlay.MarkMesh.Count, "no target, no mark");
+            overlay.MarkSource = _ => 99;
+            overlay.Draw(camera);
+            Assert.AreEqual(0, overlay.MarkMesh.Count, "an unknown id shows nothing");
+        }
+
+        [UnityTest, Category("NeedsData")]
+        public IEnumerator CombatOverlay_TargetMark_HiddenWhenDead()
+        {
+            Poring(1, 13, 20);
+            _presenter.Sync(_model);
+            yield return Loaded(1);
+            var overlay = Overlay(out var camera, out _);
+            LookAt(camera, _presenter.ViewOf(1).transform.position, 0f);
+            overlay.MarkSource = _ => 1;
+            overlay.Draw(camera);
+            Assert.AreEqual(1, overlay.DrawnMarks);
+            _model.Vanish(1, VanishReason.Died, 0);
+            _presenter.Sync(_model);
+            overlay.Draw(camera);
+            Assert.AreEqual(0, overlay.DrawnMarks, "a dead monster shows no mark");
+            Assert.AreEqual(0, overlay.MarkMesh.Count);
+        }
+
         // ---- SPEC-0011 T6.5 (FR-12; PLAN-0011 6.1): 100 numbers and 300 units, bars and arrows, at 0 B per frame ----
 
         [UnityTest, Category("NeedsData")]
@@ -536,6 +604,7 @@ namespace Uninarok.World.PlayTests
             overlay.Use(_model, new OwnStatus { Hp = 50, MaxHp = 100, Sp = 10, MaxSp = 20 }, timeline, _presenter, settings);
             _presenter.Timeline = timeline;
             _model.SetLook(First, LookType.Weapon, 11, 0); // the own character shoots arrows
+            overlay.MarkSource = _ => First + 151; // and a mark on a monster
 
             const uint T = 10_000;
             for (uint i = 0; i < 110; i++)
@@ -563,6 +632,7 @@ namespace Uninarok.World.PlayTests
             Assert.GreaterOrEqual(overlay.DrawnNumbers, 100, "100 numbers on the screen");
             Assert.GreaterOrEqual(overlay.DrawnBars, 150, "the hurt porings' bars and the own one");
             Assert.Greater(overlay.DrawnArrows, 0, "and arrows");
+            Assert.AreEqual(1, overlay.DrawnMarks, "and the mark");
             Assert.AreEqual(300, _presenter.ShownCount);
             Assert.That(() => frames(), UnityEngine.TestTools.Constraints.Is.Not.AllocatingGCMemory());
         }

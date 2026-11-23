@@ -25,8 +25,9 @@ namespace Uninarok.World.View
         CombatTimeline _timeline;
         WorldPresenter _presenter;
         CombatSettings _settings;
-        QuadMesh _digits, _messages, _bars;
-        Material _digitMaterial, _messageMaterial, _barMaterial;
+        QuadMesh _digits, _messages, _bars, _mark;
+        Material _digitMaterial, _messageMaterial, _barMaterial, _markMaterial;
+        Rect _markUv;
         readonly Rect[] _digitUv = new Rect[10];
         readonly Vector2[] _digitPx = new Vector2[10];
         readonly Rect[] _messageUv = new Rect[6];
@@ -48,7 +49,14 @@ namespace Uninarok.World.View
         /// <summary>Bars drawn in the last frame.</summary>
         internal int DrawnBars { get; private set; }
 
+        /// <summary>Marks drawn in the last frame (0 or 1).</summary>
+        internal int DrawnMarks { get; private set; }
+
         internal QuadMesh BarMesh => _bars;
+        internal QuadMesh MarkMesh => _mark;
+
+        /// <summary>Without a session (tests): the monster that shows the mark at a server time, in place of <c>Combat.MarkedTarget</c>.</summary>
+        internal Func<uint, uint> MarkSource { get; set; }
 
         CombatTimeline Timeline => _session != null ? _session.Timeline : _timeline;
         WorldModel Model => _session != null ? _session.Model : _model;
@@ -78,6 +86,17 @@ namespace Uninarok.World.View
             _digits ??= new QuadMesh("Combat Digits", settings.NumberCapacity * settings.MaxDigits);
             _messages ??= new QuadMesh("Combat Messages", settings.NumberCapacity * 2);
             _bars ??= new QuadMesh("Combat Bars", settings.BarCapacity * 5);
+            _mark ??= new QuadMesh("Combat Mark", 4);
+            if (_markMaterial != null) Destroy(_markMaterial);
+            _markMaterial = null;
+            if (settings.TargetMark != null)
+            {
+                var sprite = settings.TargetMark;
+                var r = sprite.textureRect;
+                var t = sprite.texture;
+                _markUv = new Rect(r.x / t.width, r.y / t.height, r.width / t.width, r.height / t.height);
+                _markMaterial = new Material(settings.OverlayShader) { name = "Combat Mark", mainTexture = t, hideFlags = HideFlags.DontSave };
+            }
             if (_barMaterial == null)
                 _barMaterial = new Material(settings.OverlayShader) { name = "Combat Bars", mainTexture = Texture2D.whiteTexture, hideFlags = HideFlags.DontSave };
             _digitMaterial = MakeMaterial(settings.OverlayShader, settings.Digits);
@@ -105,7 +124,9 @@ namespace Uninarok.World.View
             _messages?.End();
             _bars?.Begin();
             _bars?.End();
-            DrawnNumbers = DrawnBars = 0;
+            _mark?.Begin();
+            _mark?.End();
+            DrawnNumbers = DrawnBars = DrawnMarks = 0;
             for (int i = 0; i < _arrows.Length; i++) if (_arrows[i] != null) _arrows[i].Hide();
             DrawnArrows = 0;
         }
@@ -143,6 +164,12 @@ namespace Uninarok.World.View
             var p = new RenderParams(_barMaterial) { layer = gameObject.layer, shadowCastingMode = ShadowCastingMode.Off };
             if (_bars.Count > 0) Graphics.RenderMesh(p, _bars.Mesh, 0, Matrix4x4.identity);
             p.material = _digitMaterial;
+            if (_mark.Count > 0 && _markMaterial != null)
+            {
+                p.material = _markMaterial;
+                Graphics.RenderMesh(p, _mark.Mesh, 0, Matrix4x4.identity);
+                p.material = _digitMaterial;
+            }
             if (_digits.Count > 0) Graphics.RenderMesh(p, _digits.Mesh, 0, Matrix4x4.identity);
             p.material = _messageMaterial;
             if (_messages.Count > 0) Graphics.RenderMesh(p, _messages.Mesh, 0, Matrix4x4.identity);
@@ -157,11 +184,13 @@ namespace Uninarok.World.View
             _digits.Begin();
             _messages.Begin();
             _bars.Begin();
-            DrawnNumbers = DrawnBars = 0;
+            _mark.Begin();
+            DrawnNumbers = DrawnBars = DrawnMarks = 0;
             int arrows = 0;
             if (map != null && camera != null)
             {
                 DrawBars(map, camera);
+                DrawMark(map, camera, timeline);
                 if (timeline != null)
                 {
                     DrawNumbers(timeline, map, camera.transform);
@@ -173,6 +202,44 @@ namespace Uninarok.World.View
             _digits.End();
             _messages.End();
             _bars.End();
+            _mark.End();
+        }
+
+        // ---- target mark (FR-16, FR-12; PLAN-0011 4.8, D29) ----
+
+        // One quad over the monster OwnCombat names: its centre TargetMarkHeight screen pixels above the top of the unit's standing
+        // sprite, on whole pixels, constant in screen pixels. Not drawn for a unit that is not shown or is dead.
+        void DrawMark(MapData map, Camera camera, CombatTimeline timeline)
+        {
+            if (_markMaterial == null) return;
+            uint now = timeline != null ? timeline.Now : 0;
+            var combat = _session != null ? _session.Combat : null;
+            uint id = combat != null ? combat.MarkedTarget(now) : MarkSource != null ? MarkSource(now) : 0;
+            var model = Model;
+            if (id == 0 || model == null || !model.TryGetSlot(id, out int slot)) return;
+            ref readonly var e = ref model[slot];
+            if (e.Id != id || e.State == EntityState.Dead) return;
+            var view = _presenter.ViewOf(id);
+            if (view == null || !view.gameObject.activeInHierarchy || view.PickRect.height <= 0f) return;
+            var top = view.transform.position + camera.transform.up * view.StandingTop;
+            var p = camera.WorldToScreenPoint(top);
+            if (p.z <= camera.nearClipPlane) return;
+            float bob = 0f;
+            if (_settings.TargetMarkBobPixels > 0)
+            {
+                float phase = (now % (uint)_settings.TargetMarkBobMs) / (float)_settings.TargetMarkBobMs;
+                bob = _settings.TargetMarkBobPixels * 0.5f * (1f - Mathf.Cos(phase * 2f * Mathf.PI));
+            }
+            float w = _settings.TargetMarkSizePx.x, h = _settings.TargetMarkSizePx.y;
+            float cx = Mathf.Round(p.x), cy = Mathf.Round(p.y + _settings.TargetMarkHeight + bob);
+            float z = camera.nearClipPlane + 0.01f;
+            float x0 = cx - Mathf.Floor(w * 0.5f), y0 = cy - Mathf.Floor(h * 0.5f);
+            var a = camera.ScreenToWorldPoint(new Vector3(x0, y0, z));
+            var b = camera.ScreenToWorldPoint(new Vector3(x0 + w, y0, z));
+            var c = camera.ScreenToWorldPoint(new Vector3(x0 + w, y0 + h, z));
+            var d = camera.ScreenToWorldPoint(new Vector3(x0, y0 + h, z));
+            _mark.Quad(a, b, c, d, _markUv, new Color32(255, 255, 255, 255));
+            DrawnMarks = 1;
         }
 
         // ---- projectiles (FR-14) ----
@@ -382,7 +449,9 @@ namespace Uninarok.World.View
             _digits?.Dispose();
             _messages?.Dispose();
             _bars?.Dispose();
+            _mark?.Dispose();
             if (_barMaterial != null) Destroy(_barMaterial);
+            if (_markMaterial != null) Destroy(_markMaterial);
             if (_digitMaterial != null) Destroy(_digitMaterial);
             if (_messageMaterial != null) Destroy(_messageMaterial);
         }

@@ -15,6 +15,7 @@ MonoBehaviour:
   Digits: {fileID: 11400000, guid: efd2d9bb19bdbe346ad4ef940b373ef0, type: 2}
   Messages: {fileID: 11400000, guid: 76a7e8605bb6b9242a2eff5ccfd0eb7f, type: 2}
   Arrow: {fileID: 11400000, guid: 50db1caed0713134f8da87dc6b293da2, type: 2}
+  TargetMark: {fileID: -1172562426, guid: f00e95db59d0d034babc8ad6e6ad5876, type: 3}
   OverlayShader: {fileID: 4800000, guid: dbeebc657a8519941937f94fe7964821, type: 3}
   ApproachRepeatMs: 200
   AttackSilenceMs: 1500
@@ -22,6 +23,7 @@ MonoBehaviour:
   AttackSilencePadMs: 500
   AttackRetries: 3
   PickupRetryMs: 400
+  TargetMarkSingleMs: 0
   StandbyMs: -1
   MultiHitMs: 200
   LeftHandMs: 350
@@ -64,6 +66,10 @@ MonoBehaviour:
   MonsterHp: {r: 1, g: 0, b: 0.90588236, a: 1}
   MonsterHpLow: {r: 1, g: 1, b: 0, a: 1}
   BarCapacity: 512
+  TargetMarkSizePx: {x: 22, y: 15}
+  TargetMarkHeight: 66
+  TargetMarkBobPixels: 0
+  TargetMarkBobMs: 1000
   HoldAttackMs: 300
   PickMinPx: 24
   RestartTimeoutMs: 3000

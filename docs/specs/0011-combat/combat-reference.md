@@ -23,6 +23,10 @@ Each row is one setting or one table row. **Source** is where the first value co
 | `AttackRetries` | 3 | plan choice | live, T9.1 |
 | `PickupRetryMs` | 400 ms | plan choice: one step of lag | live, T9.1 |
 | `TargetMarkSingleMs` | 0 ms after the single blow's hit moment (`blow.At + AttackMs`); while approaching or in a continuous attack the mark stays | footage, `evidence/T0.3/README.md`, 3 samples | shot 17: the mark went 0.04 s and 0.12 s before the number and about 0.4 s after it; first value 0, to be refined with more single attacks |
+| `TargetMark` (the picture) | `sprite/cursors` frame 6 (14 x 10 px, white faceted diamond pointing down, dark outline), imported as the sprite `f6` of `Assets/Art/Imported/sprite/_sheets/e7/cursors_e7ef9996.png`; in `cursors.act` it is action 3 (21 frames of 100 ms, the original's own target-mark animation, tint alpha 245); frames 16 and 24 of the same file are the same diamond in other shading (action 9) and an oval | extracted client data (`GRF Resources~/data/sprite/cursors.spr`, `cursors.act`), found by comparing the footage's `mark_sprite_26x18_x8.png` with every frame of cursors, effects and UI sprites | OpenCV template match of the frame-6 sprite on footage frame 17.63 s (`22-32-58.mp4`): score 0.975 at 22 x 15 |
+| `TargetMarkSizePx` | 22 x 15 screen px (the 14 x 10 sprite shown about 1.5 times larger, scaled by the owner's client; the plan's "about 22 x 15") | footage, `evidence/T0.3/README.md`; best match of the scale test above (22 x 17, 21 x 15, 22 x 15 all above 0.973) | shot 17 |
+| `TargetMarkHeight` | 66 screen px from the top of the standing sprite to the mark's centre | footage, `evidence/T0.3/README.md` (poring top 580, mark centre 514) | shot 17 |
+| `TargetMarkBobPixels`, `TargetMarkBobMs` | 0 px, 1,000 ms (no float) | footage: constant y over a standing poring (4.7 to 5.0 s). **Open:** `cursors.act` action 3 floats the picture by 9 px (offset -80, -71, -80 over 2.1 s); the footage is not long enough over a standing monster to tell whether the original plays it | `evidence/T0.3/README.md` |
 
 ## Timeline (plan §4.6)
 

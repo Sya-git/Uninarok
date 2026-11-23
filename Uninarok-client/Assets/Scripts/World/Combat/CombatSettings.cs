@@ -18,6 +18,8 @@ namespace Uninarok.World
         public SpriteAnimation Messages;
         [Tooltip("sprite/npc/skel_archer_arrow (T6.4).")]
         public SpriteAnimation Arrow;
+        [Tooltip("The target mark: sprite/cursors frame 6 (action 3 of cursors.act), a white faceted diamond pointing down (T11.2).")]
+        public Sprite TargetMark;
         [Tooltip("Uninarok/Overlay.")]
         public Shader OverlayShader;
 
@@ -106,6 +108,16 @@ namespace Uninarok.World
         public Color MonsterHp = new Color32(0xff, 0x00, 0xe7, 0xff);
         public Color MonsterHpLow = new Color32(0xff, 0xff, 0x00, 0xff);
         [Min(1)] public int BarCapacity = 512;
+
+        [Header("Target mark (4.8, FR-16)")]
+        [Tooltip("Size of the mark on the screen, in pixels (the footage shows the 14 x 10 sprite at about 22 x 15).")]
+        public Vector2Int TargetMarkSizePx = new Vector2Int(22, 15);
+        [Tooltip("The mark's centre is this many screen pixels above the top of the unit's standing sprite.")]
+        public int TargetMarkHeight = 66;
+        [Tooltip("The mark floats this many screen pixels up and down (0: none, as in the footage).")]
+        [Min(0)] public int TargetMarkBobPixels = 0;
+        [Tooltip("One float up and down takes this long, in ms.")]
+        [Min(1)] public int TargetMarkBobMs = 1000;
 
         [Header("Input and restart (4.10, 4.11)")]
         [Tooltip("A plain press on a monster still held after this attacks continuously, in ms.")]
