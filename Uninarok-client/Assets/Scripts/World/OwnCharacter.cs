@@ -55,7 +55,10 @@ namespace Uninarok.World
         // ---- walk (FR-9) ----
 
         /// <summary>Asks the server to walk to a cell when it would accept; the walk starts when it answers.</summary>
-        public WalkRequestResult RequestWalk(int x, int y)
+        public WalkRequestResult RequestWalk(int x, int y) => WalkFor(x, y);
+
+        /// <summary>A walk asked for by the combat rules (SPEC-0011 FR-3, FR-10): it does not end the attack.</summary>
+        internal WalkRequestResult WalkFor(int x, int y)
         {
             var result = CheckWalk(x, y);
             if (result != WalkRequestResult.Sent) return result;

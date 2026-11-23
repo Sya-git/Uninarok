@@ -344,6 +344,7 @@ namespace Uninarok.World
             if (Model == null) return;
             var blow = Blow.From(p, _clock.Now);
             Model.Strike(blow);
+            Combat.OnBlow(blow, blow.At);
             Raise(blow);
         }
 

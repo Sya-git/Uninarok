@@ -91,7 +91,7 @@ namespace Uninarok.World.Tests
 
         // ---- FR-2: what is attacked, and how ----
 
-        [Test, Ignore("pending T3.3")]
+        [Test]
         public void OwnCombat_Click_SendsSingle()
         {
             Monster(MonsterA, 151, 200);
@@ -109,7 +109,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(1, Sent.Count);
         }
 
-        [Test, Ignore("pending T3.3")]
+        [Test]
         public void OwnCombat_CtrlHoldNoCtrl_SendContinuous()
         {
             Monster(MonsterA, 151, 200);
@@ -127,7 +127,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual((MonsterB, true), (Combat.TargetId, Combat.Continuous));
         }
 
-        [Test, Ignore("pending T3.3")]
+        [Test]
         public void OwnCombat_PlayerNpcOwn_SendNothing()
         {
             _rig.Client.Deliver(Stand(PlayerId, 151, 200, type: 0, gid: 150001, job: 0));
@@ -144,7 +144,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(CombatState.Idle, Combat.State);
         }
 
-        [Test, Ignore("pending T3.3")]
+        [Test]
         public void OwnCombat_SittingOrDead_SendNothing()
         {
             Monster(MonsterA, 151, 200);
@@ -218,7 +218,7 @@ namespace Uninarok.World.Tests
 
         // ---- FR-3: range and approach ----
 
-        [Test, Ignore("pending T3.3")]
+        [Test]
         public void OwnCombat_Approach_StopsAtRange1And9()
         {
             Monster(MonsterC, 130, 200);
@@ -239,7 +239,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(0, Count(PacketIds.REQUEST_ACT));
         }
 
-        [Test, Ignore("pending T3.3")]
+        [Test]
         public void OwnCombat_TargetMoves_WalksAgain()
         {
             Monster(MonsterA, 160, 200);
@@ -256,7 +256,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(2, Count(PacketIds.REQUEST_MOVE), "the target stands: no new walk while the own walk goes on");
         }
 
-        [Test, Ignore("pending T3.3")]
+        [Test]
         public void OwnCombat_AsksWhileWalkingOnceInRange()
         {
             Monster(MonsterA, 160, 200);
@@ -345,7 +345,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(1, _info.Count, string.Join("\n", _info));
         }
 
-        [Test, Ignore("pending T3.3")]
+        [Test]
         public void OwnCombat_TargetDies_Idle()
         {
             Monster(MonsterA, 151, 200);

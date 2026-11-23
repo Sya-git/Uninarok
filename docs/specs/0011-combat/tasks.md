@@ -84,7 +84,7 @@
 - [x] **T3.2** Tests for `OwnCombat` (plan §4.5). (FR-2, FR-3, FR-10)
   *Done when:* every `OwnCombat_*` test of plan §6.1 exists, compiles and is ignored as pending.
 
-- [ ] **T3.3** `OwnCombat`: attack and approach. (FR-2, FR-3)
+- [x] **T3.3** `OwnCombat`: attack and approach. (FR-2, FR-3)
   *Done when:* the click, approach, target-moves and target-dies tests pass.
 
 - [ ] **T3.4** `OwnCombat`: too far, silence, no ammunition, ground click, cancel. (FR-2, FR-3, FR-8)
