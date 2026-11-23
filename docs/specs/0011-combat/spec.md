@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Approved (owner, 2026-11-22; FR-7 amended by the owner 2026-11-22: a monster healed to full) |
+| **Status** | Approved (owner, 2026-11-22; FR-7 amended by the owner 2026-11-22: a monster healed to full; §6 pickup results corrected by the owner 2026-11-22 after T0.1) |
 | **Created** | 2026-11-21 |
 | **Owner** | Jhonnatan |
 | **Depends on** | [SPEC-0001](../0001-networking-core/spec.md) (packets), [SPEC-0009](../0009-unit-display/spec.md) (animations: attack, hurt, dead; play once and hold), [SPEC-0010](../0010-world-session/spec.md) (world model, server clock, own walk, vanish reasons, ground items) |
@@ -64,7 +64,7 @@ Priority: **M** = must, **S** = should.
   - Damage types (`enum battle_dmg_type`): 0 normal, 4 endure, 8 multi-hit, 9 endured multi-hit, 10 critical, 11 lucky dodge; a hit with no target motion and damage > 0 is turned into endure (`clif_calc_delay`). The SP damage flag is always 0.
   - From PACKETVER 20131223 a monster's HP reaches the client by re-sending its walking-unit entry (`0x09FD`, `HP`/`maxHP` fields, −1 when hidden) after each damage; `UNIT_HP` `0x0977` is only sent by older versions (`mob.cpp`, `clif.cpp` under `#if PACKETVER < 20131223`). Its packet doc is corrected in the plan.
   - Own death is `UNIT_VANISH` reason 1 for the own id; respawn (`CZ_RESTART` type 0) is `pc_setpos` to the save point, which sends a map change even on the same map; a revive in place is `ZC_RESURRECTION`.
-  - Pickup: server distance ≤ 2 cells (square), a failure always answers with `ZC_ITEM_PICKUP_ACK` result 6; the pickup motion is `ZC_NOTIFY_ACT` `0x008A` with action 1 to the area.
+  - Pickup: server distance ≤ 2 cells (square), every failure answers with `ZC_ITEM_PICKUP_ACK` and a result other than 0: 6 for a refusal before the item is given (too far, reserved loot, dead, cannot act), the inventory's own code when it cannot take the item (2 overweight, 4 no free slot, 5 maximum amount, 7 stack limit); the pickup motion is `ZC_NOTIFY_ACT` `0x008A` with action 1 to the area.
 - Packet IDs and layouts depend on PACKETVER 20220406 and are each checked against `packets_struct.h`, `clif.cpp` and a real capture in the plan, with their docs in the same change (BACKLOG). Expected: in `0x08C8` damage, `0x008A` act (pickup motion), `0x0139` too far, `0x013A` attack range, `0x00B0`, `0x00B1` and `0x0ACB` status values (EXP as 64-bit), `0x0ACC` EXP gain, `0x0148` resurrection, `0x09FD` monster HP, `0x0B41` pickup result, `0x0080` and `0x00A1` (SPEC-0010); out `0x0437` attack (actions 0 and 7), `0x0118` stop attack, `0x0362` pickup, `0x00B2` restart.
 - Server values (`attack_walk_delay`, `show_monster_hp_bar`, `display_fake_hp_when_dead`, attack range) come from the server; the client follows what it receives and keeps Hercules's defaults only where it must assume one.
 - Display of blows uses SPEC-0009's play-once and hold animations; timing uses SPEC-0010's server clock only where a packet carries a server time; blows start when they arrive (no lag compensation).

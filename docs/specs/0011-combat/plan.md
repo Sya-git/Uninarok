@@ -116,7 +116,7 @@ Sizes from the Hercules length table for 20220406. "Seen": how often in SPEC-001
 | `0x0ACC` | 18 | `clif_displayexp`: id at 2, amount `int64` at 6, var at 14, quest at 16 | as §4.1 | 16, amount 1, vars 1 and 2, quest 0 | ok |
 | `0x0148` | 8 | `clif_resurrection`: id at 2, type 0 at 6 | as §4.1 | none | ok |
 | `0x09FD`, `0x09FE`, `0x09FF` | variable | SPEC-0010 | unchanged | 186, 35, 184 | ok |
-| `0x0B41` | 70 | `PACKET_ZC_ITEM_PICKUP_ACK`: `result` at 33 | result codes below | 1: red potion (501) × 5, result 0 | **differs** from spec §6 (D13) |
+| `0x0B41` | 70 | `PACKET_ZC_ITEM_PICKUP_ACK`: `result` at 33 | result codes below | 1: red potion (501) × 5, result 0 | differed from spec §6, now corrected (D13) |
 | `0x0080`, `0x00A1` | 7, 6 | SPEC-0010 | unchanged | 422, 69 | ok |
 | `0x0437` out | 7 | `clif_parse_ActionRequest`, shuffle `packet(0x0437, pActionRequest, 2, 6)`: target at 2, action at 6; actions 0 attack, 1 pickup, 2 sit, 3 stand, 7 continuous | as §4.1 | – | ok |
 | `0x0118` out | 2 | `clif_parse_StopAttack` | no payload | – | ok |
@@ -447,7 +447,7 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 | D10 | Pick by the body's rectangle in the pivot plane, nearest to the camera | Alpha test; colliders | No physics, no texture reads; checked against the original (shot 14) |
 | D11 | `Standby` pose of players after an attack or a hurt | Back to idle at once | Goal 2 ("as the original client shows it"); one setting turns it off if T0.3 shows otherwise |
 | D12 | Wire type 13 (multi-hit critical) shown as a multi-hit | Ignoring it | Hercules 2026.09 has it only among the request actions and never sends it for a basic attack |
-| D13 | (T0.1) Any pickup result ≠ 0 is a failure; its code is logged at info level as received | Treating only 6 as a failure, as spec §6 says ("a failure always answers with result 6") | `pc_additem` failures reach the client with their own code (2 overweight, 4, 5, 7) through `party_share_loot`; 6 covers only the refusals before that. FR-10 is unchanged: §4.1 already says "`Result` ≠ 0 is a failure" |
+| D13 | (T0.1) Any pickup result ≠ 0 is a failure; its code is logged at info level as received | Treating only 6 as a failure, as spec §6 first said (corrected by the owner after T0.1) | `pc_additem` failures reach the client with their own code (2 overweight, 4, 5, 7) through `party_share_loot`; 6 covers only the refusals before that. FR-10 is unchanged: §4.1 already says "`Result` ≠ 0 is a failure" |
 
 ## 9. Risks
 
