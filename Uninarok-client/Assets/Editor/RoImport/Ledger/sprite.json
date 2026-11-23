@@ -15205,6 +15205,20 @@
             ]
         },
         {
+            "Source": "sprite/npc/skel_archer_arrow.act",
+            "SourceHash": "b47a538e6c148b1483c7a39e8c742d289b0f416ecb74ba32303421f657633312",
+            "Rules": 1001,
+            "Outputs": [
+                "Assets/Art/Imported/sprite/npc/skel_archer_arrow.asset"
+            ],
+            "Dependencies": [
+                {
+                    "Source": "sprite/npc/skel_archer_arrow.spr",
+                    "Hash": "e6accc0d4a0d2798009d7c55b785771e52d59608447a0bf9fe620e752d0882b9"
+                }
+            ]
+        },
+        {
             "Source": "sprite/npc/thanatos_battle.act",
             "SourceHash": "12d3865add43fc312e68613cdd2db908bf680ad29ef07ff1eddc45c3f03a3631",
             "Rules": 1001,

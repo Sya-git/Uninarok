@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Uninarok.World::Uninarok.World.CombatSettings
   Digits: {fileID: 11400000, guid: efd2d9bb19bdbe346ad4ef940b373ef0, type: 2}
   Messages: {fileID: 11400000, guid: 76a7e8605bb6b9242a2eff5ccfd0eb7f, type: 2}
-  Arrow: {fileID: 0}
+  Arrow: {fileID: 11400000, guid: 50db1caed0713134f8da87dc6b293da2, type: 2}
   OverlayShader: {fileID: 4800000, guid: dbeebc657a8519941937f94fe7964821, type: 3}
   ApproachRepeatMs: 200
   AttackSilenceMs: 1500

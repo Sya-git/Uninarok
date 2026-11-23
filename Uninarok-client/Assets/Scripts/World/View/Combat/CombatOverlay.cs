@@ -34,6 +34,13 @@ namespace Uninarok.World.View
         float _digitPpu = 1f, _messagePpu = 1f;
         int[] _order = Array.Empty<int>();
         bool _ready;
+        ProjectileView[] _arrows = Array.Empty<ProjectileView>();
+
+        /// <summary>The material of the arrow's sprite (<c>sprite_unit.mat</c>, as the units).</summary>
+        public Material SpriteMaterial { get; set; }
+
+        /// <summary>Arrows shown in the last frame.</summary>
+        internal int DrawnArrows { get; private set; }
 
         /// <summary>Numbers drawn in the last frame (tests, dev HUD).</summary>
         internal int DrawnNumbers { get; private set; }
@@ -80,6 +87,12 @@ namespace Uninarok.World.View
             _digitPpu = settings.Digits.PixelsPerUnit > 0f ? settings.Digits.PixelsPerUnit : 1f;
             _messagePpu = settings.Messages.PixelsPerUnit > 0f ? settings.Messages.PixelsPerUnit : 1f;
             if (_order.Length < settings.NumberCapacity) _order = new int[settings.NumberCapacity];
+            // FR-14: arrows made in advance.
+            if (_arrows.Length == 0 && settings.Arrow != null)
+            {
+                _arrows = new ProjectileView[Math.Max(1, settings.ProjectilePool)];
+                for (int i = 0; i < _arrows.Length; i++) _arrows[i] = ProjectileView.Create(transform, settings.Arrow, SpriteMaterial);
+            }
             _ready = true;
         }
 
@@ -93,6 +106,8 @@ namespace Uninarok.World.View
             _bars?.Begin();
             _bars?.End();
             DrawnNumbers = DrawnBars = 0;
+            for (int i = 0; i < _arrows.Length; i++) if (_arrows[i] != null) _arrows[i].Hide();
+            DrawnArrows = 0;
         }
 
         static Material MakeMaterial(Shader shader, SpriteAnimation sprites)
@@ -143,14 +158,55 @@ namespace Uninarok.World.View
             _messages.Begin();
             _bars.Begin();
             DrawnNumbers = DrawnBars = 0;
+            int arrows = 0;
             if (map != null && camera != null)
             {
                 DrawBars(map, camera);
-                if (timeline != null) DrawNumbers(timeline, map, camera.transform);
+                if (timeline != null)
+                {
+                    DrawNumbers(timeline, map, camera.transform);
+                    arrows = PlaceArrows(timeline, map, camera);
+                }
             }
+            for (int i = arrows; i < _arrows.Length; i++) _arrows[i].Hide();
+            DrawnArrows = arrows;
             _digits.End();
             _messages.End();
             _bars.End();
+        }
+
+        // ---- projectiles (FR-14) ----
+
+        // Arrows from their launch to their arrival, straight between the shown positions, ProjectileHeight above the ground.
+        int PlaceArrows(CombatTimeline timeline, MapData map, Camera camera)
+        {
+            var projectiles = timeline.Projectiles;
+            uint now = timeline.Now;
+            int used = 0;
+            var rotation = camera.transform.rotation;
+            for (int i = 0; i < projectiles.Length && used < _arrows.Length; i++)
+            {
+                ref readonly var p = ref projectiles[i];
+                if (p.Kind != ProjectileKind.Arrow || ServerClock.Diff(now, p.Launches) < 0 || ServerClock.Diff(now, p.Arrives) >= 0) continue;
+                int flight = Math.Max(1, ServerClock.Diff(p.Arrives, p.Launches));
+                float t = ServerClock.Diff(now, p.Launches) / (float)flight;
+                var from = Lifted(map, p.FromX, p.FromY);
+                var to = Lifted(map, p.ToX, p.ToY);
+                var at = Vector3.Lerp(from, to, t);
+                var a = camera.WorldToScreenPoint(from);
+                var b = camera.WorldToScreenPoint(to);
+                float angle = Mathf.Atan2(b.y - a.y, b.x - a.x) * Mathf.Rad2Deg;
+                _arrows[used++].Place(at, rotation, angle);
+            }
+            return used;
+        }
+
+        Vector3 Lifted(MapData map, float x, float y)
+        {
+            var p = WorldPresenter.Position(map, x, y);
+            if (map.TryGetHeight(p, out float ground)) p.y = ground;
+            p.y += _settings.ProjectileHeight * map.CellSize;
+            return p;
         }
 
         // ---- bars (FR-7) ----

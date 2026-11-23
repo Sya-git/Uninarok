@@ -147,7 +147,7 @@
 - [x] **T6.3** HP and SP bars of `CombatOverlay`. (FR-7)
   *Done when:* `_BarsFollowAtFourTurns` and `_BarHiddenAtFullAndWhenDead` pass; a hit poring shows its bar, an MVP none, the own bars shrink and refill (screenshots).
 
-- [ ] **T6.4** Convert `sprite/npc/skel_archer_arrow`; `ProjectileView`. (FR-14)
+- [x] **T6.4** Convert `sprite/npc/skel_archer_arrow`; `ProjectileView`. (FR-14)
   *Done when:* an archer's and an archer skeleton's arrow fly to their targets on the local server, turned along their flight at four camera turns (screenshots).
 
 - [ ] **T6.5** `CombatOverlay_ZeroAllocation_100Numbers300Units`. (FR-12)

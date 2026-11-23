@@ -109921,6 +109921,14 @@
             "IndexedCount": 2
         },
         {
+            "Hash": "e6accc0d4a0d2798009d7c55b785771e52d59608447a0bf9fe620e752d0882b9",
+            "Sheet": "Assets/Art/Imported/sprite/_sheets/e6/skel_archer_arrow_e6accc0d.png",
+            "Source": "sprite/npc/skel_archer_arrow.spr",
+            "HasIndex": false,
+            "Rules": 1,
+            "IndexedCount": 1
+        },
+        {
             "Hash": "e6b437301684a00533d1c002b8d186dbc3dd41907c71f001a40f881792708d86",
             "Sheet": "Assets/Art/Imported/sprite/_sheets/e6/여_금우궁보관_e6b43730.png",
             "Source": "sprite/악세사리/여/여_금우궁보관.spr",

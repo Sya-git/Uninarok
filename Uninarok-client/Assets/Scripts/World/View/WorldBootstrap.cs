@@ -113,6 +113,7 @@ namespace Uninarok.World.View
             if (presenter != null && Combat != null && Session != null)
             {
                 if (_overlay == null) _overlay = gameObject.AddComponent<CombatOverlay>();
+                _overlay.SpriteMaterial = UnitMaterial;
                 _overlay.Use(Session, presenter, Combat);
             }
             if (_map != null) ShowMap();
