@@ -239,6 +239,17 @@ namespace Uninarok.World
             _entities[slot].Version++;
         }
 
+        // ---- combat (SPEC-0011, PLAN-0011 4.2) ----
+
+        /// <summary>HP and max HP from an entry or a status packet; a negative value: not known. Never kills (FR-1).</summary>
+        public void SetHp(uint id, int hp, int maxHp) => throw new NotImplementedException();
+
+        /// <summary>A blow: the attacker's target, last blow and facing (FR-4, FR-9). It moves nobody and stops no walk.</summary>
+        public void Strike(in Blow blow) => throw new NotImplementedException();
+
+        /// <summary>Everyone who attacks this unit attacks nobody now (FR-9).</summary>
+        public void ClearTargets(uint targetId) => throw new NotImplementedException();
+
         /// <summary>An item on the ground, at its cell and sub-cell (FR-16).</summary>
         /// <param name="falls">It was dropped now: it goes up a little and falls to the ground (D37).</param>
         public void AddItem(uint id, int itemId, bool identified, int x, int y, byte subX, byte subY, int amount, bool falls = false, uint now = 0)

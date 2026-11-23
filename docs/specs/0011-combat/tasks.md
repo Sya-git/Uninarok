@@ -60,7 +60,7 @@
 
 ## Phase 2: Combat state
 
-- [ ] **T2.1** Tests for `Blow`, the model's combat state and `OwnStatus` (plan §4.2). (FR-1, FR-5, FR-9)
+- [x] **T2.1** Tests for `Blow`, the model's combat state and `OwnStatus` (plan §4.2). (FR-1, FR-5, FR-9)
   *Done when:* the `Blow_*`, `WorldModel_*` and `OwnStatus_*` tests of plan §6.1 exist, compile and are ignored as pending.
 
 - [ ] **T2.2** `Blow`, the `Entity` fields, `SetHp`, `Strike`, `ClearTargets`, `Feigning`, `RESURRECTION` in the model. (FR-1, FR-4, FR-9)

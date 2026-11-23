@@ -87,6 +87,21 @@ namespace Uninarok.World
         public ServerClock Clock => _clock;
         public WorldSettings Settings => _settings;
 
+        /// <summary>The own character's HP, SP, levels, EXP and range, kept across maps (SPEC-0011 FR-1).</summary>
+        public OwnStatus Status { get; } = new OwnStatus();
+
+        public delegate void BlowHandler(in Blow blow);
+
+        /// <summary>Every blow in view, as it is handled (SPEC-0011 FR-11: the dev HUD).</summary>
+        public event BlowHandler BlowReceived;
+
+        /// <summary>EXP gained by the own character: variable (1 base, 2 job) and amount (SPEC-0011 FR-11).</summary>
+        public event Action<int, long> ExpGained;
+
+        void Raise(in Blow blow) => BlowReceived?.Invoke(blow);
+
+        void RaiseExp(int varId, long amount) => ExpGained?.Invoke(varId, amount);
+
         /// <summary>The map is loaded: a new world on its cells; without data (null) the world is tracked with nothing walkable (FR-1).</summary>
         public void BeginMap(MapData map) => BeginMap(map != null ? new MapDataWalkGrid(map) : new UnknownWalkGrid());
 
