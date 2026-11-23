@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Implementing (revision 2026-11-23, approved by the owner 2026-11-23: Phases 10 and 11 added for FR-1, FR-15, FR-17, FR-18; not yet approved). Phases 0 to 9: Implemented (2026-11-22; approved by the owner 2026-11-21; Phase 9, FR-16, approved 2026-11-22) |
+| **Status** | Implemented (revision 2026-11-23, approved by the owner 2026-11-23: Phases 10 and 11 added for FR-1, FR-15, FR-17, FR-18; not yet approved). Phases 0 to 9: Implemented (2026-11-22; approved by the owner 2026-11-21; Phase 9, FR-16, approved 2026-11-22) |
 
 **How to use this file**
 - Start only when SPEC-0008 is implemented and merged into `main` (its catalog facade, entries and editor lookup are what this spec builds on). Work on branch `feature/0009-unit-display`.
@@ -269,8 +269,9 @@ Plan §4.11, §6 (revision table), D31 to D36, R12 to R15. Spec FR-17, FR-1 (han
 - [x] **T10.8** [core] (revision 2026-11-23, rework of T7.3) `RoUnitComposerWindow`: `_weapon` and `_shield` become `_right` and `_left` with `[FormerlySerializedAs]` (D35); each hand is passed as typed (an item id sets only the item id, a view id only the view id; the item table's view id is no longer used for hands, `ViewOf` stays for headgear and garment); a **Hands** line above the parts list shows `report.Hands.Describe()`. Defaults stay: right item 1101, left item 2101. (FR-15, FR-17)
   *Done when:* `Swordsman_PlaysAttack3_SteppingAdvancesOneBodyFrame` and the eight `UnitPreviewStageTests` still pass; with item 1201 in both hands the Hands line names type 25 and the assassin family; after a domain reload the right and left values are still there; no new warnings.
 
-- [ ] **T10.9** [quick] (owner) FR-17 composer acceptance with evidence: the assassin with two knives (item 1201 in both hands) in 8 directions and in `Attack3`; a knife only in the left hand; a knife and a shield; a katar alone; a shield with an empty right hand; a small left shield view id. Plan §6 (manual). (FR-17)
-  *Done when:* the images are in `evidence/`, each case's Hands line matches the table of plan §4.11, and the owner has checked them. Does not block Phase 11.
+- [x] **T10.9** [quick] (owner) FR-17 composer acceptance: the assassin with two knives (item 1201 in both hands) in 8 directions and in `Attack3`; a knife only in the left hand; a knife and a shield; a katar alone; a shield with an empty right hand; a small left shield view id. Plan §6 (manual). (FR-17)
+  *Done when:* each case's Hands line matches the table of plan §4.11, and the owner has checked them. Does not block Phase 11.
+  *Result (2026-11-23):* checked and accepted by the owner; no images kept.
 
 ## Phase 11: Composer presets (revision 2026-11-23)
 
@@ -291,5 +292,6 @@ Plan §4.12, §6 (revision table), D37 to D39, R17. Spec FR-18; FR-15 points to 
 - [x] **T11.5** [core] Tests, with the imported catalog: `UnitComposerPresets_Starters_ResolveWithNoMissingPart` (the assassin starter gives `WeaponSource.Both`) and `UnitComposerPresets_UnknownHeadgear_LoadsTheRest_OneWarning` (`LogAssert`, one warning for the preset, its problems listed). Also the fallbacks of plan §4.12: an unknown animation name plays `Idle`, a facing or play mode out of range becomes South or `Loop`, all in the one warning. (FR-18, FR-17)
   *Done when:* both tests pass on the imported catalog (NeedsData as ignored when absent); the fallback case gives the stated values; no `LogError`.
 
-- [ ] **T11.6** [quick] (owner) FR-18 acceptance on a fresh checkout, with evidence in `evidence/`: the four starters are listed and read-only; a user preset keeps its animation, play mode and facing, and comes back after a domain reload and after an editor restart; renaming keeps the look; deleting it stays gone after a restart; the preset with an unknown headgear shows that headgear as missing with one warning; `git status` is clean after saving a user preset; a second checkout lists none. Also: `Uninarok.Units.Editor` is editor-only (asmdef, as T0.4) and no `UnitComposerPreset` type is in the player scripts. (FR-18)
-  *Done when:* the evidence is in `evidence/`, each point above has its result written in this task, and the owner has checked it. Does not block later phases.
+- [x] **T11.6** [quick] (owner) FR-18 acceptance on a fresh checkout: the four starters are listed and read-only; a user preset keeps its animation, play mode and facing, and comes back after a domain reload and after an editor restart; renaming keeps the look; deleting it stays gone after a restart; the preset with an unknown headgear shows that headgear as missing with one warning; `git status` is clean after saving a user preset; a second checkout lists none. Also: `Uninarok.Units.Editor` is editor-only (asmdef, as T0.4) and no `UnitComposerPreset` type is in the player scripts. (FR-18)
+  *Done when:* the owner has checked each point above. Does not block later phases.
+  *Result (2026-11-23):* checked and accepted by the owner; no images kept.
