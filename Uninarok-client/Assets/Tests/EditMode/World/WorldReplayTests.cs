@@ -21,7 +21,7 @@ namespace Uninarok.World.Tests
     {
         const uint Account = 2000000;
 
-        sealed class Replay : IDisposable
+        internal sealed class Replay : IDisposable
         {
             public readonly WorldSessionTests.Rig Rig = new WorldSessionTests.Rig();
             public readonly List<string> Errors = new List<string>();
@@ -34,7 +34,7 @@ namespace Uninarok.World.Tests
             uint[] _nextTick;
 
             /// <summary>Feeds the capture up to the server's last look at the player (<paramref name="end"/>).</summary>
-            public void Run(byte[] bytes, uint end)
+            public void Run(byte[] bytes, uint end, byte[] character = null)
             {
                 bytes = Cut(bytes, end);
                 var c = Rig.Client;
@@ -63,7 +63,7 @@ namespace Uninarok.World.Tests
                     Maps++;
                     _map = Uninarok.Map.MapSceneKeys.MapName(Rig.Flow.Context.Map.MapName.ToString());
                 };
-                Rig.ToLoadingMap(OwnCharacterTests.Character(), authenticate: false);
+                Rig.ToLoadingMap(character ?? OwnCharacterTests.Character(), authenticate: false);
                 Rig.Flow.Context.AccountId = Account;
 
                 var router = new GeneratedPacketRouter(c.Dispatcher, (id, e) => Errors.Add($"0x{id:X4}: {e.Message}"));
