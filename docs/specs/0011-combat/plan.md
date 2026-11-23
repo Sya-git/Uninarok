@@ -416,7 +416,7 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 
 ### 6.2 Fixtures (T0.2, T1.5)
 
-`docs/specs/0011-combat/fixtures/combat-*.bin` with the capture tee (as PLAN-0010 T0.5), a README with how each was made, searched for credentials: **(a)** 20 kills on prt_fild08 with a dagger (normal, critical, miss, multi-hit), own HP falling and refilling, a level up; **(b)** own death, `@raise`, death again, restart; **(c)** a bow user with and without arrows, a too-far reply; **(d)** dual wield; pickup of own and of reserved loot; a second client seen fighting and picking up. The plugin `uninarok_pathdump` writes, beside its view lines, HP and max HP of each monster and one `S` line per second with the player's HP, SP, levels and EXP: the server's truth the replay test compares with (and with `@stats` and `@exp` typed at the end).
+`docs/specs/0011-combat/fixtures/combat-*.bin` with the capture tee (as PLAN-0010 T0.5), a README with how each was made, searched for credentials: **(a)** 20 kills on prt_fild08 with a dagger (normal, critical, miss, multi-hit), own HP falling and refilling, a level up; **(b)** own death, `@raise`, death again, restart; **(c)** a bow user with and without arrows, a too-far reply; **(d)** dual wield; pickup of own and of reserved loot; a second client seen fighting and picking up (the reserved loot and the second client are recorded on their own as **(e)**, T1.6, D14). The plugin `uninarok_pathdump` writes, beside its view lines, HP and max HP of each monster and one `S` line per second with the player's HP, SP, levels and EXP: the server's truth the replay test compares with (and with `@stats` and `@exp` typed at the end).
 
 ### 6.3 Reference footage of the original client (owner, T0.3)
 
@@ -448,6 +448,7 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 | D11 | `Standby` pose of players after an attack or a hurt | Back to idle at once | Goal 2 ("as the original client shows it"); one setting turns it off if T0.3 shows otherwise |
 | D12 | Wire type 13 (multi-hit critical) shown as a multi-hit | Ignoring it | Hercules 2026.09 has it only among the request actions and never sends it for a basic attack |
 | D13 | (T0.1) Any pickup result ≠ 0 is a failure; its code is logged at info level as received | Treating only 6 as a failure, as spec §6 first said (corrected by the owner after T0.1) | `pc_additem` failures reach the client with their own code (2 overweight, 4, 5, 7) through `party_share_loot`; 6 covers only the refusals before that. FR-10 is unchanged: §4.1 already says "`Result` ≠ 0 is a failure" |
+| D14 | (T1.5) The second client of fixture (d) and the reserved loot are a capture of their own, (e) | Waiting with (a) to (d) until a second player can be started | The second player is the owner's Multiplayer Play Mode player and needs the owner; (a) to (d) are enough for the replay of T2.4, and (e) is only needed by the live checks of T9.2 |
 
 ## 9. Risks
 

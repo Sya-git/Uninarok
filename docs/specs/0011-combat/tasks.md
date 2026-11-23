@@ -54,9 +54,13 @@
 - [x] **T1.4** Tests, then structs: `STOP_ATTACK`, `PICKUP_ITEM`, `RESTART`, the `REQUEST_ACT` constants. (FR-2, FR-3, FR-8, FR-10)
   *Done when:* golden-byte and size tests pass.
 
-- [ ] **T1.5** Record the fights of plan §6.2. (FR-1, FR-13)
-  On the local server with the capture tee and T0.2's plugin; a scratch script sends the requests.
+- [x] **T1.5** Record the fights of plan §6.2. (FR-1, FR-13)
+  On the local server with the capture tee and T0.2's plugin; a scratch script sends the requests. The second client of (d) moved to T1.6 (2026-11-23: it needs the owner's second Multiplayer Play Mode player).
   *Done when:* the captures (a) to (d) and their server lines are under `fixtures/` with a `README.md`, and none contains the account name or password (searched).
+
+- [ ] **T1.6** Owner and AI: record (e), the second client of plan §6.2 (d). (FR-2, FR-9, FR-10, FR-13)
+  The owner turns on the second Multiplayer Play Mode player (`login:testeAdmin2`); a scratch script makes the second character fight, pick up, die and be raised in view of the first, and leaves loot reserved for one of them.
+  *Done when:* `combat-second.bin` (the first client's connection) and its server lines are under `fixtures/`, listed in its `README.md`, searched for both accounts' names and passwords. Does not block T2.4.
 
 ## Phase 2: Combat state
 
