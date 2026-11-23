@@ -212,7 +212,7 @@ public static class AttackRange
 
 ### 4.5 Own combat: `OwnCombat`, changes in `OwnCharacter`
 
-Satisfies FR-2, FR-3, FR-8 (input), FR-10, FR-13.
+Satisfies FR-2, FR-3, FR-8 (input), FR-10, FR-13, FR-16 (the marked target).
 
 ```csharp
 public enum CombatState : byte { Idle, Approaching, Attacking, Fetching }
@@ -241,6 +241,7 @@ public sealed class OwnCombat
 - **No ammunition** (`0x013B` type 0) → `Idle`, one info line.
 - **Ground click** while `Approaching`, `Attacking` or `Fetching`: when `CheckWalk` gives `Sent`, send `STOP_ATTACK` first if an attack request is outstanding, then `REQUEST_MOVE`, state `Idle`; the server runs the walk when its walk delay ends (H5). A click that cannot walk changes nothing. This is `OwnCharacter.RequestWalk`, the player's walk.
 - **Pickup** (FR-10): `CanPickUp` and not walking → send `PICKUP_ITEM`; else walk to the first cell of the path within two cells, `Fetching`; when that walk ends in range → send. The walk must have ended because the server tests its own cell once and keeps nothing (unlike attacks, H4). An answer with `Result` ≠ 0 while the item is still there: the first time, ask once more after `PickupRetryMs` (400; a step of lag); then one info line with the code. Success needs nothing: the server removes the item.
+- **Marked target** (FR-16, D29): `uint MarkedTarget(uint now)` answers the id of the monster that shows the mark, or 0. Every accepted `Attack` sets it (state `Approaching` or `Attacking`, from the click), so it follows `TargetId` while the attack is active. A **continuous** attack keeps it until the state leaves `Approaching`/`Attacking` for any reason (target dead or gone, silence give-up, no ammunition, ground click, sit, own death, map change, another target). A **single** attack keeps it after its own blow, when the state goes `Idle`, for `TargetMarkSingleMs` *(no lead; first value 2,000; T0.3 shot 17)*, then 0; a ground click, a sit, death, a map change or a new `Attack` clear it at once. Only monsters are ever marked (the attackable rule above).
 - **Death, map change, disconnect** → `Cancel`. A **sit** request → `Cancel` (the server stops the attack, `clif_parse_ActionRequest`).
 - The requests of `OwnCharacter` already refuse while dead (SPEC-0010); `OwnInput` adds: while dead no cell cursor, no attack cursor, no picking.
 
@@ -395,7 +396,7 @@ flowchart LR
 
 ### 4.8 Drawing: `CombatOverlay`, numbers, bars, projectiles
 
-Satisfies FR-6, FR-7, FR-12, FR-14.
+Satisfies FR-6, FR-7, FR-12, FR-14, FR-16.
 
 ```csharp
 public sealed class CombatOverlay : MonoBehaviour      // [DefaultExecutionOrder(950)], created by WorldBootstrap
@@ -409,6 +410,7 @@ public static class NumberMotion                       // pure, in Uninarok.Worl
 - **One mesh each** for digits, message sprites and bars: vertices in persistent `NativeArray`s, written with `Mesh.SetVertexBufferData` and `SetSubMesh`, validation and bounds recalculation off (fixed large bounds). Nothing per number or per bar is a GameObject (D6). Capacity: 512 numbers of at most 10 digits, 512 bars.
 - **Digits** come from the `숫자` animation's sprites (frame = digit), messages from `msg`; UVs and pixel sizes from the sprites' rects and the sheet texture, read once. Spacing 2 px *(lead)*. A number is laid out centred, in the plane that faces the camera, `pixels / PixelsPerUnit × scale` large, so it zooms with the world as a sprite does *(T0.3: world or screen size)*.
 - **Motion, first values** *(lead: `Damage.js`)*: normal and critical 1,500 ms, scale 4 → 0, drifting 4 cells to +x and 4 to −y over the life, height `2 + 5 · sin(−π/2 + π(0.5 + 1.5 t))`, alpha `1 − t`; miss and lucky over 800 ms, scale 0.5, rising 7 from 3.5; total 3,000 ms, above the target. Colours: on a monster white; on a player red; critical (0.9, 0.9, 0.15) over the `msg` critical background; the multi-hit `Total` in the same yellow-green, `NumberTotal` (D28); miss and lucky are the `msg` pictures. Each is a row of `combat-reference.md`, measured in T0.3.
+- **Target mark** (FR-16, D29): one quad of the mark's sprite over the unit that `OwnCombat.MarkedTarget(now)` names, in the same sprite mesh as the message pictures (no new object). Placed like a bar: from the unit's projected top (the top of its `PickRect`, T5.2, or its head height when it has none) plus `TargetMarkHeight` screen pixels, on whole pixels, constant size in screen pixels, and floating with a sine of `TargetMarkBobPixels` over `TargetMarkBobMs`. Hidden when the unit is not shown or dead. The sprite, its size, height and float are *(no lead; identified in T11.2 from the footage of T0.3 shot 17 and the client data)* and are rows of `combat-reference.md`.
 - **Order**: after the units, no depth test, newer over older *(lead; T0.3)*.
 - **Bars** (FR-7): under the feet, on whole pixels, constant size in screen pixels *(lead: `EntityLife.js`: 60 × 5 for HP, 60 × 9 with SP; frame `#10189c`, empty `#424242`, own HP `#10ef21`, below 25 % `#ff0000`, SP `#1863de`, monster `#ff00e7`, below 25 % `#ffff00`; 0.5 below the feet)*. The corners are computed in screen pixels from the projected feet and unprojected in front of the near plane, so turn, tilt and zoom need nothing more. Which units: the own character always, from `OwnStatus`; a monster that is shown, not dead, with `0 < Hp < MaxHp`.
 - **Projectile**: `ProjectileView`, a pooled object with one driven `SpriteActor` (`skel_archer_arrow`), turned in the camera plane along its flight on the screen, placed each frame from `CombatTimeline.Projectiles`; 32 made in advance.
@@ -490,6 +492,7 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 | `OwnCombat_Click_SendsSingle`, `_CtrlHoldNoCtrl_SendContinuous`, `_PlayerNpcOwn_SendNothing`, `_SittingOrDead_SendNothing`, `_GroundClick_StopsThenWalks` | FR-2 |
 | `OwnCombat_Approach_StopsAtRange1And9`, `_TargetMoves_WalksAgain`, `_AsksWhileWalkingOnceInRange`, `_TooFar_ApproachesAgainAndCloser`, `_Silence_AsksAgainThenGivesUp`, `_TargetDies_Idle`, `_NoAmmo_Idle` | FR-3 |
 | `OwnCombat_PickUp_WalksWithinTwoThenAsks`, `_FailureRetriedOnce`, `_FailureReportedOnce` | FR-10 |
+| `OwnCombat_Mark_ContinuousStaysSingleExpires`, `_ClearedByGroundClickSitDeathTargetGone`, `_OnlyAttackableMonster` | FR-16 |
 | `CombatTimeline_AttackLasts500_HitAt500_Hurt300`, `_EnduredHasNumberNoHurt`, `_MissNoHurt`, `_WalkKeepsPosition`, `_NewBlowRestarts`, `_SlowMonster1320_HitAt1320`, `_SelfDamage` | FR-4 |
 | `CombatTimeline_Kinds` (each row of §4.6's table), `_DoubleAttack300_150_150_300`, `_DualWield_TwoNumbers`, `_SplitAlwaysSums` (1 to 100 hits) | FR-5 |
 | `CombatTimeline_DeathHeldUntilHit` (also a notice at 1,000 for a hit at 1,320), `_MonsterHurt250`, `_OwnDeath`, `_PickUpMotion` | FR-9, FR-10 |
@@ -506,6 +509,7 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 | `WorldSession_CombatReplay_<capture>` (fight into a model, no scene: own HP, SP, levels, EXP and every damaged monster's HP equal the server's lines, §6.2) — `NeedsData` | FR-1, FR-13 |
 | `Combat_ZeroAllocation_100Fighting` (session and timeline, 600 frames after warm-up) | FR-12 |
 | `CombatDebugView_ListsBlowsAsReceived` | FR-11 |
+| PlayMode: `CombatOverlay_TargetMark_AboveHeadAtFourTurns`, `_OnlyOneMark`, `_HiddenWhenDead` (and `CombatOverlay_ZeroAllocation_100Numbers300Units` includes a mark) | FR-12, FR-16 |
 | PlayMode: `CombatOverlay_ZeroAllocation_100Numbers300Units`, `_BarsFollowAtFourTurns`, `_BarHiddenAtFullAndWhenDead`; `WorldPresenter_PlaysMotionThenBase`, `_DeathAfterHurt`; `UnitPicker_NearestUnit_PlayerHidesMonster`; `RestartPromptView_TwoButtons` | FR-2, FR-4, FR-6 to FR-9, FR-12 |
 | Release check: no type of `Uninarok.World.Dev` in a release build; the prompt is there | FR-8, FR-11 |
 
@@ -515,7 +519,7 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 
 ### 6.3 Reference footage of the original client (owner, T0.3)
 
-1920 × 1080, 60 fps, default view, as for PLAN-0010 D37. Shots: **1** ten normal blows on a poring (path, size, colour and time of the numbers; hurt; bar; pose after the attack); **2** criticals; **3** misses in both directions (over whom are they shown); **4** own damage; **5** double attack (places and times of the parts and the total); **6** dual wield; **7** fast attacks, many numbers; **8** a kill (last number, hurt, death); **9** own death and the prompt, Esc, close; **10** HP bars at several zooms and at low HP; **11** bow at 2, 5 and 9 cells; **12** an archer skeleton; **13** one attack each with gun, throwing weapon, whip, instrument; **14** click, hold and release on a monster; a player standing in front of a monster; a ground click right after a blow; **15** picking up an item; **16** a monster slower than 1 s (Medusa, 1,320 ms): when its attack ends, when the number and the hurt start, when the own HP falls. Measured values go to `combat-reference.md` with the frame numbers; frames are kept in `evidence/`.
+1920 × 1080, 60 fps, default view, as for PLAN-0010 D37. Shots: **1** ten normal blows on a poring (path, size, colour and time of the numbers; hurt; bar; pose after the attack); **2** criticals; **3** misses in both directions (over whom are they shown); **4** own damage; **5** double attack (places and times of the parts and the total); **6** dual wield; **7** fast attacks, many numbers; **8** a kill (last number, hurt, death); **9** own death and the prompt, Esc, close; **10** HP bars at several zooms and at low HP; **11** bow at 2, 5 and 9 cells; **12** an archer skeleton; **13** one attack each with gun, throwing weapon, whip, instrument; **14** click, hold and release on a monster; a player standing in front of a monster; a ground click right after a blow; **15** picking up an item; **16** a monster slower than 1 s (Medusa, 1,320 ms): when its attack ends, when the number and the hurt start, when the own HP falls; **17** the target mark: a click on a standing monster and on a walking one, a continuous attack until the kill, a single attack and how long the mark stays, a ground click while it shows (picture, size, height, float, time). Footage the owner already has (2026-11-22, `C:\Users\catdo\Videos\Captures`): `Ragnarok 2026-11-22 22-32-58.mp4` (acolyte without a weapon; attacks cancelled by walking, monster misses, own damage: shots 1, 3, 4, 14, 17), `... 22-39-21.mp4` (dancer with a bow on Roween at several distances: shot 11), `... 22-41-02.mp4` (dancer with a whip: shot 13), `... 22-47-07.mp4` (Archbishop hit by Medusa, most skills and attacks miss: shots 3, 4, 16). Missing: dual wield, from YouTube Shorts the owner named (assassin cross with katar, critical, high attack speed against Tao Gunka, about 0:42 of `3uhR2cXSJ0A`; katar critical, 188 aspd, `11XUFSB_bLg`; dual dagger, 172 aspd, with the double attack that corrects our timing, `Y3VDwW-GuDM`): shots 5, 6 and the timing of FR-5. These are not stored in the repo; the owner provides the files for frame extraction. Measured values go to `combat-reference.md` with the frame numbers; frames are kept in `evidence/`.
 
 ## 7. Migration and compatibility
 
@@ -564,6 +568,7 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 | D26 | (Owner, 2026-11-23) Dark Collector, Wedding, Xmas, Summer (and the other outfit jobs): no row, `Attack1` by the default | A row per outfit copied from the job worn before | Owner's answer: they do not usually attack; the default already gives `Attack1`, so no data is added |
 | D27 | (Owner, 2026-11-23) Ids above 4242 are copied from roBrowserLegacy and accepted untested | Leaving them out until a server sends them | Owner accepts the risk (spec §6); they are marked in code and in `combat-reference.md`, and corrected like any lead |
 | D28 | (Owner, 2026-11-23) Multi-hit: parts white over a monster and red over a player; the `Total` only over a target that is not a player, in the yellow-green of the critical number (`NumberTotal` in `CombatSettings`, default (0.9, 0.9, 0.15)) | A total over a player too; a white total | The owner saw the client: the total is yellow-green, a hit on a player shows the parts alone in red. Timeline: no `Total` for a player target; overlay: colour by kind. Task T9.7 |
+| D29 | (Owner, 2026-11-23) The target mark of FR-16: `OwnCombat.MarkedTarget(now)` and a quad in the combat overlay; a single attack keeps it for `TargetMarkSingleMs` after its blow, a continuous attack until it stops | Drawing it from `TargetId` alone (a single attack would lose it at once); a unit-level marker in the presenter | `TargetId` is only set while the attack lasts, so the single-attack time needs state in `OwnCombat`; the overlay already draws pictures over units at 950. Sprite and values come from footage (T11.2) |
 
 ## 9. Risks
 
@@ -597,3 +602,4 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 | FR-13 | 3, 4.4 to 4.7, 6 | the EditMode suite and the replay test |
 | FR-14 | 4.6, 4.7, 4.8 | `ProjectileRules_*`; side by side (shots 11 to 13) |
 | FR-15 | 3, 4.6, 4.7 (hands table, family table, reference doc), 7, 8 (D20 to D27) | `JobFamilies_RowJobOf_Table`, `JobFamilies_RowSexOf_SoulReaperMale`, `JobFamilies_IsAssassinFamily_*`, `AttackMotions_JobFamilies_*`, `_TaekwonFamily_*`, `_SoulReaper_*`, `_NoRowJobs_Attack1`, `AttackMotions_Hands_*`, `_ShieldNeverChangesMotion`, `CatalogWeaponTypes_TypeOf_BothHands_*`, `_LeftShieldViewId_IsShield`, `CombatTimeline_AttackNumber_*`, `WorldSession_CombatReplay_DualWield`; `combat-reference.md` "Attack animation" |
+| FR-16 | 4.5, 4.8, 8 (D29) | `OwnCombat_Mark_*`, `CombatOverlay_TargetMark_*`; side by side (shot 17) |

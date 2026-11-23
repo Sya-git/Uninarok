@@ -32,7 +32,7 @@
   *Done when:* the plugin builds and loads; the three path files differ from the committed ones only in the new flag and SPEC-0010's pathfinder tests still pass on them; a sample of the new lines is in the report; `docs/specs/0010-world-session/fixtures/README.md` describes both formats.
 
 - [ ] **T0.3** Owner: record the reference footage; then measure it. (FR-2, FR-4 to FR-7, FR-9, FR-10, FR-14)
-  The 16 shots of plan §6.3.
+  The 17 shots of plan §6.3. The owner's footage of 2026-11-22 (`C:\Users\catdo\Videos\Captures`, four files, listed in plan §6.3) covers shots 1, 3, 4, 11, 13, 14, 16 and 17 in part; dual wield (shots 5, 6) comes from three YouTube Shorts the owner named, as files the owner provides. FR-16's mark (shot 17) is measured here too.
   *Done when:* every row of `combat-reference.md` (T4.1) has a measured value or "as lead", with the shot and frame numbers, and the frames used are in `evidence/`.
 
 - [ ] **T0.4** Owner: the restart prompt of the original client. (FR-8)
@@ -234,3 +234,13 @@ Rework and new work for plan §4.6, §4.7, §6.1, §7 and §8 (D18, D20 to D27).
 
 - [x] **T10.8** [quick] Rework of **T5.4** (wiring): `WorldBootstrap.UseAssets` sets `timeline.Weapons` and `timeline.Jobs` from one `CatalogWeaponTypes` instance (plan §7). Only the assignments change; no other line of the bootstrap is touched. (FR-15)
   *Done when:* `WorldBootstrap.cs` assigns both members from the same instance (grep shows both lines); the project compiles; Logs/Editor.log has no new warning after a refresh.
+
+## Phase 11: Revision 2026-11-23 (FR-16): the target mark
+
+New work for plan §4.5, §4.8, §6.1 and D29. Independent of phase 10 and of T9.1 to T9.6; do it **before T9.6**, because the spec does not close without it. Test-first as in phase 10.
+
+- [ ] **T11.1** [core] Tests, then implementation: `OwnCombat.MarkedTarget(now)` (plan §4.5). `OwnCombat_Mark_ContinuousStaysSingleExpires`, `_ClearedByGroundClickSitDeathTargetGone`, `_OnlyAttackableMonster`; `CombatSettings.TargetMarkSingleMs` (first value 2,000; a row of `combat-reference.md`, "no lead"). One commit: tests, state and setting. (FR-16)
+  *Done when:* the three tests pass, the `OwnCombat_*` tests of T3.3 to T3.5 pass unchanged, and `combat-reference.md` has the row.
+
+- [ ] **T11.2** [core] The mark in `CombatOverlay` (plan §4.8, D29). First find the picture: look in the extracted client data and in the owner's footage (T0.3 shot 17; frames in `evidence/`) for the mark's sprite, size, height above the head, float and, for a single attack, how long it stays; record each in `combat-reference.md` with its source. Then draw it with `CombatSettings` fields (`TargetMark` sprite, `TargetMarkHeight`, `TargetMarkBobPixels`, `TargetMarkBobMs`; `TargetMarkSingleMs` corrected from the footage); tests `CombatOverlay_TargetMark_AboveHeadAtFourTurns`, `_OnlyOneMark`, `_HiddenWhenDead` and a mark inside `CombatOverlay_ZeroAllocation_100Numbers300Units`. If the sprite cannot be identified from the footage and the data, stop and ask the owner. (FR-16, FR-12)
+  *Done when:* the PlayMode tests pass, the zero-allocation test still passes, and screenshots of a continuous attack (mark stays until the kill) and of a single attack (mark goes away after its time) are in `evidence/`, beside the original client's frames.
