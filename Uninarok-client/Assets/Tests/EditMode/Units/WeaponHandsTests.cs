@@ -87,7 +87,7 @@ namespace Uninarok.Units.Tests
     [Category("NeedsData")]
     public class WeaponHandsClassifyTests
     {
-        [Test, Ignore("pending T10.4")]
+        [Test]
         public void WeaponHands_Classify_LeftByItemKind()
         {
             var source = UnitTestData.CatalogOrIgnore();

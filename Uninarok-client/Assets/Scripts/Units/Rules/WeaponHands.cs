@@ -1,4 +1,3 @@
-using System;
 using Uninarok.Catalog;
 
 namespace Uninarok.Units
@@ -85,8 +84,44 @@ namespace Uninarok.Units
         public const int Katar = 16;
 
         public static bool IsItemId(int value) => value >= FirstItemId;
-        public static Hand Right(int value, SpriteCatalog catalog, CompositionTables tables) => throw new NotImplementedException("T10.4");
-        public static Hand Left(int value, SpriteCatalog catalog, CompositionTables tables) => throw new NotImplementedException("T10.4");
+        /// <summary>
+        /// The right hand: a view id is a weapon of its type; an item id is a weapon by the item table, any other kind (a shield
+        /// included) or an item the table does not have is Unknown. No catalog or no tables: items Unknown, types 0. No allocation.
+        /// </summary>
+        public static Hand Right(int value, SpriteCatalog catalog, CompositionTables tables)
+        {
+            if (value <= 0) return new Hand(value, HandKind.None, 0, 0);
+            if (!IsItemId(value)) return new Hand(value, HandKind.Weapon, value, TypeOf(value, tables));
+            if (TryItem(value, catalog, tables, out var kind, out int view) && kind == EquipmentKind.Weapon)
+                return new Hand(value, HandKind.Weapon, view, TypeOf(view, tables));
+            return new Hand(value, HandKind.Unknown, 0, 0);
+        }
+
+        /// <summary>
+        /// The left hand: a view id is a shield (ambiguous, FR-17; R14); an item id is a weapon or a shield by the item table,
+        /// any other kind or an item the table does not have is Unknown. No catalog or no tables: items Unknown. No allocation.
+        /// </summary>
+        public static Hand Left(int value, SpriteCatalog catalog, CompositionTables tables)
+        {
+            if (value <= 0) return new Hand(value, HandKind.None, 0, 0);
+            if (!IsItemId(value)) return new Hand(value, HandKind.Shield, value, 0);
+            if (TryItem(value, catalog, tables, out var kind, out int view))
+            {
+                if (kind == EquipmentKind.Weapon) return new Hand(value, HandKind.Weapon, view, TypeOf(view, tables));
+                if (kind == EquipmentKind.Shield) return new Hand(value, HandKind.Shield, view, 0);
+            }
+            return new Hand(value, HandKind.Unknown, 0, 0);
+        }
+
+        static bool TryItem(int item, SpriteCatalog catalog, CompositionTables tables, out EquipmentKind kind, out int view)
+        {
+            if (catalog != null && tables != null && catalog.TryGetItemView(item, out kind, out view)) return true;
+            kind = EquipmentKind.None;
+            view = 0;
+            return false;
+        }
+
+        static int TypeOf(int viewId, CompositionTables tables) => tables != null ? tables.WeaponTypeOf(viewId) : 0;
 
         const int ShortSword = 1, Sword = 2, Axe = 6;
 
@@ -131,6 +166,8 @@ namespace Uninarok.Units
                 return new HandsResult(right, left, left.WeaponType, WeaponSource.Left, false, false);
             return new HandsResult(right, left, 0, WeaponSource.None, leftShield, false);
         }
-        public static HandsResult Of(int job, int right, int left, SpriteCatalog catalog, CompositionTables tables) => throw new NotImplementedException("T10.4");
+        /// <summary>Both hands classified (Right, Left) and combined (Combine). No allocation, no exception.</summary>
+        public static HandsResult Of(int job, int right, int left, SpriteCatalog catalog, CompositionTables tables)
+            => Combine(job, Right(right, catalog, tables), Left(left, catalog, tables));
     }
 }
