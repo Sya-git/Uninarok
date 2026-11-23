@@ -1,0 +1,3 @@
+354.7 first answer: Boneco3 int_land 79 56
+657.9 DONE map prt_fild08 stops 125/125 unanswered 0 moves 113 over 1.05: 0 worst 0,717865 (110023752 shown (110.28, 259.28) server 111,260) duplicates 0
+661.9 back int_land 79,56

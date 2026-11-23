@@ -2,13 +2,13 @@
 
 | | |
 |---|---|
-| **Status** | Approved (owner, 2026-11-21; FR-13 and FR-11 amended by the owner 2026-11-22 after comparing with the original client, FR-13 three times, FR-15 for its check; FR-20 added and FR-6, FR-9, FR-16 amended by the owner 2026-11-22) |
+| **Status** | Implemented (2026-11-22; approved by the owner 2026-11-21; FR-13 and FR-11 amended by the owner 2026-11-22 after comparing with the original client, FR-13 three times, FR-15 for its check; FR-20 added and FR-6, FR-9, FR-16 amended by the owner 2026-11-22) |
 | **Created** | 2026-11-21 |
 | **Owner** | Jhonnatan |
 | **Depends on** | [SPEC-0001](../0001-networking-core/spec.md) (connection, flow, packets), [SPEC-0005](../0005-gat-map-data/spec.md) (walkable cells, heights), [SPEC-0006](../0006-rsw-map-scene/spec.md) (map scenes), [SPEC-0008](../0008-sprite-catalog/spec.md) (ground items), [SPEC-0009](../0009-unit-display/spec.md) (unit display, facing, camera) |
 | **Reference** | [Packets](../0001-networking-core/Packets/INDEX.md), [UninarokPosition](../../data/UninarokPosition.md), [UninarokMoveData](../../data/UninarokMoveData.md) |
-| **Plan** | [plan.md](plan.md) (Approved, 2026-11-21) |
-| **Tasks** | [tasks.md](tasks.md) (Approved, 2026-11-21) |
+| **Plan** | [plan.md](plan.md) (Implemented, 2026-11-22) |
+| **Tasks** | [tasks.md](tasks.md) (Implemented, 2026-11-22) |
 
 ## 1. Why
 

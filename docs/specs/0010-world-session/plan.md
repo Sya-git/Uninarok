@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [spec.md](spec.md) (SPEC-0010, approved 2026-11-21) |
-| **Status** | Approved (owner, 2026-11-21) |
+| **Status** | Implemented (2026-11-22; approved by the owner 2026-11-21) |
 | **Audience** | Architects, senior developers, AI agents |
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. The connection, flow, managers and packet rules are [PLAN-0001](../0001-networking-core/plan.md) (packet rules normative in [Packet-Implementation.md](../0001-networking-core/Packets/Packet-Implementation.md)); `MapData` is [PLAN-0005](../0005-gat-map-data/plan.md); map scenes [PLAN-0006](../0006-rsw-map-scene/plan.md); `SpriteCatalog` [PLAN-0008](../0008-sprite-catalog/plan.md); `UnitView`, `UnitLook`, `UnitSystem`, `RoCamera` and `IUnitAssetSource` [PLAN-0009](../0009-unit-display/plan.md). This plan adds the layer between them: **packets → one world model → views**, plus the own character's input.

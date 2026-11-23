@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Approved (owner, 2026-11-21) |
+| **Status** | Implemented (2026-11-22; approved by the owner 2026-11-21) |
 
 **How to use this file**
 - Start only when SPEC-0009 is implemented and merged into `main` (its `UnitView`, `UnitSystem`, `RoCamera` with `SnapToTarget` and `AddressablesUnitAssetSource` are what this spec builds on). Work on branch `feature/0010-world-session`.
@@ -268,7 +268,8 @@
   *Measured (2026-11-22), not ticked:* this PC (i5-14600KF), in the editor with the profiler on (as TASKS-0009 T8.2), 100 players and 200 monsters walking on prt_fild08 through the simulated connection: `World.Update` 0.20 ms mean, 0.51 ms max over 300 frames, 0 B GC (`evidence/t9.2-world-update-profiler.csv`, `t9.2-300-walkers.png`). A development build needs the 7 GB of Addressables content built: owner to accept the editor numbers or ask for the build.
   *Result (2026-11-22):* the owner accepted the editor numbers (2026-11-22) in place of a development build.
 
-- [ ] **T9.3** Spec §5 run and close the spec. (all)
+- [x] **T9.3** Spec §5 run and close the spec. (all)
   Enter prontera, walk to the south warp, arrive on prt_fild08, walk among monsters for 5 minutes.
   *Done when:* the own cell equals `@where` at every stop, every server stop or move finds a monster within one cell of where the client shows it (debug log), no unit is duplicated or left behind; spec, plan and tasks are set to `Implemented`; leftovers are in `BACKLOG.md`.
   *Open (2026-11-22):* run done on the local server: prontera, walk to the south warp, prt_fild08, 5 minutes (305 s) of walking among wandering and chasing monsters. Own cell equal to the server's (the server's own position, written every second by `uninarok_pathdump`, in place of `@where`) at 87 of 87 stops; 680 server moves and stops of other units, none over 1.05 cells from where the client showed them (worst 1.02: shown 138,187.98, the server 139,189); no duplicate. At 86 of 87 stops the client's units equal the server's list to within one unit (84 exactly); the other three times one, one and two units of the server's list were not shown. Those three were the comparison, not the client: the server's list is up to a second old. Traced in a second run (323 s, every arrival and departure in the client with its server time against every list): at the time of each list, 304 of 319 are equal; the 15 others differ by 18 units at the edge of the view or just spawned or killed, each one settled in the client within 25 ms of the list (the packet's way plus a frame). Compared half a second late, as the first run could be, 103 of the 319 would differ. Left: closing the spec, which waits for T9.1 (owner).
+  *Result (2026-11-22):* the walk changed after the run above (D36), so it was repeated on the local server. (a) prontera, walk to the south warp, prt_fild08 170,375, 5 minutes: 95 server moves and stops of other units, none over 1.05 cells from where the client showed them (worst 0.65), no duplicate; `@where` without a name fails on this Hercules, so its stops were not compared. (b) the middle of prt_fild08, 5 minutes, half of the walks with a new order on the way: own cell equal to `@where Boneco3` at 125 of 125 stops; 113 server moves and stops, none over 1.05 (worst 0.72), no duplicate (`evidence/t9.3-run-after-d36-*.txt`). Units left behind were compared in the run above only, before D36, which does not touch what comes and goes. FR-10: T3.8 (players 273 of 273). FR-17: T9.2. World EditMode 170/170, PlayMode 45/45. Leftovers are in `BACKLOG.md`.
