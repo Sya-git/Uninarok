@@ -179,7 +179,7 @@
 - [x] **T8.1** `CombatDebugView` (plan §4.12). (FR-11)
   *Done when:* `CombatDebugView_ListsBlowsAsReceived` passes; during a fight its numbers equal the packet trace (screenshot and trace).
 
-- [ ] **T8.2** Release check. (FR-8, FR-11)
+- [x] **T8.2** Release check. (FR-8, FR-11)
   *Done when:* the non-development player scripts contain no `Uninarok.World.Dev` type and contain `RestartPromptView` (reflection, command and result in the report).
 
 ## Phase 9: Verify and close
