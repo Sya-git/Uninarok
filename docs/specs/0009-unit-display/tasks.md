@@ -276,7 +276,7 @@ Plan §4.11, §6 (revision table), D31 to D36, R12 to R15. Spec FR-17, FR-1 (han
 
 Plan §4.12, §6 (revision table), D37 to D39, R17. Spec FR-18; FR-15 points to it. Editor only: `Uninarok.Units.Editor`, and `Units/Editor/Presets/` for the starters. No runtime code.
 
-- [ ] **T11.1** [core] Tests, pending T11.2: `UnitComposerPresetStore_SaveReload_AllFields_NoCameraFrameOrPlayState`, `_StartersListed_AndReadOnly`, `_NamesUniqueAcrossKinds_CaseInsensitive`, `_SaveOverUserName_NeedsConfirm_StarterNameRefused`, `_Rename_KeepsLook`, `_Delete_GoneAfterReload`, `_UnreadableFile_OneWarning_KeptAside`, `_UserFileUnderUserSettings`. Temporary folders and synthetic presets. (FR-18)
+- [x] **T11.1** [core] Tests, pending T11.2: `UnitComposerPresetStore_SaveReload_AllFields_NoCameraFrameOrPlayState`, `_StartersListed_AndReadOnly`, `_NamesUniqueAcrossKinds_CaseInsensitive`, `_SaveOverUserName_NeedsConfirm_StarterNameRefused`, `_Rename_KeepsLook`, `_Delete_GoneAfterReload`, `_UnreadableFile_OneWarning_KeptAside`, `_UserFileUnderUserSettings`. Temporary folders and synthetic presets. (FR-18)
   *Done when:* they compile against the signatures of plan §4.12 and are listed as ignored ("pending T11.2"); no new warnings.
 
 - [ ] **T11.2** [core] Implementation: `PresetHand`, `UnitComposerPreset`, `UnitComposerPresetStore` (`ForProject`, `All`, `Problem`, `IsStarter`, `IsTaken`, `Save`, `Rename`, `Delete`, `Reload`; whole-file write through a temporary file and a replace; the unreadable user file moved aside on the next save). Removes the marks of T11.1. (FR-18)
