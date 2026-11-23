@@ -217,6 +217,17 @@ namespace Uninarok.Units
 
         public void Play(MonsterAnimation animation, PlayMode mode = PlayMode.Loop) => Play(false, (int)animation, mode);
 
+        /// <summary>
+        /// Plays an animation so that it lasts exactly <paramref name="durationMs"/> (an attack lasts its <c>attackMT</c>, a hurt its
+        /// <c>attackedMT</c>; SPEC-0011 FR-4, PLAN-0011 4.9); a unit that is not a player plays the mapped animation. 0 or less: at
+        /// its own speed.
+        /// </summary>
+        public void PlayFor(PcAnimation animation, int durationMs, PlayMode mode)
+        {
+            Play(true, (int)animation, mode);
+            _clock.FitMs = durationMs > 0 ? durationMs : 0;
+        }
+
         void Play(bool player, int animation, PlayMode mode)
         {
             _askedPlayer = player;

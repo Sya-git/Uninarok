@@ -175,5 +175,27 @@ namespace Uninarok.Units.Tests
             _view.PlaceOn(map, new Vector3(-5f, 7f, -5f));
             Assert.That(_view.transform.position.y, Is.EqualTo(7f), "outside the map the height is kept");
         }
+
+        // TASKS-0011 T5.1 (SPEC-0011 FR-4; PLAN-0011 4.9).
+        [Test]
+        public void UnitView_PlayFor_DirectionChangeKeepsTime()
+        {
+            _view.SetLook(UnitTestData.Swordsman());
+            _view.Facing = UninarokDirection.South;
+            _view.PlayFor(PcAnimation.Attack1, 800, PlayMode.OnceHold);
+            Step(0f);
+            Step(0.4f);
+            var body = _view.ActorOf(PartSlot.Body);
+            int count = body.Data.Actions[body.UniqueAction].FrameCount;
+            Assert.That(_view.Frame, Is.EqualTo(count / 2), "half of 800 ms");
+            _view.Facing = UninarokDirection.East;
+            Step(0f);
+            count = body.Data.Actions[body.UniqueAction].FrameCount;
+            Assert.That(_view.Frame, Is.EqualTo(count / 2), "turned, still half way");
+            Step(0.4f);
+            Assert.That(_view.Frame, Is.EqualTo(count - 1));
+            _view.Play(PcAnimation.Idle);
+            Assert.That(_view.Clock.FitMs, Is.EqualTo(0), "Play forgets the fitted time");
+        }
     }
 }

@@ -124,7 +124,7 @@
 
 ## Phase 5: Units and presenter
 
-- [ ] **T5.1** Tests, then implementation: `UnitClock.FitMs`, `UnitView.PlayFor`. (FR-4)
+- [x] **T5.1** Tests, then implementation: `UnitClock.FitMs`, `UnitView.PlayFor`. (FR-4)
   *Done when:* `UnitClock_FitMs_*` and `UnitView_PlayFor_*` pass, SPEC-0009's clock and view tests too.
 
 - [ ] **T5.2** Tests, then implementation: `PickRect` of units and ground items. (FR-2, FR-10)
