@@ -167,7 +167,7 @@
 - [x] **T7.4** Tests, then implementation: `RestartPrompt`. (FR-8)
   *Done when:* the `RestartPrompt_*` tests pass.
 
-- [ ] **T7.5** `RestartPromptView` in UI Toolkit. (FR-8)
+- [x] **T7.5** `RestartPromptView` in UI Toolkit. (FR-8)
   First check UI Toolkit input with a button in an empty panel in Bootstrap (plan §9).
   *Done when:* `RestartPromptView_TwoButtons` passes; mouse and Esc work in game; labels from T0.4, or marked as provisional until it is done.
 

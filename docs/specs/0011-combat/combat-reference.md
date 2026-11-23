@@ -198,7 +198,8 @@ Not in the lead: the projectile's height, and whether it follows a moving target
 | `HoldAttackMs` | 300 ms | plan choice | shot 14 |
 | `PickMinPx` | 24 screen pixels | plan choice | shot 14 |
 | `RestartTimeoutMs` | 3,000 ms | plan choice | not displayed |
-| restart prompt labels and order | T0.4 | owner | T0.4 |
+| restart prompt labels and order | "Return to Save Point", then "Cancel" (provisional) | T0.4 (owner); until then a placeholder of T7.5 | T0.4 |
+| restart prompt window | 200 px wide, plain USS (`RestartPrompt.uss`), centred, no images (D8) | provisional (T7.5) | T0.4 |
 
 ## Owner's notes on the footage (2026-11-22)
 

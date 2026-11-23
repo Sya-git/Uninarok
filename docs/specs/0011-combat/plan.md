@@ -463,7 +463,7 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 | The original's numbers or bars do not scale as assumed (world or screen) | Both placements go through one function per mesh (§4.8); decided by shots 1 and 10 |
 | A monster healed to full keeps a bar (H10: not reported) | The client shows the last report; the bar goes at the next report or when the unit leaves. Heal skills only. Written into the packet doc; accepted by the owner, FR-7 amended (2026-11-22) |
 | Client ahead of the server by up to a step (PLAN-0010 D36) gives too-far replies | H4 (the server keeps a request made while walking), D4; the success criterion is measured in the 20-kill run |
-| UI Toolkit input beside the Input System package (no EventSystem in Bootstrap) | Checked first in the prompt's task with a button in an empty panel; fallback: an EventSystem in Bootstrap, recorded here |
+| UI Toolkit input beside the Input System package (no EventSystem in Bootstrap) | Checked first in the prompt's task with a button in an empty panel; fallback: an EventSystem in Bootstrap, recorded here. **Checked (T7.5, Unity 6000.7):** the panel gets the Input System's mouse and keyboard without an EventSystem, with simulated devices (`RestartPromptView_TwoButtons`) and with events queued on the real devices in game; no fallback needed |
 | The server's `attack_walk_delay` or `delay_battle_damage` changed by configuration | Spec §6: defaults assumed only where nothing is sent; both only move what is shown |
 | Weapon value forms (view id or item id) wrong for some weapons | PLAN-0010 D22 holds so far; unknown weapons fall back to bare hand and log one trace line per value |
 
