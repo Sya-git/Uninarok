@@ -3,6 +3,12 @@ namespace Uninarok.Units
     /// <summary>Job families the display rules depend on (PLAN-0009 4.11).</summary>
     public static class JobFamilies
     {
+        /// <summary>The job id whose attack row <paramref name="job"/> uses (PLAN-0011 4.7). Pending T10.2.</summary>
+        public static int RowJobOf(int job) => throw new System.NotImplementedException();
+
+        /// <summary>Male for the Soul Reaper family, <paramref name="sex"/> otherwise (PLAN-0011 4.7, D24). Pending T10.2.</summary>
+        public static byte RowSexOf(int job, byte sex) => throw new System.NotImplementedException();
+
         /// <summary>Assassin, Assassin Cross, Baby Assassin, Guillotine Cross (both), Baby Guillotine Cross.</summary>
         public static bool IsAssassinFamily(int job) 
         {
