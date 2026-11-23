@@ -49,6 +49,9 @@ namespace Uninarok.World
         /// <summary>Requests in a row without an own blow before the attack is given up.</summary>
         public int AttackRetries { get; set; } = 3;
 
+        /// <summary>A refused pickup is asked for once more after this (a step of lag).</summary>
+        public int PickupRetryMs { get; set; } = 400;
+
         readonly WorldSession _session;
         readonly INetworkClient _client;
         readonly NetworkFlow _flow;
@@ -68,6 +71,12 @@ namespace Uninarok.World
         uint _silentSince;
         int _lastAttackMs;
         int _retries;
+        // The item asked for, whether a request waits for its answer, the failures, a retry due.
+        uint _item;
+        bool _pickUpSent;
+        int _pickupFailures;
+        bool _retryPickUp;
+        uint _retryAt;
 
         internal OwnCombat(WorldSession session, INetworkClient client, NetworkFlow flow)
         {
@@ -127,15 +136,43 @@ namespace Uninarok.World
             return AttackResult.NoPath;
         }
 
-        /// <summary>A click on an item on the ground; false when nothing was asked for.</summary>
-        public bool PickUp(uint itemId) => throw new NotImplementedException("T3.5");
+        /// <summary>
+        /// A click on an item on the ground (FR-10): within two cells and standing, it is asked for now; else the own character
+        /// walks to the first cell of the path within two cells and asks when the walk ends. False when nothing was asked for.
+        /// </summary>
+        public bool PickUp(uint itemId)
+        {
+            if (!_session.Own.TryGet(out var model, out int own) || model[own].State != EntityState.Standing) return false;
+            if (!model.TryGetSlot(itemId, out int item) || !model[item].IsItem) return false;
+            Idle();
+            _item = itemId;
+            _pickupFailures = 0;
+            uint now = _session.Clock.Now;
+            ref readonly var o = ref model[own];
+            if (!o.Walking && AttackRange.CanPickUp(o.CellX, o.CellY, model[item].CellX, model[item].CellY)) return SendPickUp();
+            if (!Fetch(model, own, item, now))
+            {
+                _item = 0;
+                return false;
+            }
+            _state = CombatState.Fetching;
+            return true;
+        }
 
         /// <summary>Sit, map change, death: forgets the target or the item, sends nothing.</summary>
-        public void Cancel() => Idle();
+        public void Cancel()
+        {
+            Idle();
+            _item = 0;
+            _pickUpSent = false;
+            _retryPickUp = false;
+        }
 
         /// <summary>Once per frame after the model's <c>Advance</c>, with the server time.</summary>
         public void Tick(uint now)
         {
+            if (_retryPickUp && ServerClock.Diff(now, _retryAt) >= 0) RetryPickUp();
+            if (_state == CombatState.Fetching) TickFetch(now);
             if (_state == CombatState.Idle || _state == CombatState.Fetching) return;
             if (!_session.Own.TryGet(out var model, out int own) || model[own].State == EntityState.Dead || !IsAttackable(model, _target, out int target))
             {
@@ -188,7 +225,90 @@ namespace Uninarok.World
             Idle();
             NetLog.Info("attack stopped: no arrows (ZC_ACTION_FAILURE 0)");
         }
-        internal void OnPickupAnswer(int result, uint now) => throw new NotImplementedException("T3.5");
+        // ZC_ITEM_PICKUP_ACK to the request sent: a failure while the item is there is asked for once more after a step of lag,
+        // then reported with its code as received (D13). Success needs nothing: the server removes the item.
+        internal void OnPickupAnswer(int result, uint now)
+        {
+            if (!_pickUpSent) return;
+            _pickUpSent = false;
+            if (result == 0)
+            {
+                _item = 0;
+                return;
+            }
+            if (++_pickupFailures == 1 && ItemThere(out _, out _))
+            {
+                _retryPickUp = true;
+                _retryAt = unchecked(now + (uint)Math.Max(0, PickupRetryMs));
+                return;
+            }
+            NetLog.Info($"pickup failed: ZC_ITEM_PICKUP_ACK result {result}");
+            _item = 0;
+        }
+
+        // ---- pickup ----
+
+        bool ItemThere(out WorldModel model, out int slot)
+        {
+            slot = -1;
+            model = _session.Model;
+            return _item != 0 && model != null && model.TryGetSlot(_item, out slot) && model[slot].IsItem;
+        }
+
+        bool SendPickUp()
+        {
+            if (!_client.Send(new PICKUP_ITEM(_item))) return false;
+            _pickUpSent = true;
+            return true;
+        }
+
+        void RetryPickUp()
+        {
+            _retryPickUp = false;
+            if (_state != CombatState.Idle || !ItemThere(out _, out _) || !_session.Own.CanAct)
+            {
+                _item = 0;
+                return;
+            }
+            SendPickUp();
+        }
+
+        // The server tests its own cell once and keeps nothing (unlike attacks, H4): asked for only when the walk has ended.
+        void TickFetch(uint now)
+        {
+            if (!ItemThere(out var model, out int item) || !_session.Own.TryGet(out _, out int own) || model[own].State != EntityState.Standing)
+            {
+                Idle();
+                return;
+            }
+            ref readonly var o = ref model[own];
+            if (o.Walking) return;
+            if (AttackRange.CanPickUp(o.CellX, o.CellY, model[item].CellX, model[item].CellY))
+            {
+                _state = CombatState.Idle;
+                SendPickUp();
+                return;
+            }
+            if (ServerClock.Diff(now, _askedAt) >= ApproachRepeatMs && !Fetch(model, own, item, now)) Idle();
+        }
+
+        // The first cell of the path to the item within two cells; an occupied one: the next.
+        bool Fetch(WorldModel model, int own, int item, uint now)
+        {
+            ref readonly var o = ref model[own];
+            ref readonly var i = ref model[item];
+            _askedAt = now;
+            if (model.Pathfinder.Search(o.CellX, o.CellY, i.CellX, i.CellY, ref _path) != PathResult.Found) return false;
+            for (int step = 0; step < _path.Length; step++)
+            {
+                CellAt(step, out int x, out int y);
+                if (!AttackRange.CanPickUp(x, y, i.CellX, i.CellY)) continue;
+                var result = _session.Own.WalkFor(x, y);
+                if (result == WalkRequestResult.Sent) return true;
+                if (result != WalkRequestResult.Occupied) return false;
+            }
+            return false;
+        }
 
         // ---- rules ----
 

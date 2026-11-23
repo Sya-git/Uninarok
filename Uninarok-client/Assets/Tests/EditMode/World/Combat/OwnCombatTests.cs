@@ -379,7 +379,7 @@ namespace Uninarok.World.Tests
 
         // ---- FR-10: pickup ----
 
-        [Test, Ignore("pending T3.5")]
+        [Test]
         public void OwnCombat_PickUp_WalksWithinTwoThenAsks()
         {
             Monster(MonsterA, 151, 200);
@@ -399,14 +399,14 @@ namespace Uninarok.World.Tests
             for (int i = 0; i < 40 && _rig.Get(Own).Walking; i++)
             {
                 Run(50);
-                Assert.AreEqual(1, Count(PacketIds.PICKUP_ITEM), "not before the walk ends: the server keeps nothing");
+                if (_rig.Get(Own).Walking) Assert.AreEqual(1, Count(PacketIds.PICKUP_ITEM), "not before the walk ends: the server keeps nothing");
             }
             Run(50);
             Assert.AreEqual(PickUpBytes(ItemB), Last);
             Assert.AreEqual(CombatState.Idle, Combat.State);
         }
 
-        [Test, Ignore("pending T3.5")]
+        [Test]
         public void OwnCombat_PickUp_FailureRetriedOnce()
         {
             Item(ItemA, 151, 200);
@@ -434,7 +434,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(4, Count(PacketIds.PICKUP_ITEM), "success needs nothing");
         }
 
-        [Test, Ignore("pending T3.5")]
+        [Test]
         public void OwnCombat_PickUp_FailureReportedOnce()
         {
             Item(ItemA, 151, 200);

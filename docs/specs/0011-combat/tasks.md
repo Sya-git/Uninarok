@@ -90,7 +90,7 @@
 - [x] **T3.4** `OwnCombat`: too far, silence, no ammunition, ground click, cancel. (FR-2, FR-3, FR-8)
   *Done when:* the remaining attack tests pass, SPEC-0010's `OwnCharacter_*` tests too.
 
-- [ ] **T3.5** `OwnCombat`: pickup. (FR-10)
+- [x] **T3.5** `OwnCombat`: pickup. (FR-10)
   *Done when:* the `OwnCombat_PickUp_*` tests pass.
 
 ## Phase 4: Timeline

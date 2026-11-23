@@ -55,6 +55,7 @@ namespace Uninarok.World
         readonly PacketHandler<ATTACK_TOO_FAR> _onTooFar;
         readonly PacketHandler<RESURRECTION> _onResurrection;
         readonly PacketHandler<ACTION_FAILURE> _onActionFailure;
+        readonly PacketHandler<ITEM_PICKUP_ACK> _onPickupAnswer;
 
         public WorldSession(INetworkClient client, NetworkFlow flow, ServerClock clock, WorldSettings settings)
         {
@@ -86,6 +87,7 @@ namespace Uninarok.World
             _onTooFar = OnTooFar;
             _onResurrection = OnResurrection;
             _onActionFailure = OnActionFailure;
+            _onPickupAnswer = OnPickupAnswer;
             Own = new OwnCharacter(this, client, _flow);
             Combat = new OwnCombat(this, client, _flow);
 
@@ -255,6 +257,7 @@ namespace Uninarok.World
             _subscriptions.Add(_onTooFar);
             _subscriptions.Add(_onResurrection);
             _subscriptions.Add(_onActionFailure);
+            _subscriptions.Add(_onPickupAnswer);
             _subscriptions.Add(_onStand);
             _subscriptions.Add(_onNew);
             _subscriptions.Add(_onMoveEntry);
@@ -370,6 +373,8 @@ namespace Uninarok.World
         }
 
         void OnActionFailure(in ACTION_FAILURE p) => Combat.OnActionFailure(p.Type);
+
+        void OnPickupAnswer(in ITEM_PICKUP_ACK p) => Combat.OnPickupAnswer(p.Result, _clock.Now);
 
         void OnResurrection(in RESURRECTION p) => Model?.SetState(p.UnitId, EntityState.Standing);
 
