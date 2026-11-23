@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 261c3086ca8a8134db681ec75c5eb369, type: 3}
+  m_Name: CombatSettings
+  m_EditorClassIdentifier: Uninarok.World::Uninarok.World.CombatSettings
+  ApproachRepeatMs: 200
+  AttackSilenceMs: 1500
+  AttackSilenceMotions: 2
+  AttackSilencePadMs: 500
+  AttackRetries: 3
+  PickupRetryMs: 400
+  StandbyMs: -1
+  MultiHitMs: 200
+  LeftHandMs: 350
+  HurtBeforeDeathMs: 250
+  PlayerHurtBeforeDeathMs: 0
+  FlightMs: 192
+  FlightFullCells: 8
+  ProjectileHeight: 1
+  ProjectilePool: 32
+  NumberMs: 1500
+  NumberScaleStart: 4
+  NumberScaleEnd: 0
+  NumberDriftX: 4
+  NumberDriftY: 4
+  NumberHeightBase: 2
+  NumberHeightAmplitude: 5
+  MessageMs: 800
+  MessageScale: 0.5
+  MessageHeightStart: 3.5
+  MessageHeightEnd: 7
+  TotalMs: 3000
+  DigitSpacingPx: 2
+  NumberOnMonster: {r: 1, g: 1, b: 1, a: 1}
+  NumberOnPlayer: {r: 1, g: 0, b: 0, a: 1}
+  NumberCritical: {r: 0.9, g: 0.9, b: 0.15, a: 1}
+  NumberCapacity: 512
+  MaxDigits: 10
+  HpBarPx: {x: 60, y: 5}
+  HpSpBarPx: {x: 60, y: 9}
+  BarBelowFeet: 0.5
+  BarLowShare: 0.25
+  BarFrame: {r: 0.0627451, g: 0.09411765, b: 0.6117647, a: 1}
+  BarEmpty: {r: 0.25882354, g: 0.25882354, b: 0.25882354, a: 1}
+  OwnHp: {r: 0.0627451, g: 0.9372549, b: 0.12941177, a: 1}
+  OwnHpLow: {r: 1, g: 0, b: 0, a: 1}
+  OwnSp: {r: 0.09411765, g: 0.3882353, b: 0.87058824, a: 1}
+  MonsterHp: {r: 1, g: 0, b: 0.90588236, a: 1}
+  MonsterHpLow: {r: 1, g: 1, b: 0, a: 1}
+  BarCapacity: 512
+  HoldAttackMs: 300
+  PickMinPx: 24
+  RestartTimeoutMs: 3000

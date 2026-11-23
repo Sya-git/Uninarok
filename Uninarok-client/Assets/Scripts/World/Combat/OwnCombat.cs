@@ -52,6 +52,22 @@ namespace Uninarok.World
         /// <summary>A refused pickup is asked for once more after this (a step of lag).</summary>
         public int PickupRetryMs { get; set; } = 400;
 
+        /// <summary>The silence is at least this many times the last own attack motion, plus <see cref="AttackSilencePadMs"/>.</summary>
+        public int AttackSilenceMotions { get; set; } = 2;
+        public int AttackSilencePadMs { get; set; } = 500;
+
+        /// <summary>Takes the values of the settings (PLAN-0011 4.5); the defaults are the same values.</summary>
+        public void Use(CombatSettings settings)
+        {
+            if (settings == null) return;
+            ApproachRepeatMs = settings.ApproachRepeatMs;
+            AttackSilenceMs = settings.AttackSilenceMs;
+            AttackSilenceMotions = settings.AttackSilenceMotions;
+            AttackSilencePadMs = settings.AttackSilencePadMs;
+            AttackRetries = settings.AttackRetries;
+            PickupRetryMs = settings.PickupRetryMs;
+        }
+
         readonly WorldSession _session;
         readonly INetworkClient _client;
         readonly NetworkFlow _flow;
@@ -351,7 +367,7 @@ namespace Uninarok.World
         // not to its own idea of the target's cell (D5).
         void Watch(WorldModel model, int own, uint now)
         {
-            int limit = Math.Max(AttackSilenceMs, 2 * _lastAttackMs + 500);
+            int limit = Math.Max(AttackSilenceMs, AttackSilenceMotions * _lastAttackMs + AttackSilencePadMs);
             if (ServerClock.Diff(now, _silentSince) < limit) return;
             if (++_retries > AttackRetries)
             {
