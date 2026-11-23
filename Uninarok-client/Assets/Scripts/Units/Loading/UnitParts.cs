@@ -81,6 +81,9 @@ namespace Uninarok.Units
 
         public IReadOnlyList<Line> Lines => _lines;
 
+        /// <summary>The hands of the look (PLAN-0009 4.11). Stub until T10.6 sets it; default for now.</summary>
+        public HandsResult Hands { get; internal set; }
+
         public bool TryGet(PartSlot slot, out Line line)
         {
             foreach (var l in _lines)
