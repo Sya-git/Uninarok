@@ -42,7 +42,40 @@ namespace Uninarok.Units
             LeftNotDrawn = leftNotDrawn;
         }
 
-        public string Describe() => throw new NotImplementedException("T10.2");
+        /// <summary>One readable line for the report and the composer. Allocates: not for the frame loop.</summary>
+        public string Describe()
+        {
+            string text = "right " + DescribeHand(Right) + " + left " + DescribeHand(Left) + " -> ";
+            switch (Weapon)
+            {
+                case WeaponSource.Both:
+                    text += "type " + WeaponType + " (assassin family)";
+                    break;
+                case WeaponSource.Right:
+                    text += "type " + WeaponType + " (right weapon)";
+                    break;
+                case WeaponSource.Left:
+                    text += "type " + WeaponType + " (left weapon)";
+                    break;
+                default:
+                    text += "no weapon";
+                    break;
+            }
+            if (DrawShield) text += ", shield drawn";
+            if (LeftNotDrawn) text += ", left weapon not drawn";
+            return text;
+        }
+
+        static string DescribeHand(in Hand hand)
+        {
+            switch (hand.Kind)
+            {
+                case HandKind.Weapon: return "weapon type " + hand.WeaponType + " (" + hand.Value + ")";
+                case HandKind.Shield: return "shield view " + hand.ViewId + " (" + hand.Value + ")";
+                case HandKind.Unknown: return "unknown (" + hand.Value + ")";
+                default: return "none";
+            }
+        }
     }
 
     /// <summary>The both-hands rule, defined once for display and combat (PLAN-0009 4.11; SPEC-0009 FR-17).</summary>
@@ -51,11 +84,53 @@ namespace Uninarok.Units
         public const int FirstItemId = 500;
         public const int Katar = 16;
 
-        public static bool IsItemId(int value) => throw new NotImplementedException("T10.2");
+        public static bool IsItemId(int value) => value >= FirstItemId;
         public static Hand Right(int value, SpriteCatalog catalog, CompositionTables tables) => throw new NotImplementedException("T10.4");
         public static Hand Left(int value, SpriteCatalog catalog, CompositionTables tables) => throw new NotImplementedException("T10.4");
-        public static int CombinedType(int typeA, int typeB) => throw new NotImplementedException("T10.2");
-        public static HandsResult Combine(int job, in Hand right, in Hand left) => throw new NotImplementedException("T10.2");
+
+        const int ShortSword = 1, Sword = 2, Axe = 6;
+
+        /// <summary>Sprite type of two one-handed weapons together (25..30, either order), else 0.</summary>
+        public static int CombinedType(int typeA, int typeB)
+        {
+            int lo = typeA < typeB ? typeA : typeB;
+            int hi = typeA < typeB ? typeB : typeA;
+            if (lo == ShortSword && hi == ShortSword) return 25;
+            if (lo == Sword && hi == Sword) return 26;
+            if (lo == Axe && hi == Axe) return 27;
+            if (lo == ShortSword && hi == Sword) return 28;
+            if (lo == ShortSword && hi == Axe) return 29;
+            if (lo == Sword && hi == Axe) return 30;
+            return 0;
+        }
+
+        /// <summary>Pure case table of PLAN-0009 4.11. Unknown hands count as empty for the type.</summary>
+        public static HandsResult Combine(int job, in Hand right, in Hand left)
+        {
+            bool rightWeapon = right.Kind == HandKind.Weapon;
+            bool leftWeapon = left.Kind == HandKind.Weapon;
+            bool leftShield = left.Kind == HandKind.Shield;
+
+            if (rightWeapon)
+            {
+                if (right.WeaponType == Katar)
+                    return new HandsResult(right, left, Katar, WeaponSource.Right, false, false);
+                if (leftShield)
+                    return new HandsResult(right, left, right.WeaponType, WeaponSource.Right, true, false);
+                if (leftWeapon)
+                {
+                    int combined = JobFamilies.IsAssassinFamily(job) ? CombinedType(right.WeaponType, left.WeaponType) : 0;
+                    if (combined != 0)
+                        return new HandsResult(right, left, combined, WeaponSource.Both, false, false);
+                    return new HandsResult(right, left, right.WeaponType, WeaponSource.Right, false, true);
+                }
+                return new HandsResult(right, left, right.WeaponType, WeaponSource.Right, false, false);
+            }
+
+            if (leftWeapon)
+                return new HandsResult(right, left, left.WeaponType, WeaponSource.Left, false, false);
+            return new HandsResult(right, left, 0, WeaponSource.None, leftShield, false);
+        }
         public static HandsResult Of(int job, int right, int left, SpriteCatalog catalog, CompositionTables tables) => throw new NotImplementedException("T10.4");
     }
 }

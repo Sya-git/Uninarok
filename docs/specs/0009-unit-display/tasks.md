@@ -248,7 +248,7 @@ Plan §4.11, §6 (revision table), D31 to D36, R12 to R15. Spec FR-17, FR-1 (han
 - [x] **T10.1** [core] Tests, pending T10.2: `WeaponHands_Combine_EveryCase` (the case table of plan §4.11: weapon/none, none/weapon, assassin weapon/weapon for the six pairs in both orders, swordsman weapon/weapon, weapon/shield, katar alone and with a left value, none/shield, none/none, unknown hands) and `WeaponHands_CombinedType_SixPairsEitherOrder_ElseZero`, `JobFamilies_IsAssassinFamily_EveryIdAndNotRogue`. Synthetic data. (FR-17)
   *Done when:* they compile against the empty signatures of plan §4.11 and are listed as ignored ("pending T10.2"); no new warnings in `Logs/Editor.log`.
 
-- [ ] **T10.2** [core] Implementation: `HandKind`, `Hand`, `WeaponSource`, `HandsResult` (with `Describe()`), `WeaponHands.CombinedType`, `WeaponHands.Combine`, `WeaponHands.IsItemId`, and `JobFamilies.IsAssassinFamily` (the six ids of plan §4.11). Removes the marks of T10.1. (FR-17)
+- [x] **T10.2** [core] Implementation: `HandKind`, `Hand`, `WeaponSource`, `HandsResult` (with `Describe()`), `WeaponHands.CombinedType`, `WeaponHands.Combine`, `WeaponHands.IsItemId`, and `JobFamilies.IsAssassinFamily` (the six ids of plan §4.11). Removes the marks of T10.1. (FR-17)
   *Done when:* the three T10.1 tests pass; no new warnings. `Hand` and `HandsResult` carry no catalog lookup (classification is T10.4).
 
 - [ ] **T10.3** [core] Tests, pending T10.4: `WeaponHands_Classify_LeftByItemKind` (left 1201 gives a weapon, 2101 a shield, 1 a shield, 2220 unknown, 9999999 unknown; right 2101 unknown). Real catalog. (FR-17)

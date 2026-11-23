@@ -2,7 +2,7 @@ using NUnit.Framework;
 
 namespace Uninarok.Units.Tests
 {
-    // TASKS-0009 T10.1 (FR-17; PLAN-0009 4.11). Synthetic hands; implemented by T10.2.
+    // TASKS-0009 T10.1 (FR-17; PLAN-0009 4.11). Synthetic hands.
     public class WeaponHandsTests
     {
         const int Swordsman = 1, Assassin = 12, Rogue = 17;
@@ -22,7 +22,7 @@ namespace Uninarok.Units.Tests
             Assert.That(r.LeftNotDrawn, Is.EqualTo(leftNotDrawn), what + " leftNotDrawn");
         }
 
-        [Test, Ignore("pending T10.2")]
+        [Test]
         public void WeaponHands_Combine_EveryCase()
         {
             Check(Swordsman, W(Sword), None(), Sword, WeaponSource.Right, false, false, "weapon/none");
@@ -62,7 +62,7 @@ namespace Uninarok.Units.Tests
             Check(Swordsman, Unknown(), Shield(), 0, WeaponSource.None, true, false, "unknown/shield");
         }
 
-        [Test, Ignore("pending T10.2")]
+        [Test]
         public void WeaponHands_CombinedType_SixPairsEitherOrder_ElseZero()
         {
             Assert.That(WeaponHands.CombinedType(ShortSword, ShortSword), Is.EqualTo(25));
@@ -85,7 +85,7 @@ namespace Uninarok.Units.Tests
 
     public class JobFamiliesTests
     {
-        [Test, Ignore("pending T10.2")]
+        [Test]
         public void JobFamilies_IsAssassinFamily_EveryIdAndNotRogue()
         {
             // JOB_ASSASSIN, JOB_ASSASSIN_CROSS, JOB_BABY_ASSASSIN, JOB_GUILLOTINE_CROSS, JOB_GUILLOTINE_CROSS_T, JOB_BABY_CROSS
