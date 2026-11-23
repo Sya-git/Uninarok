@@ -23,7 +23,7 @@
 
 ## Phase 0: Prepare
 
-- [ ] **T0.1** Verify every packet of plan §4.1 against Hercules for PACKETVER 20220406. (FR-1, FR-2, FR-3, FR-5, FR-8, FR-9, FR-10, FR-11)
+- [x] **T0.1** Verify every packet of plan §4.1 against Hercules for PACKETVER 20220406. (FR-1, FR-2, FR-3, FR-5, FR-8, FR-9, FR-10, FR-11)
   ID, size and layout in `packets_struct.h`/`clif.cpp`; the samples in SPEC-0010's captures; the result codes of `ITEM_PICKUP_ACK`; that `0x00B1` is not sent.
   *Done when:* a results table is in plan §4.1 (a Decisions note for any difference).
 

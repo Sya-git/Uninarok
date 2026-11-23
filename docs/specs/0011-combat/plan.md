@@ -101,6 +101,30 @@ Sizes from the Hercules length table for 20220406. "Seen": how often in SPEC-001
 
 `UNIT_HP` (`0x0977`) gets a note in its doc: never sent at this PACKETVER (H10). `0x00B1` is not implemented (H13).
 
+**T0.1 results** (2026-11-22). Sources: lengths from `src/common/packets/packets2022_len_main.h`; the client-to-server IDs from the `PACKETVER == 20220406` block of `src/map/packets_shuffle_main.h` (`PACKETVER_RE` and `PACKETVER_ZERO` are off in `mmo.h`); layouts from `packets_struct.h` or the sender in `clif.cpp`; samples: SPEC-0010's three `world-*.bin` walked packet by packet with that length table, all three to their last byte.
+
+| ID | Size (table) | Layout source | Layout | Capture | Result |
+|---|---:|---|---|---|---|
+| `0x08C8` | 34 | `packet_damage` (`PACKETVER` ≥ 20131223: `is_sp_damaged` present; ≥ 20071113: `int32` damages), `clif_damage` | as §4.1 | 119 in prt_fild08: 118 type 0 and one type 11, all on the own character, `attackMT` 912, `attackedMT` 0, damage 0, count 1 | ok |
+| `0x008A` | 29 | `clif_takeitem`: id at 2, item id at 6, action at 26 = 1; `clif_sitting`, `clif_standing` write only id and action into an uninitialised buffer | as §4.1 | none | ok |
+| `0x0139` | 16 | `PACKET_ZC_ATTACK_FAILURE_FOR_DISTANCE` | as §4.1 | none | ok |
+| `0x013A` | 4 | `PACKET_ZC_ATTACK_RANGE` | as §4.1 | 6, range 1 (bare hands) | ok |
+| `0x013B` | 4 | `clif_arrow_fail`: type `uint16` at 2 | as §4.1 | none | ok |
+| `0x00B0` | 8 | `PACKET_ZC_PAR_CHANGE`, `clif_updatestatus` | vars 0, 5, 6, 7, 8, 11, 55 as §4.1; HP of a dead player is `get_restart_hp` (spec FR-1) | 72; vars 5 to 8 seen | ok |
+| `0x00B1` | 8 | `clif_updatestatus` uses it for zeny and EXP only under `#else` of `PACKETVER_MAIN_NUM >= 20170906` | not sent | none | ok (H13) |
+| `0x0ACB` | 12 | `PACKET_ZC_LONGLONGPAR_CHANGE`; vars 1, 2, 20, 22, 23 | as §4.1 | 28; vars 1, 2, 22, 23 with values 0 to 8, 350 and 10 | ok |
+| `0x0ACC` | 18 | `clif_displayexp`: id at 2, amount `int64` at 6, var at 14, quest at 16 | as §4.1 | 16, amount 1, vars 1 and 2, quest 0 | ok |
+| `0x0148` | 8 | `clif_resurrection`: id at 2, type 0 at 6 | as §4.1 | none | ok |
+| `0x09FD`, `0x09FE`, `0x09FF` | variable | SPEC-0010 | unchanged | 186, 35, 184 | ok |
+| `0x0B41` | 70 | `PACKET_ZC_ITEM_PICKUP_ACK`: `result` at 33 | result codes below | 1: red potion (501) × 5, result 0 | **differs** from spec §6 (D13) |
+| `0x0080`, `0x00A1` | 7, 6 | SPEC-0010 | unchanged | 422, 69 | ok |
+| `0x0437` out | 7 | `clif_parse_ActionRequest`, shuffle `packet(0x0437, pActionRequest, 2, 6)`: target at 2, action at 6; actions 0 attack, 1 pickup, 2 sit, 3 stand, 7 continuous | as §4.1 | – | ok |
+| `0x0118` out | 2 | `clif_parse_StopAttack` | no payload | – | ok |
+| `0x0362` out | 6 | shuffle `packet(0x0362, pTakeItem, 2)` | item object id at 2 | – | ok |
+| `0x00B2` out | 3 | `clif_parse_Restart`: type at 2, 0 respawn, 1 character select | as §4.1 | – | ok |
+
+Pickup results (`ITEM_PICKUP_ACK.Result`, `clif_additem`): **0** success; on failure the packet is all zero but `Index` 2 and `result`. **6** from `clif_parse_TakeItem` for every refusal before the item is given: dead, item gone or on another map, hiding and similar states, cannot act, too far (`check_distance_bl` 2), permission, loot reserved for someone else. From `pc_additem` through `party_share_loot`: **1** invalid item or amount, **2** overweight, **4** no free inventory slot, **5** maximum amount, **7** stack limit (also bound items).
+
 ### 4.2 Model: `Entity`, `WorldModel`, `OwnStatus`, `Blow`
 
 Satisfies FR-1, FR-4 (facing), FR-7 (values), FR-9, FR-12.
@@ -423,6 +447,7 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 | D10 | Pick by the body's rectangle in the pivot plane, nearest to the camera | Alpha test; colliders | No physics, no texture reads; checked against the original (shot 14) |
 | D11 | `Standby` pose of players after an attack or a hurt | Back to idle at once | Goal 2 ("as the original client shows it"); one setting turns it off if T0.3 shows otherwise |
 | D12 | Wire type 13 (multi-hit critical) shown as a multi-hit | Ignoring it | Hercules 2026.09 has it only among the request actions and never sends it for a basic attack |
+| D13 | (T0.1) Any pickup result ≠ 0 is a failure; its code is logged at info level as received | Treating only 6 as a failure, as spec §6 says ("a failure always answers with result 6") | `pc_additem` failures reach the client with their own code (2 overweight, 4, 5, 7) through `party_share_loot`; 6 covers only the refusals before that. FR-10 is unchanged: §4.1 already says "`Result` ≠ 0 is a failure" |
 
 ## 9. Risks
 
