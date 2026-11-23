@@ -42,7 +42,9 @@ namespace Uninarok.Networking.Packets
         public const ushort ITEM_DISAPPEAR = 0x00A1;                 // in
         public const ushort DROP_ITEM_ACK = 0x00AF;                  // in
         public const ushort PARAMETER_CHANGE = 0x00B0;               // in
+        public const ushort RESTART = 0x00B2;                        // out
         public const ushort GLOBAL_CHAT = 0x00F3;                    // out
+        public const ushort STOP_ATTACK = 0x0118;                    // out
         public const ushort ATTACK_TOO_FAR = 0x0139;                 // in
         public const ushort ATTACK_RANGE = 0x013A;                   // in
         public const ushort ACTION_FAILURE = 0x013B;                 // in
@@ -54,6 +56,7 @@ namespace Uninarok.Networking.Packets
         public const ushort REQUEST_MOVE = 0x035F;                   // out
         public const ushort HEARTBEAT_REQUEST = 0x0360;              // out
         public const ushort CHANGE_DIRECTION = 0x0361;               // out
+        public const ushort PICKUP_ITEM = 0x0362;                    // out
         public const ushort DROP_ITEM = 0x0363;                      // out
         public const ushort REQUEST_ENTER_MAP = 0x0436;              // out
         public const ushort REQUEST_ACT = 0x0437;                    // out

@@ -30,14 +30,14 @@ One row per documented packet (SPEC-0001, PACKETVER 20220406). Generated from th
 | Client to login server | `0x0AD0` | [OTP_CODE_SUBMISSION](Out/LoginServer/OTP_CODE_SUBMISSION.md) | 11 | documented | cold |
 | Client to map server | `0x007D` | [MAP_LOADED](Out/MapServer/MAP_LOADED.md) | 2 | verified | cold |
 | Client to map server | `0x0090` | [NPC_CLICK](Out/MapServer/NPC_CLICK.md) | 7 | documented | cold |
-| Client to map server | `0x00B2` | [RESTART](Out/MapServer/RESTART.md) | 3 | documented | cold |
+| Client to map server | `0x00B2` | [RESTART](Out/MapServer/RESTART.md) | 3 | implemented | cold |
 | Client to map server | `0x00F3` | [GLOBAL_CHAT](Out/MapServer/GLOBAL_CHAT.md) | variable | implemented | warm |
-| Client to map server | `0x0118` | [STOP_ATTACK](Out/MapServer/STOP_ATTACK.md) | 2 | documented | warm |
+| Client to map server | `0x0118` | [STOP_ATTACK](Out/MapServer/STOP_ATTACK.md) | 2 | implemented | warm |
 | Client to map server | `0x018A` | [QUIT_GAME](Out/MapServer/QUIT_GAME.md) | 4 | documented | cold |
 | Client to map server | `0x035F` | [REQUEST_MOVE](Out/MapServer/REQUEST_MOVE.md) | 5 | implemented | warm |
 | Client to map server | `0x0360` | [HEARTBEAT_REQUEST](Out/MapServer/HEARTBEAT_REQUEST.md) | 6 | verified | warm |
 | Client to map server | `0x0361` | [CHANGE_DIRECTION](Out/MapServer/CHANGE_DIRECTION.md) | 5 | implemented | warm |
-| Client to map server | `0x0362` | [PICKUP_ITEM](Out/MapServer/PICKUP_ITEM.md) | 6 | documented | warm |
+| Client to map server | `0x0362` | [PICKUP_ITEM](Out/MapServer/PICKUP_ITEM.md) | 6 | implemented | warm |
 | Client to map server | `0x0363` | [DROP_ITEM](Out/MapServer/DROP_ITEM.md) | 6 | implemented | warm |
 | Client to map server | `0x0366` | [USE_SKILL_TO_POS](Out/MapServer/USE_SKILL_TO_POS.md) | 10 | documented | warm |
 | Client to map server | `0x0368` | [REQUEST_UNIT_NAME](Out/MapServer/REQUEST_UNIT_NAME.md) | 6 | documented | warm |

@@ -1,9 +1,11 @@
 using System;
 using NUnit.Framework;
 using UnityEngine.TestTools.Constraints;
+using Uninarok.Networking.Core.Transport;
 using Uninarok.Networking.Core.Wire;
 using Uninarok.Networking.Packets;
 using Uninarok.Networking.Packets.In.Map;
+using Uninarok.Networking.Packets.Out.Map;
 
 namespace Uninarok.Networking.Tests
 {
@@ -136,6 +138,52 @@ namespace Uninarok.Networking.Tests
             Assert.AreEqual((0x013B, 4), ((int)PacketIds.ACTION_FAILURE, ACTION_FAILURE.Size));
             Assert.AreEqual((0x0148, 8), ((int)PacketIds.RESURRECTION, RESURRECTION.Size));
             Assert.AreEqual((2, 3), ((int)UNIT_ACT.Sit, (int)UNIT_ACT.Stand));
+        }
+
+        // ---- requests (T1.4) ----
+
+        [Test]
+        public void REQUEST_ACT_Attack_WritesGoldenBytes()
+        {
+            Assert.AreEqual(Hex("3704" + "69c58e06" + "00"), Serialized(new REQUEST_ACT(110019945, REQUEST_ACT.Attack)));
+            Assert.AreEqual(Hex("3704" + "69c58e06" + "07"), Serialized(new REQUEST_ACT(110019945, REQUEST_ACT.AttackRepeat)));
+        }
+
+        [Test]
+        public void STOP_ATTACK_PICKUP_ITEM_RESTART_WriteGoldenBytes()
+        {
+            Assert.AreEqual(Hex("1801"), Serialized(new STOP_ATTACK()));
+            Assert.AreEqual(Hex("6203" + "39300000"), Serialized(new PICKUP_ITEM(12345)));
+            Assert.AreEqual(Hex("B200" + "00"), Serialized(new RESTART(RESTART.SavePoint)));
+        }
+
+        [Test]
+        public void CombatRequests_SizesAndIds_AndAllocateNothing()
+        {
+            Assert.AreEqual((0x0118, 2), ((int)PacketIds.STOP_ATTACK, STOP_ATTACK.Size));
+            Assert.AreEqual((0x0362, 6), ((int)PacketIds.PICKUP_ITEM, PICKUP_ITEM.Size));
+            Assert.AreEqual((0x00B2, 3), ((int)PacketIds.RESTART, RESTART.Size));
+            Assert.AreEqual((0, 7), ((int)REQUEST_ACT.Attack, (int)REQUEST_ACT.AttackRepeat));
+            var client = new FakeNetworkClient { Status = Client.ConnectionStatus.Connected, RecordSends = false };
+            var buffer = new byte[16];
+            Action run = () =>
+            {
+                for (int i = 0; i < Decodes; i++)
+                {
+                    var act = new REQUEST_ACT((uint)i, REQUEST_ACT.AttackRepeat);
+                    var stop = new STOP_ATTACK();
+                    var pick = new PICKUP_ITEM((uint)i);
+                    act.Serialize(new Span<byte>(buffer, 0, act.WireSize));
+                    stop.Serialize(new Span<byte>(buffer, 0, stop.WireSize));
+                    pick.Serialize(new Span<byte>(buffer, 0, pick.WireSize));
+                    client.Send(act);
+                    client.Send(stop);
+                    client.Send(pick);
+                }
+            };
+            run();
+            Assert.That(() => run(), UnityEngine.TestTools.Constraints.Is.Not.AllocatingGCMemory());
+            Assert.AreEqual(2 * 3 * Decodes, client.UncountedSends);
         }
 
         [Test]

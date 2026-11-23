@@ -5,12 +5,16 @@ using Uninarok.Networking.Core.Wire;
 
 namespace Uninarok.Networking.Packets.Out.Map
 {
-    /// <summary>Client to map server, 0x0437 (CZ_REQUEST_ACT2), 7 bytes. Sits (2) or stands (3), or attacks a unit (combat spec).</summary>
+    /// <summary>Client to map server, 0x0437 (CZ_REQUEST_ACT2), 7 bytes. Attacks a unit once (0) or continuously (7), sits (2) or stands (3).</summary>
     [OutPacket(PacketIds.REQUEST_ACT, Size)]
     public readonly struct REQUEST_ACT : IOutgoingPacket
     {
         public const int Size = 7;
 
+        /// <summary>One blow (SPEC-0011 FR-2).</summary>
+        public const byte Attack = 0;
+        /// <summary>Continuous attack (SPEC-0011 FR-2).</summary>
+        public const byte AttackRepeat = 7;
         public const byte Sit = 2;
         public const byte Stand = 3;
 

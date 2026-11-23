@@ -51,7 +51,7 @@
 - [x] **T1.3** Tests, then structs: `ATTACK_TOO_FAR`, `ATTACK_RANGE`, `ACTION_FAILURE`, `RESURRECTION`; `UNIT_ACT.TargetId`. (FR-2, FR-3, FR-8, FR-9, FR-10)
   *Done when:* size and decode tests pass, the sit and stand tests of `UNIT_ACT` too.
 
-- [ ] **T1.4** Tests, then structs: `STOP_ATTACK`, `PICKUP_ITEM`, `RESTART`, the `REQUEST_ACT` constants. (FR-2, FR-3, FR-8, FR-10)
+- [x] **T1.4** Tests, then structs: `STOP_ATTACK`, `PICKUP_ITEM`, `RESTART`, the `REQUEST_ACT` constants. (FR-2, FR-3, FR-8, FR-10)
   *Done when:* golden-byte and size tests pass.
 
 - [ ] **T1.5** Record the fights of plan §6.2. (FR-1, FR-13)
