@@ -43,6 +43,10 @@ namespace Uninarok.Networking.Packets
         public const ushort DROP_ITEM_ACK = 0x00AF;                  // in
         public const ushort PARAMETER_CHANGE = 0x00B0;               // in
         public const ushort GLOBAL_CHAT = 0x00F3;                    // out
+        public const ushort ATTACK_TOO_FAR = 0x0139;                 // in
+        public const ushort ATTACK_RANGE = 0x013A;                   // in
+        public const ushort ACTION_FAILURE = 0x013B;                 // in
+        public const ushort RESURRECTION = 0x0148;                   // in
         public const ushort UNIT_LOOK_CHANGE = 0x01D7;               // in
         public const ushort UNIT_SLIDE = 0x01FF;                     // in
         public const ushort MAP_ENTRY_ACCEPTANCE = 0x0283;           // in

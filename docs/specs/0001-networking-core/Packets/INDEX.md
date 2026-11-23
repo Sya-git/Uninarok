@@ -68,10 +68,10 @@ One row per documented packet (SPEC-0001, PACKETVER 20220406). Generated from th
 | Map server to client | `0x00A1` | [ITEM_DISAPPEAR](In/MapServer/ITEM_DISAPPEAR.md) | 6 | implemented | hot |
 | Map server to client | `0x00AF` | [DROP_ITEM_ACK](In/MapServer/DROP_ITEM_ACK.md) | 6 | implemented | warm |
 | Map server to client | `0x00B0` | [PARAMETER_CHANGE](In/MapServer/PARAMETER_CHANGE.md) | 8 | verified | warm |
-| Map server to client | `0x0139` | [ATTACK_TOO_FAR](In/MapServer/ATTACK_TOO_FAR.md) | 16 | documented | warm |
-| Map server to client | `0x013A` | [ATTACK_RANGE](In/MapServer/ATTACK_RANGE.md) | 4 | documented | cold |
-| Map server to client | `0x013B` | [ACTION_FAILURE](In/MapServer/ACTION_FAILURE.md) | 4 | documented | cold |
-| Map server to client | `0x0148` | [RESURRECTION](In/MapServer/RESURRECTION.md) | 8 | documented | cold |
+| Map server to client | `0x0139` | [ATTACK_TOO_FAR](In/MapServer/ATTACK_TOO_FAR.md) | 16 | implemented | warm |
+| Map server to client | `0x013A` | [ATTACK_RANGE](In/MapServer/ATTACK_RANGE.md) | 4 | verified | cold |
+| Map server to client | `0x013B` | [ACTION_FAILURE](In/MapServer/ACTION_FAILURE.md) | 4 | implemented | cold |
+| Map server to client | `0x0148` | [RESURRECTION](In/MapServer/RESURRECTION.md) | 8 | implemented | cold |
 | Map server to client | `0x01D7` | [UNIT_LOOK_CHANGE](In/MapServer/UNIT_LOOK_CHANGE.md) | 15 | verified | warm |
 | Map server to client | `0x01FF` | [UNIT_SLIDE](In/MapServer/UNIT_SLIDE.md) | 10 | implemented | warm |
 | Map server to client | `0x0283` | [MAP_ENTRY_ACCEPTANCE](In/MapServer/MAP_ENTRY_ACCEPTANCE.md) | 6 | verified | cold |

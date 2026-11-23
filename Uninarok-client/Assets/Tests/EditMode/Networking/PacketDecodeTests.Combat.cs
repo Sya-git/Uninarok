@@ -79,6 +79,65 @@ namespace Uninarok.Networking.Tests
             Assert.AreEqual((0x0ACC, 18), ((int)PacketIds.EXP_GAIN, EXP_GAIN.Size));
         }
 
+        // ---- attack answers, resurrection, pickup motion (T1.3) ----
+
+        [Test]
+        public void ATTACK_TOO_FAR_Decodes_AndRejectsWrongLengths()
+        {
+            // a poring at 160,190, the own character at 152,190, range 1
+            var p = new ATTACK_TOO_FAR(Hex("69c58e06" + "A000" + "BE00" + "9800" + "BE00" + "0100"));
+            Assert.AreEqual(110019945u, p.TargetId);
+            Assert.AreEqual((160, 190, 152, 190, 1), ((int)p.TargetX, (int)p.TargetY, (int)p.X, (int)p.Y, (int)p.Range));
+            Assert.Throws<PacketFormatException>(() => new ATTACK_TOO_FAR(new byte[13]));
+            Assert.Throws<PacketFormatException>(() => new ATTACK_TOO_FAR(new byte[15]));
+        }
+
+        [Test]
+        public void ATTACK_RANGE_DecodesTheRealCapture_AndRejectsWrongLengths()
+        {
+            // world-prontera.bin: bare hands
+            Assert.AreEqual(1, new ATTACK_RANGE(Hex("0100")).Range);
+            Assert.AreEqual(9, new ATTACK_RANGE(Hex("0900")).Range);
+            Assert.Throws<PacketFormatException>(() => new ATTACK_RANGE(new byte[1]));
+            Assert.Throws<PacketFormatException>(() => new ATTACK_RANGE(new byte[3]));
+        }
+
+        [Test]
+        public void ACTION_FAILURE_Decodes_AndRejectsWrongLengths()
+        {
+            Assert.AreEqual(ACTION_FAILURE.NoArrows, new ACTION_FAILURE(Hex("0000")).Type);
+            Assert.AreEqual(3, new ACTION_FAILURE(Hex("0300")).Type);
+            Assert.Throws<PacketFormatException>(() => new ACTION_FAILURE(new byte[1]));
+            Assert.Throws<PacketFormatException>(() => new ACTION_FAILURE(new byte[3]));
+        }
+
+        [Test]
+        public void RESURRECTION_Decodes_AndRejectsWrongLengths()
+        {
+            var p = new RESURRECTION(Hex("80841e00" + "0000"));
+            Assert.AreEqual((2000000u, 0), (p.UnitId, (int)p.Type));
+            Assert.Throws<PacketFormatException>(() => new RESURRECTION(new byte[5]));
+            Assert.Throws<PacketFormatException>(() => new RESURRECTION(new byte[7]));
+        }
+
+        [Test]
+        public void UNIT_ACT_PickUp_CarriesTheItem()
+        {
+            // clif_takeitem: unit at 2, item at 6, action at 26, the rest left as the buffer held it
+            var p = new UNIT_ACT(Hex("80841e00" + "39300000" + new string('F', 32) + "01" + "FFFF"));
+            Assert.AreEqual((2000000u, 12345u, UNIT_ACT.PickUp), (p.UnitId, p.TargetId, p.Action));
+        }
+
+        [Test]
+        public void AttackAnswerPackets_SizesAndIds()
+        {
+            Assert.AreEqual((0x0139, 16), ((int)PacketIds.ATTACK_TOO_FAR, ATTACK_TOO_FAR.Size));
+            Assert.AreEqual((0x013A, 4), ((int)PacketIds.ATTACK_RANGE, ATTACK_RANGE.Size));
+            Assert.AreEqual((0x013B, 4), ((int)PacketIds.ACTION_FAILURE, ACTION_FAILURE.Size));
+            Assert.AreEqual((0x0148, 8), ((int)PacketIds.RESURRECTION, RESURRECTION.Size));
+            Assert.AreEqual((2, 3), ((int)UNIT_ACT.Sit, (int)UNIT_ACT.Stand));
+        }
+
         [Test]
         public void CombatStatusPackets_ThousandDecodes_AllocateNothing()
         {

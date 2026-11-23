@@ -102,6 +102,7 @@ namespace Uninarok.Networking.Tests
                 PacketIds.OWN_MESSAGE,
                 // SPEC-0011
                 PacketIds.DAMAGE, PacketIds.LONG_PARAMETER_CHANGE, PacketIds.EXP_GAIN,
+                PacketIds.ATTACK_TOO_FAR, PacketIds.ATTACK_RANGE, PacketIds.ACTION_FAILURE, PacketIds.RESURRECTION,
             };
             var handled = GeneratedPacketRouter.HandledIds.ToArray();
             CollectionAssert.AreEquivalent(expected, handled);

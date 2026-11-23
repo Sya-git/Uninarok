@@ -6,7 +6,7 @@
 | **Hercules packet name** | `ZC_ATTACK_FAILURE_FOR_DISTANCE` |
 | **Packet ID** | `0x0139` |
 | **Declared size** | 16 bytes total, including the 2-byte packet ID |
-| **Status** | documented |
+| **Status** | implemented |
 | **Frequency** | warm |
 | **Verified** | ID and size match Hercules 2026.09 length table for PACKETVER 20220406; layout from `packets_struct.h` (`PACKET_ZC_ATTACK_FAILURE_FOR_DISTANCE`) (checked 2026-11-22, SPEC-0011 T0.1). Capture: no |
 | **Allocates** | no |
