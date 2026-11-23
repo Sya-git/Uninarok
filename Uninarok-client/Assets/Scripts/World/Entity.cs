@@ -115,6 +115,15 @@ namespace Uninarok.World
         internal float OffX, OffY;
         internal uint OffStarts, OffEnds;
 
+        /// <summary>HP and max HP when the server gave them; −1: not known (SPEC-0011 FR-1). Death is never taken from them.</summary>
+        public int Hp, MaxHp;
+        /// <summary>Who it attacks; 0: nobody (SPEC-0011 FR-9).</summary>
+        public uint TargetId;
+        /// <summary>The last blow it struck.</summary>
+        public Blow LastBlow;
+        /// <summary>Dead by <see cref="VanishReason.FeignedDeath"/> (Trick Dead), not by a death.</summary>
+        public bool Feigning;
+
         /// <summary>A dead unit that is removed at <see cref="RemoveAt"/>.</summary>
         internal bool Removing;
         internal uint RemoveAt;

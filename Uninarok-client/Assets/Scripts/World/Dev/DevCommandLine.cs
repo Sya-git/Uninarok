@@ -33,11 +33,12 @@ namespace Uninarok.World.Dev
         {
             _world = world;
             _input = input;
-            Register(() => _world != null && _world.Session != null ? _world.Session.Own : null);
+            Register(() => _world != null && _world.Session != null ? _world.Session.Own : null,
+                     () => _world != null && _world.Session != null ? _world.Session.Combat : null);
         }
 
-        /// <summary>The commands of SPEC-0010, on the own character.</summary>
-        internal void Register(Func<OwnCharacter> own)
+        /// <summary>The commands of SPEC-0010, on the own character; <c>/noctrl</c> of SPEC-0011 on its combat.</summary>
+        internal void Register(Func<OwnCharacter> own, Func<OwnCombat> combat = null)
         {
             _own = own;
             Add("/doridori", () => Ask(own, c => c.Doridori()));
@@ -45,6 +46,15 @@ namespace Uninarok.World.Dev
             Add("/sit", () => Ask(own, c => c.Sit()));
             Add("/stand", () => Ask(own, c => c.Stand()));
             AddWithArguments("/drop", arguments => Drop(own(), arguments));
+            if (combat != null) Add("/noctrl", () => NoCtrl(combat()));
+        }
+
+        // SPEC-0011 FR-2 (PLAN-0011 4.10): a plain click attacks without end, as with ctrl held; for the session.
+        static string NoCtrl(OwnCombat combat)
+        {
+            if (combat == null) return "no character";
+            combat.NoCtrl = !combat.NoCtrl;
+            return combat.NoCtrl ? "/noctrl on: a click attacks without end" : "/noctrl off: ctrl or a held button attacks without end";
         }
 
         /// <summary>The items <c>/drop</c> knows; replaces (and ends) those of before.</summary>

@@ -331,6 +331,368 @@ namespace Uninarok.World.PlayTests
             Assert.That(() => frames(), UnityEngine.TestTools.Constraints.Is.Not.AllocatingGCMemory());
         }
 
+        // ---- SPEC-0011 T5.3 (FR-4, FR-9; PLAN-0011 4.9): the timeline's motions over the base animation ----
+
+        CombatTimeline Combat(out CombatSettings settings)
+        {
+            settings = ScriptableObject.CreateInstance<CombatSettings>();
+            var timeline = new CombatTimeline(settings, _model.Capacity);
+            timeline.Use(_model);
+            _presenter.Timeline = timeline;
+            return timeline;
+        }
+
+        void At(CombatTimeline timeline, uint now)
+        {
+            _model.Advance(now);
+            timeline.Advance(now);
+            _presenter.Sync(_model);
+        }
+
+        static Blow Hit(uint attacker, uint target, uint at) => new Blow(attacker, target, at, 500, 300, 10, 0, 1, BlowKind.Normal, false, 0);
+
+        [UnityTest, Category("NeedsData")]
+        public IEnumerator WorldPresenter_PlaysMotionThenBase()
+        {
+            Poring(1, 13, 20);
+            Novice(2, 12, 20);
+            _presenter.Sync(_model);
+            yield return Loaded(1);
+            yield return Loaded(2);
+            var timeline = Combat(out var settings);
+            var poring = _presenter.ViewOf(1);
+            var novice = _presenter.ViewOf(2);
+
+            timeline.Add(Hit(2, 1, 1000));
+            At(timeline, 1000);
+            Assert.AreEqual((int)PcAnimation.Attack1, novice.AnimationNumber, "the attack");
+            Assert.AreEqual(Uninarok.Units.PlayMode.OnceHold, novice.PlayMode);
+            Assert.AreEqual((int)MonsterAnimation.Idle, poring.AnimationNumber);
+            At(timeline, 1500);
+            Assert.AreEqual((int)UnitAnimations.ToUnit(PcAnimation.Hurt), poring.AnimationNumber, "the hurt at the hit moment");
+            Assert.AreEqual((int)PcAnimation.Standby, novice.AnimationNumber, "then the player stands by");
+            At(timeline, 1800);
+            Assert.AreEqual((int)MonsterAnimation.Idle, poring.AnimationNumber, "back to its base animation");
+
+            _model.Walk(2, 12, 20, 16, 20, 1900, 1900);
+            At(timeline, 1950);
+            Assert.AreEqual((int)PcAnimation.Walk, novice.AnimationNumber, "a walk ends the standby and shows itself");
+            UnityEngine.Object.Destroy(settings);
+        }
+
+        [UnityTest, Category("NeedsData")]
+        public IEnumerator WorldPresenter_DeathAfterHurt()
+        {
+            Poring(1, 13, 20);
+            Novice(2, 12, 20);
+            _presenter.Sync(_model);
+            yield return Loaded(1);
+            var timeline = Combat(out var settings);
+            var poring = _presenter.ViewOf(1);
+
+            timeline.Add(Hit(2, 1, 1000));
+            At(timeline, 1000);
+            _model.Vanish(1, VanishReason.Died, 1200);
+            At(timeline, 1200);
+            Assert.AreNotEqual((int)MonsterAnimation.Die, poring.AnimationNumber, "the death waits for its hit");
+            At(timeline, 1500);
+            Assert.AreEqual((int)UnitAnimations.ToUnit(PcAnimation.Hurt), poring.AnimationNumber);
+            At(timeline, 1749);
+            Assert.AreEqual((int)UnitAnimations.ToUnit(PcAnimation.Hurt), poring.AnimationNumber, "250 ms of hurt");
+            At(timeline, 1750);
+            Assert.AreEqual((int)MonsterAnimation.Die, poring.AnimationNumber, "then it dies");
+            UnityEngine.Object.Destroy(settings);
+        }
+
+        // ---- SPEC-0011 T6.3 (FR-7; PLAN-0011 4.8): the bars under the feet, constant in screen pixels ----
+
+        CombatOverlay Overlay(out Camera camera, out OwnStatus status)
+        {
+            CombatSettings settings = null;
+#if UNITY_EDITOR
+            settings = UnityEditor.AssetDatabase.LoadAssetAtPath<CombatSettings>("Assets/Settings/World/CombatSettings.asset");
+#endif
+            if (settings == null) Assert.Ignore("no combat settings");
+            var cameraObject = new GameObject("Bar Camera");
+            cameraObject.transform.SetParent(_root.transform, false);
+            camera = cameraObject.AddComponent<Camera>();
+            camera.fieldOfView = 15f;
+            camera.nearClipPlane = 1f;
+            camera.targetTexture = new RenderTexture(1280, 720, 24);
+            camera.enabled = false;
+            status = new OwnStatus { Hp = 50, MaxHp = 100, Sp = 10, MaxSp = 20 };
+            var overlay = new GameObject("Overlay").AddComponent<CombatOverlay>();
+            overlay.transform.SetParent(_root.transform, false);
+            overlay.enabled = false; // drawn by the test
+            overlay.Use(_model, status, null, _presenter, settings);
+            return overlay;
+        }
+
+        static void LookAt(Camera camera, Vector3 target, float yaw)
+        {
+            camera.transform.rotation = Quaternion.Euler(50f, yaw, 0f);
+            camera.transform.position = target - camera.transform.forward * 40f;
+        }
+
+        static Rect ScreenRectOf(Camera camera, Mesh mesh, int quad)
+        {
+            var v = mesh.vertices;
+            float minX = float.MaxValue, minY = float.MaxValue, maxX = float.MinValue, maxY = float.MinValue;
+            for (int i = 0; i < 4; i++)
+            {
+                var s = camera.WorldToScreenPoint(v[quad * 4 + i]);
+                minX = Mathf.Min(minX, s.x);
+                maxX = Mathf.Max(maxX, s.x);
+                minY = Mathf.Min(minY, s.y);
+                maxY = Mathf.Max(maxY, s.y);
+            }
+            return Rect.MinMaxRect(minX, minY, maxX, maxY);
+        }
+
+        [UnityTest, Category("NeedsData")]
+        public IEnumerator CombatOverlay_BarsFollowAtFourTurns()
+        {
+            Poring(1, 13, 20);
+            _model.SetHp(1, 5, 10);
+            _presenter.Sync(_model);
+            yield return Loaded(1);
+            var overlay = Overlay(out var camera, out _);
+            var feet = _presenter.ViewOf(1).transform.position;
+            foreach (float yaw in new[] { 0f, 90f, 180f, 270f })
+            {
+                LookAt(camera, feet, yaw);
+                overlay.Draw(camera);
+                Assert.AreEqual(1, overlay.DrawnBars, $"yaw {yaw}");
+                var frame = ScreenRectOf(camera, overlay.BarMesh.Mesh, 0);
+                Assert.AreEqual(60f, frame.width, 0.05f, $"yaw {yaw}: 60 px wide at any turn");
+                Assert.AreEqual(5f, frame.height, 0.05f, $"yaw {yaw}: 5 px high");
+                var under = camera.WorldToScreenPoint(feet - Vector3.up * (0.5f * _map.CellSize));
+                Assert.AreEqual(Mathf.Round(under.y), frame.yMax, 0.05f, $"yaw {yaw}: half a cell under the feet");
+                Assert.AreEqual(Mathf.Round(under.x), frame.center.x, 1f, $"yaw {yaw}: centred under the feet");
+                Assert.AreEqual(Mathf.Round(frame.xMin), frame.xMin, 0.05f, "on whole pixels");
+                var fill = ScreenRectOf(camera, overlay.BarMesh.Mesh, 1);
+                Assert.AreEqual(29f, fill.width, 0.05f, "half of the 58 px inside");
+            }
+        }
+
+        [UnityTest, Category("NeedsData")]
+        public IEnumerator CombatOverlay_BarHiddenAtFullAndWhenDead()
+        {
+            Poring(1, 13, 20);
+            Poring(3, 15, 20);
+            Poring(4, 17, 20);
+            Poring(5, 19, 20);
+            Novice(2, 12, 22);
+            _model.OwnId = 2;
+            _model.SetHp(1, 5, 10);
+            _model.SetHp(3, 10, 10);  // full: nothing is sent at full, nothing shown
+            _model.SetHp(5, 5, 10);
+            _model.Vanish(5, VanishReason.Died, 0);
+            _presenter.Sync(_model);
+            yield return Loaded(1);
+            yield return Loaded(2);
+            var overlay = Overlay(out var camera, out var status);
+            LookAt(camera, _presenter.ViewOf(2).transform.position, 0f);
+            overlay.Draw(camera);
+            Assert.AreEqual(2, overlay.DrawnBars, "the hurt poring and the own character; not at full, unknown or dead");
+            Assert.AreEqual(3 + 5, overlay.BarMesh.Count, "a monster's frame and HP row; the own frame, HP and SP rows");
+
+            status.Hp = 0;
+            _model.Vanish(2, VanishReason.Died, 0);
+            _presenter.Sync(_model);
+            overlay.Draw(camera);
+            Assert.AreEqual(1, overlay.DrawnBars, "no bar while the own character is dead");
+        }
+
+        // ---- SPEC-0011 T6.5 (FR-12; PLAN-0011 6.1): 100 numbers and 300 units, bars and arrows, at 0 B per frame ----
+
+        [UnityTest, Category("NeedsData")]
+        public IEnumerator CombatOverlay_ZeroAllocation_100Numbers300Units()
+        {
+            const uint First = 1000;
+            for (uint i = 0; i < 300; i++)
+            {
+                int x = 5 + (int)(i % 30) * 3, y = 5 + (int)(i / 30) * 9;
+                if (i % 3 == 0) Novice(First + i, x, y);
+                else
+                {
+                    Poring(First + i, x, y);
+                    _model.SetHp(First + i, 5 + (int)(i % 4), 10); // hurt: a bar each
+                }
+            }
+            _model.OwnId = First;
+            _presenter.Sync(_model);
+            yield return Loaded(First + 299);
+            var overlay = Overlay(out var camera, out _);
+            LookAt(camera, _presenter.ViewOf(First + 150).transform.position, 0f);
+            camera.transform.position -= camera.transform.forward * 120f; // the whole field in view
+
+            CombatSettings settings = null;
+#if UNITY_EDITOR
+            settings = UnityEditor.AssetDatabase.LoadAssetAtPath<CombatSettings>("Assets/Settings/World/CombatSettings.asset");
+#endif
+            var timeline = new CombatTimeline(settings, _model.Capacity) { Weapons = new BowWeapons() };
+            timeline.Use(_model);
+            overlay.Use(_model, new OwnStatus { Hp = 50, MaxHp = 100, Sp = 10, MaxSp = 20 }, timeline, _presenter, settings);
+            _presenter.Timeline = timeline;
+            _model.SetLook(First, LookType.Weapon, 11, 0); // the own character shoots arrows
+
+            const uint T = 10_000;
+            for (uint i = 0; i < 110; i++)
+            {
+                uint poring = First + 1 + i % 199;
+                if ((poring - First) % 3 == 0) poring++;
+                if (i < 100) // a hundred monster blows on the own character, shown at T + 400
+                    timeline.Add(new Blow(poring, First, T, 400, 200, 100 + (int)i * 37, 0, 1, i % 4 == 0 ? BlowKind.Critical : BlowKind.Normal, false, 0));
+                else         // ten arrows of the own character
+                    timeline.Add(new Blow(First, poring, T, 2000, 200, 55, 0, 1, BlowKind.Normal, false, 0));
+            }
+            uint now = T + 395; // the numbers from T + 400; the arrows launched at T + 667 (6 x 24 x 2000 / 432)
+            Action frames = () =>
+            {
+                for (int f = 0; f < 60; f++)
+                {
+                    now += 5;
+                    _model.Advance(now);
+                    timeline.Advance(now);
+                    _presenter.Sync(_model);
+                    overlay.Draw(camera);
+                }
+            };
+            frames();
+            Assert.GreaterOrEqual(overlay.DrawnNumbers, 100, "100 numbers on the screen");
+            Assert.GreaterOrEqual(overlay.DrawnBars, 150, "the hurt porings' bars and the own one");
+            Assert.Greater(overlay.DrawnArrows, 0, "and arrows");
+            Assert.AreEqual(300, _presenter.ShownCount);
+            Assert.That(() => frames(), UnityEngine.TestTools.Constraints.Is.Not.AllocatingGCMemory());
+        }
+
+        // ---- SPEC-0011 T7.1 (FR-2, FR-10; PLAN-0011 4.10): the unit under the pointer ----
+
+        Camera PickCamera(Vector3 target)
+        {
+            var cameraObject = new GameObject("Pick Camera");
+            cameraObject.transform.SetParent(_root.transform, false);
+            var camera = cameraObject.AddComponent<Camera>();
+            camera.fieldOfView = 15f;
+            camera.targetTexture = new RenderTexture(1280, 720, 24);
+            camera.enabled = false;
+            LookAt(camera, target, 0f);
+            UnitSystem.Camera = camera;
+            return camera;
+        }
+
+        // The middle of a view's rectangle on the screen.
+        static Vector2 ScreenCentre(Camera camera, Transform pivot, Rect rect)
+        {
+            var world = pivot.position + camera.transform.rotation * new Vector3(rect.center.x, rect.center.y, 0f);
+            return camera.WorldToScreenPoint(world);
+        }
+
+        uint Pick(UnitPicker picker, Camera camera, Vector2 at)
+        {
+            _presenter.Sync(_model);
+            UnitSystem.Tick(0.016f);
+            return picker.TryPick(_presenter, _model, camera, at, out uint id) ? id : 0;
+        }
+
+        [UnityTest, Category("NeedsData")]
+        public IEnumerator UnitPicker_NearestUnit_PlayerHidesMonster()
+        {
+            Poring(1, 20, 22);
+            _presenter.Sync(_model);
+            yield return Loaded(1);
+            var camera = PickCamera(_presenter.ViewOf(1).transform.position);
+            try
+            {
+                var picker = new UnitPicker();
+                UnitSystem.Tick(0.016f);
+                var poring = _presenter.ViewOf(1);
+                Assert.Greater(poring.PickRect.width, 0f, "the poring has a rectangle");
+                var at = ScreenCentre(camera, poring.transform, poring.PickRect);
+                Assert.AreEqual(1u, Pick(picker, camera, at), "the poring alone");
+                Assert.AreEqual(0u, Pick(picker, camera, at + new Vector2(300f, 0f)), "the ground beside it");
+
+                // A small rectangle is taken as at least MinPx wide and high.
+                float wide = ScreenWidth(camera, poring);
+                Assert.AreEqual(0u, Pick(picker, camera, at + new Vector2(wide * 0.5f + 20f, 0f)), "beside its rectangle");
+                picker.MinPx = wide + 60f;
+                Assert.AreEqual(1u, Pick(picker, camera, at + new Vector2(wide * 0.5f + 20f, 0f)), "inside the smallest size");
+                picker.MinPx = 24f;
+
+                // The own character in front of it never catches the pointer.
+                Novice(2, 20, 21);
+                _model.OwnId = 2;
+                _presenter.Sync(_model);
+                yield return Loaded(2);
+                Assert.AreEqual(1u, Pick(picker, camera, at), "the own character lets the pointer through");
+
+                // Another player in front of it hides it: a click on it never attacks the monster.
+                _model.OwnId = 0;
+                Assert.AreEqual(2u, Pick(picker, camera, at), "the player in front wins");
+
+                // A dead player does not count.
+                Novice(2, 20, 21, EntityState.Dead);
+                Assert.AreEqual(1u, Pick(picker, camera, at), "a dead player lets the pointer through");
+                _model.Vanish(2, VanishReason.OutOfSight, 0);
+
+                // An item.
+                _model.AddItem(501, 501, true, 26, 22, 6, 6, 1);
+                _presenter.Sync(_model);
+                var item = _presenter.ItemViewOf(501);
+                for (int i = 0; i < 600 && !item.Loaded; i++) yield return null;
+                _presenter.FaceItems(camera.transform.rotation);
+                var itemAt = ScreenCentre(camera, item.transform, item.PickRect);
+                Assert.AreEqual(501u, Pick(picker, camera, itemAt), "the item");
+                _model.RemoveItem(501);
+            }
+            finally
+            {
+                UnitSystem.Camera = null;
+            }
+        }
+
+        static float ScreenWidth(Camera camera, UnitView view)
+        {
+            var r = view.PickRect;
+            var rotation = camera.transform.rotation;
+            var a = camera.WorldToScreenPoint(view.transform.position + rotation * new Vector3(r.xMin, r.center.y, 0f));
+            var b = camera.WorldToScreenPoint(view.transform.position + rotation * new Vector3(r.xMax, r.center.y, 0f));
+            return Mathf.Abs(b.x - a.x);
+        }
+
+        [UnityTest, Category("NeedsData")]
+        public IEnumerator UnitPicker_300Units_AllocatesNothing()
+        {
+            for (uint i = 0; i < 300; i++) Poring(100 + i, 5 + (int)(i % 30) * 3, 5 + (int)(i / 30) * 9);
+            _presenter.Sync(_model);
+            yield return Loaded(399);
+            var camera = PickCamera(_presenter.ViewOf(250).transform.position);
+            try
+            {
+                camera.transform.position -= camera.transform.forward * 120f;
+                UnitSystem.Tick(0.016f);
+                var picker = new UnitPicker();
+                var view = _presenter.ViewOf(250);
+                var at = ScreenCentre(camera, view.transform, view.PickRect);
+                Assert.IsTrue(picker.TryPick(_presenter, _model, camera, at, out uint id));
+                Assert.AreEqual(250u, id);
+                Assert.That(() =>
+                {
+                    for (int i = 0; i < 100; i++) picker.TryPick(_presenter, _model, camera, at, out _);
+                }, UnityEngine.TestTools.Constraints.Is.Not.AllocatingGCMemory());
+            }
+            finally
+            {
+                UnitSystem.Camera = null;
+            }
+        }
+
+        sealed class BowWeapons : IWeaponTypes
+        {
+            public int TypeOf(int weapon) => weapon;
+        }
+
         [TestCase(0, 1, 0, 2)] // job, sex, server style, head file
         [TestCase(0, 0, 0, 2)]
         [TestCase(0, 1, 2, 1)]

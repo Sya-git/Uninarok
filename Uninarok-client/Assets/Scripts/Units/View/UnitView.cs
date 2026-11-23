@@ -55,6 +55,14 @@ namespace Uninarok.Units
         internal int SystemIndex = -1;
         /// <summary>How many times the parts were composed (tests).</summary>
         internal int ComposeCount { get; private set; }
+
+        /// <summary>
+        /// The rectangle of the body's layers of the frame shown, in the pivot's plane (Unity units, from the pivot, at the display
+        /// scale); empty when nothing is shown. Updated in <c>Compose</c> only (SPEC-0011 FR-2, FR-10; PLAN-0011 4.9).
+        /// </summary>
+        public Rect PickRect { get; private set; }
+
+        internal int PickRectCount { get; private set; }
         internal UnitParts Parts => _parts;
         internal Transform Pivot => _pivot;
         internal UnitShadow Shadow => _shadow;
@@ -156,6 +164,7 @@ namespace Uninarok.Units
         public void Clear()
         {
             _loader?.Release(_parts);
+            PickRect = default;
             _hasLook = false;
             _look = default;
             _report = null;
@@ -216,6 +225,17 @@ namespace Uninarok.Units
         public void Play(PcAnimation animation, PlayMode mode = PlayMode.Loop) => Play(true, (int)animation, mode);
 
         public void Play(MonsterAnimation animation, PlayMode mode = PlayMode.Loop) => Play(false, (int)animation, mode);
+
+        /// <summary>
+        /// Plays an animation so that it lasts exactly <paramref name="durationMs"/> (an attack lasts its <c>attackMT</c>, a hurt its
+        /// <c>attackedMT</c>; SPEC-0011 FR-4, PLAN-0011 4.9); a unit that is not a player plays the mapped animation. 0 or less: at
+        /// its own speed.
+        /// </summary>
+        public void PlayFor(PcAnimation animation, int durationMs, PlayMode mode)
+        {
+            Play(true, (int)animation, mode);
+            _clock.FitMs = durationMs > 0 ? durationMs : 0;
+        }
 
         void Play(bool player, int animation, PlayMode mode)
         {
@@ -347,6 +367,7 @@ namespace Uninarok.Units
         {
             float ppu = _parts.Animations[(int)PartSlot.Body].PixelsPerUnit;
             int shown = 0;
+            var pick = default(Rect);
             for (int i = 0; i < _placementCount; i++)
             {
                 ref var p = ref _placements[i];
@@ -360,6 +381,7 @@ namespace Uninarok.Units
                     continue;
                 }
                 var position = new Vector3(p.OffsetPx.x / ppu, -p.OffsetPx.y / ppu, -p.Order * PartDepthStep);
+                if (p.Slot == PartSlot.Body) pick = BodyRect(animation, direction, position);
                 if (!position.Equals(_actorPositions[slot])) _actorTransforms[slot].localPosition = _actorPositions[slot] = position;
                 actor.SortingBase = p.Order * OrdersPerPart;
                 actor.Tint = p.Tint;
@@ -368,6 +390,18 @@ namespace Uninarok.Units
             }
             for (int i = 0; i < _actors.Length; i++)
                 if ((shown & (1 << i)) == 0 && !ReferenceEquals(_actors[i], null)) _actors[i].Hide();
+            PickRect = pick;
+            PickRectCount++;
+        }
+
+        Rect BodyRect(int animation, int direction, Vector3 position)
+        {
+            var data = _parts.Animations[(int)PartSlot.Body];
+            if (ReferenceEquals(data, null) || !data.TryGetAction(animation, direction, SpriteMissingAction.Fallback, out int unique)) return default;
+            var action = data.Actions[unique];
+            if (action.FrameCount <= 0 || !data.TryGetFrameRect(action.FirstFrame + _partFrames[(int)PartSlot.Body] % action.FrameCount, out var r)) return default;
+            float scale = _parts.Scale;
+            return new Rect((r.x + position.x) * scale, (r.y + position.y) * scale, r.width * scale, r.height * scale);
         }
 
         void Attached(PartSlot slot, int viewId, ref AttachedPart part, int animation, int direction, int frame, int head)
@@ -411,6 +445,7 @@ namespace Uninarok.Units
             _shownVersion = _parts.Version;
             _shownFrame = _shownDirection = _shownAnimation = -1;
             _placementCount = 0;
+            PickRect = default;
             for (int i = 0; i < _actors.Length; i++)
                 if (_actors[i] != null) _actors[i].Hide();
             if (_shadow != null) _shadow.Visible = false;

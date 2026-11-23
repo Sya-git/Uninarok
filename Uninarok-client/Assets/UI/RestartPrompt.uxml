@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <!-- SPEC-0011 FR-8 (PLAN-0011 4.11, D8): the death prompt. Labels and order are provisional until T0.4. -->
+    <Style src="RestartPrompt.uss" />
+    <ui:VisualElement name="restart-layer" picking-mode="Ignore" class="restart-layer">
+        <ui:VisualElement name="restart-prompt" class="restart-prompt">
+            <ui:Button name="save-point" text="Return to Save Point" class="restart-button" />
+            <ui:Button name="close" text="Cancel" class="restart-button" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

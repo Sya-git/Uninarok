@@ -239,6 +239,52 @@ namespace Uninarok.World
             _entities[slot].Version++;
         }
 
+        // ---- combat (SPEC-0011, PLAN-0011 4.2) ----
+
+        /// <summary>HP and max HP from an entry or a status packet; a negative value: not known. Never kills (FR-1).</summary>
+        public void SetHp(uint id, int hp, int maxHp)
+        {
+            if (!_slots.TryGetValue(id, out int slot)) return;
+            ref var e = ref _entities[slot];
+            if (hp < 0 || maxHp < 0) hp = maxHp = -1;
+            if (e.Hp == hp && e.MaxHp == maxHp) return;
+            e.Hp = hp;
+            e.MaxHp = maxHp;
+            e.Version++;
+        }
+
+        /// <summary>A blow: the attacker's target, last blow and facing (FR-4, FR-9). It moves nobody and stops no walk.</summary>
+        public void Strike(in Blow blow)
+        {
+            if (!_slots.TryGetValue(blow.AttackerId, out int slot)) return; // nothing of the target changes in the model
+            ref var e = ref _entities[slot];
+            e.TargetId = blow.TargetId;
+            e.LastBlow = blow;
+            if (blow.TargetId != blow.AttackerId && _slots.TryGetValue(blow.TargetId, out int target))
+            {
+                ref readonly var t = ref _entities[target];
+                if (t.CellX != e.CellX || t.CellY != e.CellY)
+                {
+                    e.Facing = (UninarokDirection)OwnCharacter.DirectionTo(e.CellX, e.CellY, t.CellX, t.CellY);
+                    e.Head = HeadDirection.Straight;
+                }
+            }
+            e.Version++;
+        }
+
+        /// <summary>Everyone who attacks this unit attacks nobody now (FR-9).</summary>
+        public void ClearTargets(uint targetId)
+        {
+            if (targetId == 0) return;
+            for (int i = 0; i < SlotLimit; i++)
+            {
+                ref var e = ref _entities[i];
+                if (e.Id == 0 || e.TargetId != targetId) continue;
+                e.TargetId = 0;
+                e.Version++;
+            }
+        }
+
         /// <summary>An item on the ground, at its cell and sub-cell (FR-16).</summary>
         /// <param name="falls">It was dropped now: it goes up a little and falls to the ground (D37).</param>
         public void AddItem(uint id, int itemId, bool identified, int x, int y, byte subX, byte subY, int amount, bool falls = false, uint now = 0)
@@ -281,6 +327,12 @@ namespace Uninarok.World
             {
                 EndWalk(ref e);
                 SetState(ref e, EntityState.Dead);
+                e.Feigning = feigns;
+                if (e.TargetId != 0)
+                {
+                    e.TargetId = 0; // the dead attack nobody (SPEC-0011 FR-9)
+                    e.Version++;
+                }
                 // A player lies until the server says otherwise; anything else is removed after a while (D8).
                 if (dies && e.Kind != EntityKind.Player && id != OwnId)
                 {
@@ -288,6 +340,7 @@ namespace Uninarok.World
                     e.RemoveAt = unchecked(now + (uint)Math.Max(0, _settings.DeadMonsterLingerMs));
                 }
             }
+            ClearTargets(id); // nobody attacks a unit that died or left (SPEC-0011 FR-9)
             Vanished?.Invoke(new VanishInfo(id, e.Kind, reason, e.CellX, e.CellY));
 
             // A listener may have changed the model: look the unit up again.
@@ -413,6 +466,7 @@ namespace Uninarok.World
             if (e.State == state) return;
             e.State = state;
             e.Removing = false;
+            if (state != EntityState.Dead) e.Feigning = false;
             e.Version++;
             e.AnimationVersion++;
         }
@@ -439,7 +493,7 @@ namespace Uninarok.World
             int slot = _free[--_freeCount];
             ref var e = ref _entities[slot];
             int generation = e.Generation + 1, version = e.Version, animation = e.AnimationVersion;
-            e = new Entity { Id = id, Generation = generation, Version = version + 1, AnimationVersion = animation + 1 };
+            e = new Entity { Id = id, Generation = generation, Version = version + 1, AnimationVersion = animation + 1, Hp = -1, MaxHp = -1 };
             _slots.Add(id, slot);
             if (slot >= SlotLimit) SlotLimit = slot + 1;
             return slot;
@@ -475,6 +529,11 @@ namespace Uninarok.World
                     h = (h ^ (e.Walking ? 1u : 0u)) * 16777619u;
                     h = (h ^ (uint)e.StepIndex) * 16777619u;
                     h = (h ^ (uint)e.Look.GetHashCode()) * 16777619u;
+                    h = (h ^ (uint)e.Hp) * 16777619u;
+                    h = (h ^ (uint)e.MaxHp) * 16777619u;
+                    h = (h ^ e.TargetId) * 16777619u;
+                    h = (h ^ e.LastBlow.At ^ (uint)e.LastBlow.Damage) * 16777619u;
+                    h = (h ^ (e.Feigning ? 1u : 0u)) * 16777619u;
                 }
                 return h;
             }

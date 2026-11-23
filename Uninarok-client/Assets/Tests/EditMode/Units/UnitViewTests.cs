@@ -175,5 +175,68 @@ namespace Uninarok.Units.Tests
             _view.PlaceOn(map, new Vector3(-5f, 7f, -5f));
             Assert.That(_view.transform.position.y, Is.EqualTo(7f), "outside the map the height is kept");
         }
+
+        // TASKS-0011 T5.1 (SPEC-0011 FR-4; PLAN-0011 4.9).
+        [Test]
+        public void UnitView_PlayFor_DirectionChangeKeepsTime()
+        {
+            _view.SetLook(UnitTestData.Swordsman());
+            _view.Facing = UninarokDirection.South;
+            _view.PlayFor(PcAnimation.Attack1, 800, PlayMode.OnceHold);
+            Step(0f);
+            Step(0.4f);
+            var body = _view.ActorOf(PartSlot.Body);
+            int count = body.Data.Actions[body.UniqueAction].FrameCount;
+            Assert.That(_view.Frame, Is.EqualTo(count / 2), "half of 800 ms");
+            _view.Facing = UninarokDirection.East;
+            Step(0f);
+            count = body.Data.Actions[body.UniqueAction].FrameCount;
+            Assert.That(_view.Frame, Is.EqualTo(count / 2), "turned, still half way");
+            Step(0.4f);
+            Assert.That(_view.Frame, Is.EqualTo(count - 1));
+            _view.Play(PcAnimation.Idle);
+            Assert.That(_view.Clock.FitMs, Is.EqualTo(0), "Play forgets the fitted time");
+        }
+
+        // TASKS-0011 T5.2 (SPEC-0011 FR-2, FR-10; PLAN-0011 4.9): the pick rectangle is the body layers' rectangle.
+        [Test]
+        public void UnitView_PickRect_IsTheBodyLayers()
+        {
+            Assert.That(_view.PickRect.width, Is.EqualTo(0f), "nothing shown");
+            foreach (var look in new[] { UnitTestData.Swordsman(), UnitLook.ForJob(1002) })
+            {
+                _view.SetLook(look);
+                _view.Play(PcAnimation.Attack1, PlayMode.OnceHold);
+                for (int step = 0; step < 6; step++)
+                {
+                    UnitSystem.StepOne(_view, step == 0 ? 0f : 0.07f, Quaternion.identity);
+                    bool any = false;
+                    var bounds = new Bounds();
+                    foreach (var r in _view.ActorOf(PartSlot.Body).LayerRenderers)
+                    {
+                        if (r == null || !r.enabled || r.sprite == null) continue;
+                        if (!any) bounds = r.bounds;
+                        else bounds.Encapsulate(r.bounds);
+                        any = true;
+                    }
+                    Assert.That(any, Is.True);
+                    var p = _view.PickRect;
+                    var origin = _view.transform.position;
+                    Assert.That(p.xMin, Is.EqualTo(bounds.min.x - origin.x).Within(1e-3f), $"{look.JobId} frame {_view.Frame}");
+                    Assert.That(p.xMax, Is.EqualTo(bounds.max.x - origin.x).Within(1e-3f));
+                    Assert.That(p.yMin, Is.EqualTo(bounds.min.y - origin.y).Within(1e-3f));
+                    Assert.That(p.yMax, Is.EqualTo(bounds.max.y - origin.y).Within(1e-3f));
+                }
+            }
+
+            int computed = _view.PickRectCount, composed = _view.ComposeCount;
+            _view.Play(PcAnimation.Dead, PlayMode.OnceHold);
+            for (int i = 0; i < 20; i++) UnitSystem.StepOne(_view, 0.5f, Quaternion.identity);
+            Assert.That(_view.PickRectCount - computed, Is.EqualTo(_view.ComposeCount - composed), "only when a frame is composed");
+            Assert.That(_view.PickRectCount - computed, Is.LessThan(20), "not on frames that compose nothing");
+
+            _view.Clear();
+            Assert.That(_view.PickRect.width, Is.EqualTo(0f), "cleared");
+        }
     }
 }

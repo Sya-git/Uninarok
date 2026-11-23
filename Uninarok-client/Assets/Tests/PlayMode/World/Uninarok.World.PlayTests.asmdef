@@ -19,6 +19,8 @@
         "Unity.ResourceManager",
         "Uninarok.World.View",
         "Uninarok.World.Dev",
+        "Uninarok.World.UI",
+        "Unity.InputSystem.TestFramework",
         "Unity.Addressables.Editor"
     ],
     "includePlatforms": [],

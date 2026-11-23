@@ -1,0 +1,7 @@
+0: alive True own 200/200 sp 62/62
+2: alive True own 40/200 sp 22/62
+3: own 200/200 sp 62/62
+4: mvp 110023457 own hits 0 mvp hp -1/-1; alive False own 1/200
+vit +90: own 380/380
+mvp 110023462 own hits 0 mvp hp in the model -1/-1; alive False own 1/380
+vit back: own 200/200

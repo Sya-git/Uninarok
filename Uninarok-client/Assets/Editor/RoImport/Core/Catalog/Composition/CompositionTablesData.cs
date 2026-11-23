@@ -22,9 +22,13 @@ namespace Uninarok.RoImport.Core.Catalog.Composition
         public int[] ShadowJobIds = Array.Empty<int>();
         public float[] ShadowScales = Array.Empty<float>();
         public int[] HiddenJobIds = Array.Empty<int>();
+        public int[] WeaponViewIds = Array.Empty<int>();
+        public int[] WeaponBaseTypes = Array.Empty<int>();
 
         public void ApplyTo(CompositionTables t)
         {
+            t.WeaponViewIds = WeaponViewIds;
+            t.WeaponBaseTypes = WeaponBaseTypes;
             t.DefaultTop = DefaultTop;
             t.DefaultMid = DefaultMid;
             t.DefaultBottom = DefaultBottom;

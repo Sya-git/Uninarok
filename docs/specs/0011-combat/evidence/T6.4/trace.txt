@@ -1,0 +1,9 @@
+walk Sent
+turn 0 yaw 0: skeleton 189,343 -> own 195,343
+turn 1 yaw 90: skeleton 189,343 -> own 195,343
+turn 2 yaw 180: skeleton 189,343 -> own 195,343
+turn 3 yaw 270: skeleton 189,343 -> own 195,343
+player turn 0 yaw 360: arrow mid flight
+player turn 1 yaw 90: arrow mid flight
+player turn 2 yaw 180: arrow mid flight
+player turn 3 yaw 270: arrow mid flight

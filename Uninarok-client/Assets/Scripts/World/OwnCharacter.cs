@@ -55,7 +55,22 @@ namespace Uninarok.World
         // ---- walk (FR-9) ----
 
         /// <summary>Asks the server to walk to a cell when it would accept; the walk starts when it answers.</summary>
+        /// <remarks>
+        /// The player's walk ends an attack or a pickup (SPEC-0011 FR-2, PLAN-0011 4.5): a sent attack request is stopped first, and
+        /// the server runs the walk when its walk delay ends (H5). A click that cannot walk changes nothing.
+        /// </remarks>
         public WalkRequestResult RequestWalk(int x, int y)
+        {
+            var result = CheckWalk(x, y);
+            if (result != WalkRequestResult.Sent) return result;
+            var combat = _session.Combat;
+            if (combat.State != CombatState.Idle && combat.AttackRequested) _client.Send(new STOP_ATTACK());
+            combat.Cancel();
+            return _client.Send(new REQUEST_MOVE((ushort)x, (ushort)y)) ? WalkRequestResult.Sent : WalkRequestResult.NotInGame;
+        }
+
+        /// <summary>A walk asked for by the combat rules (SPEC-0011 FR-3, FR-10): it does not end the attack.</summary>
+        internal WalkRequestResult WalkFor(int x, int y)
         {
             var result = CheckWalk(x, y);
             if (result != WalkRequestResult.Sent) return result;
@@ -213,7 +228,12 @@ namespace Uninarok.World
         public bool ToggleSit() => TryGet(out var model, out int slot) && (model[slot].State == EntityState.Sitting ? Stand() : Sit());
 
         /// <summary>Asks to sit; nothing while sitting already.</summary>
-        public bool Sit() => Act(EntityState.Standing, REQUEST_ACT.Sit);
+        public bool Sit()
+        {
+            if (!Act(EntityState.Standing, REQUEST_ACT.Sit)) return false;
+            _session.Combat.Cancel(); // the server stops the attack (clif_parse_ActionRequest)
+            return true;
+        }
 
         /// <summary>Asks to stand up; nothing while standing already.</summary>
         public bool Stand() => Act(EntityState.Sitting, REQUEST_ACT.Stand);

@@ -22,6 +22,7 @@ namespace Uninarok.World.Tests
             public int Width => 400;
             public int Height => 400;
             public bool IsPassable(int x, int y) => x >= 0 && y >= 0 && x < Width && y < Height && !Wall(x, y);
+            public bool BlocksSight(int x, int y) => !IsPassable(x, y);
         }
 
         /// <summary>A flow over the simulated connection, brought to a map.</summary>

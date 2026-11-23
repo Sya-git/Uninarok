@@ -5,6 +5,7 @@
         "Uninarok.Networking",
         "Uninarok.Networking.Core",
         "Uninarok.Map",
+        "Uninarok.Sprites",
         "Unity.Collections"
     ],
     "includePlatforms": [],

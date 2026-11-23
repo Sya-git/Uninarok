@@ -46,6 +46,16 @@ namespace Uninarok.World
         readonly PacketHandler<ITEM_FALL_ENTRY> _onItemFall;
         readonly PacketHandler<ITEM_DISAPPEAR> _onItemGone;
         readonly PacketHandler<PARAMETER_CHANGE> _onParameter;
+        // SPEC-0011
+        bool _statusKnown;
+        readonly PacketHandler<DAMAGE> _onDamage;
+        readonly PacketHandler<LONG_PARAMETER_CHANGE> _onLongParameter;
+        readonly PacketHandler<EXP_GAIN> _onExpGain;
+        readonly PacketHandler<ATTACK_RANGE> _onAttackRange;
+        readonly PacketHandler<ATTACK_TOO_FAR> _onTooFar;
+        readonly PacketHandler<RESURRECTION> _onResurrection;
+        readonly PacketHandler<ACTION_FAILURE> _onActionFailure;
+        readonly PacketHandler<ITEM_PICKUP_ACK> _onPickupAnswer;
 
         public WorldSession(INetworkClient client, NetworkFlow flow, ServerClock clock, WorldSettings settings)
         {
@@ -70,7 +80,17 @@ namespace Uninarok.World
             _onItemFall = OnItemFall;
             _onItemGone = OnItemGone;
             _onParameter = OnParameter;
+            _onDamage = OnDamage;
+            _onLongParameter = OnLongParameter;
+            _onExpGain = OnExpGain;
+            _onAttackRange = OnAttackRange;
+            _onTooFar = OnTooFar;
+            _onResurrection = OnResurrection;
+            _onActionFailure = OnActionFailure;
+            _onPickupAnswer = OnPickupAnswer;
             Own = new OwnCharacter(this, client, _flow);
+            Combat = new OwnCombat(this, client, _flow);
+            Restart = new RestartPrompt(this, client, _flow);
 
             _flow.StateChanged += OnStateChanged;
             _flow.MapLoadRequested += OnMapLoadRequested;
@@ -84,8 +104,42 @@ namespace Uninarok.World
         /// <summary>The rules of the own character.</summary>
         public OwnCharacter Own { get; }
 
+        /// <summary>The own character's attacks and pickups (SPEC-0011 FR-2, FR-3, FR-10).</summary>
+        public OwnCombat Combat { get; }
+
+        /// <summary>The own character's death prompt (SPEC-0011 FR-8), without its view.</summary>
+        public RestartPrompt Restart { get; }
+
+        /// <summary>What is shown of each blow, and when (SPEC-0011 FR-4 to FR-6, FR-9, FR-14); null until <see cref="UseCombat"/>.</summary>
+        public CombatTimeline Timeline { get; private set; }
+
+        /// <summary>The combat values: the own character's rules and a timeline for every map from now on (PLAN-0011 §5, D17).</summary>
+        public void UseCombat(CombatSettings settings, int slots = 2048)
+        {
+            if (settings == null) throw new ArgumentNullException(nameof(settings));
+            Combat.Use(settings);
+            Restart.TimeoutMs = settings.RestartTimeoutMs;
+            Timeline = new CombatTimeline(settings, slots);
+            Timeline.Use(Model);
+        }
+
         public ServerClock Clock => _clock;
         public WorldSettings Settings => _settings;
+
+        /// <summary>The own character's HP, SP, levels, EXP and range, kept across maps (SPEC-0011 FR-1).</summary>
+        public OwnStatus Status { get; } = new OwnStatus();
+
+        public delegate void BlowHandler(in Blow blow);
+
+        /// <summary>Every blow in view, as it is handled (SPEC-0011 FR-11: the dev HUD).</summary>
+        public event BlowHandler BlowReceived;
+
+        /// <summary>EXP gained by the own character: variable (1 base, 2 job) and amount (SPEC-0011 FR-11).</summary>
+        public event Action<int, long> ExpGained;
+
+        void Raise(in Blow blow) => BlowReceived?.Invoke(blow);
+
+        void RaiseExp(int varId, long amount) => ExpGained?.Invoke(varId, amount);
 
         /// <summary>The map is loaded: a new world on its cells; without data (null) the world is tracked with nothing walkable (FR-1).</summary>
         public void BeginMap(MapData map) => BeginMap(map != null ? new MapDataWalkGrid(map) : new UnknownWalkGrid());
@@ -94,6 +148,7 @@ namespace Uninarok.World
         {
             EndMap();
             Model = new WorldModel(grid, _settings);
+            Timeline?.Use(Model);
             AddOwn();
         }
 
@@ -117,7 +172,11 @@ namespace Uninarok.World
             else if (entry.StartTick == 0 && _settings.WarpKeepsDirection) facing = _ownFacing; // D14
             Model.Upsert(context.AccountId, EntityKind.Player, _ownLook, _ownSpeed, entry.Position.X, entry.Position.Y, facing, HeadDirection.Straight, state);
             Model.OwnId = context.AccountId;
+            SetOwnHp();
         }
+
+        // The own entity has the HP of the status (SPEC-0011 FR-1, PLAN-0011 4.2).
+        void SetOwnHp() => Model?.SetHp(Model.OwnId, (int)Math.Min(Status.Hp, int.MaxValue), (int)Math.Min(Status.MaxHp, int.MaxValue));
 
         // The character server lists them; the selected slot, else the selected id.
         static CharInfo Selected(SessionContext context)
@@ -148,6 +207,8 @@ namespace Uninarok.World
         /// <summary>Empties the world: map change, disconnect (FR-3). The handlers stay.</summary>
         public void EndMap()
         {
+            Combat.Cancel();
+            Timeline?.Use(null);
             var model = Model;
             if (model == null) return;
             if (model.TryGetSlot(model.OwnId, out int slot))
@@ -184,6 +245,8 @@ namespace Uninarok.World
                 {
                     _entered = false;
                     _ownSpeed = 0;
+                    _statusKnown = false;
+                    Status.Reset();
                 }
             }
         }
@@ -200,6 +263,20 @@ namespace Uninarok.World
 
         void Subscribe()
         {
+            // The character server's data, before the map server's first status packet (they can come while the map loads).
+            if (!_statusKnown && _flow.Context.AccountId != 0)
+            {
+                _statusKnown = true;
+                Status.From(Selected(_flow.Context));
+            }
+            _subscriptions.Add(_onDamage);
+            _subscriptions.Add(_onLongParameter);
+            _subscriptions.Add(_onExpGain);
+            _subscriptions.Add(_onAttackRange);
+            _subscriptions.Add(_onTooFar);
+            _subscriptions.Add(_onResurrection);
+            _subscriptions.Add(_onActionFailure);
+            _subscriptions.Add(_onPickupAnswer);
             _subscriptions.Add(_onStand);
             _subscriptions.Add(_onNew);
             _subscriptions.Add(_onMoveEntry);
@@ -224,6 +301,7 @@ namespace Uninarok.World
             if (Model == null) return;
             var look = Look(p.Job, p.HairStyle, p.Weapon, p.Shield, p.HeadBottom, p.HeadTop, p.HeadMid, p.HairColour, p.ClothColour, p.Robe, p.Sex, p.BodyStyle);
             Model.Upsert(p.UnitId, KindOf(p.ObjectType, p.CharacterId), look, p.Speed, p.Position.X, p.Position.Y, p.Position.Direction, (HeadDirection)p.HeadDirection, StateOf(p.State));
+            Model.SetHp(p.UnitId, p.Hp, p.MaxHp);
         }
 
         void OnNew(in UNIT_NEW_ENTRY p)
@@ -231,6 +309,7 @@ namespace Uninarok.World
             if (Model == null) return;
             var look = Look(p.Job, p.HairStyle, p.Weapon, p.Shield, p.HeadBottom, p.HeadTop, p.HeadMid, p.HairColour, p.ClothColour, p.Robe, p.Sex, p.BodyStyle);
             Model.Upsert(p.UnitId, KindOf(p.ObjectType, p.CharacterId), look, p.Speed, p.Position.X, p.Position.Y, p.Position.Direction, (HeadDirection)p.HeadDirection, EntityState.Standing);
+            Model.SetHp(p.UnitId, p.Hp, p.MaxHp);
         }
 
         void OnMoveEntry(in UNIT_MOVE_ENTRY p)
@@ -239,6 +318,8 @@ namespace Uninarok.World
             var look = Look(p.Job, p.HairStyle, p.Weapon, p.Shield, p.HeadBottom, p.HeadTop, p.HeadMid, p.HairColour, p.ClothColour, p.Robe, p.Sex, p.BodyStyle);
             Model.UpsertWalking(p.UnitId, KindOf(p.ObjectType, p.CharacterId), look, p.Speed, p.Move.SourceX, p.Move.SourceY, p.Move.DestX, p.Move.DestY,
                                 (HeadDirection)p.HeadDirection, p.MoveStartTime, _clock.Now);
+            // From PACKETVER 20131223 a monster's HP comes in this entry, re-sent after each change (SPEC-0011 H10).
+            Model.SetHp(p.UnitId, p.Hp, p.MaxHp);
         }
 
         void OnMove(in UNIT_MOVE p) => Model?.Walk(p.UnitId, p.Move.SourceX, p.Move.SourceY, p.Move.DestX, p.Move.DestY, p.StartTick, _clock.Now);
@@ -249,19 +330,35 @@ namespace Uninarok.World
 
         void OnSlide(in UNIT_SLIDE p) => Model?.Slide(p.UnitId, p.X, p.Y);
 
-        void OnVanish(in UNIT_VANISH p) =>
-            Model?.Vanish(p.UnitId, p.Type <= (byte)VanishReason.FeignedDeath ? (VanishReason)p.Type : VanishReason.OutOfSight, _clock.Now);
+        void OnVanish(in UNIT_VANISH p)
+        {
+            if (Model == null) return;
+            var reason = p.Type <= (byte)VanishReason.FeignedDeath ? (VanishReason)p.Type : VanishReason.OutOfSight;
+            if (p.UnitId == Model.OwnId && reason == VanishReason.Died) Combat.Cancel(); // SPEC-0011 FR-8
+            Model.Vanish(p.UnitId, reason, _clock.Now);
+        }
 
         void OnDirection(in UNIT_DIRECTION p) =>
             Model?.Turn(p.UnitId, (UninarokDirection)p.Direction, p.HeadDirection <= 2 ? (HeadDirection)p.HeadDirection : HeadDirection.Straight);
 
         void OnLook(in UNIT_LOOK_CHANGE p) => Model?.SetLook(p.UnitId, (LookType)p.Type, unchecked((int)p.Value), unchecked((int)p.Value2));
 
-        // Sitting and standing; the other actions are the combat spec's.
+        // Sitting, standing and picking up (SPEC-0011 FR-10: a player faces the item and bends down once).
         void OnAct(in UNIT_ACT p)
         {
             if (p.Action == ActSit) Model?.SetState(p.UnitId, EntityState.Sitting);
             else if (p.Action == ActStand) Model?.SetState(p.UnitId, EntityState.Standing);
+            else if (p.Action == UNIT_ACT.PickUp && Model != null)
+            {
+                if (Model.TryGetSlot(p.UnitId, out int unit) && Model.TryGetSlot(p.TargetId, out int item) && Model[item].IsItem)
+                {
+                    ref readonly var u = ref Model[unit];
+                    ref readonly var i = ref Model[item];
+                    if (u.Kind == EntityKind.Player && !u.Walking && (u.CellX != i.CellX || u.CellY != i.CellY))
+                        Model.Turn(p.UnitId, (UninarokDirection)OwnCharacter.DirectionTo(u.CellX, u.CellY, i.CellX, i.CellY), HeadDirection.Straight);
+                }
+                Timeline?.AddPickUp(p.UnitId, p.TargetId, _clock.Now);
+            }
         }
 
         void OnItem(in ITEM_ENTRY p) => Model?.AddItem(p.ItemObjectId, (int)p.ItemId, p.Identified, p.X, p.Y, p.SubX, p.SubY, p.Amount);
@@ -272,10 +369,45 @@ namespace Uninarok.World
 
         void OnParameter(in PARAMETER_CHANGE p)
         {
-            if (p.VarId != VarSpeed) return;
-            _ownSpeed = (short)Math.Clamp(p.Value, 1, short.MaxValue); // also before the map is loaded
-            Model?.SetSpeed(Model.OwnId, _ownSpeed);
+            if (p.VarId == VarSpeed)
+            {
+                _ownSpeed = (short)Math.Clamp(p.Value, 1, short.MaxValue); // also before the map is loaded
+                Model?.SetSpeed(Model.OwnId, _ownSpeed);
+                return;
+            }
+            // HP while dead is the restart HP (display_fake_hp_when_dead): it never stands the character up (SPEC-0011 FR-1).
+            if (Status.SetParameter(p.VarId, p.Value) && (p.VarId == OwnStatus.VarHp || p.VarId == OwnStatus.VarMaxHp)) SetOwnHp();
         }
+
+        // ---- combat (SPEC-0011, PLAN-0011 4.3) ----
+
+        void OnDamage(in DAMAGE p)
+        {
+            if (Model == null) return;
+            var blow = Blow.From(p, _clock.Now);
+            Model.Strike(blow);
+            Combat.OnBlow(blow, blow.At);
+            Timeline?.Add(blow);
+            Raise(blow);
+        }
+
+        void OnLongParameter(in LONG_PARAMETER_CHANGE p) => Status.SetLongParameter(p.VarId, p.Value);
+
+        void OnExpGain(in EXP_GAIN p) => RaiseExp(p.VarId, p.Amount);
+
+        void OnAttackRange(in ATTACK_RANGE p) => Status.SetAttackRange(p.Range);
+
+        void OnTooFar(in ATTACK_TOO_FAR p)
+        {
+            Status.SetAttackRange(p.Range);
+            Combat.OnTooFar(p, _clock.Now);
+        }
+
+        void OnActionFailure(in ACTION_FAILURE p) => Combat.OnActionFailure(p.Type);
+
+        void OnPickupAnswer(in ITEM_PICKUP_ACK p) => Combat.OnPickupAnswer(p.Result, _clock.Now);
+
+        void OnResurrection(in RESURRECTION p) => Model?.SetState(p.UnitId, EntityState.Standing);
 
         // ---- wire to model ----
 

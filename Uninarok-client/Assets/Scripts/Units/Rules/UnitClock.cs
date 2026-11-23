@@ -13,8 +13,14 @@ namespace Uninarok.Units
         public PlayMode Mode;
         /// <summary>Multiplies the body's frame time: 2 plays at half speed (walk and attack speed, later specs).</summary>
         public float Speed;
+        /// <summary>
+        /// While above 0 the animation lasts exactly this many ms: each frame lasts <c>FitMs / FrameCount</c> of the action shown,
+        /// whatever the file's frame time and the direction (SPEC-0011 FR-4, PLAN-0011 4.9). <see cref="Play"/> sets it to 0.
+        /// </summary>
+        public int FitMs;
 
         float _elapsedMs;   // into the current frame
+        float _fitMs;       // into the animation, while FitMs is set
         int _ticks;         // whole frames since the animation started, wrapped (see Advance)
         bool _finished;
 
@@ -34,6 +40,8 @@ namespace Uninarok.Units
             Animation = animation;
             Mode = mode;
             if (!(Speed > 0f)) Speed = 1f;
+            FitMs = 0;
+            _fitMs = 0f;
             _elapsedMs = 0f;
             _ticks = 0;
             _finished = false;
@@ -49,6 +57,7 @@ namespace Uninarok.Units
         {
             ended = false;
             int count = body.FrameCount;
+            if (FitMs > 0 && count > 0) return AdvanceFit(deltaMs, count, headFrame, ref ended);
             float frameMs = body.FrameMs * (Speed > 0f ? Speed : 1f);
             if (frameMs < 0.001f) frameMs = 0.001f;
 
@@ -77,6 +86,24 @@ namespace Uninarok.Units
 
             if (headFrame >= 0) return count > 0 ? headFrame % count : 0;
             return FrameOf(count);
+        }
+
+        // FitMs: time into the animation, not frames, so a direction with another frame count shows the same point of it.
+        int AdvanceFit(float deltaMs, int count, int headFrame, ref bool ended)
+        {
+            if (!_finished)
+            {
+                _fitMs += deltaMs;
+                if (Mode == PlayMode.Loop) _fitMs %= FitMs;
+                else if (_fitMs >= FitMs)
+                {
+                    _fitMs = FitMs;
+                    _finished = true;
+                    ended = Mode == PlayMode.OnceEnd;
+                }
+            }
+            _ticks = _finished ? count - 1 : System.Math.Min(count - 1, (int)(_fitMs * count / FitMs));
+            return headFrame >= 0 ? headFrame % count : _ticks;
         }
 
         /// <summary>The frame of an action with <paramref name="count"/> frames, without advancing.</summary>

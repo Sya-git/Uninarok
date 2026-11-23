@@ -111,6 +111,23 @@ namespace Uninarok.Units
         public int[] HiddenJobIds = Array.Empty<int>();
         /// <summary>The ground shadow sprite (PLAN-0009 D20).</summary>
         public SpriteRef Shadow;
+        /// <summary>
+        /// Parallel, sorted by view id: a specific weapon's view id and its base type (the client's <c>Expansion_Weapon_IDs</c>,
+        /// Main Gauche → short sword; SPEC-0011 FR-4, FR-14, PLAN-0011 4.7).
+        /// </summary>
+        public int[] WeaponViewIds = Array.Empty<int>();
+        public int[] WeaponBaseTypes = Array.Empty<int>();
+
+        /// <summary>The highest base weapon type (<c>Weapon_IDs</c>: bare hand 0 to 30).</summary>
+        public const int MaxBaseWeaponType = 30;
+
+        /// <summary>The base weapon type of a weapon view id: its own value for a base type, 0 (bare hand) when unknown.</summary>
+        public int WeaponTypeOf(int viewId)
+        {
+            int i = Find(WeaponViewIds, viewId);
+            if (i >= 0 && i < WeaponBaseTypes.Length) return WeaponBaseTypes[i];
+            return viewId >= 0 && viewId <= MaxBaseWeaponType ? viewId : 0;
+        }
 
         /// <summary>The shadow scale of a job id; 1 when the table does not list it, 0 for no shadow (FR-11).</summary>
         public float ShadowScaleOf(int jobId)

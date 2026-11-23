@@ -253,6 +253,20 @@ namespace Uninarok.Catalog
             return false;
         }
 
+        /// <summary>The equipment kind and view id (<c>ClassNum</c>) of an item; false for an item the table does not list.</summary>
+        public bool TryGetItemView(int itemId, out EquipmentKind kind, out int viewId)
+        {
+            if (_itemTable != null && _items.TryGetValue(itemId, out int i))
+            {
+                kind = (EquipmentKind)_itemTable.Kinds[i];
+                viewId = _itemTable.ViewIds[i];
+                return true;
+            }
+            kind = EquipmentKind.None;
+            viewId = 0;
+            return false;
+        }
+
         /// <summary>The kind and view id of <paramref name="itemId"/> from the item table, then <see cref="TryFindEquipment"/> (FR-4).</summary>
         public bool TryFindEquipmentByItem(int itemId, out EquipmentKind kind, out EquipmentEntryReference entry)
         {

@@ -17,6 +17,7 @@ namespace Uninarok.World.Tests
             public int Width => 300;
             public int Height => 300;
             public bool IsPassable(int x, int y) => x >= 0 && y >= 0 && x < Width && y < Height && !Wall(x, y);
+            public bool BlocksSight(int x, int y) => !IsPassable(x, y);
         }
 
         const uint Poring = 0x068EB5EC, Player = 2000002;

@@ -335,6 +335,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Uninarok.World.View::Uninarok.World.View.WorldBootstrap
   CameraRig: {fileID: 1493915940}
   Settings: {fileID: 11400000, guid: 2fedfc7384612594eb7b2f18cc7af076, type: 2}
+  Combat: {fileID: 11400000, guid: 78817477a6a7bc84d888d68e2a02ecb9, type: 2}
   UnitMaterial: {fileID: 2100000, guid: 7564f1b793a26a9468149218c26c83af, type: 2}
 --- !u!114 &1746140162
 MonoBehaviour:
@@ -378,6 +379,77 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Uninarok.World.View::Uninarok.World.View.MouseCursor
   Animation: {fileID: 11400000, guid: e8491cf275c58b949ab7c9932b597291, type: 2}
+--- !u!1 &1789916483
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1789916486}
+  - component: {fileID: 1789916485}
+  - component: {fileID: 1789916484}
+  m_Layer: 0
+  m_Name: Restart Prompt
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1789916484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1789916483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e5625a7ea8d57e49aa677b21ff26603, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Uninarok.World.UI::Uninarok.World.UI.RestartPromptView
+  World: {fileID: 1746140161}
+  Input: {fileID: 1746140162}
+--- !u!114 &1789916485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1789916483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: a13fbd265db644d4e93c301f0b84d86b, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: c9742f489cf23d348997450bc5ace8d2, type: 3}
+  m_SortingOrder: 0
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+  m_GenerateAccessibilityHierarchy: 1
+--- !u!4 &1789916486
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1789916483}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -385,3 +457,4 @@ SceneRoots:
   - {fileID: 832575519}
   - {fileID: 1746140158}
   - {fileID: 1493915939}
+  - {fileID: 1789916486}

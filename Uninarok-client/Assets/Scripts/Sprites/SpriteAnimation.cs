@@ -66,6 +66,42 @@ namespace Uninarok.Sprites
             public Color32 Tint;
         }
 
+        /// <summary>
+        /// The rectangle a frame's layers cover in the actor's plane, in Unity units, as <c>SpriteActor</c> places them (offset, mirror,
+        /// scale, rotation). False when no layer draws (SPEC-0011 FR-2, FR-10: picking; PLAN-0011 4.9).
+        /// </summary>
+        public bool TryGetFrameRect(int frameIndex, out Rect rect)
+        {
+            rect = default;
+            if (frameIndex < 0 || frameIndex >= Frames.Length) return false;
+            var frame = Frames[frameIndex];
+            float ppu = PixelsPerUnit > 0f ? PixelsPerUnit : 1f;
+            float minX = float.MaxValue, minY = float.MaxValue, maxX = float.MinValue, maxY = float.MinValue;
+            for (int i = 0; i < frame.LayerCount; i++)
+            {
+                var layer = Layers[frame.FirstLayer + i];
+                if (layer.Slot < 0 || layer.Slot >= Sprites.Length || ReferenceEquals(Sprites[layer.Slot], null)) continue;
+                var b = Sprites[layer.Slot].bounds;
+                float radians = -layer.Rotation * Mathf.Deg2Rad, cos = Mathf.Cos(radians), sin = Mathf.Sin(radians);
+                float ox = layer.OffsetX / ppu, oy = -layer.OffsetY / ppu;
+                for (int c = 0; c < 4; c++)
+                {
+                    float x = (c & 1) == 0 ? b.min.x : b.max.x, y = (c & 2) == 0 ? b.min.y : b.max.y;
+                    if (layer.Mirror) x = -x;
+                    x *= layer.ScaleX;
+                    y *= layer.ScaleY;
+                    float rx = ox + x * cos - y * sin, ry = oy + x * sin + y * cos;
+                    if (rx < minX) minX = rx;
+                    if (rx > maxX) maxX = rx;
+                    if (ry < minY) minY = ry;
+                    if (ry > maxY) maxY = ry;
+                }
+            }
+            if (minX > maxX) return false;
+            rect = Rect.MinMaxRect(minX, minY, maxX, maxY);
+            return true;
+        }
+
         /// <summary>The number of animations: action count / 8 for a directional file, the action count otherwise.</summary>
         public int AnimationCount => Directional ? FileActionCount / Directions : FileActionCount;
 

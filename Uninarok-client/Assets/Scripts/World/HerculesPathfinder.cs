@@ -281,7 +281,19 @@ namespace Uninarok.World
         }
 
         /// <summary><c>path_search_long</c> with <c>CELL_CHKNOPASS</c>: every cell of the straight line passes, the last included.</summary>
-        public bool StraightLine(int x0, int y0, int x1, int y1)
+        public bool StraightLine(int x0, int y0, int x1, int y1) => SearchLong(x0, y0, x1, y1, false);
+
+        /// <summary>
+        /// <c>path_search_long</c> with <c>CELL_CHKWALL</c>, the attack's line of sight (SPEC-0011 FR-3, PLAN-0011 4.4): no cell of the
+        /// straight line after the first is a wall. Outside the map and on its last row and column nothing blocks, as on the server;
+        /// a grid without cells has no sight (D15).
+        /// </summary>
+        public bool LineOfSight(int x0, int y0, int x1, int y1) => _grid.Width > 0 && _grid.Height > 0 && SearchLong(x0, y0, x1, y1, true);
+
+        // map_getcellp: outside and on the last row and column, CELL_CHKWALL answers false.
+        bool NoSight(int x, int y) => x >= 0 && y >= 0 && x < _grid.Width - 1 && y < _grid.Height - 1 && _grid.BlocksSight(x, y);
+
+        bool SearchLong(int x0, int y0, int x1, int y1, bool sight)
         {
             int dx = x1 - x0;
             if (dx < 0)
@@ -312,7 +324,7 @@ namespace Uninarok.World
                     wy += weight;
                     y0--;
                 }
-                if (NoPass(x0, y0)) return false;
+                if (sight ? NoSight(x0, y0) : NoPass(x0, y0)) return false;
             }
             return true;
         }

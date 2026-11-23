@@ -81,6 +81,10 @@ Baby classes: the **body** scale is 0.8 (roBrowser `EntityView`: size 4 where ot
 
 `sprite/shadow.spr` + `.act` at the root of the sprite folder, **not** in `이팩트/`, so the catalog has no effect of that name (D12 corrected, D20). The Composition import converts it and stores its reference. roBrowser hides it while sitting or dead (**Candidate**, followed).
 
+### 2.10 `datainfo/weapontable.lub` `Expansion_Weapon_IDs` — base weapon type (SPEC-0011 FR-4, FR-14)
+
+`Expansion_Weapon_IDs[specific view id] = base type view id` (Main Gauche → short sword), read with the catalog's view-id tables (PLAN-0008). Stored as two parallel arrays sorted by view id; `CompositionTables.WeaponTypeOf` answers a listed id with its base type, a base type (0 to 30) with itself and anything else with 0, bare hand (PLAN-0011 4.7). Added by SPEC-0011 T4.6.
+
 ## 3. Default order (no table needed)
 
 Back to front. **Confirmed** by the owner on the reference set (T8.1); from roBrowser (the client hard-codes it).
@@ -140,5 +144,6 @@ Head: placed at `bodyAnchor − headAnchor` (anchor 0 of the frame shown of each
 | Shadow scales | 987, of which 67 are 0 |
 | Hidden job ids | 27: 45, 111, 139 and 24 `INVISIBLE` ids |
 | Ground shadow | `sprite/shadow`, static (one frame), `sprite/_sheets/0d/shadow_0dbb9009.png` |
+| Weapon base types | 72 (view ids 31 and up; SPEC-0011 T4.6, rebuilt 2026-11-23: `Updated 1, Warnings 0`) |
 
 `JOBID` is defined in `skillinfoz/jobinheritlist.lub` and `pcJobTbl` in `admin/pcidentity.lub`; `JTtbl` must also answer the NPC constants (`JTtbl.JT_EDDGA3` in the shadow table).

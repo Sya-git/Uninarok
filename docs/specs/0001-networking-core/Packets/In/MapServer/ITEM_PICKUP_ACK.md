@@ -26,7 +26,7 @@
 | slot | `uint[4]` | 16 bytes | Card slots (item IDs). |
 | location | `uint` | 4 bytes | Equip location bitmask. |
 | type | `byte` | 1 byte | Item type. |
-| result | `byte` | 1 byte | `0` success; non-zero is a failure code. |
+| result | `byte` | 1 byte | `0` success; any other value is a failure (see below). |
 | HireExpireDate | `int` | 4 bytes | Expiry (unix time), `0` if none. |
 | bindOnEquipType | `ushort` | 2 bytes | Bind-on-equip type. |
 | option_data | `ItemOption[5]` | 25 bytes | 5 options, each `short index`, `short value`, `byte param` (5 bytes). |
@@ -34,5 +34,7 @@
 | look | `ushort` | 2 bytes | Look / view sprite ID. |
 | refiningLevel | `byte` | 1 byte | Refine level. |
 | grade | `byte` | 1 byte | Item grade. |
+
+**Results** (`clif_additem`, checked 2026-11-22, SPEC-0011 T0.1): on a failure every field is 0 except `Index` (2) and `result`. `6`: refused before the item is given (`clif_parse_TakeItem`: dead, item gone or on another map, hiding and similar states, cannot act, too far, no permission, loot reserved for someone else). From `pc_additem` (through `party_share_loot`): `1` invalid item or amount, `2` overweight, `4` no free inventory slot, `5` maximum amount, `7` stack limit or bound item.
 
 **Parsing:** all fields are fixed; `ItemOption` is a 5-byte record. Allocation-free if read into a fixed struct.

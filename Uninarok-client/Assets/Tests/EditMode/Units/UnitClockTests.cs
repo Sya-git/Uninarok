@@ -130,6 +130,46 @@ namespace Uninarok.Units.Tests
             c.SetFrame(3);
             Assert.That(c.FrameOf(4), Is.EqualTo(3));
         }
+
+        // TASKS-0011 T5.1 (SPEC-0011 FR-4; PLAN-0011 4.9): an attack lasts its attackMT whatever its frames.
+        [Test]
+        public void UnitClock_FitMs_LastsExactly_AnyFrameCount()
+        {
+            foreach (int duration in new[] { 288, 500, 1320 })
+                for (int frames = 1; frames <= 12; frames++)
+                {
+                    var body = Action(frames, 77f);
+                    var c = Clock(PlayMode.OnceEnd, (int)PcAnimation.Attack1);
+                    c.FitMs = duration;
+                    int last = -1, ends = 0;
+                    for (int ms = 1; ms <= duration + 50; ms++)
+                    {
+                        int frame = c.Advance(1f, body, -1, out bool ended);
+                        if (ended) ends++;
+                        Assert.That(frame, Is.GreaterThanOrEqualTo(last), "frames only go forward");
+                        last = frame;
+                        if (ms == duration - 1) Assert.That(c.Finished, Is.False, $"{frames} frames over {duration} ms: not before");
+                        if (ms == duration) Assert.That(c.Finished, Is.True, $"{frames} frames over {duration} ms: exactly then");
+                        if (ms == duration / 2 && frames > 1) Assert.That(frame, Is.EqualTo(frames * (duration / 2) / duration), "half way");
+                    }
+                    Assert.That((last, ends), Is.EqualTo((frames - 1, 1)));
+                }
+
+            var play = Clock();
+            play.FitMs = 500;
+            play.Play((int)PcAnimation.Walk, PlayMode.Loop);
+            Assert.That(play.FitMs, Is.EqualTo(0), "Play goes back to the file's frame time");
+        }
+
+        [Test]
+        public void UnitClock_FitMs_AnotherFrameCountKeepsTheTime()
+        {
+            var c = Clock(PlayMode.OnceHold, (int)PcAnimation.Attack1);
+            c.FitMs = 600;
+            Assert.That(c.Advance(300f, Action(8, 100f), -1, out _), Is.EqualTo(4));
+            Assert.That(c.Advance(0f, Action(6, 100f), -1, out _), Is.EqualTo(3), "half way in a direction with 6 frames too");
+            Assert.That(c.Advance(150f, Action(6, 100f), -1, out _), Is.EqualTo(4));
+        }
     }
 
     // TASKS-0009 T3.3 (FR-7)

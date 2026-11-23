@@ -34,6 +34,9 @@ namespace Uninarok.World.View
         internal SpriteActor Actor => _actor;
         internal UnitShadow Shadow => _shadow;
 
+        /// <summary>The rectangle of its sprite in the pivot's plane, in Unity units; empty until it is shown (SPEC-0011 FR-10).</summary>
+        public Rect PickRect { get; private set; }
+
         /// <summary>The scale of its shadow; 0: none. Counts from the next <see cref="Show"/>.</summary>
         public float ShadowScale { get; set; }
 
@@ -75,6 +78,7 @@ namespace Uninarok.World.View
                     _actor.Data = a;
                     _actor.gameObject.SetActive(true);
                     _actor.ShowFrame(0, 0, 0);
+                    PickRect = a.Actions.Length > 0 && a.Actions[0].FrameCount > 0 && a.TryGetFrameRect(a.Actions[0].FirstFrame, out var rect) ? rect : default;
                     Loaded = true;
                 });
             }
@@ -87,6 +91,8 @@ namespace Uninarok.World.View
                     EnsureStill();
                     _still.sprite = s;
                     _still.enabled = true;
+                    var b = s.bounds;
+                    PickRect = Rect.MinMaxRect(b.min.x, b.min.y, b.max.x, b.max.y);
                     Loaded = true;
                 });
             }
@@ -130,6 +136,7 @@ namespace Uninarok.World.View
             _request++;
             ItemId = 0;
             Loaded = false;
+            PickRect = default;
             if (_actor != null)
             {
                 _actor.Hide();

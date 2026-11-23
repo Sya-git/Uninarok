@@ -20,6 +20,7 @@ namespace Uninarok.World.Tests
         Keyboard _keyboard;
         double _now;
         int _x = 155, _y = 200;
+        uint _unit;
         bool _over = true;
 
         public override void Setup()
@@ -33,9 +34,10 @@ namespace Uninarok.World.Tests
             _input = _go.AddComponent<OwnInput>();
             _input.Actions = Object.Instantiate(AssetDatabase.LoadAssetAtPath<InputActionAsset>("Assets/Scripts/World/View/WorldInputActions.inputactions"));
             _input.Own = () => _rig.Session.Own;
+            _input.Combat = () => _rig.Session.Combat;
             _input.Bind();
             _now = 100.0;
-            (_x, _y, _over) = (155, 200, true);
+            (_x, _y, _over, _unit) = (155, 200, true, 0u);
         }
 
         public override void TearDown()
@@ -51,7 +53,7 @@ namespace Uninarok.World.Tests
         void Frame(double seconds = 0.016)
         {
             _now += seconds;
-            _input.Step(_now, _over, _x, _y);
+            _input.Step(_now, _over, _x, _y, _unit);
         }
 
         int Moves => _rig.Client.SentCount(PacketIds.REQUEST_MOVE);
@@ -253,6 +255,159 @@ namespace Uninarok.World.Tests
                 Assert.Greater(Vector3.Cross(v[t[i + 1]] - v[t[i]], v[t[i + 2]] - v[t[i]]).y, 0f, "both triangles face up");
             cursor.Show(5, 5);
             Assert.IsFalse(cursor.Visible, "outside the map");
+            Object.DestroyImmediate(map);
+        }
+
+        // ---- SPEC-0011 T7.2 (FR-2, FR-8, FR-10; PLAN-0011 4.10): monsters, players, NPCs and items under the pointer ----
+
+        const uint MonsterA = 0x068EB5EC, PlayerId = 2000003, NpcId = 110000123, ItemA = 9001;
+        const byte Single = 0, Continuous = 7;
+
+        uint OwnId => _rig.Flow.Context.AccountId;
+        int Attacks => _rig.Client.SentCount(PacketIds.REQUEST_ACT);
+        byte LastAttack => _rig.Client.Sent.FindLast(p => p.Bytes[0] == 0x37 && p.Bytes[1] == 0x04).Bytes[6];
+
+        void Monster() => _rig.Client.Deliver(WorldSessionTests.Stand(MonsterA, 151, 200));
+
+        void Click()
+        {
+            Press(_mouse.leftButton);
+            Frame();
+            Release(_mouse.leftButton);
+            InputSystem.Update();
+            Frame();
+        }
+
+        [Test]
+        public void OwnInput_ClickOnAMonster_AttacksOnce_AndNeverWalks()
+        {
+            Monster();
+            _unit = MonsterA;
+            Click();
+            Assert.AreEqual((1, Single, 0), (Attacks, LastAttack, Moves));
+            Frame(1);
+            Assert.AreEqual((1, 0), (Attacks, Moves));
+        }
+
+        [Test]
+        public void OwnInput_CtrlClick_AttacksWithoutEnd()
+        {
+            Monster();
+            _unit = MonsterA;
+            Press(_keyboard.leftCtrlKey);
+            Click();
+            Assert.AreEqual((1, Continuous, 0), (Attacks, LastAttack, Moves));
+        }
+
+        [Test]
+        public void OwnInput_Hold300_AttacksWithoutEnd_ReleaseDoesNotStop()
+        {
+            Monster();
+            _unit = MonsterA;
+            Press(_mouse.leftButton);
+            Frame();
+            InputSystem.Update();
+            Frame(0.2);
+            Assert.AreEqual((1, Single), (Attacks, LastAttack), "200 ms: still the single attack");
+            Frame(0.11);
+            Assert.AreEqual((2, Continuous), (Attacks, LastAttack), "300 ms held: continuous");
+            Frame(1);
+            Assert.AreEqual(2, Attacks, "once");
+            _unit = 0;
+            Frame(1);
+            Release(_mouse.leftButton);
+            InputSystem.Update();
+            Frame(1);
+            Assert.AreEqual((0, 0), (Moves, _rig.Client.SentCount(PacketIds.STOP_ATTACK)), "a hold that began on a monster never walks; letting go does not stop");
+            Assert.IsTrue(_rig.Session.Combat.Continuous);
+        }
+
+        [Test]
+        public void OwnInput_ShiftOnAMonster_Turns()
+        {
+            Monster();
+            _unit = MonsterA;
+            Press(_keyboard.leftShiftKey);
+            Click();
+            Assert.AreEqual((0, 0, 1), (Attacks, Moves, _rig.Client.SentCount(PacketIds.CHANGE_DIRECTION)));
+        }
+
+        [Test]
+        public void OwnInput_PlayerOrNpc_WalksAsOverTheGround()
+        {
+            _rig.Client.Deliver(WorldSessionTests.Stand(PlayerId, 155, 200, type: 0, gid: 150001, job: 0));
+            _rig.Client.Deliver(WorldSessionTests.Stand(NpcId, 155, 201, type: 6, job: 100));
+            _unit = PlayerId;
+            Click();
+            Assert.AreEqual((0, 1), (Attacks, Moves), "a player");
+            _unit = NpcId;
+            _y = 201;
+            Click();
+            Assert.AreEqual((0, 2), (Attacks, Moves), "an NPC");
+        }
+
+        [Test]
+        public void OwnInput_Item_PicksUp()
+        {
+            _rig.Model.AddItem(ItemA, 501, true, 151, 200, 6, 6, 1);
+            _unit = ItemA;
+            Click();
+            Assert.AreEqual((1, 0), (_rig.Client.SentCount(PacketIds.PICKUP_ITEM), Moves));
+        }
+
+        [Test]
+        public void OwnInput_GroundWhileAttacking_StopsThenWalks()
+        {
+            Monster();
+            _unit = MonsterA;
+            Press(_keyboard.leftCtrlKey);
+            Click();
+            Release(_keyboard.leftCtrlKey);
+            InputSystem.Update();
+            _unit = 0;
+            Click();
+            var sent = _rig.Client.Sent;
+            Assert.AreEqual(PacketIds.STOP_ATTACK, (ushort)(sent[sent.Count - 2].Bytes[0] | sent[sent.Count - 2].Bytes[1] << 8));
+            Assert.AreEqual(1, Moves);
+            Assert.AreEqual(CombatState.Idle, _rig.Session.Combat.State);
+        }
+
+        [Test]
+        public void OwnInput_Dead_SendsNothing()
+        {
+            Monster();
+            _rig.Client.Deliver(WorldSessionTests.VanishPacket(OwnId, 1));
+            _unit = MonsterA;
+            Click();
+            _unit = 0;
+            Click();
+            Press(_keyboard.insertKey);
+            Frame();
+            Assert.AreEqual(0, _rig.Client.Sent.Count);
+        }
+
+        [Test]
+        public void OwnInput_OverAMonster_AttackCursorAndNoCell()
+        {
+            const int n = 200;
+            var map = ScriptableObject.CreateInstance<MapData>();
+            map.Assign("flat", n, n * 2, 0.5f, Vector2.zero, 1f, false, new float[n * n * 2 * 4], new byte[n * n * 2], new byte[n * n * 2], new byte[n * n * 2]);
+            var cursor = _go.AddComponent<CellCursor>();
+            cursor.Map = map;
+            _input.Cursor = cursor;
+            var mouse = _go.AddComponent<MouseCursor>();
+            _input.Mouse = mouse;
+            Monster();
+            _rig.Client.Deliver(WorldSessionTests.Stand(PlayerId, 155, 201, type: 0, gid: 150001, job: 0));
+            _unit = MonsterA;
+            Frame();
+            Assert.AreEqual((false, MouseCursorKind.Attack), (cursor.Visible, mouse.Kind), "a monster");
+            _unit = PlayerId;
+            Frame();
+            Assert.AreEqual((true, MouseCursorKind.Default), (cursor.Visible, mouse.Kind), "a player: as the ground");
+            _unit = 0;
+            Frame();
+            Assert.AreEqual((true, MouseCursorKind.Default), (cursor.Visible, mouse.Kind), "the ground");
             Object.DestroyImmediate(map);
         }
     }

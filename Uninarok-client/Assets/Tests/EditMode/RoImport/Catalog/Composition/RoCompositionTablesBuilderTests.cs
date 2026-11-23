@@ -112,6 +112,35 @@ namespace Uninarok.RoImport.Tests.Catalog.Composition
             CollectionAssert.AreEqual(new[] { 45, 111, 2337 }, d.HiddenJobIds);
         }
 
+        // TASKS-0011 T4.6 (SPEC-0011 FR-4, FR-14; PLAN-0011 4.7).
+        [Test]
+        public void RoCompositionTablesBuilder_WeaponTypes()
+        {
+            Assert.That(RoViewIdTables.TryRead("ACCESSORY_IDs = { }", "AccNameTable = { }", "SPRITE_ROBE_IDs = { }", "RobeNameTable = { }",
+                "Weapon_IDs = { WEAPONTYPE_NONE = 0, WEAPONTYPE_SHORTSWORD = 1, WEAPONTYPE_BOW = 11, WEAPONTYPE_Main_Gauche = 51, WEAPONTYPE_Hunter_Bow = 61 }\n" +
+                "WeaponNameTable = { }\n" +
+                "Expansion_Weapon_IDs = { [Weapon_IDs.WEAPONTYPE_Main_Gauche] = Weapon_IDs.WEAPONTYPE_SHORTSWORD, [Weapon_IDs.WEAPONTYPE_Hunter_Bow] = Weapon_IDs.WEAPONTYPE_BOW }",
+                out var views, out string reason), Is.True, reason);
+            var (d, _) = B.Build(RoCatalogTables.Create(null, views), f => _files.TryGetValue(f, out string t) ? t : null);
+            CollectionAssert.AreEqual(new[] { 51, 61 }, d.WeaponViewIds);
+            CollectionAssert.AreEqual(new[] { 1, 11 }, d.WeaponBaseTypes);
+
+            var tables = ScriptableObject.CreateInstance<CompositionTables>();
+            try
+            {
+                d.ApplyTo(tables);
+                Assert.That(tables.WeaponTypeOf(51), Is.EqualTo(1), "Main Gauche is a short sword");
+                Assert.That(tables.WeaponTypeOf(61), Is.EqualTo(11), "a hunter bow is a bow");
+                Assert.That(tables.WeaponTypeOf(11), Is.EqualTo(11), "a base type is itself");
+                Assert.That(tables.WeaponTypeOf(9999), Is.EqualTo(0), "unknown: bare hand");
+                Assert.That(tables.WeaponTypeOf(0), Is.EqualTo(0));
+            }
+            finally
+            {
+                Object.DestroyImmediate(tables);
+            }
+        }
+
         [Test]
         public void RoCompositionTablesBuilder_MissingFile_OneGap_EmptyTable_OthersLoad()
         {
