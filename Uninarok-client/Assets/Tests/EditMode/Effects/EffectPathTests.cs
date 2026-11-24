@@ -2,19 +2,17 @@ using NUnit.Framework;
 
 namespace Uninarok.Effects.Tests
 {
-    /// <summary>Pins EffectPath normalisation (SPEC-0012 FR-5, FR-10, plan 4.4 / 6). Enabled by T1.7.</summary>
+    /// <summary>Pins EffectPath normalisation (SPEC-0012 FR-5, FR-10, plan 4.4 / 6).</summary>
     public class EffectPathTests
     {
-        const string Pending = "pending T1.7";
-
-        [Test, Ignore(Pending)]
+        [Test]
         public void Prefixes_AreTheFourPlanEntries()
         {
             CollectionAssert.AreEqual(new[] { "", "texture/effect/", "texture/", "sprite/" }, EffectPath.Prefixes);
         }
 
         // Normalisation table (FR-5): every form reaches one key.
-        [Test, Ignore(Pending)]
+        [Test]
         [TestCase("texture/effect/firewall.str", "texture/effect/firewall.str")]
         [TestCase("TEXTURE/EFFECT/FIREWALL.STR", "texture/effect/firewall.str")]
         [TestCase("texture\\effect\\firewall.str", "texture/effect/firewall.str")]
@@ -35,7 +33,7 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(expected, key);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void Normalize_DecomposedKorean_EqualsComposed()
         {
             // "이팩트" typed with decomposed jamo (NFD) must reach the NFC key.
@@ -46,7 +44,7 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(composed, key);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void Normalize_AllFormsOfOneFile_ReachOneKey()
         {
             string[] forms =
@@ -61,7 +59,7 @@ namespace Uninarok.Effects.Tests
             }
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         [TestCase(null)]
         [TestCase("")]
         [TestCase("   ")]
