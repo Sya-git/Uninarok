@@ -42,7 +42,7 @@
 - [x] **T1.3** [quick] Add the data types of plan §4.2 and §4.4 with no logic: `EffectKind`, `EffectFacing`, `EffectAsset` with `LayerData` and `KeyData`, `AuthoredData`, `EffectCatalogIndex`, `EffectAssetRef`. (FR-2, FR-4, FR-5)
   *Done when:* the types compile with exactly the fields of plan §4.2 and §4.4 and no method body.
 
-- [ ] **T1.4** [quick] Add `EffectSettings` (plan §4.6) and its asset `Assets/Settings/Effects/EffectSettings.asset` with the lead values (PixelsPerCell 35, Pivot (320, 320), VerticalBaseCells 0.5, AngleUnitsPerTurn 1024, DepthBias 0.5, PlaceholderSeconds 1, AuthoredFrameRate 60) and a tooltip on each lead value naming its source. Shader and placeholder texture are set in T5.1 and T5.2. (FR-3, FR-4, FR-11)
+- [x] **T1.4** [quick] Add `EffectSettings` (plan §4.6) and its asset `Assets/Settings/Effects/EffectSettings.asset` with the lead values (PixelsPerCell 35, Pivot (320, 320), VerticalBaseCells 0.5, AngleUnitsPerTurn 1024, DepthBias 0.5, PlaceholderSeconds 1, AuthoredFrameRate 60) and a tooltip on each lead value naming its source. Shader and placeholder texture are set in T5.1 and T5.2. (FR-3, FR-4, FR-11)
   *Done when:* the asset loads with those values; each lead value has a tooltip.
 
 - [ ] **T1.5** [core] Implement `EffectBlend.ToUnity(byte code)` with the Direct3D code table of plan §4.5, and `EffectBlendTests`: the table is pinned; an unknown code gives SrcAlpha / OneMinusSrcAlpha and reports unknown, so the caller logs one warning per asset. (FR-3)
