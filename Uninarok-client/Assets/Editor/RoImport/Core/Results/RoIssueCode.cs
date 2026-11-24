@@ -62,6 +62,8 @@ namespace Uninarok.RoImport.Core.Results
         CatalogOrphanSpr,
         /// <summary>A legacy, misspelt or out-of-pattern file or folder in a catalog folder (SPEC-0008 FR-10, OQ-6).</summary>
         CatalogStrayFile,
+        /// <summary>An STR whose magic GRF accepts but whose version is not 0x94; nothing is written (PLAN-0012 4.1, SPEC-0012 FR-2).</summary>
+        UnsupportedStrVersion,
         Unexpected
     }
 }

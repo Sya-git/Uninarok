@@ -41,7 +41,7 @@ GRF types: `Str` (constructor `Str(MultiType)`, as `RoSprReader` builds it from 
 
 | Plan field | GRF member | Notes |
 |---|---|---|
-| `RoStr.Version` | header check of bytes 4..7 (`TryReadVersion`); GRF `Header.MajorVersion` | GRF gives 148 for `0x94` (`HexVersionFormat` `0x9400`). **GRF accepts any version** and reads it with the 0x94 layout without an error (patched 0x95, 0x93 and 0x01 all read "OK"), so the 8-byte header check is the only version test |
+| `RoStr.Version` | GRF `StrHeader` built alone from the bytes (`new StrHeader(new ByteReader(bytes, 0), new Str())`, plan D24): `MajorVersion \| MinorVersion << 8` | GRF gives 148, minor 0, for `0x94` (`HexVersionFormat` `0x9400`); `StrHeader` alone parses only the header and throws `GrfException` on a wrong magic. **GRF's `Str` accepts any version** and reads it with the 0x94 layout without an error (versions 0x95, 0x93 and 0x01 all read "OK"), so `RoStrReader` checks the header's version against `0x94` before `new Str(bytes)` reads the body. The reader never reads the bytes itself |
 | `RoStr.Fps` | `Str.Fps` (int) | equal; 60 in every file |
 | `RoStr.FrameCount` | `Str.MaxKeyFrame` (int) | equal. GRF's `Str.KeyFrameCount` is `MaxKeyFrame + 1` (see §8 O2); not used |
 | `RoStr.Layers` | `Str.Layers` (`List<StrLayer>`), file order | equal count and order |
@@ -154,7 +154,7 @@ Differences found by T0.1, listed for the owner and **not resolved** here. The p
 | layer count 33,554,432; texture or key count 16,777,216; layer count + 1 | throws `IndexOutOfRangeException` within 20 ms, no large allocation |
 | texture or key count −1 | throws `ArgumentOutOfRangeException` (capacity) |
 
-So the reader must check magic and version itself (§3) and catch every exception type from the constructor, `OutOfMemoryException` included, and turn each into `CorruptFile` (plan §4.1). No case hangs.
+So the reader takes magic and version from GRF's `StrHeader` before the body is read (§3, plan D24): a wrong magic is `CorruptFile`, a version other than `0x94` is `UnsupportedStrVersion`; it catches every exception type from the GRF constructors, `OutOfMemoryException` included, and turns each into `CorruptFile` (plan §4.1). It also rejects fps ≤ 0 and a negative frame count. No case hangs. `RoStrReaderTests` makes wrong-version input with GRF's own writer (`Header.SetVersion`, `Save`), never by patching bytes; the patched copies above were T0.1's survey only.
 
 ## 10. Colour key
 
