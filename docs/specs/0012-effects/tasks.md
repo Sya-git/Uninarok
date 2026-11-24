@@ -149,7 +149,7 @@
 - [x] **T5.6** [core] Implement `AuthoredPart` (Quad facing camera or ground; Cylinder strip; Procedural through the empty `EffectProcedures` registry and `EffectQuadSpan`), per plan §4.5. (FR-4, FR-7)
   *Done when:* a synthetic cylinder and a synthetic quad built in code produce 42 and 4 vertices in the instance mesh (PlayMode check, added to `EffectPlayTests`).
 
-- [ ] **T5.7** [core] Implement `SpritePart` (a pooled `SpriteActor` found through `SpriteCatalog.TryGetEffect`, advanced by `SpriteActor.Step` from the runtime tick) and `ModelPart` (one prefab instance per pooled slot). (FR-4, FR-6)
+- [x] **T5.7** [core] Implement `SpritePart` (a pooled `SpriteActor` found through `SpriteCatalog.TryGetEffect`, advanced by `SpriteActor.Step` from the runtime tick) and `ModelPart` (one prefab instance per pooled slot). (FR-4, FR-6)
   *Done when:* `EffectPlayTests` sprite case passes (NeedsData): `fireball.act` plays through SpriteCatalog with the asset count unchanged.
 
 - [ ] **T5.8** [core] Implement `PlaceholderPart` (camera-facing quad of `EffectSettings.PlaceholderTexture`, `PlaceholderSeconds` long or looped), the runtime's `Warned(string key, string message)` event, and the one-warning-per-key rule. Add to `EffectPlayTests`: an unknown key plays the placeholder with exactly one warning; an unbuilt procedural entry plays the placeholder with one warning. (FR-1, FR-4, FR-5)

@@ -51,6 +51,21 @@ namespace Uninarok.Effects
         public EffectSettings Settings => settings;
         public int Capacity => slots.Length;
         internal EffectMaterials Materials => materials;
+        readonly EffectSpriteAnimations spriteAnimations = new EffectSpriteAnimations();
+        internal EffectSpriteAnimations SpriteAnimations => spriteAnimations;
+
+        /// <summary>
+        /// The sprite catalog Sprite entries are found through (<c>TryGetEffect</c>, SPEC-0008); null when the world has none, and
+        /// then a sprite entry cannot draw. Setting it forgets the animations found so far. The caller owns the catalog.
+        /// </summary>
+        public Uninarok.Catalog.SpriteCatalog SpriteCatalog
+        {
+            get => spriteAnimations.Catalog;
+            set => spriteAnimations.Catalog = value;
+        }
+
+        /// <summary>Shared material of the sprite actors (<c>sprite_default.mat</c>); null keeps Unity's default sprite material.</summary>
+        public Material SpriteMaterial { get; set; }
 
         /// <summary>One warning per asset for an unknown blend code (plan 4.5 Blend). T5.8 folds this into <c>Warned</c>.</summary>
         internal void WarnBlendOnce(EffectAsset asset)
@@ -182,6 +197,10 @@ namespace Uninarok.Effects
                 case EffectKind.Cylinder:
                 case EffectKind.Procedural:
                     return inst.AuthoredPart ?? (inst.AuthoredPart = new AuthoredPart(this));
+                case EffectKind.Sprite:
+                    return inst.SpritePart ?? (inst.SpritePart = new SpritePart(this));
+                case EffectKind.Model:
+                    return inst.ModelPart ?? (inst.ModelPart = new ModelPart());
             }
             return null;
         }
@@ -387,6 +406,7 @@ namespace Uninarok.Effects
                 else UnityEngine.Object.DestroyImmediate(o);
             }
             materials.Dispose();
+            spriteAnimations.Clear();
         }
     }
 }

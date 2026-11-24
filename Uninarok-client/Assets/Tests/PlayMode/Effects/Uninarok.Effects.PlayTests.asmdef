@@ -6,6 +6,8 @@
         "UnityEditor.TestRunner",
         "Uninarok.Effects",
         "Uninarok.Map",
+        "Uninarok.Sprites",
+        "Uninarok.SpriteCatalog",
         "Unity.Addressables",
         "Unity.ResourceManager",
         "Unity.Addressables.Editor"

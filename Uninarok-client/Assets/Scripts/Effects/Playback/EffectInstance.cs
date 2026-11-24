@@ -74,6 +74,10 @@ namespace Uninarok.Effects
         public StrPart StrPart;
         /// <summary>This slot's pooled <c>AuthoredPart</c> (Quad, Cylinder, Procedural; kept between plays).</summary>
         public AuthoredPart AuthoredPart;
+        /// <summary>This slot's pooled <c>SpritePart</c> (and its <c>SpriteActor</c>; kept between plays).</summary>
+        public SpritePart SpritePart;
+        /// <summary>This slot's pooled <c>ModelPart</c> (and its prefab instance; kept between plays).</summary>
+        public ModelPart ModelPart;
 
         public EffectInstance(int slot) { Slot = slot; }
 
