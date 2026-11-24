@@ -39,7 +39,7 @@
 - [x] **T1.2** [quick] Add the `Uninarok.Effects.Editor` assembly (`includePlatforms: [Editor]`), `Uninarok.Effects.Tests` (EditMode) and `Uninarok.Effects.PlayTests` (PlayMode) assemblies and their folders as plan §3 and §6. (FR-10, FR-11)
   *Done when:* the three asmdefs exist with the references of plan §3; the editor asmdef's `includePlatforms` is `Editor` only; the test runner lists both test assemblies with 0 tests and 0 failures.
 
-- [ ] **T1.3** [quick] Add the data types of plan §4.2 and §4.4 with no logic: `EffectKind`, `EffectFacing`, `EffectAsset` with `LayerData` and `KeyData`, `AuthoredData`, `EffectCatalogIndex`, `EffectAssetRef`. (FR-2, FR-4, FR-5)
+- [x] **T1.3** [quick] Add the data types of plan §4.2 and §4.4 with no logic: `EffectKind`, `EffectFacing`, `EffectAsset` with `LayerData` and `KeyData`, `AuthoredData`, `EffectCatalogIndex`, `EffectAssetRef`. (FR-2, FR-4, FR-5)
   *Done when:* the types compile with exactly the fields of plan §4.2 and §4.4 and no method body.
 
 - [ ] **T1.4** [quick] Add `EffectSettings` (plan §4.6) and its asset `Assets/Settings/Effects/EffectSettings.asset` with the lead values (PixelsPerCell 35, Pivot (320, 320), VerticalBaseCells 0.5, AngleUnitsPerTurn 1024, DepthBias 0.5, PlaceholderSeconds 1, AuthoredFrameRate 60) and a tooltip on each lead value naming its source. Shader and placeholder texture are set in T5.1 and T5.2. (FR-3, FR-4, FR-11)
