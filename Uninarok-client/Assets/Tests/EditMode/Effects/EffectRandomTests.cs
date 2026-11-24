@@ -5,7 +5,7 @@ namespace Uninarok.Effects.Tests
     /// <summary>Pins EffectRandom (SPEC-0012 plan 4.2, D19): a stateless hash of the seed and channel. The hash itself is not pinned.</summary>
     public class EffectRandomTests
     {
-        [Test, Ignore("pending T2.4")]
+        [Test]
         public void SameSeedAndChannel_GiveTheSameValue()
         {
             float a = EffectRandom.Range(1234u, 0, -3f, 3f);
@@ -13,7 +13,7 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(a, b);
         }
 
-        [Test, Ignore("pending T2.4")]
+        [Test]
         public void DifferentSeeds_Differ()
         {
             var first = EffectRandom.Range(1u, 0, 0f, 1f);
@@ -23,7 +23,7 @@ namespace Uninarok.Effects.Tests
             Assert.IsTrue(anyDiffers);
         }
 
-        [Test, Ignore("pending T2.4")]
+        [Test]
         public void DifferentChannels_Differ()
         {
             var first = EffectRandom.Range(77u, 0, 0f, 1f);
@@ -33,7 +33,7 @@ namespace Uninarok.Effects.Tests
             Assert.IsTrue(anyDiffers);
         }
 
-        [Test, Ignore("pending T2.4")]
+        [Test]
         public void Value_StaysInsideMinMax()
         {
             for (uint s = 0; s < 500; s++)
@@ -44,13 +44,13 @@ namespace Uninarok.Effects.Tests
             }
         }
 
-        [Test, Ignore("pending T2.4")]
+        [Test]
         public void EqualMinAndMax_GiveThatValue()
         {
             Assert.AreEqual(2.5f, EffectRandom.Range(9u, 3, 2.5f, 2.5f), 1e-6f);
         }
 
-        [Test, Ignore("pending T2.4")]
+        [Test]
         public void Range_AllocatesNothing()
         {
             EffectRandom.Range(1u, 0, 0f, 1f);

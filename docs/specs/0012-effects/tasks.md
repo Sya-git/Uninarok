@@ -65,7 +65,7 @@
 - [x] **T2.3** [core] Test-first: `AuthoredSamplerTests` and the `EffectRandom` cases (plan §6: warp cylinder values at t 0, 0.25, 0.5, 0.75, 1; null curves give their neutral values; quad offset inside the start box at t 0 and the end box at t 1; size = `SizePixels` / `PixelsPerCell`; same seed → same sample; same offset in a later cycle; different seeds differ; 0 B over 10,000 samples). The cylinder strip's vertex count and uv are checked in T5.3. Stubs, every case `[Ignore("pending T2.4")]`. (FR-4, FR-7, FR-10)
   *Done when:* the test classes compile and the run shows their cases ignored, 0 failed.
 
-- [ ] **T2.4** [core] Implement `AuthoredSampler` and `EffectRandom` (plan §4.2 authored sampling rules, D19 seeded hash, `AnimationCurve` neutral values) and remove the Ignores. (FR-4, FR-7, FR-9)
+- [x] **T2.4** [core] Implement `AuthoredSampler` and `EffectRandom` (plan §4.2 authored sampling rules, D19 seeded hash, `AnimationCurve` neutral values) and remove the Ignores. (FR-4, FR-7, FR-9)
   *Done when:* the `AuthoredSamplerTests` and `EffectRandom` cases pass.
 
 ## Phase 3: STR and effect texture import (offline, one asset per STR)

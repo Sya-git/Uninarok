@@ -69,21 +69,21 @@ namespace Uninarok.Effects.Tests
         }
 
         // t = 0: radius scale 1, height scale 0, alpha 0 (fade start). bottom 2 cells = 1 u, top 3.3 cells = 1.65 u, height 0, alpha 0
-        [Test, Ignore("pending T2.4")] public void WarpCylinder_AtT0() => AssertWarpCylinder(0f, 1f, 0f, 0f);
+        [Test] public void WarpCylinder_AtT0() => AssertWarpCylinder(0f, 1f, 0f, 0f);
 
         // t = 0.25: radius scale 0.75 (bottom 0.75 u, top 1.2375 u), height scale 0.5 (1.1 x 0.5 cells x 0.5 = 0.275 u), alpha 0.4 x 1
-        [Test, Ignore("pending T2.4")] public void WarpCylinder_AtT025() => AssertWarpCylinder(0.25f, 0.75f, 0.5f, 1f);
+        [Test] public void WarpCylinder_AtT025() => AssertWarpCylinder(0.25f, 0.75f, 0.5f, 1f);
 
         // t = 0.5: radius scale 0.5 (bottom 0.5 u, top 0.825 u), height scale 1 (1.1 cells = 0.55 u), alpha 0.4
-        [Test, Ignore("pending T2.4")] public void WarpCylinder_AtT05() => AssertWarpCylinder(0.5f, 0.5f, 1f, 1f);
+        [Test] public void WarpCylinder_AtT05() => AssertWarpCylinder(0.5f, 0.5f, 1f, 1f);
 
         // t = 0.75: radius scale 0.25 (bottom 0.25 u, top 0.4125 u), height scale 0.5 (0.275 u), alpha 0.4 x 1 (fade out starts)
-        [Test, Ignore("pending T2.4")] public void WarpCylinder_AtT075() => AssertWarpCylinder(0.75f, 0.25f, 0.5f, 1f);
+        [Test] public void WarpCylinder_AtT075() => AssertWarpCylinder(0.75f, 0.25f, 0.5f, 1f);
 
         // t = 1: radius scale 0, height scale 0, alpha 0
-        [Test, Ignore("pending T2.4")] public void WarpCylinder_AtT1() => AssertWarpCylinder(1f, 0f, 0f, 0f);
+        [Test] public void WarpCylinder_AtT1() => AssertWarpCylinder(1f, 0f, 0f, 0f);
 
-        [Test, Ignore("pending T2.4")]
+        [Test]
         public void Cylinder_NullCurves_GiveNeutralValues()
         {
             // RadiusScale / HeightScale null = 1, Alpha null = 1 (colour alpha = MaxAlpha), Rotation null = 0
@@ -102,7 +102,7 @@ namespace Uninarok.Effects.Tests
             }
         }
 
-        [Test, Ignore("pending T2.4")]
+        [Test]
         public void Cylinder_RotationFollowsTheCurve()
         {
             var d = WarpOuter();
@@ -111,7 +111,7 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(45f, c.AngleDegrees, Tol);
         }
 
-        [Test, Ignore("pending T2.4")]
+        [Test]
         public void ColourAlpha_IsClampedToZeroOne()
         {
             var d = new AuthoredData { MaxAlpha = 2f, BottomRadius = 1f, TopRadius = 1f, Height = 1f };
@@ -122,7 +122,7 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(0f, c.Color.a, Tol);
         }
 
-        [Test, Ignore("pending T2.4")]
+        [Test]
         public void Quad_NullCurves_GiveNeutralValues()
         {
             // SizeScale null = 1, Alpha null = 1, Rotation null = 0, Motion null = linear (t 0.5 = midpoint of the two offsets)
@@ -143,7 +143,7 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(0f, ((q0.Offset + q1.Offset) * 0.5f - qh.Offset).magnitude, Tol);
         }
 
-        [Test, Ignore("pending T2.4")]
+        [Test]
         public void Quad_OffsetIsInsideStartBoxAtT0_AndEndBoxAtT1()
         {
             // Warp sparkle (plan 4.7): start x, y in +-3 cells (+-1.5 u), z 0; end x, y 0, z in 0..4 cells (0..2 u).
@@ -170,7 +170,21 @@ namespace Uninarok.Effects.Tests
             }
         }
 
-        [Test, Ignore("pending T2.4")]
+        [Test]
+        public void Quad_OffsetAxes_AuthoredZIsUnityUp_AuthoredYIsUnityZ()
+        {
+            // Authored (x, y on the ground, z up) in cells -> Unity (x, up = y, ground y = z) in units, like RoSpace for ground and up.
+            var d = new AuthoredData
+            {
+                StartMin = new Vector3(2, 4, 6), StartMax = new Vector3(2, 4, 6), EndMin = new Vector3(2, 4, 6), EndMax = new Vector3(2, 4, 6),
+            };
+            AuthoredSampler.SampleQuad(d, settings, 0.5f, 1u, out var q);
+            Assert.AreEqual(1f, q.Offset.x, Tol);
+            Assert.AreEqual(3f, q.Offset.y, Tol, "authored z (up) is Unity y");
+            Assert.AreEqual(2f, q.Offset.z, Tol, "authored y (ground) is Unity z");
+        }
+
+        [Test]
         public void Quad_SizeIsSizePixelsOverPixelsPerCell()
         {
             // 50 px / 35 px per cell, SizeScale null = 1
@@ -181,7 +195,7 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(2f, q.Size, Tol);
         }
 
-        [Test, Ignore("pending T2.4")]
+        [Test]
         public void Quad_SizeScaleAndRotationFollowTheirCurves()
         {
             var d = WarpSparkle();
@@ -192,7 +206,7 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(45f, q.AngleDegrees, Tol);
         }
 
-        [Test, Ignore("pending T2.4")]
+        [Test]
         public void Quad_AlphaAndColourFollowTheFadeCurve()
         {
             // tint (0.9, 1, 0.9), MaxAlpha 1 x fade: 0 at t 0, 0.5 at t 0.125, 1 at 0.5, 0 at 1
@@ -205,7 +219,7 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(0f, q.Color.a, Tol);
         }
 
-        [Test, Ignore("pending T2.4")]
+        [Test]
         public void Quad_SameSeed_GivesIdenticalSample()
         {
             AuthoredSampler.SampleQuad(WarpSparkle(), settings, 0.37f, 42u, out var a);
@@ -216,7 +230,7 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(a.Color, b.Color);
         }
 
-        [Test, Ignore("pending T2.4")]
+        [Test]
         public void Quad_StartAndEndAreDrawnOncePerPlay_SoALaterCycleRepeatsThePath()
         {
             // Drawn once per play (D19): the sample depends on t and seed only, so the same t in a later cycle (t is the
@@ -229,7 +243,7 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(0f, ((s0.Offset + s1.Offset) * 0.5f - mid1.Offset).magnitude, Tol);
         }
 
-        [Test, Ignore("pending T2.4")]
+        [Test]
         public void Quad_DifferentSeeds_Differ()
         {
             AuthoredSampler.SampleQuad(WarpSparkle(), settings, 0f, 1u, out var first);
@@ -242,7 +256,7 @@ namespace Uninarok.Effects.Tests
             Assert.IsTrue(anyDiffers);
         }
 
-        [Test, Ignore("pending T2.4")]
+        [Test]
         public void Sampling_AllocatesNothing()
         {
             var quad = WarpSparkle();
