@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Approved |
+| **Status** | Implementing |
 
 **How to use this file**
 - Branch: `feature/0012-effects`, merged to main with `--no-ff` when the spec is done.
@@ -19,7 +19,7 @@
 
 ## Phase 0: Prepare (spikes and owner decisions)
 
-- [ ] **T0.1** [critical] Spike the STR format on the 10 reference files: map GRF's `StrFormat` members to the fields of plan §4.1 (uv and corner order, angle and colour units, CP949 name decoding), count versions and uv-differs files over the whole data set, and compare GRF's keyframe interpolation with the plan §4.2 rule. Write `docs/specs/0012-effects/str-reference.md` (GRF mapping table, sampling section, reference table) and `docs/specs/0012-effects/evidence/str-survey.txt`. (FR-2, FR-3, FR-10)
+- [x] **T0.1** [critical] Spike the STR format on the 10 reference files: map GRF's `StrFormat` members to the fields of plan §4.1 (uv and corner order, angle and colour units, CP949 name decoding), count versions and uv-differs files over the whole data set, and compare GRF's keyframe interpolation with the plan §4.2 rule. Write `docs/specs/0012-effects/str-reference.md` (GRF mapping table, sampling section, reference table) and `docs/specs/0012-effects/evidence/str-survey.txt`. (FR-2, FR-3, FR-10)
   *Done when:* str-reference.md has the mapping table and one row per reference file (version, fps, frame count, layer count, key count per layer, texture count), matching an independent byte read of the headers; str-survey.txt holds the version counts over all `.str` files and the count of files whose uv differs from the full rectangle (R5); every interpolation difference from GRF is listed under "Owner decision" in str-reference.md, not resolved.
 
 - [ ] **T0.2** [core] Survey the colour of every effect texture: for each image under `texture/effect/`, its corner colour class (pink, black, other) and the blend pairs of the layers that use it (from the T0.1 reads). Write `docs/specs/0012-effects/evidence/colour-key-survey.csv`. (FR-2)

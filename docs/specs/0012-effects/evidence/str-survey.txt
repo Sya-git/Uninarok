@@ -1,0 +1,124 @@
+# STR survey (SPEC-0012 T0.1)
+# Data set: Uninarok-client/Assets/Editor/GRF Resources~/data, every file whose name ends in .str (case-insensitive).
+# Method: independent byte read (Python struct, layout of str-reference.md section 2) of every file,
+#         compared field by field with the same files read through GRF.dll (GRF.FileFormats.StrFormat.Str).
+
+files .str: 2995
+  under sprite/이팩트: 1
+  under texture/effect: 2994
+bad magic (not STRM): 0
+
+## Versions (uint32 at offset 4)
+  0x94 (148): 2995
+files parsed (version 0x94): 2995; files with bytes after the last key: 0
+
+## Texture coordinates (R5)
+files whose uv differs from the full rectangle: 0 of 2995
+  definition: any base key (type 0) with uv != (0, 0, 1, 1, 0, 0, 1, 1), or any delta key (type 1) with a uv delta != 0
+  base keys with uv != full rectangle: 0 of 139353
+  delta keys with uv delta != 0: 0 of 49383
+  base keys whose uv[4..7] differ from uv[0..3]: 0 (in 0 files)
+
+## Keys
+base keys (type 0): 139353; delta keys (type 1): 49383; other types: 0
+delta key right after a base key of the same frame: 49383; after a base key of another frame: 0; not after a base key: 0
+delta key after the last base key of its layer: 0
+two base keys on one frame in a layer: 0
+delta key anitype differs from its base key: 0; delay differs: 8716
+base keys followed by an anitype-0 delta key: 36495; of them with aniframe != 0: 625
+layers with keys not sorted by frame: 0
+keys at frame == frame count: 6066 (in 2753 files); keys beyond the frame count: 0 (in 0 files)
+layers whose first key is after frame 0: 12891 [('sprite/이팩트/jong_mini.str', 2, 20), ('sprite/이팩트/jong_mini.str', 3, 20), ('sprite/이팩트/jong_mini.str', 4, 20)]
+layers whose last key is before the frame count: 16584 (of them, last key alpha 0: 10772) [('sprite/이팩트/jong_mini.str', 2, 75, 100), ('sprite/이팩트/jong_mini.str', 3, 75, 100), ('sprite/이팩트/jong_mini.str', 4, 75, 100)]
+layers with a single key: 46
+base key followed directly by another base key (a held segment, no delta): 67320
+files with anitype 5 or 6 (outside the lead 0..4): 5: 2 ['texture/effect/_devil.str', 'texture/effect/devil.str'], 6: 1 ['texture/effect/efst_kung_fu_panda/redyoumei2.str']
+extrapolation check (base + delta x (next base frame - base frame) == next base, tolerance 1 % or 0.01):
+  position: match 49383, differ 0
+  corners: match 49383, differ 0
+  angle: match 49383, differ 0
+  colour: match 49383, differ 0
+  uv: match 49383, differ 0
+
+## Distributions
+fps: 60: 2995
+(type, anitype): (0, 0): 114925, (0, 1): 190, (0, 2): 12489, (0, 3): 11595, (0, 4): 140, (0, 5): 4, (0, 6): 10, (1, 0): 36495, (1, 1): 8, (1, 2): 7259, (1, 3): 5593, (1, 4): 23, (1, 6): 5
+mtpreset: 0: 188676, 1: 60
+base-key blend (src, dst), D3D codes: (5, 7): 116972, (5, 6): 20425, (1, 6): 576, (2, 1): 443, (6, 6): 300, (3, 9): 244, (12, 12): 95, (5, 5): 94, (2, 2): 51, (7, 6): 30, (5, 9): 27, (1, 3): 24, (5, 2): 18, (3, 6): 16, (3, 7): 14, (2, 6): 8, (1, 7): 8, (7, 5): 4, (5, 8): 2, (2, 7): 2
+layers whose base keys use more than one blend pair: 111 (in 67 files): ['texture/effect/4abc_abyss_slayer/abyss_slayer_cast/abyss_slayer_cast.str', 'texture/effect/4abc_abyss_slayer/abyss_slayer_cast/min_abyss_slayer_cast.str', 'texture/effect/4ig_firstbrand/firstbrand_hit/firstbrand_hit.str', 'texture/effect/4ig_firstbrand/firstbrand_hit/min_firstbrand_hit.str', 'texture/effect/4ig_secondfalth/secondfalth_hit/secondfalth_hit.str', 'texture/effect/4iq_secondjudgement/secondjudgement/secondjudgement.str', 'texture/effect/_devil.str', 'texture/effect/ain_rhapsody/ain_rhapsody/ain_rhapsody.str', 'texture/effect/ain_rhapsody/ain_rhapsody_cast/ain_rhapsody_cast.str', 'texture/effect/angel_2nd.str']
+layers: 25598; layers with no key: 2948
+texture names: 58410; with non-ASCII characters (CP949): 3; without an extension: 0
+
+## GRF agreement
+files GRF failed to read: 0 []
+files where GRF and the byte read differ (version, fps, frame count, layers, names, any key field except angle): 914 [('texture/effect/4ig_explosionblaster/explosionblaster/min_explosionblaster.str', ['L1 f0 field delay', 'L1 f2 field delay', 'L2 f0 field delay']), ('texture/effect/4ig_explosionblaster/explosionblaster_bottom/min_explosionblaster_bottom.str', ['L1 f0 field delay', 'L1 f2 field delay']), ('texture/effect/4ig_firstbrand/firstbrand/min_firstbrand.str', ['L1 f0 field delay', 'L2 f0 field delay', 'L3 f0 field delay']), ('texture/effect/4ig_firstbrand/firstbrand_hit/min_firstbrand_hit.str', ['L1 f0 field delay', 'L1 f3 field delay', 'L2 f0 field delay']), ('texture/effect/4ig_firstbrand/firstbrand_start/min_firstbrand_start.str', ['L1 f29 field delay', 'L2 f34 field delay', 'L3 f0 field delay'])]
+key fields that differ (GRF vs bytes), keys / files: delay: 8716 / 913
+  delay differences as (raw file value, GRF value): ('inf', '0'): 8716
+non-finite raw values (field, key type): ('delay', 1): 8716; files: delay: 913
+non-delay GRF differences: [('texture/effect/ado.str', ["L1 names ['¹ø°³1.bmp'] vs ['번개1.bmp']", "L2 names ['¹ø°³2.bmp'] vs ['번개2.bmp']", "L3 names ['¹ø°³3.bmp'] vs ['번개3.bmp']"])]
+angle: GRF value x 1024 / 360 vs raw file value, max abs difference: 0.000488
+
+## Reference files: byte read (header and layer counts) vs GRF read
+| File | Version | Fps | Frame count | Layers | Keys per layer | Textures per layer | Distinct textures | GRF = bytes |
+|---|---|---|---|---|---|---|---|---|
+| `texture/effect/firewall.str` | 0x94 | 60 | 40 | 11 | 0 11 11 11 13 13 13 23 23 27 41 | 0 2 2 2 2 2 2 2 2 2 1 | 4 | yes |
+| `texture/effect/cross.str` | 0x94 | 60 | 121 | 11 | 0 45 45 34 34 17 17 15 15 21 5 | 0 1 1 1 1 1 1 1 1 1 1 | 2 | yes |
+| `texture/effect/angelus.str` | 0x94 | 60 | 236 | 11 | 0 30 119 119 3 3 119 119 3 27 43 | 0 31 1 1 1 1 1 1 1 1 1 | 14 | yes |
+| `texture/effect/cure.str` | 0x94 | 60 | 107 | 12 | 0 36 26 26 73 5 3 33 33 51 51 51 | 0 1 1 1 1 1 1 1 1 1 1 1 | 5 | yes |
+| `texture/effect/freeze.str` | 0x94 | 60 | 60 | 8 | 0 26 26 11 8 14 14 14 | 0 1 1 1 1 1 1 1 | 3 | yes |
+| `texture/effect/bs_refinesuccess.str` | 0x94 | 60 | 100 | 17 | 0 33 18 15 21 12 12 12 12 11 11 3 3 3 3 7 3 | 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 | 6 | yes |
+| `texture/effect/dust.str` | 0x94 | 60 | 120 | 46 | 0 11 11 11 11 5 11 5 11 5 11 5 11 5 11 5 11 5 11 5 11 11 11 5 11 11 11 11 11 11 11 11 11 11 11 11 11 5 5 5 5 5 3 7 7 7 | 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 | 7 | yes |
+| `texture/effect/new_splash/new_splash.str` | 0x94 | 60 | 38 | 2 | 0 3 | 0 20 | 20 | yes |
+| `texture/effect/mineffect/new_earthgrave/new_earthgrave_bottom/new_earthgrave_bottom.str` | 0x94 | 60 | 48 | 3 | 0 5 5 | 0 1 1 | 1 | yes |
+| `sprite/이팩트/jong_mini.str` | 0x94 | 60 | 100 | 6 | 0 21 5 5 38 38 | 0 31 1 1 1 1 | 10 | yes |
+
+texture/effect/firewall.str	blend pairs (base keys) {(5, 7): 130}	layers with >1 pair 0	anitypes [3]	inf delays 0
+texture/effect/cross.str	blend pairs (base keys) {(5, 7): 234}	layers with >1 pair 0	anitypes [0]	inf delays 0
+texture/effect/angelus.str	blend pairs (base keys) {(5, 7): 573, (2, 1): 5}	layers with >1 pair 1	anitypes [0, 1]	inf delays 0
+texture/effect/cure.str	blend pairs (base keys) {(5, 7): 382}	layers with >1 pair 0	anitypes [0]	inf delays 0
+texture/effect/freeze.str	blend pairs (base keys) {(5, 7): 109}	layers with >1 pair 0	anitypes [0]	inf delays 0
+texture/effect/bs_refinesuccess.str	blend pairs (base keys) {(5, 7): 152}	layers with >1 pair 0	anitypes [0]	inf delays 0
+texture/effect/dust.str	blend pairs (base keys) {(5, 7): 218}	layers with >1 pair 0	anitypes [0]	inf delays 0
+texture/effect/new_splash/new_splash.str	blend pairs (base keys) {(5, 7): 2}	layers with >1 pair 0	anitypes [3]	inf delays 0
+texture/effect/mineffect/new_earthgrave/new_earthgrave_bottom/new_earthgrave_bottom.str	blend pairs (base keys) {(5, 7): 6}	layers with >1 pair 0	anitypes [0]	inf delays 0
+sprite/이팩트/jong_mini.str	blend pairs (base keys) {(5, 7): 91}	layers with >1 pair 0	anitypes [0, 3]	inf delays 0
+
+## GRF interpolation vs the plan 4.2 rule
+Interpolation: GRF InterpolatedKeyFrame.Interpolate(str, layer, frame, false) vs plan 4.2 rule, every integer frame 0..frame count of the 10 reference files
+layer-frames compared: 14298
+  visibility agree: 14298
+  plan hidden, GRF shown: 0
+  plan shown, GRF hidden: 0
+  grf exception: 0
+  pos: agree 1594, differ 4589
+  xy: agree 1594, differ 4589
+  uv: agree 1594, differ 4589
+  angle: agree 5544, differ 639
+  color: agree 1594, differ 4589
+  ani: agree 5746, differ 437
+  blend: agree 1594, differ 4589
+  example differs: ('texture/effect/firewall.str', 1, 0, 'pos', (320.0, 329.0), (-0.4, -4.0))
+  example differs: ('texture/effect/firewall.str', 1, 0, 'xy', (-32.0, 32.0, 32.0, -32.0), (0.0, 0.0, 0.0, 0.0))
+  example differs: ('texture/effect/firewall.str', 1, 0, 'uv', (0.0, 0.0, 1.0, 1.0), (0.0, 0.0, 0.0, 0.0))
+  example differs: ('texture/effect/firewall.str', 1, 0, 'angle', (0.0,), (12.65625,))
+  example differs: ('texture/effect/firewall.str', 1, 0, 'color', (255.0, 255.0, 255.0, 0.0), (0.0, 0.0, 0.0, 5.1))
+  example differs: ('texture/effect/firewall.str', 1, 0, 'blend', (5, 7), (0, 0))
+
+## GRF on malformed input (firewall.str patched or cut; GRF.FileFormats.StrFormat.Str constructor)
+empty	throws IndexOutOfRangeException: Index was outside the bounds of the array. (16 ms)
+junk 64 bytes	throws GrfException: Unrecognized file format (STR). (3 ms)
+truncated to 8 bytes	throws IndexOutOfRangeException: Index was outside the bounds of the array. (1 ms)
+truncated to half	throws IndexOutOfRangeException: Index was outside the bounds of the array. (1 ms)
+truncated by 1 byte	throws IndexOutOfRangeException: Index was outside the bounds of the array. (0 ms)
+version 0x95	read OK: version=149 layers=11 keys=0 11 11 11 13 13 13 23 23 27 41 (14 ms)
+version 0x93	read OK: version=147 layers=11 keys=0 11 11 11 13 13 13 23 23 27 41 (0 ms)
+version 0x01	read OK: version=1 layers=11 keys=0 11 11 11 13 13 13 23 23 27 41 (0 ms)
+layer count 0x7FFFFFFF	throws OutOfMemoryException: Array dimensions exceeded supported range. (3 ms)
+layer count 12 (one more)	throws IndexOutOfRangeException: Index was outside the bounds of the array. (0 ms)
+layer 1 texture count 0x7FFFFFFF	throws OutOfMemoryException: Array dimensions exceeded supported range. (0 ms)
+layer 1 key count 0x7FFFFFFF	throws OutOfMemoryException: Array dimensions exceeded supported range. (0 ms)
+layer count 33,554,432	throws IndexOutOfRangeException (20 ms, no large allocation)
+layer 1 texture count 16,777,216	throws IndexOutOfRangeException (4 ms)
+layer 1 key count 16,777,216	throws IndexOutOfRangeException (4 ms)
+layer 1 texture count -1	throws ArgumentOutOfRangeException: Non-negative number required (capacity)
+layer 1 key count -1	throws ArgumentOutOfRangeException: Non-negative number required (capacity)
