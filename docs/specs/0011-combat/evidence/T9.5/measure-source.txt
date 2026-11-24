@@ -1,0 +1,142 @@
+Scratch measurement code used for T9.5 (NOT committed into Assets; it was added temporarily to the test classes named and then removed with git checkout).
+
+=== PlayMode: added to Uninarok.World.PlayTests.WorldPresenterPlayTests (uses its setup helpers) ===
+
+        [UnityTest, Category("NeedsData")]
+        public IEnumerator ZZ_T95_Measure()
+        {
+            const uint First = 1000;
+            for (uint i = 0; i < 300; i++)
+            {
+                int x = 5 + (int)(i % 30) * 3, y = 5 + (int)(i / 30) * 9;
+                if (i % 3 == 0) Novice(First + i, x, y);
+                else { Poring(First + i, x, y); _model.SetHp(First + i, 5 + (int)(i % 4), 10); }
+            }
+            _model.OwnId = First;
+            _presenter.Sync(_model);
+            yield return Loaded(First + 299);
+            var overlay = Overlay(out var camera, out _);
+            LookAt(camera, _presenter.ViewOf(First + 150).transform.position, 0f);
+            camera.transform.position -= camera.transform.forward * 120f;
+            camera.gameObject.tag = "MainCamera"; camera.enabled = true; // the overlay's own LateUpdate finds it as Camera.main
+            var settings = UnityEditor.AssetDatabase.LoadAssetAtPath<CombatSettings>("Assets/Settings/World/CombatSettings.asset");
+            var timeline = new CombatTimeline(settings, _model.Capacity) { Weapons = new BowWeapons() };
+            timeline.Use(_model);
+            overlay.Use(_model, new OwnStatus { Hp = 50, MaxHp = 100, Sp = 10, MaxSp = 20 }, timeline, _presenter, settings);
+            _presenter.Timeline = timeline;
+            _model.SetLook(First, LookType.Weapon, 11, 0);
+            overlay.MarkSource = _ => First + 151;
+            var attackers = new uint[100]; int na = 0;
+            for (uint id = First + 1; na < 100; id++) if ((id - First) % 3 != 0) attackers[na++] = id;
+            uint now = 10_000; int blowN = 0; uint step = 16;
+            for (int f = 0; f < 240; f++)
+            {
+                now += step;
+                int blows = (f % 10 == 0) ? 2 : 1;
+                for (int b = 0; b < blows; b++, blowN++)
+                {
+                    if (blowN % 12 == 11) timeline.Add(new Blow(First, attackers[blowN % 100], now, 2000, 200, 55, 0, 1, BlowKind.Normal, false, 0));
+                    else timeline.Add(new Blow(attackers[blowN % 100], First, now, 400, 200, 100 + blowN % 900, 0, 1, blowN % 4 == 0 ? BlowKind.Critical : BlowKind.Normal, false, 0));
+                }
+                _model.Advance(now); timeline.Advance(now); _presenter.Sync(_model); overlay.Draw(camera);
+                yield return null;
+            }
+            var baseCsv = new System.Text.StringBuilder("frame,gc_bytes_in_frame\n");
+            using (var rec0 = Unity.Profiling.ProfilerRecorder.StartNew(Unity.Profiling.ProfilerCategory.Memory, "GC Allocated In Frame"))
+            {
+                overlay.enabled = false;
+                for (int f = 0; f < 100; f++) { yield return null; baseCsv.Append(f).Append(',').Append(rec0.LastValue).Append('\n'); }
+            }
+            System.IO.File.WriteAllText(@"E:\Dev\Uninarok\docs\specs\0011-combat\evidence\T9.5\baseline-empty-frames.csv", baseCsv.ToString());
+            var lateUpdate = (Action)Delegate.CreateDelegate(typeof(Action), overlay, typeof(CombatOverlay).GetMethod("LateUpdate", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance));
+            lateUpdate(); lateUpdate();
+            const int N = 600;
+            double tick = 1000.0 / System.Diagnostics.Stopwatch.Frequency;
+            var csv = new System.Text.StringBuilder("frame,add_bytes,add_ms,model_bytes,model_ms,timeline_bytes,timeline_ms,sync_bytes,sync_ms,overlay_bytes,overlay_ms,numbers,bars,arrows,marks,shown,frame_gc_bytes_profiler\n");
+            using var rec = Unity.Profiling.ProfilerRecorder.StartNew(Unity.Profiling.ProfilerCategory.Memory, "GC Allocated In Frame");
+            for (int f = 0; f < N; f++)
+            {
+                now += step;
+                long a0 = GC.GetAllocatedBytesForCurrentThread(); long t0 = System.Diagnostics.Stopwatch.GetTimestamp();
+                int blows = (f % 10 == 0) ? 2 : 1;
+                for (int b = 0; b < blows; b++, blowN++)
+                {
+                    if (blowN % 12 == 11) timeline.Add(new Blow(First, attackers[blowN % 100], now, 2000, 200, 55, 0, 1, BlowKind.Normal, false, 0));
+                    else timeline.Add(new Blow(attackers[blowN % 100], First, now, 400, 200, 100 + blowN % 900, 0, 1, blowN % 4 == 0 ? BlowKind.Critical : BlowKind.Normal, false, 0));
+                }
+                long a1 = GC.GetAllocatedBytesForCurrentThread(); long t1 = System.Diagnostics.Stopwatch.GetTimestamp();
+                _model.Advance(now);
+                long a2 = GC.GetAllocatedBytesForCurrentThread(); long t2 = System.Diagnostics.Stopwatch.GetTimestamp();
+                timeline.Advance(now);
+                long a3 = GC.GetAllocatedBytesForCurrentThread(); long t3 = System.Diagnostics.Stopwatch.GetTimestamp();
+                _presenter.Sync(_model);
+                long a4 = GC.GetAllocatedBytesForCurrentThread(); long t4 = System.Diagnostics.Stopwatch.GetTimestamp();
+                lateUpdate();
+                long a5 = GC.GetAllocatedBytesForCurrentThread(); long t5 = System.Diagnostics.Stopwatch.GetTimestamp();
+                csv.Append(f).Append(',').Append(a1 - a0).Append(',').Append(((t1 - t0) * tick).ToString("F4", System.Globalization.CultureInfo.InvariantCulture)).Append(',')
+                   .Append(a2 - a1).Append(',').Append(((t2 - t1) * tick).ToString("F4", System.Globalization.CultureInfo.InvariantCulture)).Append(',')
+                   .Append(a3 - a2).Append(',').Append(((t3 - t2) * tick).ToString("F4", System.Globalization.CultureInfo.InvariantCulture)).Append(',')
+                   .Append(a4 - a3).Append(',').Append(((t4 - t3) * tick).ToString("F4", System.Globalization.CultureInfo.InvariantCulture)).Append(',')
+                   .Append(a5 - a4).Append(',').Append(((t5 - t4) * tick).ToString("F4", System.Globalization.CultureInfo.InvariantCulture)).Append(',')
+                   .Append(overlay.DrawnNumbers).Append(',').Append(overlay.DrawnBars).Append(',').Append(overlay.DrawnArrows).Append(',').Append(overlay.DrawnMarks).Append(',').Append(_presenter.ShownCount).Append(',')
+                   .Append(rec.Valid ? rec.LastValue : -1).Append('\n');
+                yield return null;
+            }
+            System.IO.File.WriteAllText(@"E:\Dev\Uninarok\docs\specs\0011-combat\evidence\T9.5\combat-frames.csv", csv.ToString());
+        }
+
+
+=== EditMode: added to Uninarok.World.Tests.CombatAllocationTests (same setup as Combat_ZeroAllocation_100Fighting) ===
+
+        [Test]
+        public void ZZ_T95_MeasureModel()
+        {
+            var settings = ScriptableObject.CreateInstance<CombatSettings>();
+            try
+            {
+                using var rig = new Rig().ToInGame(OwnCharacterTests.Character());
+                rig.Session.UseCombat(settings);
+                uint own = rig.Model.OwnId;
+                const int Monsters = 100;
+                var hits = new DAMAGE[Monsters];
+                var backs = new DAMAGE[Monsters];
+                for (int i = 0; i < Monsters; i++)
+                {
+                    uint id = 0x068EB5EC + (uint)i;
+                    rig.Client.Deliver(Stand(id, 140 + i % 20, 195 + i / 20));
+                    int[] types = { 0, 10, 8, 11 };
+                    hits[i] = Damage(id, own, i % 7 == 0 ? 0 : 12, i % 3 == 0 ? 4 : 0, 1, 400 + i * 10);
+                    backs[i] = Damage(own, id, 30 + i, types[i % types.Length], (short)(i % 3 + 1), 480);
+                }
+                rig.Session.Combat.Attack(0x068EB5EC + 50, true);
+                rig.Client.RecordSends = false;
+                double tick = 1000.0 / System.Diagnostics.Stopwatch.Frequency;
+                var csv = new System.Text.StringBuilder("frame,deliver_bytes,deliver_ms,model_bytes,model_ms,tick_bytes,tick_ms,timeline_bytes,timeline_ms,numbers\n");
+                var inv = System.Globalization.CultureInfo.InvariantCulture;
+                for (int f = 0; f < 1800; f++)
+                {
+                    int i = f % Monsters;
+                    long a0 = GC.GetAllocatedBytesForCurrentThread(); long t0 = System.Diagnostics.Stopwatch.GetTimestamp();
+                    rig.Client.Deliver(hits[i]);
+                    rig.Client.Deliver(backs[(i * 37) % Monsters]);
+                    long a1 = GC.GetAllocatedBytesForCurrentThread(); long t1 = System.Diagnostics.Stopwatch.GetTimestamp();
+                    rig.Local.AdvanceMs(16);
+                    uint now = rig.Clock.Now;
+                    rig.Model.Advance(now);
+                    long a2 = GC.GetAllocatedBytesForCurrentThread(); long t2 = System.Diagnostics.Stopwatch.GetTimestamp();
+                    rig.Session.Combat.Tick(now);
+                    long a3 = GC.GetAllocatedBytesForCurrentThread(); long t3 = System.Diagnostics.Stopwatch.GetTimestamp();
+                    rig.Session.Timeline.Advance(now);
+                    long a4 = GC.GetAllocatedBytesForCurrentThread(); long t4 = System.Diagnostics.Stopwatch.GetTimestamp();
+                    if (f < 1200) continue; // 1,200 frames of warm-up (including the JIT), then 600 measured
+                    csv.Append(f - 1200).Append(',').Append(a1 - a0).Append(',').Append(((t1 - t0) * tick).ToString("F4", inv)).Append(',')
+                       .Append(a2 - a1).Append(',').Append(((t2 - t1) * tick).ToString("F4", inv)).Append(',')
+                       .Append(a3 - a2).Append(',').Append(((t3 - t2) * tick).ToString("F4", inv)).Append(',')
+                       .Append(a4 - a3).Append(',').Append(((t4 - t3) * tick).ToString("F4", inv)).Append(',')
+                       .Append(rig.Session.Timeline.Numbers.Length).Append('\n');
+                }
+                System.IO.File.WriteAllText(@"E:\Dev\Uninarok\docs\specs\0011-combat\evidence\T9.5\combat-model-frames.csv", csv.ToString());
+            }
+            finally { UnityEngine.Object.DestroyImmediate(settings); }
+        }
+
