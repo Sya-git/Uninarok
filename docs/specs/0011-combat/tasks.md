@@ -196,7 +196,7 @@
 - [ ] **T9.4** Side by side with the original client. (FR-6, FR-7, FR-14)
   *Done when:* the same blows filmed in both clients are in `evidence/` (numbers, 20 numbers per second over one monster, bars, arrows at 2, 5 and 9 cells, an archer skeleton, one attack of each other weapon type), and the owner accepts them.
 
-- [ ] **T9.5** Cost (plan §6.1). (FR-12)
+- [x] **T9.5** Cost (plan §6.1). (FR-12)
   300 units, 100 fighting, 100 numbers on screen.
   *Done when:* a profiler capture in `evidence/` shows 0 B GC per frame from the combat update; its frame time is recorded (guide 0.5 ms).
 
