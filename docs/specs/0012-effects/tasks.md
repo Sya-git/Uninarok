@@ -85,7 +85,7 @@
 - [x] **T3.5** [core] Implement `RoEffectTextureLookup` (`EffectRoot`, `BareNamePreference`, `TryResolve`; a name found nowhere gives `TextureMissing` once per (texture, STR)) and remove the Ignores. (FR-2)
   *Done when:* `RoEffectTextureLookupTests` pass.
 
-- [ ] **T3.6** [core] Test-first: `RoEffectColorKeyTests` (pink keyed; black keyed; `None` keeps pixels; tolerances; overrides beat defaults; rules read from JSON; key written to userData), with stubs of `RoEffectKeyRules` and the `RoColorKey` key-set overload; every case `[Ignore("pending T3.7")]`, except that "rules read from JSON" is `[Ignore("pending T3.8")]`. (FR-2, FR-10)
+- [x] **T3.6** [core] Test-first: `RoEffectColorKeyTests` (pink keyed; black keyed; `None` keeps pixels; tolerances; overrides beat defaults; rules read from JSON; key written to userData), with stubs of `RoEffectKeyRules` and the `RoColorKey` key-set overload; every case `[Ignore("pending T3.7")]`, except that "rules read from JSON" is `[Ignore("pending T3.8")]`. (FR-2, FR-10)
   *Done when:* the test class compiles and the run shows its cases ignored, 0 failed.
 
 - [ ] **T3.7** [core] Implement `RoEffectKeyRules` (loads `Rules/effect-textures.json`, `For(texture, sourceHadAlpha)`) and the `RoColorKey` key-set overload; `RoColorKey.Apply(RoImage)` keeps its behaviour. Remove the Ignores except T3.8's. (FR-2)

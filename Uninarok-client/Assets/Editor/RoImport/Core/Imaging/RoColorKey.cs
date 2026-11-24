@@ -55,6 +55,11 @@ namespace Uninarok.RoImport.Core.Imaging
         }
 
         /// <summary>
+        /// Gives alpha 0 to every pixel within the key set's tolerance of its pink and/or black. STUB (PLAN-0012 T3.6): T3.7 implements it.
+        /// </summary>
+        public static RoTextureAlpha Apply(RoImage image, RoKeySet keys) => throw new NotImplementedException("T3.7");
+
+        /// <summary>
         /// Replaces the RGB of every alpha-0 pixel with the rounded average of its already-filled 8-neighbors, one ring per
         /// pass, until every transparent pixel is filled (at most width + height passes). Alpha and visible pixels are not
         /// changed. A fully transparent image is cleared to black.
