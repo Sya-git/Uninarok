@@ -169,11 +169,20 @@ namespace Uninarok.Effects
             Normalize(inst);
         }
 
-        /// <summary>The part that draws this instance's kind; only STR exists before T5.6-T5.8 (others only keep time).</summary>
+        /// <summary>The part that draws this instance's kind; STR and the authored kinds exist (T5.7-T5.8 add the rest; others only keep time).</summary>
         IEffectPart CreatePart(EffectInstance inst)
         {
-            if (inst.Asset != null && inst.Asset.Kind == EffectKind.Str)
-                return inst.StrPart ?? (inst.StrPart = new StrPart(this));
+            var asset = inst.Asset;
+            if (asset == null) return null;
+            switch (asset.Kind)
+            {
+                case EffectKind.Str:
+                    return inst.StrPart ?? (inst.StrPart = new StrPart(this));
+                case EffectKind.Quad:
+                case EffectKind.Cylinder:
+                case EffectKind.Procedural:
+                    return inst.AuthoredPart ?? (inst.AuthoredPart = new AuthoredPart(this));
+            }
             return null;
         }
 

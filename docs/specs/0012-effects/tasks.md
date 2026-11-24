@@ -146,7 +146,7 @@
 - [x] **T5.5** [core] Implement `StrPart` (per layer: `EffectSampler` into `EffectMeshWriter`; the STR placement formula of plan §4.5; each layer's submesh material from its current base key's blend). Add the STR case to `EffectPlayTests`: a 3-layer synthetic asset gives 3 submeshes, and layer 0's corners at frame 0 equal the expected world positions. (FR-2, FR-3)
   *Done when:* that case passes.
 
-- [ ] **T5.6** [core] Implement `AuthoredPart` (Quad facing camera or ground; Cylinder strip; Procedural through the empty `EffectProcedures` registry and `EffectQuadSpan`), per plan §4.5. (FR-4, FR-7)
+- [x] **T5.6** [core] Implement `AuthoredPart` (Quad facing camera or ground; Cylinder strip; Procedural through the empty `EffectProcedures` registry and `EffectQuadSpan`), per plan §4.5. (FR-4, FR-7)
   *Done when:* a synthetic cylinder and a synthetic quad built in code produce 42 and 4 vertices in the instance mesh (PlayMode check, added to `EffectPlayTests`).
 
 - [ ] **T5.7** [core] Implement `SpritePart` (a pooled `SpriteActor` found through `SpriteCatalog.TryGetEffect`, advanced by `SpriteActor.Step` from the runtime tick) and `ModelPart` (one prefab instance per pooled slot). (FR-4, FR-6)

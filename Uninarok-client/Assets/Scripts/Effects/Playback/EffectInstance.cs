@@ -72,6 +72,8 @@ namespace Uninarok.Effects
         EffectMeshWriter writer;
         /// <summary>This slot's pooled <c>StrPart</c> (kept between plays).</summary>
         public StrPart StrPart;
+        /// <summary>This slot's pooled <c>AuthoredPart</c> (Quad, Cylinder, Procedural; kept between plays).</summary>
+        public AuthoredPart AuthoredPart;
 
         public EffectInstance(int slot) { Slot = slot; }
 
