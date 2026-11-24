@@ -31,7 +31,6 @@ namespace Uninarok.RoImport.Tests.Effects
         static RoPath P(string s) => RoPath.Parse(s);
 
         [Test]
-        [Ignore("pending T3.7")]
         public void Pink_IsKeyed_OthersKept()
         {
             var image = Image(Pink, Black, Green);
@@ -41,7 +40,6 @@ namespace Uninarok.RoImport.Tests.Effects
         }
 
         [Test]
-        [Ignore("pending T3.7")]
         public void Black_IsKeyed_OthersKept()
         {
             var image = Image(Black, Pink, Green);
@@ -51,7 +49,6 @@ namespace Uninarok.RoImport.Tests.Effects
         }
 
         [Test]
-        [Ignore("pending T3.7")]
         public void PinkAndBlack_KeysBoth()
         {
             var image = Image(Pink, Black, Green);
@@ -60,7 +57,6 @@ namespace Uninarok.RoImport.Tests.Effects
         }
 
         [Test]
-        [Ignore("pending T3.7")]
         public void None_KeepsEveryPixel()
         {
             var image = Image(Pink, Black, Green);
@@ -70,7 +66,6 @@ namespace Uninarok.RoImport.Tests.Effects
         }
 
         [Test]
-        [Ignore("pending T3.7")]
         public void KeySet_WithoutMatch_ReportsNoneAndKeepsPixels()
         {
             var image = Image(Green, Green);
@@ -86,7 +81,6 @@ namespace Uninarok.RoImport.Tests.Effects
         [TestCase(5, 5, 5, RoEffectKey.Black, true, TestName = "Tolerance: black exactly at the black tolerance is keyed")]
         [TestCase(6, 0, 0, RoEffectKey.Black, false, TestName = "Tolerance: black one past the tolerance is not keyed")]
         [TestCase(5, 5, 5, RoEffectKey.Pink, false, TestName = "Tolerance: near-black is not keyed by a pink key")]
-        [Ignore("pending T3.7")]
         public void Tolerance_PerChannel(int r, int g, int b, RoEffectKey key, bool keyed)
         {
             var image = Image(new Color32((byte)r, (byte)g, (byte)b, 255));
@@ -95,7 +89,6 @@ namespace Uninarok.RoImport.Tests.Effects
         }
 
         [Test]
-        [Ignore("pending T3.7")]
         public void ZeroBlackTolerance_KeysOnlyExactBlack()
         {
             var image = Image(Black, new Color32(1, 0, 0, 255));
@@ -104,7 +97,6 @@ namespace Uninarok.RoImport.Tests.Effects
         }
 
         [Test]
-        [Ignore("pending T3.7")]
         public void For_UsesDefaultBySourceKind()
         {
             var rules = new RoEffectKeyRules { DefaultOpaque = RoEffectKey.Pink, DefaultWithAlpha = RoEffectKey.Black };
@@ -113,7 +105,6 @@ namespace Uninarok.RoImport.Tests.Effects
         }
 
         [Test]
-        [Ignore("pending T3.7")]
         public void Override_BeatsBothDefaults()
         {
             var rules = new RoEffectKeyRules
@@ -128,7 +119,6 @@ namespace Uninarok.RoImport.Tests.Effects
         }
 
         [Test]
-        [Ignore("pending T3.7")]
         public void Override_ToNone_BeatsAKeyingDefault()
         {
             var rules = new RoEffectKeyRules
@@ -140,7 +130,6 @@ namespace Uninarok.RoImport.Tests.Effects
         }
 
         [Test]
-        [Ignore("pending T3.7")]
         public void KeySetFor_CarriesKeyAndTolerances_AndAppliesToImage()
         {
             var rules = new RoEffectKeyRules
@@ -164,7 +153,6 @@ namespace Uninarok.RoImport.Tests.Effects
         // stored key differs from For(). Pinned here: For is deterministic, and its value survives a round trip through its
         // name, which is what a stored key is compared with. The 'alpha=...;key=...' string itself is T3.10.
         [Test]
-        [Ignore("pending T3.7")]
         public void For_KeyNameRoundTrips_SoAStoredKeyCanBeCompared()
         {
             var rules = new RoEffectKeyRules { DefaultOpaque = RoEffectKey.PinkAndBlack };
