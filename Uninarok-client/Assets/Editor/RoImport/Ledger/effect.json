@@ -1,0 +1,2020 @@
+{
+    "entries": [
+        {
+            "Source": "sprite/이팩트/05vallentine.act",
+            "SourceHash": "05vallentine",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/05vallentine.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/atque_poenitentia/atque_poenitentia.act",
+            "SourceHash": "atque_poenitentia/atque_poenitentia",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/atque_poenitentia/atque_poenitentia.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/barmund_magic_circle/angel_magic_circle.act",
+            "SourceHash": "barmund_magic_circle/angel_magic_circle",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/barmund_magic_circle/angel_magic_circle.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/barmund_magic_circle/animal_magic_circle.act",
+            "SourceHash": "barmund_magic_circle/animal_magic_circle",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/barmund_magic_circle/animal_magic_circle.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/barmund_magic_circle/devil_magic_circle.act",
+            "SourceHash": "barmund_magic_circle/devil_magic_circle",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/barmund_magic_circle/devil_magic_circle.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/barmund_magic_circle/dragon_magic_circle.act",
+            "SourceHash": "barmund_magic_circle/dragon_magic_circle",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/barmund_magic_circle/dragon_magic_circle.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/barmund_magic_circle/fish_magic_circle.act",
+            "SourceHash": "barmund_magic_circle/fish_magic_circle",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/barmund_magic_circle/fish_magic_circle.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/barmund_magic_circle/human_magic_circle.act",
+            "SourceHash": "barmund_magic_circle/human_magic_circle",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/barmund_magic_circle/human_magic_circle.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/barmund_magic_circle/insect_magic_circle.act",
+            "SourceHash": "barmund_magic_circle/insect_magic_circle",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/barmund_magic_circle/insect_magic_circle.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/barmund_magic_circle/nothing_magic_circle.act",
+            "SourceHash": "barmund_magic_circle/nothing_magic_circle",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/barmund_magic_circle/nothing_magic_circle.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/barmund_magic_circle/plant_magic_circle.act",
+            "SourceHash": "barmund_magic_circle/plant_magic_circle",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/barmund_magic_circle/plant_magic_circle.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/barmund_magic_circle/undead_magic_circle.act",
+            "SourceHash": "barmund_magic_circle/undead_magic_circle",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/barmund_magic_circle/undead_magic_circle.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/black_bubble/large/blackbubble_large.act",
+            "SourceHash": "black_bubble/large/blackbubble_large",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/black_bubble/large/blackbubble_large.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/black_bubble/midium/blackbubble_midium.act",
+            "SourceHash": "black_bubble/midium/blackbubble_midium",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/black_bubble/midium/blackbubble_midium.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/black_bubble/small/blackbubble_small.act",
+            "SourceHash": "black_bubble/small/blackbubble_small",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/black_bubble/small/blackbubble_small.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/black_thunder/black_thunder.act",
+            "SourceHash": "black_thunder/black_thunder",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/black_thunder/black_thunder.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/black_thunder/black_thunder_dark.act",
+            "SourceHash": "black_thunder/black_thunder_dark",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/black_thunder/black_thunder_dark.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/book_of_creatingstar/book_of_creatingstar.act",
+            "SourceHash": "book_of_creatingstar/book_of_creatingstar",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/book_of_creatingstar/book_of_creatingstar.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/book_of_dimension/book_of_dimension.act",
+            "SourceHash": "book_of_dimension/book_of_dimension",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/book_of_dimension/book_of_dimension.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/burnt.act",
+            "SourceHash": "burnt",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/burnt.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/c_amdarais_effect.act",
+            "SourceHash": "c_amdarais_effect",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/c_amdarais_effect.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/c_amdarais_effect/c_amdarais_effect.act",
+            "SourceHash": "c_amdarais_effect/c_amdarais_effect",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/c_amdarais_effect/c_amdarais_effect.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/cconfine.act",
+            "SourceHash": "cconfine",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/cconfine.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/cons_of_poison.act",
+            "SourceHash": "cons_of_poison",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/cons_of_poison.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/costumebody.act",
+            "SourceHash": "costumebody",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/costumebody.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/curse_explosion/curse_explosion.act",
+            "SourceHash": "curse_explosion/curse_explosion",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/curse_explosion/curse_explosion.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/darkbreath.act",
+            "SourceHash": "darkbreath",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/darkbreath.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/digital_space/digital_space.act",
+            "SourceHash": "digital_space/digital_space",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/digital_space/digital_space.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/ef_immune_property/ef_immune_property_darkness.act",
+            "SourceHash": "ef_immune_property/ef_immune_property_darkness",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/ef_immune_property/ef_immune_property_darkness.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/ef_immune_property/ef_immune_property_fire.act",
+            "SourceHash": "ef_immune_property/ef_immune_property_fire",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/ef_immune_property/ef_immune_property_fire.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/ef_immune_property/ef_immune_property_ground.act",
+            "SourceHash": "ef_immune_property/ef_immune_property_ground",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/ef_immune_property/ef_immune_property_ground.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/ef_immune_property/ef_immune_property_nothing.act",
+            "SourceHash": "ef_immune_property/ef_immune_property_nothing",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/ef_immune_property/ef_immune_property_nothing.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/ef_immune_property/ef_immune_property_poison.act",
+            "SourceHash": "ef_immune_property/ef_immune_property_poison",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/ef_immune_property/ef_immune_property_poison.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/ef_immune_property/ef_immune_property_saint.act",
+            "SourceHash": "ef_immune_property/ef_immune_property_saint",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/ef_immune_property/ef_immune_property_saint.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/ef_immune_property/ef_immune_property_telekinesis.act",
+            "SourceHash": "ef_immune_property/ef_immune_property_telekinesis",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/ef_immune_property/ef_immune_property_telekinesis.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/ef_immune_property/ef_immune_property_undead.act",
+            "SourceHash": "ef_immune_property/ef_immune_property_undead",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/ef_immune_property/ef_immune_property_undead.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/ef_immune_property/ef_immune_property_water.act",
+            "SourceHash": "ef_immune_property/ef_immune_property_water",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/ef_immune_property/ef_immune_property_water.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/ef_immune_property/ef_immune_property_wind.act",
+            "SourceHash": "ef_immune_property/ef_immune_property_wind",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/ef_immune_property/ef_immune_property_wind.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/ef_popcorn/ef_popcorn.act",
+            "SourceHash": "ef_popcorn/ef_popcorn",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/ef_popcorn/ef_popcorn.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/ef_snow.act",
+            "SourceHash": "ef_snow",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/ef_snow.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/emotion.act",
+            "SourceHash": "emotion",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/emotion.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/emotion_latam.act",
+            "SourceHash": "emotion_latam",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/emotion_latam.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/fast.act",
+            "SourceHash": "fast",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/fast.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/fireball.act",
+            "SourceHash": "fireball",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/fireball.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/firewall.act",
+            "SourceHash": "firewall",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/firewall.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/fvoice.act",
+            "SourceHash": "fvoice",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/fvoice.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/gameover.act",
+            "SourceHash": "gameover",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/gameover.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/han.act",
+            "SourceHash": "han",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/han.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/han_bmsg.act",
+            "SourceHash": "han_bmsg",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/han_bmsg.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/han_msg.act",
+            "SourceHash": "han_msg",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/han_msg.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/icemine.act",
+            "SourceHash": "icemine",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/icemine.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/icemine_.act",
+            "SourceHash": "icemine_",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/icemine_.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/item_cloud.act",
+            "SourceHash": "item_cloud",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/item_cloud.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/item_curse.act",
+            "SourceHash": "item_curse",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/item_curse.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/item_rain.act",
+            "SourceHash": "item_rain",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/item_rain.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/item_thunder.act",
+            "SourceHash": "item_thunder",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/item_thunder.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/item_zzz.act",
+            "SourceHash": "item_zzz",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/item_zzz.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/m_ef01.act",
+            "SourceHash": "m_ef01",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/m_ef01.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/m_ef02.act",
+            "SourceHash": "m_ef02",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/m_ef02.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/m_ef03.act",
+            "SourceHash": "m_ef03",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/m_ef03.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/m_ef04.act",
+            "SourceHash": "m_ef04",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/m_ef04.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/m_ef05.act",
+            "SourceHash": "m_ef05",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/m_ef05.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/m_ef06.act",
+            "SourceHash": "m_ef06",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/m_ef06.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/m_ef07.act",
+            "SourceHash": "m_ef07",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/m_ef07.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/magma_flow.act",
+            "SourceHash": "magma_flow",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/magma_flow.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/mashofa.act",
+            "SourceHash": "mashofa",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/mashofa.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/miss.act",
+            "SourceHash": "miss",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/miss.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/mobile_ef04.act",
+            "SourceHash": "mobile_ef04",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/mobile_ef04.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/msg.act",
+            "SourceHash": "msg",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/msg.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/mvp.act",
+            "SourceHash": "mvp",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/mvp.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/newnumber.act",
+            "SourceHash": "newnumber",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/newnumber.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/newnumber_bmsg.act",
+            "SourceHash": "newnumber_bmsg",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/newnumber_bmsg.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/newnumber_msg.act",
+            "SourceHash": "newnumber_msg",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/newnumber_msg.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/newnumberh.act",
+            "SourceHash": "newnumberh",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/newnumberh.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/newnumberh_bmsg.act",
+            "SourceHash": "newnumberh_bmsg",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/newnumberh_bmsg.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/newnumberh_msg.act",
+            "SourceHash": "newnumberh_msg",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/newnumberh_msg.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/newnumberkorh.act",
+            "SourceHash": "newnumberkorh",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/newnumberkorh.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/newnumberkorh_bmsg.act",
+            "SourceHash": "newnumberkorh_bmsg",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/newnumberkorh_bmsg.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/newnumberkorh_msg.act",
+            "SourceHash": "newnumberkorh_msg",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/newnumberkorh_msg.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/orcface.act",
+            "SourceHash": "orcface",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/orcface.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/orcface_doram.act",
+            "SourceHash": "orcface_doram",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/orcface_doram.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/owl.act",
+            "SourceHash": "owl",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/owl.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/particle1.act",
+            "SourceHash": "particle1",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/particle1.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/particle2.act",
+            "SourceHash": "particle2",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/particle2.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/particle3.act",
+            "SourceHash": "particle3",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/particle3.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/particle4.act",
+            "SourceHash": "particle4",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/particle4.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/particle5.act",
+            "SourceHash": "particle5",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/particle5.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/particle6.act",
+            "SourceHash": "particle6",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/particle6.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/particle7.act",
+            "SourceHash": "particle7",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/particle7.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/poisonhit.act",
+            "SourceHash": "poisonhit",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/poisonhit.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/random_opt_spr/yellow.act",
+            "SourceHash": "random_opt_spr/yellow",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/random_opt_spr/yellow.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/rankfont.act",
+            "SourceHash": "rankfont",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/rankfont.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/rk_dragonbreath_water.act",
+            "SourceHash": "rk_dragonbreath_water",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/rk_dragonbreath_water.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/sakura01.act",
+            "SourceHash": "sakura01",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/sakura01.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/shield.act",
+            "SourceHash": "shield",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/shield.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/sight.act",
+            "SourceHash": "sight",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/sight.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/silent_brz.act",
+            "SourceHash": "silent_brz",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/silent_brz.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/smoke.act",
+            "SourceHash": "smoke",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/smoke.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/soul_explosion/soul_explosion.act",
+            "SourceHash": "soul_explosion/soul_explosion",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/soul_explosion/soul_explosion.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/soul_fairy/soul_fairy.act",
+            "SourceHash": "soul_fairy/soul_fairy",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/soul_fairy/soul_fairy.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/soul_falcon/soul_falcon.act",
+            "SourceHash": "soul_falcon/soul_falcon",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/soul_falcon/soul_falcon.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/soul_reaper/soul_reaper.act",
+            "SourceHash": "soul_reaper/soul_reaper",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/soul_reaper/soul_reaper.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/soul_shadow/soul_shadow.act",
+            "SourceHash": "soul_shadow/soul_shadow",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/soul_shadow/soul_shadow.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/soule.act",
+            "SourceHash": "soule",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/soule.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/status-curse.act",
+            "SourceHash": "status-curse",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/status-curse.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/status-sleep.act",
+            "SourceHash": "status-sleep",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/status-sleep.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/status-stun.act",
+            "SourceHash": "status-stun",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/status-stun.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/su_cn_meteor/su_cn_meteor.act",
+            "SourceHash": "su_cn_meteor/su_cn_meteor",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/su_cn_meteor/su_cn_meteor.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/su_lunaticcarrotbeat/su_lunaticcarrotbeat.act",
+            "SourceHash": "su_lunaticcarrotbeat/su_lunaticcarrotbeat",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/su_lunaticcarrotbeat/su_lunaticcarrotbeat.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/su_spritemable/su_spritemable_blue.act",
+            "SourceHash": "su_spritemable/su_spritemable_blue",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/su_spritemable/su_spritemable_blue.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/su_spritemable/su_spritemable_green.act",
+            "SourceHash": "su_spritemable/su_spritemable_green",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/su_spritemable/su_spritemable_green.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/su_spritemable/su_spritemable_red.act",
+            "SourceHash": "su_spritemable/su_spritemable_red",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/su_spritemable/su_spritemable_red.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/su_sv_roottwist/su_sv_roottwist.act",
+            "SourceHash": "su_sv_roottwist/su_sv_roottwist",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/su_sv_roottwist/su_sv_roottwist.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/su_tunaparty/su_tunaparty.act",
+            "SourceHash": "su_tunaparty/su_tunaparty",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/su_tunaparty/su_tunaparty.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/sv_stemspear/sv_stemspear.act",
+            "SourceHash": "sv_stemspear/sv_stemspear",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/sv_stemspear/sv_stemspear.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/timeattack.act",
+            "SourceHash": "timeattack",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/timeattack.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/timefont.act",
+            "SourceHash": "timefont",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/timefont.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/torch_01.act",
+            "SourceHash": "torch_01",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/torch_01.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/valkyrie_wing.act",
+            "SourceHash": "valkyrie_wing",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/valkyrie_wing.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/valkyrie_wing/valkyrie_wing.act",
+            "SourceHash": "valkyrie_wing/valkyrie_wing",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/valkyrie_wing/valkyrie_wing.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/vallentine.act",
+            "SourceHash": "vallentine",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/vallentine.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/waterball.act",
+            "SourceHash": "waterball",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/waterball.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/wideweb.act",
+            "SourceHash": "wideweb",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/wideweb.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/windhawk_hawk.act",
+            "SourceHash": "windhawk_hawk",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/windhawk_hawk.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/windhawk_wolf.act",
+            "SourceHash": "windhawk_wolf",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/windhawk_wolf.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/wink.act",
+            "SourceHash": "wink",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/wink.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/거스트.act",
+            "SourceHash": "거스트",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/거스트.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/굴뚝연기.act",
+            "SourceHash": "굴뚝연기",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/굴뚝연기.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/그라운드드리프트.act",
+            "SourceHash": "그라운드드리프트",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/그라운드드리프트.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/그림자베기.act",
+            "SourceHash": "그림자베기",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/그림자베기.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/기본트랩.act",
+            "SourceHash": "기본트랩",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/기본트랩.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/깃털1.act",
+            "SourceHash": "깃털1",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/깃털1.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/깃털2.act",
+            "SourceHash": "깃털2",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/깃털2.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/남_로켓트펀치.act",
+            "SourceHash": "남_로켓트펀치",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/남_로켓트펀치.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/다다미 뒤집기.act",
+            "SourceHash": "다다미 뒤집기",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/다다미 뒤집기.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/다다미.act",
+            "SourceHash": "다다미",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/다다미.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/다다미_.act",
+            "SourceHash": "다다미_",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/다다미_.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/단풍.act",
+            "SourceHash": "단풍",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/단풍.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/담황색트랩.act",
+            "SourceHash": "담황색트랩",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/담황색트랩.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/데몬스트레이션.act",
+            "SourceHash": "데몬스트레이션",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/데몬스트레이션.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/데스페라도.act",
+            "SourceHash": "데스페라도",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/데스페라도.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/독.act",
+            "SourceHash": "독",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/독.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/동전.act",
+            "SourceHash": "동전",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/동전.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/라이트닝스피어.act",
+            "SourceHash": "라이트닝스피어",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/라이트닝스피어.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/래피드샤워.act",
+            "SourceHash": "래피드샤워",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/래피드샤워.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/마도카트.act",
+            "SourceHash": "마도카트",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/마도카트.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/마도카트_미니.act",
+            "SourceHash": "마도카트_미니",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/마도카트_미니.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/매.act",
+            "SourceHash": "매",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/매.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/매2.act",
+            "SourceHash": "매2",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/매2.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/매지컬불릿.act",
+            "SourceHash": "매지컬불릿",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/매지컬불릿.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/박쥐.act",
+            "SourceHash": "박쥐",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/박쥐.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/블라인드스피어.act",
+            "SourceHash": "블라인드스피어",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/블라인드스피어.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/블래스트.act",
+            "SourceHash": "블래스트",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/블래스트.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/블러드러스트.act",
+            "SourceHash": "블러드러스트",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/블러드러스트.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/선물상자카트.act",
+            "SourceHash": "선물상자카트",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/선물상자카트.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/선물상자카트_미니.act",
+            "SourceHash": "선물상자카트_미니",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/선물상자카트_미니.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/성수뜨기.act",
+            "SourceHash": "성수뜨기",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/성수뜨기.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/손수레.act",
+            "SourceHash": "손수레",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/손수레.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/손수레1.act",
+            "SourceHash": "손수레1",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/손수레1.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/손수레2.act",
+            "SourceHash": "손수레2",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/손수레2.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/손수레3.act",
+            "SourceHash": "손수레3",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/손수레3.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/손수레4.act",
+            "SourceHash": "손수레4",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/손수레4.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/손수레5.act",
+            "SourceHash": "손수레5",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/손수레5.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/손수레5베이비.act",
+            "SourceHash": "손수레5베이비",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/손수레5베이비.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/손수레6.act",
+            "SourceHash": "손수레6",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/손수레6.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/손수레6베이비.act",
+            "SourceHash": "손수레6베이비",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/손수레6베이비.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/손수레7.act",
+            "SourceHash": "손수레7",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/손수레7.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/손수레7베이비.act",
+            "SourceHash": "손수레7베이비",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/손수레7베이비.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/손수레8.act",
+            "SourceHash": "손수레8",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/손수레8.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/손수레8베이비.act",
+            "SourceHash": "손수레8베이비",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/손수레8베이비.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/숫자.act",
+            "SourceHash": "숫자",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/숫자.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/슈노손수레.act",
+            "SourceHash": "슈노손수레",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/슈노손수레.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/스톱.act",
+            "SourceHash": "스톱",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/스톱.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/스프레드.act",
+            "SourceHash": "스프레드",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/스프레드.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/썬더스톰.act",
+            "SourceHash": "썬더스톰",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/썬더스톰.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/아쿠아플레이.act",
+            "SourceHash": "아쿠아플레이",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/아쿠아플레이.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/안개베기.act",
+            "SourceHash": "안개베기",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/안개베기.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/암청색트랩.act",
+            "SourceHash": "암청색트랩",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/암청색트랩.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/어스퀘이크.act",
+            "SourceHash": "어스퀘이크",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/어스퀘이크.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/얼음땡.act",
+            "SourceHash": "얼음땡",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/얼음땡.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/업히벌.act",
+            "SourceHash": "업히벌",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/업히벌.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/여_로켓트펀치.act",
+            "SourceHash": "여_로켓트펀치",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/여_로켓트펀치.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/와일드스톰.act",
+            "SourceHash": "와일드스톰",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/와일드스톰.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/유령.act",
+            "SourceHash": "유령",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/유령.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/이팩트.act",
+            "SourceHash": "이팩트",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/이팩트.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/일섬.act",
+            "SourceHash": "일섬",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/일섬.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/자홍색트랩.act",
+            "SourceHash": "자홍색트랩",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/자홍색트랩.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/창.act",
+            "SourceHash": "창",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/창.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/천사.act",
+            "SourceHash": "천사",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/천사.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/천사날개.act",
+            "SourceHash": "천사날개",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/천사날개.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/천사날개깃털.act",
+            "SourceHash": "천사날개깃털",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/천사날개깃털.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/청록색트랩.act",
+            "SourceHash": "청록색트랩",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/청록색트랩.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/체인지투언데드.act",
+            "SourceHash": "체인지투언데드",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/체인지투언데드.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/축복.act",
+            "SourceHash": "축복",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/축복.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/칠리에어.act",
+            "SourceHash": "칠리에어",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/칠리에어.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/침투경_.act",
+            "SourceHash": "침투경_",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/침투경_.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/캐슬링.act",
+            "SourceHash": "캐슬링",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/캐슬링.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/커즈드소일.act",
+            "SourceHash": "커즈드소일",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/커즈드소일.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/쿨러.act",
+            "SourceHash": "쿨러",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/쿨러.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/크리스마스.act",
+            "SourceHash": "크리스마스",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/크리스마스.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/트래킹.act",
+            "SourceHash": "트래킹",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/트래킹.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/트로픽.act",
+            "SourceHash": "트로픽",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/트로픽.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/트리플액션.act",
+            "SourceHash": "트리플액션",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/트리플액션.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/파이로테크닉.act",
+            "SourceHash": "파이로테크닉",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/파이로테크닉.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/페트롤로지.act",
+            "SourceHash": "페트롤로지",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/페트롤로지.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/포링싣은카트.act",
+            "SourceHash": "포링싣은카트",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/포링싣은카트.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/포링싣은카트_미니.act",
+            "SourceHash": "포링싣은카트_미니",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/포링싣은카트_미니.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/포링카트.act",
+            "SourceHash": "포링카트",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/포링카트.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/포링카트_미니.act",
+            "SourceHash": "포링카트_미니",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/포링카트_미니.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/포이즌스피어.act",
+            "SourceHash": "포이즌스피어",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/포이즌스피어.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/폭죽_러브.act",
+            "SourceHash": "폭죽_러브",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/폭죽_러브.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/폭죽_발렌타인.act",
+            "SourceHash": "폭죽_발렌타인",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/폭죽_발렌타인.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/폭죽_생일.act",
+            "SourceHash": "폭죽_생일",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/폭죽_생일.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/폭죽_크리스마스.act",
+            "SourceHash": "폭죽_크리스마스",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/폭죽_크리스마스.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/폭죽_화이트데이.act",
+            "SourceHash": "폭죽_화이트데이",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/폭죽_화이트데이.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/프리징스피어.act",
+            "SourceHash": "프리징스피어",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/프리징스피어.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/플레어스피어.act",
+            "SourceHash": "플레어스피어",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/플레어스피어.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/한복천사(날개).act",
+            "SourceHash": "한복천사(날개)",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/한복천사(날개).act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/한복천사(본체).act",
+            "SourceHash": "한복천사(본체)",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/한복천사(본체).act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/한복천사.act",
+            "SourceHash": "한복천사",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/한복천사.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/합격_.act",
+            "SourceHash": "합격_",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/합격_.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/헌드레드스피어.act",
+            "SourceHash": "헌드레드스피어",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/헌드레드스피어.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/화염진.act",
+            "SourceHash": "화염진",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/화염진.act.asset"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "sprite/이팩트/히터.act",
+            "SourceHash": "히터",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/sprite/이팩트/히터.act.asset"
+            ],
+            "Dependencies": []
+        }
+    ]
+}

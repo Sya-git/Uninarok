@@ -1,0 +1,21 @@
+T4.4 real data run: RoImport.EffectSprites (Convert Effect Sprites) through Unity-MCP, 2026-11-24
+
+Run 1:  [RoImport] Created 224, Updated 0, Skipped 10, Failed 0, Warnings 10
+        (the 10 skipped are the ACTs without an SPR, each one CatalogOrphanAct warning, no entry:
+         emotion_index, emotion_index2, emotion_index3, 베이비매, 베이비손수레, 베이비손수레1..4, 베이비슈노손수레)
+Run 2:  [RoImport] Created 0, Updated 0, Skipped 234, Failed 0, Warnings 10   (idempotent)
+
+Counts
+  ACT files under sprite/이팩트/ ............................ 234
+  - orphan ACTs (no SPR, warned, no entry) .................. 10
+  = EffectAsset files under Art/Imported/effect/sprite/이팩트/  224
+  Animation assets under Art/Imported/sprite/이팩트/ ........ 215
+  + static ACTs (SPEC-0007 writes a sprite in the sheet, no .asset; ledger Outputs empty):
+    ef_snow, particle1..particle7, 굴뚝연기 ................... 9
+  = ACT outputs of SPEC-0007 ................................ 224  (= entries)
+  The "168" of the task text is stale (2026-11-24 count of an earlier state); the real count is 224.
+
+SPEC-0007 outputs: git shows no change under Assets/Art/Imported/sprite nor in Ledger/sprite.json.
+Addressables: effects group gained exactly one entry, Assets/Art/Imported/effect (6 added lines in
+AssetGroups/effects.asset, no null entries); AddressableAssetSettings.asset unchanged.
+LFS: .gitattributes "Uninarok-client/Assets/Art/Imported/**/*.asset" covers the outputs (git check-attr: filter lfs).
