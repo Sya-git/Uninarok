@@ -5,6 +5,7 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Uninarok.Effects",
+        "Uninarok.Map",
         "Unity.Addressables",
         "Unity.ResourceManager",
         "Unity.Addressables.Editor"
