@@ -184,7 +184,7 @@
 
 ## Phase 9: Verify and close
 
-- [ ] **T9.1** Live checks with one client. (FR-2, FR-3, FR-10)
+- [x] **T9.1** Live checks with one client. (FR-2, FR-3, FR-10)
   *Done when:* recorded in `evidence/`: a poring at 8 cells attacked 10 times, at most one try with a too-far reply; a walking monster followed and killed; a bow stops at 9 cells; a town NPC and the own character never attacked; a potion at 6 cells picked up.
 
 - [ ] **T9.2** Live checks with a second client. (FR-2, FR-4, FR-9, FR-10)

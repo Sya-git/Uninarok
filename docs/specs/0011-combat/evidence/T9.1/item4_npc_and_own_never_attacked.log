@@ -1,0 +1,15 @@
+995525410 item 4: map prontera; attack requests aimed at NPCs, the own character, id 0 and an unknown id
+995525634 Attack(110013332, single)=NotAttackable  Attack(110013332, continuous)=NotAttackable  combat state=Idle  [Npc class 105 at 163,178]
+995525862 Attack(110012474, single)=NotAttackable  Attack(110012474, continuous)=NotAttackable  combat state=Idle  [Npc class 105 at 154,187]
+995526063 Attack(110008140, single)=NotAttackable  Attack(110008140, continuous)=NotAttackable  combat state=Idle  [Npc class 722 at 155,190]
+995526276 Attack(110005923, single)=NotAttackable  Attack(110005923, continuous)=NotAttackable  combat state=Idle  [Npc class 92 at 157,187]
+995526493 Attack(110008166, single)=NotAttackable  Attack(110008166, continuous)=NotAttackable  combat state=Idle  [Npc class 722 at 146,194]
+995526710 Attack(110008236, single)=NotAttackable  Attack(110008236, continuous)=NotAttackable  combat state=Idle  [Npc class 722 at 165,194]
+995526956 Attack(110008190, single)=NotAttackable  Attack(110008190, continuous)=NotAttackable  combat state=Idle  [Npc class 722 at 143,203]
+995527160 Attack(110000890, single)=NotAttackable  Attack(110000890, continuous)=NotAttackable  combat state=Idle  [Npc class 700 at 149,202]
+995527394 Attack(110008214, single)=NotAttackable  Attack(110008214, continuous)=NotAttackable  combat state=Idle  [Npc class 722 at 167,203]
+995527627 Attack(110007347, single)=NotAttackable  Attack(110007347, continuous)=NotAttackable  combat state=Idle  [Npc class 99 at 163,204]
+995527860 Attack(2000000, single)=NotAttackable  Attack(2000000, continuous)=NotAttackable  combat state=Idle  [the own character]
+995528091 Attack(0, single)=NotAttackable  Attack(0, continuous)=NotAttackable  combat state=Idle  [id 0]
+995528293 Attack(4242424242, single)=NotAttackable  Attack(4242424242, continuous)=NotAttackable  combat state=Idle  [unknown id]
+995529111 RESULT item4: 13 targets tried, not-NotAttackable=0, REQUEST_ACT sent=0, REQUEST_MOVE sent=0
