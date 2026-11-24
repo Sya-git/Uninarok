@@ -36,7 +36,7 @@
 - [x] **T1.1** [quick] Add the `Uninarok.Effects` runtime assembly and folders `Assets/Scripts/Effects/` with `Data`, `Catalog`, `Playback`, `Parts`, references as plan §3 and no editor, VFX, particle or compute reference. (FR-4, FR-5)
   *Done when:* the asmdef references exactly Uninarok.Sprites, Uninarok.SpriteCatalog, Uninarok.Map, Unity.Addressables and Unity.ResourceManager; Unity compiles with 0 errors.
 
-- [ ] **T1.2** [quick] Add the `Uninarok.Effects.Editor` assembly (`includePlatforms: [Editor]`), `Uninarok.Effects.Tests` (EditMode) and `Uninarok.Effects.PlayTests` (PlayMode) assemblies and their folders as plan §3 and §6. (FR-10, FR-11)
+- [x] **T1.2** [quick] Add the `Uninarok.Effects.Editor` assembly (`includePlatforms: [Editor]`), `Uninarok.Effects.Tests` (EditMode) and `Uninarok.Effects.PlayTests` (PlayMode) assemblies and their folders as plan §3 and §6. (FR-10, FR-11)
   *Done when:* the three asmdefs exist with the references of plan §3; the editor asmdef's `includePlatforms` is `Editor` only; the test runner lists both test assemblies with 0 tests and 0 failures.
 
 - [ ] **T1.3** [quick] Add the data types of plan §4.2 and §4.4 with no logic: `EffectKind`, `EffectFacing`, `EffectAsset` with `LayerData` and `KeyData`, `AuthoredData`, `EffectCatalogIndex`, `EffectAssetRef`. (FR-2, FR-4, FR-5)
