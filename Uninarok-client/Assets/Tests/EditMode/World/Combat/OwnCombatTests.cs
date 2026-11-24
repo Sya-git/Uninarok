@@ -109,6 +109,30 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(1, Sent.Count);
         }
 
+        // D38: the single attack ended by its blow is remembered until any other action.
+        [Test]
+        public void OwnCombat_SingleDoneTarget_UntilAnotherAction()
+        {
+            Monster(MonsterA, 151, 200);
+            Monster(MonsterB, 149, 200);
+            Combat.Attack(MonsterA, false);
+            Assert.AreEqual(0u, Combat.SingleDoneTarget, "attacking");
+            Blow(Own, MonsterA);
+            Assert.AreEqual(MonsterA, Combat.SingleDoneTarget);
+            Run(1000);
+            Assert.AreEqual(MonsterA, Combat.SingleDoneTarget, "idle: stays");
+            Combat.Cancel();
+            Assert.AreEqual(0u, Combat.SingleDoneTarget, "cancelled");
+            Combat.Attack(MonsterA, false);
+            Blow(Own, MonsterA);
+            Combat.Attack(MonsterB, false);
+            Assert.AreEqual(0u, Combat.SingleDoneTarget, "another attack");
+            Blow(Own, MonsterB);
+            Assert.AreEqual(AttackResult.Sent, Combat.Attack(MonsterB, true));
+            Assert.AreEqual((0u, CombatState.Attacking, true), (Combat.SingleDoneTarget, Combat.State, Combat.Continuous));
+            Assert.AreEqual(AttackBytes(MonsterB, Continuous), Last);
+        }
+
         [Test]
         public void OwnCombat_CtrlHoldNoCtrl_SendContinuous()
         {

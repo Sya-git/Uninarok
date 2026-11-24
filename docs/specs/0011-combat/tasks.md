@@ -240,3 +240,10 @@ New work for plan §4.5, §4.8, §6.1 and D29. Independent of phase 10 and of T9
 
 - [x] **T11.2** [core] The mark in `CombatOverlay` (plan §4.8, D29). First find the picture: `evidence/T0.3/README.md` describes it (a white faceted diamond pointing down, about 22 × 15 px, about 66 px above the standing sprite top, no float of its own) with the frames; search the extracted client data (sprites of effects, cursors, the UI) for that picture; record the values in `combat-reference.md` with their source. Then draw it with `CombatSettings` fields (`TargetMark` sprite, `TargetMarkHeight`, `TargetMarkBobPixels`, `TargetMarkBobMs`; `TargetMarkSingleMs` corrected from the footage); tests `CombatOverlay_TargetMark_AboveHeadAtFourTurns`, `_OnlyOneMark`, `_HiddenWhenDead` and a mark inside `CombatOverlay_ZeroAllocation_100Numbers300Units`. If the sprite cannot be identified from the footage and the data, stop and ask the owner. (FR-16, FR-12)
   *Done when:* the PlayMode tests pass, the zero-allocation test still passes, and screenshots of a continuous attack (mark stays until the kill) and of a single attack (mark goes away after its time) are in `evidence/`, beside the original client's frames.
+
+## Phase 12: Bug: hold to attack (owner, 2026-11-24)
+
+Owner's report: pressing and holding the left button on a monster does not attack without end (ctrl click, plain click and `/noctrl` work). Cause: in range the single blow comes back before `HoldAttackMs` and the single attack goes `Idle`, so the hold's `TargetId` check fails (plan D38). Test-first.
+
+- [x] **T12.1** [critical] Tests, then fix (plan §4.5, §4.10, D38): `OwnInput_Hold_InRange_BlowBeforeHoldAttackMs_StillContinuous` (seen failing first), `OwnInput_Hold_Approaching_BecomesContinuous`, `OwnInput_Hold_SitDuringHold_DoesNotAttackAgain`, `OwnCombat_SingleDoneTarget_UntilAnotherAction`; `OwnCombat.SingleDoneTarget`; the hold in `OwnInput` reads it beside `TargetId`. (FR-2)
+  *Done when:* the four tests pass, the `OwnInput_*`, `OwnCombat_*`, `WorldSession*` and `CombatAllocationTests` tests pass unchanged; Logs/Editor.log has no new warning.
