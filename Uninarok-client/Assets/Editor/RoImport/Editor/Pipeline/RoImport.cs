@@ -170,6 +170,17 @@ namespace Uninarok.RoImport.Editor.Pipeline
             return Run(Effects.RoEffectSpriteEntryConverter.Jobs(source), options ?? new RoImportOptions { Source = source });
         }
 
+        /// <summary>
+        /// Rebuilds the effect catalog index (PLAN-0012 4.4; SPEC-0012 FR-5): every <c>EffectAsset</c> under the generated effect
+        /// folder and <c>Data/Effects/Authored</c>, one key each. Rewritten only when it changes. The source tells which generated
+        /// assets have lost their file.
+        /// </summary>
+        public static RoReport EffectIndex(RoImportOptions options = null)
+        {
+            var source = options?.Source ?? new RoFolderSource(RoSourceLocation.Resolve());
+            return Run(new[] { new RoJob(RoJobKind.EffectIndex, Effects.RoEffectCatalogIndexConverter.JobPath) }, options ?? new RoImportOptions { Source = source });
+        }
+
         /// <summary>Converts one PAL (or skips it when current) and returns its 256 × 1 palette texture (PLAN-0007 4.4, FR-7).</summary>
         public static RoResult<Texture2D> Palette(string palPath, RoImportOptions options = null)
         {

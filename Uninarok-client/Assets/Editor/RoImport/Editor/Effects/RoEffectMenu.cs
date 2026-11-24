@@ -23,5 +23,9 @@ namespace Uninarok.RoImport.Editor.Effects
                 return;
             RoImportApi.EffectSprites(new RoImportOptions { Source = source });
         }
+
+        [MenuItem("Tools/Ragnarok/Effects/Rebuild Effect Index", priority = 41)]
+        static void RebuildEffectIndex() =>
+            RoImportApi.EffectIndex(new RoImportOptions { Source = new RoFolderSource(RoSourceLocation.Resolve()) });
     }
 }

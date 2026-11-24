@@ -19,6 +19,16 @@ namespace Uninarok.RoImport.Editor.Effects
             return roots.Art.TrimEnd('/') + "/" + Folder;
         }
 
+        /// <summary>The catalog index: <c>effect/_index.asset</c>.</summary>
+        public static string Index(RoOutputRoots roots) => Root(roots) + "/_index.asset";
+
+        /// <summary>The hand-made effect assets: <c>Data/Effects/Authored</c>; an entry sits at <c>&lt;this&gt;/&lt;key&gt;.asset</c>.</summary>
+        public static string AuthoredRoot(RoOutputRoots roots)
+        {
+            if (roots == null) throw new ArgumentNullException(nameof(roots));
+            return roots.Data.TrimEnd('/') + "/Effects/Authored";
+        }
+
         /// <summary>The asset of an effect source (an STR or an ACT): <c>effect/&lt;canonical path&gt;.asset</c>.</summary>
         public static string Asset(RoOutputRoots roots, RoPath source)
         {
