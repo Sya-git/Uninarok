@@ -58,9 +58,7 @@
   On the local server with the capture tee and T0.2's plugin; a scratch script sends the requests. The second client of (d) moved to T1.6 (2026-11-23: it needs the owner's second Multiplayer Play Mode player).
   *Done when:* the captures (a) to (d) and their server lines are under `fixtures/` with a `README.md`, and none contains the account name or password (searched).
 
-- [ ] **T1.6** Owner and AI: record (e), the second client of plan §6.2 (d). (FR-2, FR-9, FR-10, FR-13)
-  The owner turns on the second Multiplayer Play Mode player (`login:testeAdmin2`); a scratch script makes the second character fight, pick up, die and be raised in view of the first, and leaves loot reserved for one of them.
-  *Done when:* `combat-second.bin` (the first client's connection) and its server lines are under `fixtures/`, listed in its `README.md`, searched for both accounts' names and passwords. Does not block T2.4.
+- [x] **T1.6** ~~Record (e), the second client.~~ **Removed by the owner, 2026-11-23**: the owner runs both clients and compares by hand.
 
 ## Phase 2: Combat state
 
@@ -187,8 +185,7 @@
 - [x] **T9.1** Live checks with one client. (FR-2, FR-3, FR-10)
   *Done when:* recorded in `evidence/`: a poring at 8 cells attacked 10 times, at most one try with a too-far reply; a walking monster followed and killed; a bow stops at 9 cells; a town NPC and the own character never attacked; a potion at 6 cells picked up.
 
-- [ ] **T9.2** Live checks with a second client. (FR-2, FR-4, FR-9, FR-10)
-  *Done when:* recorded in `evidence/`: the other character's attacks, hurts, pickup motion, death and raise are seen; clicking it sends no attack; its loot stays and one info line names the code.
+- [x] **T9.2** ~~Live checks with a second client.~~ **Removed by the owner, 2026-11-23**: the owner runs both clients and checks by hand.
 
 - [ ] **T9.3** Correct the leads with T0.3's and T0.4's results. (FR-2, FR-4 to FR-10, FR-14)
   *Done when:* no row of `combat-reference.md` is a bare lead; settings, tables and tests follow it; each rule changed has a Decisions note.
