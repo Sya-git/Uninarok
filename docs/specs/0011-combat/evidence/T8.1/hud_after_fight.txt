@@ -1,0 +1,26 @@
+HP 200/200  SP 62/62  base lv 13  job lv 1  range 1
+EXP base 932/6100  job 613/1600
+state Idle continuous
+blows 14 (last 14)
+982331047  2000000 > 110030760  dmg 68 + 15  MultiHit (type 8)  hits 2  attackMT 520  attackedMT 480
+982329798  110030761 > 2000000  dmg 0  Normal (type 0)  hits 1  attackMT 672  attackedMT 0
+982329396  2000000 > 110030761  dmg 34 + 15  Normal (type 0)  hits 1  attackMT 520  attackedMT 480
+982328347  2000000 > 110030761  dmg 34 + 15  Normal (type 0)  hits 1  attackMT 520  attackedMT 480
+982327329  2000000 > 110030758  dmg 34 + 15  Normal (type 0)  hits 1  attackMT 520  attackedMT 480
+982326862  110030758 > 2000000  dmg 0  Normal (type 0)  hits 1  attackMT 672  attackedMT 0
+982326297  2000000 > 110030758  dmg 34 + 15  Normal (type 0)  hits 1  attackMT 520  attackedMT 480
+982325212  2000000 > 110030756  dmg 68 + 15  MultiHit (type 8)  hits 2  attackMT 520  attackedMT 480
+982324216  2000000 > 110030757  dmg 34 + 15  Normal (type 0)  hits 1  attackMT 520  attackedMT 480
+982323698  110030757 > 2000000  dmg 0  Normal (type 0)  hits 1  attackMT 672  attackedMT 0
+982323162  2000000 > 110030757  dmg 34 + 15  Normal (type 0)  hits 1  attackMT 520  attackedMT 480
+982322080  2000000 > 110030759  dmg 68 + 15  MultiHit (type 8)  hits 2  attackMT 520  attackedMT 480
+982320979  2000000 > 110030519  dmg 68 + 15  MultiHit (type 8)  hits 2  attackMT 520  attackedMT 480
+982280484  2000000 > 110030692  dmg 64 + 13  MultiHit (type 8)  hits 2  attackMT 520  attackedMT 480
+982331581  exp job +20
+982331581  exp base +36
+982329930  exp job +20
+982329930  exp base +36
+982327831  exp job +20
+982327831  exp base +36
+982325735  exp job +20
+982325735  exp base +36

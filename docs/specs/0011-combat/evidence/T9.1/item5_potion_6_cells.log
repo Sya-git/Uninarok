@@ -1,0 +1,32 @@
+995548307 item 5: potion pickup, map prontera; inventory before: 1201 x1, 1201 x1, 501 x1, 1701 x1, 1750 x190, 1201 x1, 1201 x1, 1201 x1, 914 x1, 512 x1, 705 x1
+995548308 -> GLOBAL_CHAT
+995548330 <- ITEM_PICKUP_ACK itemId=501 amount=3 result=0
+995549113 after @item 501 3: 1201 x1, 1201 x1, 501 x4, 1701 x1, 1750 x190, 1201 x1, 1201 x1, 1201 x1, 914 x1, 512 x1, 705 x1
+995549116 -> DROP_ITEM InventoryIndex=5 Amount=1
+995550631 -> REQUEST_MOVE Destination={X=157,Y=186,Direction=North}
+995551730 RUN 1 start: item object 5631 at 157,192; own at 157,186 (chebyshev 6)
+995551744 -> REQUEST_MOVE Destination={X=157,Y=190,Direction=North}
+995551745 RUN 1 PickUp() -> True, combat state Fetching
+995552298 -> PICKUP_ITEM ItemObjectId=5631 [own 157,190 walking=False]
+995552314 <- ITEM_PICKUP_ACK itemId=0 amount=0 result=6
+995552714 -> PICKUP_ITEM ItemObjectId=5631 [own 157,190 walking=False]
+995552730 <- ITEM_PICKUP_ACK itemId=501 amount=1 result=0
+995553358 RUN 1 end: itemGone=True afterMs=800 own at 157,190 PICKUP_ITEM sent=2 acks=3 state=Idle; inventory: 1201 x1, 1201 x1, 501 x4, 1701 x1, 1750 x190, 1201 x1, 1201 x1, 1201 x1, 914 x1, 512 x1, 705 x1
+995553359 -> DROP_ITEM InventoryIndex=5 Amount=1
+995554870 -> REQUEST_MOVE Destination={X=157,Y=183,Direction=North}
+995556198 RUN 2 start: item object 5632 at 157,189; own at 157,183 (chebyshev 6)
+995556209 -> REQUEST_MOVE Destination={X=157,Y=187,Direction=North}
+995556209 RUN 2 PickUp() -> True, combat state Fetching
+995556758 -> PICKUP_ITEM ItemObjectId=5632 [own 157,187 walking=False]
+995556764 <- ITEM_PICKUP_ACK itemId=0 amount=0 result=6
+995557165 -> PICKUP_ITEM ItemObjectId=5632 [own 158,187 walking=False]
+995557181 <- ITEM_PICKUP_ACK itemId=501 amount=1 result=0
+995557798 RUN 2 end: itemGone=True afterMs=800 own at 158,187 PICKUP_ITEM sent=4 acks=5 state=Idle; inventory: 1201 x1, 1201 x1, 501 x4, 1701 x1, 1750 x190, 1201 x1, 1201 x1, 1201 x1, 914 x1, 512 x1, 705 x1
+995557799 -> DROP_ITEM InventoryIndex=5 Amount=1
+995559315 -> REQUEST_MOVE Destination={X=159,Y=181,Direction=North}
+995560632 RUN 3 start: item object 5633 at 159,187; own at 159,181 (chebyshev 6)
+995560647 -> REQUEST_MOVE Destination={X=159,Y=185,Direction=North}
+995560647 RUN 3 PickUp() -> True, combat state Fetching
+995561199 -> PICKUP_ITEM ItemObjectId=5633 [own 159,185 walking=False]
+995561215 <- ITEM_PICKUP_ACK itemId=501 amount=1 result=0
+995561915 RUN 3 end: itemGone=True afterMs=500 own at 159,185 PICKUP_ITEM sent=5 acks=6 state=Idle; inventory: 1201 x1, 1201 x1, 501 x4, 1701 x1, 1750 x190, 1201 x1, 1201 x1, 1201 x1, 914 x1, 512 x1, 705 x1

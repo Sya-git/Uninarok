@@ -62,6 +62,13 @@ namespace Uninarok.Units
         /// </summary>
         public Rect PickRect { get; private set; }
 
+        /// <summary>
+        /// The top of the body's standing sprite (frame 0 of the idle action in the direction shown), in the pivot's plane, in the same
+        /// units as <see cref="PickRect"/>; 0 when nothing is shown. It does not follow the frame being played (SPEC-0011 FR-16).
+        /// </summary>
+        public float StandingTop { get; private set; }
+
+        int _standingVersion = -1, _standingDirection = -1;
         internal int PickRectCount { get; private set; }
         internal UnitParts Parts => _parts;
         internal Transform Pivot => _pivot;
@@ -392,14 +399,23 @@ namespace Uninarok.Units
                 if ((shown & (1 << i)) == 0 && !ReferenceEquals(_actors[i], null)) _actors[i].Hide();
             PickRect = pick;
             PickRectCount++;
+            if (_standingVersion != _parts.Version || _standingDirection != direction)
+            {
+                _standingVersion = _parts.Version;
+                _standingDirection = direction;
+                var standing = BodyRectAt(0, direction, 0, Vector3.zero);
+                StandingTop = standing.height > 0f ? standing.yMax : pick.yMax;
+            }
         }
 
-        Rect BodyRect(int animation, int direction, Vector3 position)
+        Rect BodyRect(int animation, int direction, Vector3 position) => BodyRectAt(animation, direction, _partFrames[(int)PartSlot.Body], position);
+
+        Rect BodyRectAt(int animation, int direction, int bodyFrame, Vector3 position)
         {
             var data = _parts.Animations[(int)PartSlot.Body];
             if (ReferenceEquals(data, null) || !data.TryGetAction(animation, direction, SpriteMissingAction.Fallback, out int unique)) return default;
             var action = data.Actions[unique];
-            if (action.FrameCount <= 0 || !data.TryGetFrameRect(action.FirstFrame + _partFrames[(int)PartSlot.Body] % action.FrameCount, out var r)) return default;
+            if (action.FrameCount <= 0 || !data.TryGetFrameRect(action.FirstFrame + bodyFrame % action.FrameCount, out var r)) return default;
             float scale = _parts.Scale;
             return new Rect((r.x + position.x) * scale, (r.y + position.y) * scale, r.width * scale, r.height * scale);
         }
@@ -446,6 +462,8 @@ namespace Uninarok.Units
             _shownFrame = _shownDirection = _shownAnimation = -1;
             _placementCount = 0;
             PickRect = default;
+            StandingTop = 0f;
+            _standingVersion = -1;
             for (int i = 0; i < _actors.Length; i++)
                 if (_actors[i] != null) _actors[i].Hide();
             if (_shadow != null) _shadow.Visible = false;

@@ -1,4 +1,4 @@
-/* SPEC-0011 FR-8 (PLAN-0011 4.11, D8): plain until the original window's images are extracted (T0.4); size and layout provisional. */
+/* SPEC-0011 FR-8 (PLAN-0011 4.11, D8): plain USS matched by eye to the original window (T0.4); no extracted images. */
 .restart-layer {
     position: absolute;
     left: 0;
@@ -11,24 +11,37 @@
 
 .restart-prompt {
     display: none;
-    width: 200px;
-    padding: 8px;
-    background-color: rgb(240, 240, 240);
+    width: 280px;
+    background-color: rgb(255, 255, 255);
     border-width: 1px;
-    border-color: rgb(140, 160, 200);
-    border-radius: 3px;
+    border-color: rgb(90, 110, 150);
+}
+
+.restart-title {
+    height: 17px;
+    padding: 0 6px;
+    font-size: 12px;
+    color: rgb(0, 0, 0);
+    -unity-text-align: middle-left;
+    background-color: rgb(205, 220, 245);
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(90, 110, 150);
+}
+
+.restart-body {
+    padding: 4px 30px 6px 30px;
 }
 
 .restart-button {
     height: 20px;
     margin: 2px 0;
     font-size: 12px;
-    color: rgb(40, 40, 40);
-    background-color: rgb(250, 250, 250);
-    border-color: rgb(160, 170, 190);
-    border-radius: 2px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(235, 235, 235);
+    border-color: rgb(130, 130, 130);
+    border-radius: 4px;
 }
 
 .restart-button:hover {
-    background-color: rgb(225, 235, 250);
+    background-color: rgb(250, 250, 250);
 }

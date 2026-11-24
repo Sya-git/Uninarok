@@ -1,0 +1,36 @@
+995305529 item 3 setup: bow user
+995305530 -> GLOBAL_CHAT
+995307669 <- ACTION_FAILURE 3
+995308468 job=11 weapon=1701 range=5
+995314601 -> GLOBAL_CHAT
+995316115 -> GLOBAL_CHAT
+995317622 range after @skill 45 4: 5; after lv10: 5
+995335096 -> GLOBAL_CHAT
+995336605 range after @skill 44 4 (Vulture's Eye lv 4 with the bow, 5 + 4): 5
+995344557 -> GLOBAL_CHAT
+995344558 after re-equipping the arrows: range 5
+995374418 BOW range from the server: 5; weapon 1701
+995374420 -> GLOBAL_CHAT
+995375129 -> REQUEST_MOVE Destination={X=167,Y=345,Direction=North}
+995377823 RUN 1 start: poring 110033949 at 155,345 own 167,345 clientDistance=11
+995377831 -> REQUEST_MOVE Destination={X=161,Y=345,Direction=North}
+995377831 RUN 1 Attack() -> Approaching
+995378746 -> REQUEST_ACT TargetId=110033949 Action=7 [own 161,345 walking=False; target 155,345 walking=False; clientDistance=5 chebyshev=6]
+995378862 <- DAMAGE src=2000000 dst=110033949 dmg=130 left=0 count=1 type=0
+995380124 RUN 1 end: killed=True afterMs=1500 tooFarReplies=0 state=Idle
+995380125 -> GLOBAL_CHAT
+995380827 -> REQUEST_MOVE Destination={X=165,Y=357,Direction=North}
+995383162 RUN 2 start: poring 110033944 at 153,357 own 165,357 clientDistance=11
+995383174 -> REQUEST_MOVE Destination={X=159,Y=357,Direction=North}
+995383175 RUN 2 Attack() -> Approaching
+995384097 -> REQUEST_ACT TargetId=110033944 Action=7 [own 159,357 walking=False; target 153,357 walking=False; clientDistance=5 chebyshev=6]
+995384164 <- DAMAGE src=2000000 dst=110033944 dmg=131 left=0 count=1 type=0
+995385480 RUN 2 end: killed=True afterMs=1500 tooFarReplies=0 state=Idle
+995385481 -> GLOBAL_CHAT
+995386197 -> REQUEST_MOVE Destination={X=169,Y=366,Direction=North}
+995388514 RUN 3 start: poring 110033948 at 155,364 own 169,366 clientDistance=14
+995388525 -> REQUEST_MOVE Destination={X=161,Y=364,Direction=North}
+995388525 RUN 3 Attack() -> Approaching
+995389865 -> REQUEST_ACT TargetId=110033948 Action=7 [own 161,364 walking=False; target 155,364 walking=False; clientDistance=5 chebyshev=6]
+995389880 <- DAMAGE src=2000000 dst=110033948 dmg=130 left=0 count=1 type=0
+995391263 RUN 3 end: killed=True afterMs=1900 tooFarReplies=0 state=Idle

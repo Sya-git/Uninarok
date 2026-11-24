@@ -1,0 +1,41 @@
+DAMAGE src=2000000 dst=110030519 tick=982320984 attackMT=520 attackedMT=480 dmg=68 left=15 count=2 type=8
+LONG_PARAMETER_CHANGE var=1 value=716
+LONG_PARAMETER_CHANGE var=2 value=493
+EXP_GAIN var=1 amount=36
+EXP_GAIN var=2 amount=20
+DAMAGE src=2000000 dst=110030759 tick=982322078 attackMT=520 attackedMT=480 dmg=68 left=15 count=2 type=8
+LONG_PARAMETER_CHANGE var=1 value=752
+LONG_PARAMETER_CHANGE var=2 value=513
+EXP_GAIN var=1 amount=36
+EXP_GAIN var=2 amount=20
+DAMAGE src=2000000 dst=110030757 tick=982323156 attackMT=520 attackedMT=480 dmg=34 left=15 count=1 type=0
+DAMAGE src=110030757 dst=2000000 tick=982323687 attackMT=672 attackedMT=0 dmg=0 left=0 count=1 type=0
+DAMAGE src=2000000 dst=110030757 tick=982324218 attackMT=520 attackedMT=480 dmg=34 left=15 count=1 type=0
+LONG_PARAMETER_CHANGE var=1 value=788
+LONG_PARAMETER_CHANGE var=2 value=533
+EXP_GAIN var=1 amount=36
+EXP_GAIN var=2 amount=20
+DAMAGE src=2000000 dst=110030756 tick=982325203 attackMT=520 attackedMT=480 dmg=68 left=15 count=2 type=8
+LONG_PARAMETER_CHANGE var=1 value=824
+LONG_PARAMETER_CHANGE var=2 value=553
+EXP_GAIN var=1 amount=36
+EXP_GAIN var=2 amount=20
+DAMAGE src=2000000 dst=110030758 tick=982326281 attackMT=520 attackedMT=480 dmg=34 left=15 count=1 type=0
+DAMAGE src=110030758 dst=2000000 tick=982326859 attackMT=672 attackedMT=0 dmg=0 left=0 count=1 type=0
+DAMAGE src=2000000 dst=110030758 tick=982327328 attackMT=520 attackedMT=480 dmg=34 left=15 count=1 type=0
+LONG_PARAMETER_CHANGE var=1 value=860
+LONG_PARAMETER_CHANGE var=2 value=573
+EXP_GAIN var=1 amount=36
+EXP_GAIN var=2 amount=20
+DAMAGE src=2000000 dst=110030761 tick=982328343 attackMT=520 attackedMT=480 dmg=34 left=15 count=1 type=0
+DAMAGE src=2000000 dst=110030761 tick=982329390 attackMT=520 attackedMT=480 dmg=34 left=15 count=1 type=0
+DAMAGE src=110030761 dst=2000000 tick=982329796 attackMT=672 attackedMT=0 dmg=0 left=0 count=1 type=0
+LONG_PARAMETER_CHANGE var=1 value=896
+LONG_PARAMETER_CHANGE var=2 value=593
+EXP_GAIN var=1 amount=36
+EXP_GAIN var=2 amount=20
+DAMAGE src=2000000 dst=110030760 tick=982331046 attackMT=520 attackedMT=480 dmg=68 left=15 count=2 type=8
+LONG_PARAMETER_CHANGE var=1 value=932
+LONG_PARAMETER_CHANGE var=2 value=613
+EXP_GAIN var=1 amount=36
+EXP_GAIN var=2 amount=20

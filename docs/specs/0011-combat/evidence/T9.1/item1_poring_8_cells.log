@@ -1,0 +1,178 @@
+994989871 item 1 run 3 (class 1002 filter) begins
+994989872 -> GLOBAL_CHAT
+994990579 -> REQUEST_MOVE Destination={X=181,Y=355,Direction=North}
+994993408 -> REQUEST_MOVE Destination={X=164,Y=356,Direction=North}
+994996075 -> REQUEST_MOVE Destination={X=170,Y=368,Direction=North}
+994998342 -> REQUEST_MOVE Destination={X=170,Y=352,Direction=North}
+995000842 -> REQUEST_MOVE Destination={X=179,Y=362,Direction=North}
+995002976 -> REQUEST_MOVE Destination={X=183,Y=364,Direction=North}
+995003909 ATTEMPT 1 start: monster 110033583 class 1002 at 175,367 own 183,364 clientDistance=8
+995003918 -> REQUEST_MOVE Destination={X=177,Y=367,Direction=North}
+995003919 ATTEMPT 1 Attack() -> Approaching
+995004907 -> REQUEST_ACT TargetId=110033583 Action=7 [own 177,367 walking=False; target 175,367 walking=False; clientDistance=1 chebyshev=2]
+995004912 <- DAMAGE src=2000000 dst=110033583 dmg=68 left=15 count=2 type=8
+995006205 ATTEMPT 1 end: killed=True afterMs=1600 tooFarReplies=0 combatState=Idle
+995006206 -> GLOBAL_CHAT
+995006907 -> REQUEST_MOVE Destination={X=190,Y=371,Direction=North}
+995009205 -> REQUEST_MOVE Destination={X=179,Y=360,Direction=North}
+995011660 -> REQUEST_MOVE Destination={X=187,Y=369,Direction=North}
+995013661 -> REQUEST_MOVE Destination={X=187,Y=367,Direction=North}
+995014261 -> REQUEST_MOVE Destination={X=170,Y=370,Direction=North}
+995017078 -> REQUEST_MOVE Destination={X=168,Y=373,Direction=North}
+995017910 -> REQUEST_MOVE Destination={X=177,Y=366,Direction=North}
+995019845 -> REQUEST_MOVE Destination={X=175,Y=366,Direction=North}
+995020430 -> REQUEST_MOVE Destination={X=184,Y=376,Direction=North}
+995022562 -> REQUEST_MOVE Destination={X=181,Y=369,Direction=North}
+995024046 placement at 8 failed for monster 110033550; skipped, not counted
+995024047 -> GLOBAL_CHAT
+995024763 -> REQUEST_MOVE Destination={X=179,Y=370,Direction=North}
+995025465 -> REQUEST_MOVE Destination={X=163,Y=370,Direction=North}
+995028011 -> REQUEST_MOVE Destination={X=171,Y=362,Direction=North}
+995029932 -> REQUEST_MOVE Destination={X=180,Y=374,Direction=North}
+995032412 -> REQUEST_MOVE Destination={X=180,Y=372,Direction=North}
+995032994 -> REQUEST_MOVE Destination={X=173,Y=365,Direction=North}
+995034659 -> REQUEST_MOVE Destination={X=170,Y=363,Direction=North}
+995035500 -> REQUEST_MOVE Destination={X=179,Y=373,Direction=North}
+995037609 ATTEMPT 2 start: monster 110033550 class 1002 at 171,371 own 179,373 clientDistance=8
+995037621 -> REQUEST_MOVE Destination={X=173,Y=371,Direction=North}
+995037621 ATTEMPT 2 Attack() -> Approaching
+995038545 -> REQUEST_ACT TargetId=110033550 Action=7 [own 173,371 walking=False; target 171,371 walking=False; clientDistance=1 chebyshev=2]
+995038558 <- DAMAGE src=2000000 dst=110033550 dmg=68 left=15 count=2 type=8
+995039759 ATTEMPT 2 end: killed=True afterMs=1400 tooFarReplies=0 combatState=Idle
+995039759 -> GLOBAL_CHAT
+995040477 -> REQUEST_MOVE Destination={X=181,Y=371,Direction=North}
+995041946 -> REQUEST_MOVE Destination={X=173,Y=363,Direction=North}
+995043778 -> REQUEST_MOVE Destination={X=181,Y=372,Direction=North}
+995045760 -> REQUEST_MOVE Destination={X=181,Y=370,Direction=North}
+995046380 -> REQUEST_MOVE Destination={X=166,Y=373,Direction=North}
+995048860 -> REQUEST_MOVE Destination={X=172,Y=372,Direction=North}
+995050011 -> REQUEST_MOVE Destination={X=181,Y=365,Direction=North}
+995051944 -> REQUEST_MOVE Destination={X=179,Y=365,Direction=North}
+995052529 -> REQUEST_MOVE Destination={X=188,Y=375,Direction=North}
+995054679 -> REQUEST_MOVE Destination={X=174,Y=372,Direction=North}
+995057079 ATTEMPT 3 start: monster 110033871 class 1002 at 182,368 own 174,372 clientDistance=8
+995057091 -> REQUEST_MOVE Destination={X=180,Y=368,Direction=North}
+995057091 ATTEMPT 3 Attack() -> Approaching
+995058129 -> REQUEST_ACT TargetId=110033871 Action=7 [own 180,368 walking=False; target 182,368 walking=False; clientDistance=1 chebyshev=2]
+995058198 <- DAMAGE src=2000000 dst=110033871 dmg=34 left=15 count=1 type=0
+995059245 <- DAMAGE src=2000000 dst=110033871 dmg=68 left=15 count=2 type=8
+995059696 <- DAMAGE src=110033871 dst=2000000 dmg=0 left=0 count=1 type=0
+995060547 ATTEMPT 3 end: killed=True afterMs=2700 tooFarReplies=0 combatState=Idle
+995060549 -> GLOBAL_CHAT
+995061262 -> REQUEST_MOVE Destination={X=176,Y=370,Direction=North}
+995062230 -> REQUEST_MOVE Destination={X=161,Y=368,Direction=North}
+995064698 -> REQUEST_MOVE Destination={X=169,Y=375,Direction=North}
+995066634 -> REQUEST_MOVE Destination={X=169,Y=359,Direction=North}
+995069098 -> REQUEST_MOVE Destination={X=171,Y=369,Direction=North}
+995070912 ATTEMPT 4 start: monster 110033870 class 1002 at 162,369 own 171,369 clientDistance=8
+995070924 -> REQUEST_MOVE Destination={X=163,Y=368,Direction=North}
+995070925 ATTEMPT 4 Attack() -> Approaching
+995072081 -> REQUEST_ACT TargetId=110033870 Action=7 [own 163,368 walking=False; target 162,369 walking=False; clientDistance=1 chebyshev=1]
+995072147 <- DAMAGE src=2000000 dst=110033870 dmg=34 left=15 count=1 type=0
+995072815 <- DAMAGE src=110033870 dst=2000000 dmg=0 left=0 count=1 type=0
+995073247 <- DAMAGE src=2000000 dst=110033870 dmg=34 left=15 count=1 type=0
+995074514 ATTEMPT 4 end: killed=True afterMs=2800 tooFarReplies=0 combatState=Idle
+995074516 -> GLOBAL_CHAT
+995075231 -> REQUEST_MOVE Destination={X=162,Y=363,Direction=North}
+995076295 -> REQUEST_MOVE Destination={X=148,Y=365,Direction=North}
+995078632 -> REQUEST_MOVE Destination={X=158,Y=375,Direction=North}
+995080964 -> REQUEST_MOVE Destination={X=166,Y=368,Direction=North}
+995083350 -> REQUEST_MOVE Destination={X=169,Y=364,Direction=North}
+995084369 -> REQUEST_MOVE Destination={X=155,Y=366,Direction=North}
+995086719 ATTEMPT 5 start: monster 110033574 class 1002 at 164,365 own 155,366 clientDistance=8
+995086730 -> REQUEST_MOVE Destination={X=162,Y=365,Direction=North}
+995086730 ATTEMPT 5 Attack() -> Approaching
+995087737 -> REQUEST_ACT TargetId=110033574 Action=7 [own 162,365 walking=False; target 164,365 walking=False; clientDistance=1 chebyshev=2]
+995087753 <- DAMAGE src=2000000 dst=110033574 dmg=68 left=15 count=2 type=8
+995088985 ATTEMPT 5 end: killed=True afterMs=1600 tooFarReplies=0 combatState=Idle
+995088986 -> GLOBAL_CHAT
+995089703 -> REQUEST_MOVE Destination={X=168,Y=363,Direction=North}
+995090998 -> REQUEST_MOVE Destination={X=155,Y=365,Direction=North}
+995093200 ATTEMPT 6 start: monster 110033919 class 1002 at 164,365 own 155,365 clientDistance=8
+995093212 -> REQUEST_MOVE Destination={X=162,Y=365,Direction=North}
+995093212 ATTEMPT 6 Attack() -> Approaching
+995094170 -> REQUEST_ACT TargetId=110033919 Action=7 [own 162,365 walking=False; target 164,365 walking=False; clientDistance=1 chebyshev=2]
+995094287 <- DAMAGE src=2000000 dst=110033919 dmg=68 left=15 count=2 type=8
+995095586 ATTEMPT 6 end: killed=True afterMs=1700 tooFarReplies=0 combatState=Idle
+995095587 -> GLOBAL_CHAT
+995096303 -> REQUEST_MOVE Destination={X=158,Y=354,Direction=North}
+995098369 -> REQUEST_MOVE Destination={X=142,Y=354,Direction=North}
+995100875 -> REQUEST_MOVE Destination={X=150,Y=362,Direction=North}
+995102709 -> REQUEST_MOVE Destination={X=160,Y=353,Direction=North}
+995104843 -> REQUEST_MOVE Destination={X=162,Y=349,Direction=North}
+995105776 -> REQUEST_MOVE Destination={X=146,Y=351,Direction=North}
+995108327 -> REQUEST_MOVE Destination={X=146,Y=349,Direction=North}
+995108927 -> REQUEST_MOVE Destination={X=155,Y=358,Direction=North}
+995110940 -> REQUEST_MOVE Destination={X=152,Y=360,Direction=North}
+995111838 -> REQUEST_MOVE Destination={X=154,Y=344,Direction=North}
+995114494 -> REQUEST_MOVE Destination={X=151,Y=345,Direction=North}
+995115295 -> REQUEST_MOVE Destination={X=159,Y=356,Direction=North}
+995117575 -> REQUEST_MOVE Destination={X=155,Y=352,Direction=North}
+995118729 ATTEMPT 7 start: monster 110033866 class 1002 at 147,354 own 155,352 clientDistance=8
+995118741 -> REQUEST_MOVE Destination={X=149,Y=354,Direction=North}
+995118741 ATTEMPT 7 Attack() -> Approaching
+995119682 -> REQUEST_ACT TargetId=110033866 Action=7 [own 149,354 walking=False; target 147,354 walking=False; clientDistance=1 chebyshev=2]
+995119762 <- DAMAGE src=2000000 dst=110033866 dmg=34 left=15 count=1 type=0
+995120843 <- DAMAGE src=2000000 dst=110033866 dmg=68 left=15 count=2 type=8
+995121286 <- DAMAGE src=110033866 dst=2000000 dmg=0 left=0 count=1 type=0
+995122045 ATTEMPT 7 end: killed=True afterMs=2500 tooFarReplies=0 combatState=Idle
+995122046 -> GLOBAL_CHAT
+995122765 -> REQUEST_MOVE Destination={X=159,Y=355,Direction=North}
+995124562 -> REQUEST_MOVE Destination={X=148,Y=363,Direction=North}
+995126799 -> REQUEST_MOVE Destination={X=148,Y=347,Direction=North}
+995129278 -> REQUEST_MOVE Destination={X=157,Y=357,Direction=North}
+995131411 -> REQUEST_MOVE Destination={X=162,Y=355,Direction=North}
+995132544 -> REQUEST_MOVE Destination={X=147,Y=357,Direction=North}
+995135046 -> REQUEST_MOVE Destination={X=147,Y=355,Direction=North}
+995135677 -> REQUEST_MOVE Destination={X=156,Y=364,Direction=North}
+995137675 -> REQUEST_MOVE Destination={X=156,Y=362,Direction=North}
+995138263 -> REQUEST_MOVE Destination={X=158,Y=345,Direction=North}
+995141030 -> REQUEST_MOVE Destination={X=156,Y=342,Direction=North}
+995141873 -> REQUEST_MOVE Destination={X=165,Y=352,Direction=North}
+995144073 ATTEMPT 8 start: monster 110033921 class 1002 at 157,350 own 165,352 clientDistance=8
+995144083 -> REQUEST_MOVE Destination={X=159,Y=350,Direction=North}
+995144084 ATTEMPT 8 Attack() -> Approaching
+995144648 -> REQUEST_MOVE Destination={X=158,Y=349,Direction=North}
+995145114 -> REQUEST_ACT TargetId=110033921 Action=7 [own 159,349 walking=True; target 156,349 walking=True; clientDistance=2 chebyshev=3]
+995145365 -> REQUEST_MOVE Destination={X=157,Y=348,Direction=North}
+995145366 <- ATTACK_TOO_FAR target=110033921 targetCell=155,348 ownCell(server)=158,349 range=1
+995145576 -> REQUEST_ACT TargetId=110033921 Action=7 [own 157,348 walking=False; target 155,348 walking=True; clientDistance=1 chebyshev=2]
+995145697 <- DAMAGE src=2000000 dst=110033921 dmg=34 left=15 count=1 type=0
+995146747 <- DAMAGE src=2000000 dst=110033921 dmg=68 left=15 count=2 type=8
+995147181 <- DAMAGE src=110033921 dst=2000000 dmg=0 left=0 count=1 type=0
+995148098 ATTEMPT 8 end: killed=True afterMs=3100 tooFarReplies=1 combatState=Idle
+995148100 -> GLOBAL_CHAT
+995148815 -> REQUEST_MOVE Destination={X=158,Y=337,Direction=North}
+995150723 -> REQUEST_MOVE Destination={X=145,Y=340,Direction=North}
+995152977 -> REQUEST_MOVE Destination={X=154,Y=350,Direction=North}
+995155165 -> REQUEST_MOVE Destination={X=154,Y=334,Direction=North}
+995157621 -> REQUEST_MOVE Destination={X=160,Y=345,Direction=North}
+995159776 ATTEMPT 9 start: monster 110033863 class 1002 at 151,345 own 160,345 clientDistance=8
+995159795 -> REQUEST_MOVE Destination={X=153,Y=345,Direction=North}
+995159795 ATTEMPT 9 Attack() -> Approaching
+995160777 -> REQUEST_ACT TargetId=110033863 Action=7 [own 153,345 walking=False; target 151,345 walking=False; clientDistance=1 chebyshev=2]
+995160784 <- DAMAGE src=2000000 dst=110033863 dmg=34 left=15 count=1 type=0
+995161858 <- DAMAGE src=2000000 dst=110033863 dmg=34 left=15 count=1 type=0
+995162257 <- DAMAGE src=110033863 dst=2000000 dmg=0 left=0 count=1 type=0
+995163108 ATTEMPT 9 end: killed=True afterMs=2500 tooFarReplies=0 combatState=Idle
+995163109 -> GLOBAL_CHAT
+995163834 -> REQUEST_MOVE Destination={X=149,Y=352,Direction=North}
+995165308 -> REQUEST_MOVE Destination={X=141,Y=360,Direction=North}
+995167192 -> REQUEST_MOVE Destination={X=141,Y=344,Direction=North}
+995169742 -> REQUEST_MOVE Destination={X=152,Y=356,Direction=North}
+995172326 -> REQUEST_MOVE Destination={X=152,Y=354,Direction=North}
+995172924 -> REQUEST_MOVE Destination={X=136,Y=356,Direction=North}
+995175505 -> REQUEST_MOVE Destination={X=135,Y=348,Direction=North}
+995176961 -> REQUEST_MOVE Destination={X=144,Y=357,Direction=North}
+995179142 -> REQUEST_MOVE Destination={X=142,Y=357,Direction=North}
+995179746 -> REQUEST_MOVE Destination={X=144,Y=341,Direction=North}
+995182339 -> REQUEST_MOVE Destination={X=146,Y=345,Direction=North}
+995183377 ATTEMPT 10 start: monster 110033867 class 1002 at 150,353 own 146,345 clientDistance=8
+995183390 -> REQUEST_MOVE Destination={X=150,Y=351,Direction=North}
+995183391 ATTEMPT 10 Attack() -> Approaching
+995184446 -> REQUEST_ACT TargetId=110033867 Action=7 [own 150,351 walking=False; target 150,353 walking=False; clientDistance=1 chebyshev=2]
+995184459 <- DAMAGE src=2000000 dst=110033867 dmg=34 left=15 count=1 type=0
+995185494 <- DAMAGE src=2000000 dst=110033867 dmg=68 left=15 count=2 type=8
+995185926 <- DAMAGE src=110033867 dst=2000000 dmg=0 left=0 count=1 type=0
+995186732 ATTEMPT 10 end: killed=True afterMs=2600 tooFarReplies=0 combatState=Idle
+995186732 RESULT item1: attempts=10 tooFarReplies total=1 attemptsWithTooFar=1

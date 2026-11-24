@@ -7,6 +7,8 @@ using UnityEngine;
 using Uninarok.Networking.Core.Wire;
 using Uninarok.Networking.Data;
 using Uninarok.Networking.Packets.In.Map;
+using Uninarok.Units.Editor;
+using Uninarok.World.View;
 
 namespace Uninarok.World.Tests
 {
@@ -126,6 +128,62 @@ namespace Uninarok.World.Tests
             }
             Debug.Log($"{capture}: {damaged} damaged monster(s) compared at the end, {midway} at the busiest status line; dead with HP above 0: {deadWithHp}");
             if (capture == "combat-death") Assert.IsTrue(deadWithHp, "the recorded death sends the restart HP while dead");
+        }
+
+        // SPEC-0011 FR-5, FR-15 (PLAN-0011 4.6, 4.7, 6.1; T10.7): the assassin of combat-dual, with the timeline and the real catalog.
+        [Test, Category("NeedsData")]
+        public void WorldSession_CombatReplay_DualWield()
+        {
+            string file = FixturePath("combat-dual.bin"), server = FixturePath("combat-dual.server.txt");
+            if (!File.Exists(file) || !File.Exists(server)) Assert.Ignore("no fixture " + file);
+            var source = AssetDatabaseUnitAssetSource.Create();
+            if (source == null || source.Tables == null) Assert.Ignore("the catalog or the composition tables are not imported");
+            var types = new CatalogWeaponTypes(source);
+
+            Status first = default, last = default;
+            foreach (var line in File.ReadAllLines(server))
+            {
+                if (!line.StartsWith("S ")) continue;
+                if (first.Tick == 0) first = new Status(line);
+                last = new Status(line);
+            }
+
+            var settings = ScriptableObject.CreateInstance<CombatSettings>();
+            try
+            {
+                using var replay = new WorldReplayTests.Replay();
+                var session = replay.Rig.Session;
+                session.UseCombat(settings);
+                session.Timeline.Weapons = types;
+                session.Timeline.Jobs = types;
+                var motions = new List<int>();
+                var lefts = new List<int>();
+                session.BlowReceived += (in Blow blow) =>
+                {
+                    var m = replay.Rig.Model;
+                    if (m == null || blow.AttackerId != m.OwnId || !m.TryGetSlot(blow.AttackerId, out int slot)) return;
+                    session.Timeline.Advance(blow.At);
+                    motions.Add(session.Timeline.MotionOf(slot).AttackNumber);
+                    lefts.Add(blow.LeftDamage);
+                };
+                replay.Run(File.ReadAllBytes(file), last.Tick, CharacterAt(first));
+                CollectionAssert.IsEmpty(replay.Errors);
+
+                // Read from the capture (job 12, the Assassin): its own blows 1 to 24 come with only a left knife (right 0, left 1201,
+                // the failed equip: 6 kills) and no second-hand damage (LeftDamage 0): Attack2 (a knife is a short sword, type 1, row
+                // Attack2). Blows 25 to 31 come after the two knives (right 1201, left 1201: type 25) with LeftDamage 16: Attack3.
+                const int OneKnife = 24, TwoKnives = 7;
+                var expected = new List<int>();
+                for (int i = 0; i < OneKnife; i++) expected.Add(2);
+                for (int i = 0; i < TwoKnives; i++) expected.Add(3);
+                CollectionAssert.AreEqual(expected, motions, "the assassin's own attack motions, blow by blow");
+                for (int i = 0; i < lefts.Count; i++)
+                    Assert.AreEqual(i >= OneKnife, lefts[i] > 0, $"blow {i + 1}: LeftDamage only with both hands (FR-5)");
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(settings);
+            }
         }
 
         // The monsters of the view block after the status line `at`: damaged ones have the server's HP. Returns how many were damaged.

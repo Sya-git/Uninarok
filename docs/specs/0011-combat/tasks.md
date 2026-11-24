@@ -2,8 +2,8 @@
 
 | | |
 |---|---|
-| **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Approved (owner, 2026-11-22) |
+| **Implements** | [plan.md](plan.md) (rev. 2026-11-23) → [spec.md](spec.md) (rev. 2026-11-23) |
+| **Status** | Implemented (2026-11-23, T9.6; approved by the owner; owner, 2026-11-23: revision with phase 10 for FR-15 and the plan's revision; checked tasks unchanged; earlier version approved by the owner 2026-11-22) |
 
 **How to use this file**
 - Work on branch `feature/0011-combat`. Do tasks **in order**, except T0.3 and T0.4: they wait for the owner and do not block phases 1 to 8; phase 9 does not close without them.
@@ -31,11 +31,11 @@
   HP and max HP per monster in the view lines, one `S` line per second with the player's HP, SP, levels and EXP; a line-of-sight flag (`path->search_long`, `CELL_CHKWALL`) per pair in the path fixtures, which are made again with the same seeds.
   *Done when:* the plugin builds and loads; the three path files differ from the committed ones only in the new flag and SPEC-0010's pathfinder tests still pass on them; a sample of the new lines is in the report; `docs/specs/0010-world-session/fixtures/README.md` describes both formats.
 
-- [ ] **T0.3** Owner: record the reference footage; then measure it. (FR-2, FR-4 to FR-7, FR-9, FR-10, FR-14)
-  The 16 shots of plan §6.3.
+- [x] **T0.3** Owner: record the reference footage; then measure it. (FR-2, FR-4 to FR-7, FR-9, FR-10, FR-14)
+  The 17 shots of plan §6.3. The owner's footage of 2026-11-22 (`C:\Users\catdo\Videos\Captures`, four files, listed in plan §6.3) covers shots 1, 3, 4, 11, 13, 14, 16 and 17 in part; dual wield (shots 5, 6) comes from three YouTube Shorts the owner named, as files the owner provides. FR-16's mark (shot 17) is measured here too.
   *Done when:* every row of `combat-reference.md` (T4.1) has a measured value or "as lead", with the shot and frame numbers, and the frames used are in `evidence/`.
 
-- [ ] **T0.4** Owner: the restart prompt of the original client. (FR-8)
+- [x] **T0.4** Owner: the restart prompt of the original client. (FR-8)
   The labels, their order, a screenshot, Esc and close; the `esc_*.bmp` images if they can be extracted.
   *Done when:* labels, order and layout are in `combat-reference.md`, and whether the images exist (D8).
 
@@ -58,9 +58,7 @@
   On the local server with the capture tee and T0.2's plugin; a scratch script sends the requests. The second client of (d) moved to T1.6 (2026-11-23: it needs the owner's second Multiplayer Play Mode player).
   *Done when:* the captures (a) to (d) and their server lines are under `fixtures/` with a `README.md`, and none contains the account name or password (searched).
 
-- [ ] **T1.6** Owner and AI: record (e), the second client of plan §6.2 (d). (FR-2, FR-9, FR-10, FR-13)
-  The owner turns on the second Multiplayer Play Mode player (`login:testeAdmin2`); a scratch script makes the second character fight, pick up, die and be raised in view of the first, and leaves loot reserved for one of them.
-  *Done when:* `combat-second.bin` (the first client's connection) and its server lines are under `fixtures/`, listed in its `README.md`, searched for both accounts' names and passwords. Does not block T2.4.
+- [x] **T1.6** ~~Record (e), the second client.~~ **Removed by the owner, 2026-11-23**: the owner runs both clients and compares by hand.
 
 ## Phase 2: Combat state
 
@@ -176,30 +174,69 @@
 
 ## Phase 8: Dev tools
 
-- [ ] **T8.1** `CombatDebugView` (plan §4.12). (FR-11)
+- [x] **T8.1** `CombatDebugView` (plan §4.12). (FR-11)
   *Done when:* `CombatDebugView_ListsBlowsAsReceived` passes; during a fight its numbers equal the packet trace (screenshot and trace).
 
-- [ ] **T8.2** Release check. (FR-8, FR-11)
+- [x] **T8.2** Release check. (FR-8, FR-11)
   *Done when:* the non-development player scripts contain no `Uninarok.World.Dev` type and contain `RestartPromptView` (reflection, command and result in the report).
 
 ## Phase 9: Verify and close
 
-- [ ] **T9.1** Live checks with one client. (FR-2, FR-3, FR-10)
+- [x] **T9.1** Live checks with one client. (FR-2, FR-3, FR-10)
   *Done when:* recorded in `evidence/`: a poring at 8 cells attacked 10 times, at most one try with a too-far reply; a walking monster followed and killed; a bow stops at 9 cells; a town NPC and the own character never attacked; a potion at 6 cells picked up.
 
-- [ ] **T9.2** Live checks with a second client. (FR-2, FR-4, FR-9, FR-10)
-  *Done when:* recorded in `evidence/`: the other character's attacks, hurts, pickup motion, death and raise are seen; clicking it sends no attack; its loot stays and one info line names the code.
+- [x] **T9.2** ~~Live checks with a second client.~~ **Removed by the owner, 2026-11-23**: the owner runs both clients and checks by hand.
 
-- [ ] **T9.3** Correct the leads with T0.3's and T0.4's results. (FR-2, FR-4 to FR-10, FR-14)
+- [x] **T9.3** Correct the leads with T0.3's and T0.4's results. (FR-2, FR-4 to FR-10, FR-14)
   *Done when:* no row of `combat-reference.md` is a bare lead; settings, tables and tests follow it; each rule changed has a Decisions note.
 
-- [ ] **T9.4** Side by side with the original client. (FR-6, FR-7, FR-14)
-  *Done when:* the same blows filmed in both clients are in `evidence/` (numbers, 20 numbers per second over one monster, bars, arrows at 2, 5 and 9 cells, an archer skeleton, one attack of each other weapon type), and the owner accepts them.
+- [x] **T9.4** ~~Side by side with the original client.~~ **Dropped by the owner, 2026-11-23** (plan D37): the original client connects to the original server; adapting one for Hercules is too much work. FR-6, FR-7, FR-14 and FR-16 are checked against the T0.3 measurements (T9.3).
 
-- [ ] **T9.5** Cost (plan §6.1). (FR-12)
+- [x] **T9.5** Cost (plan §6.1). (FR-12)
   300 units, 100 fighting, 100 numbers on screen.
   *Done when:* a profiler capture in `evidence/` shows 0 B GC per frame from the combat update; its frame time is recorded (guide 0.5 ms).
 
-- [ ] **T9.6** Spec §5 run and close the spec. (all)
+- [x] **T9.7** [core] Multi-hit colours (D28; spec FR-5, FR-6 revision 2026-11-23). Tests first, one commit: `CombatTimeline_MultiHit_TotalOnlyOverNonPlayer` (a multi-hit over a monster has the parts and a `Total`; over a player the parts and no `Total`) and `CombatOverlay` colour choice (parts white over a monster, red over a player; `Total` in `CombatSettings.NumberTotal`, (0.9, 0.9, 0.15)). `CombatSettings.NumberTotal` and its asset value; `combat-reference.md` row already written. Done after phase 10; it does not wait for T9.6's run. (FR-5, FR-6)
+  *Done when:* the new tests pass, the existing `CombatTimeline_*` and overlay tests pass (a test that expected a total over a player is changed with a note); a screenshot of a multi-hit over a monster (white parts, yellow-green total) and over the own character (red parts, no total) is in `evidence/`.
+
+- [x] **T9.6** Spec §5 run and close the spec. (all)
   Bootstrap to prt_fild08, 20 monsters with continuous attack, their loot, death, save point.
   *Done when:* no more than one too-far reply per target; own HP, SP and EXP equal `@stats` and `@exp`; every monster's last bar equals its HP; no unit is left behind; spec, plan and tasks are set to `Implemented`; leftovers are in `BACKLOG.md`.
+
+## Phase 10: Revision 2026-11-23 (FR-15): job families and both hands
+
+Rework and new work for plan §4.6, §4.7, §6.1, §7 and §8 (D18, D20 to D27). Do **before T9.6**: the spec does not close without this phase (owner, 2026-11-23: run it now, before T9.1 to T9.5). Checked tasks keep their commits; each rework is a new task that names the task it redoes. Test-first: a tests task is committed with `[Ignore("pending Tn.m")]`, and the implementation task removes it. T10.3 and T10.4 are one commit each, because a changed signature must compile with its callers and its tests.
+
+- [x] **T10.1** [core] Tests for `JobFamilies` in `EditMode/Units`: `JobFamilies_RowJobOf_Table`, `JobFamilies_RowSexOf_SoulReaperMale`, and `JobFamilies_IsAssassinFamily_EveryIdAndNotRogue` extended with the assassin ids above 4242 (plan §6.1, §4.7 family table). Committed with `[Ignore("pending T10.2")]`. (FR-15)
+  *Done when:* the three tests exist and compile and are ignored; the rest of the `Units` suite passes unchanged.
+
+- [x] **T10.2** [critical] `JobFamilies`: the sorted `(job, rowJob, flag)` table as a `ReadOnlySpan<byte>` (no static field), `RowJobOf`, `RowSexOf` (flag bit 0, D24), `IsAssassinFamily` = `RowJobOf(job) == 12`. Ids above 4242 copied from roBrowserLegacy (`DB/Jobs/JobConst.js`, `WeaponAction.js`), each with its constant name in a comment; the mounted Crusader choices of D25 recorded per id. Removes the ignore of T10.1. Reference: `combat-reference.md`, "Attack animation": the family table (plan §4.7), the ids above 4242 marked "copied from roBrowserLegacy, not run" (D27), the Soul Reaper male row (D24), the Taekwon `Attack2` rule (D22). (FR-15, FR-4)
+  *Done when:* the three `JobFamilies_*` tests pass; the `WeaponHands` and `IsAssassinFamily` tests of SPEC-0009 pass unchanged; `combat-reference.md` has the family table; Logs/Editor.log has no new warning (UAL0010 checked).
+
+- [x] **T10.3** [critical] Rework of **T4.7** (`AttackMotions`): `NumberOf(rowJob, sex, weaponType)` without `secondHand` (D21); rows 25 to 30 found by the combined type; job 4046 with any weapon → `Attack2` (D22); no row for Gangsi, Death Knight, Dark Collector, Wedding, Xmas, Summer (D26); Druid rows from roBrowserLegacy; `HitFrameOf` takes the same arguments. `AttackMotionsTests` rewritten to plan §6.1's FR-15 list: `AttackMotions_Rows` (changed), `_JobFamilies_EveryWeaponType`, `_TaekwonFamily_Attack2EveryWeapon`, `_SoulReaper_MaleWizardRowEitherSex`, `_NoRowJobs_Attack1`, `_Hands_EachCase`, `_ShieldNeverChangesMotion`. The one call in `CombatTimeline` drops `secondHand` so the project compiles. Reference: the attack-number rows in `combat-reference.md`. One commit (signature and its tests). (FR-4, FR-15)
+  *Done when:* the `AttackMotions_*` tests pass (`_Hands_EachCase` through `WeaponHands.Combine` with synthetic hands); `_ShieldNeverChangesMotion` passes for every row job × weapon type 0 to 30; the `CombatTimeline` tests of T4.3 and T4.8 still pass; the rows in `combat-reference.md` equal the test's table.
+
+- [x] **T10.4** [critical] Rework of **T5.4** (interfaces and `CatalogWeaponTypes`): `IWeaponTypes.TypeOf(job, right, left)` (plan §4.7); `IJobBases` replaced by `IJobRows` (`RowJobOf`, `RowSexOf`). `CatalogWeaponTypes` implements both: `TypeOf(job, right, left)` = `HandsOf(job, right, left).WeaponType` with unknown values traced once; `RowJobOf` and `RowSexOf` from `JobFamilies`; `BaseJobOf` and its two asserts in `CatalogWeaponTypesTests` removed. The test fakes migrated (`ProjectileRulesTests.SameTypes`, `WorldPresenterPlayTests.BowWeapons`, and any other fake of either interface). `CombatTimeline.Weapons` and `Jobs` typed to the new interfaces, and `Add` asks `TypeOf(job, right, left)`; the rest of the timeline follows in T10.6. Tests in `CatalogWeaponTypesTests`: `CatalogWeaponTypes_TypeOf_BothHands_IsHandsOf`, `_LeftShieldViewId_IsShield`, `_RowJobOf_IsJobFamilies` (`NeedsData`). `combat-reference.md`: "the caller maps them" sentence replaced by a pointer to the hands table (plan §4.7) and `composition-reference.md` "Hands". One commit (interface, implementation, fakes). (FR-15, FR-4)
+  *Done when:* the project compiles; the `CatalogWeaponTypes_*` tests pass (or are reported as not run if their data is absent, which blocks the task); the `ProjectileRules` and `WorldPresenter` tests pass; `BaseJobOf` and `IJobBases` are gone from `Assets` (grep); `git status` shows no asset changed (no rebuild, plan §7).
+
+- [x] **T10.5** [core] Tests, then implementation (part 1): `CombatTimeline_AttackNumber_BothHandsAndRowJob` with fake `IWeaponTypes` and `IJobRows`: the server's job, `Look.Weapon` and `Look.Shield` reach `TypeOf`; the row job and row sex reach `NumberOf`; the same type reaches `ProjectileRules`. Committed with `[Ignore("pending T10.6")]`. (FR-15, FR-4)
+  *Done when:* the test exists, compiles and is ignored; the rest of the `Combat` suite passes unchanged.
+
+- [x] **T10.6** [critical] Rework of **T4.3** and **T4.8** (`CombatTimeline` both hands): `Add` computes the both-hands type once per blow and passes it to `AttackNumber` (`NumberOf(Jobs?.RowJobOf(job) ?? job, Jobs?.RowSexOf(job, sex) ?? sex, type)`), `HitFrameOf` and `ProjectileRules.Of`; `AddProjectile` takes the same type, not the right hand alone (D23). Removes the ignore of T10.5. (FR-4, FR-14, FR-15)
+  *Done when:* `CombatTimeline_AttackNumber_BothHandsAndRowJob` passes; the `ProjectileRules_*` and `CombatTimeline_*` tests of T4.3 and T4.8 pass; `Combat_ZeroAllocation_100Fighting` (T4.9) still passes at 0 B over 600 frames.
+
+- [x] **T10.7** [core] Dual-wield replay: `WorldSession_CombatReplay_DualWield` replays `fixtures/combat-dual.bin` into a session with the timeline and the real `CatalogWeaponTypes` (`NeedsData`). The assassin's own attack motions are `Attack2` while only the left hand holds a knife, `Attack3` once both hands hold knives, and those blows carry `LeftDamage`. (FR-5, FR-15)
+  *Done when:* the test passes on the committed fixture, and its motion sequence is written in the test with the blow numbers it is read from (the capture's server lines are listed in `fixtures/README.md`).
+
+- [x] **T10.8** [quick] Rework of **T5.4** (wiring): `WorldBootstrap.UseAssets` sets `timeline.Weapons` and `timeline.Jobs` from one `CatalogWeaponTypes` instance (plan §7). Only the assignments change; no other line of the bootstrap is touched. (FR-15)
+  *Done when:* `WorldBootstrap.cs` assigns both members from the same instance (grep shows both lines); the project compiles; Logs/Editor.log has no new warning after a refresh.
+
+## Phase 11: Revision 2026-11-23 (FR-16): the target mark
+
+New work for plan §4.5, §4.8, §6.1 and D29. Independent of phase 10 and of T9.1 to T9.6; do it **before T9.6**, because the spec does not close without it. Test-first as in phase 10.
+
+- [x] **T11.1** [core] Tests, then implementation: `OwnCombat.MarkedTarget(now)` (plan §4.5). `OwnCombat_Mark_ContinuousStaysSingleExpires`, `_ClearedByGroundClickSitDeathTargetGone`, `_OnlyAttackableMonster`; `CombatSettings.TargetMarkSingleMs` (first value 0 after the single blow's hit moment, from `evidence/T0.3/README.md`; a row of `combat-reference.md`). One commit: tests, state and setting. (FR-16)
+  *Done when:* the three tests pass, the `OwnCombat_*` tests of T3.3 to T3.5 pass unchanged, and `combat-reference.md` has the row.
+
+- [x] **T11.2** [core] The mark in `CombatOverlay` (plan §4.8, D29). First find the picture: `evidence/T0.3/README.md` describes it (a white faceted diamond pointing down, about 22 × 15 px, about 66 px above the standing sprite top, no float of its own) with the frames; search the extracted client data (sprites of effects, cursors, the UI) for that picture; record the values in `combat-reference.md` with their source. Then draw it with `CombatSettings` fields (`TargetMark` sprite, `TargetMarkHeight`, `TargetMarkBobPixels`, `TargetMarkBobMs`; `TargetMarkSingleMs` corrected from the footage); tests `CombatOverlay_TargetMark_AboveHeadAtFourTurns`, `_OnlyOneMark`, `_HiddenWhenDead` and a mark inside `CombatOverlay_ZeroAllocation_100Numbers300Units`. If the sprite cannot be identified from the footage and the data, stop and ask the owner. (FR-16, FR-12)
+  *Done when:* the PlayMode tests pass, the zero-allocation test still passes, and screenshots of a continuous attack (mark stays until the kill) and of a single attack (mark goes away after its time) are in `evidence/`, beside the original client's frames.

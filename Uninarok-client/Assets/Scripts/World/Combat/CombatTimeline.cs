@@ -31,11 +31,14 @@ namespace Uninarok.World
         Critical,
         Miss,
         Lucky,
-        /// <summary>The sum of a multi-hit, with its last part.</summary>
+        /// <summary>The running sum of a multi-hit, from its first part, replaced by each later number of the blow (D32).</summary>
         Total,
     }
 
-    /// <summary>A number or a message shown over a unit (FR-5, FR-6): from when, over whom, where the unit was shown then.</summary>
+    /// <summary>
+    /// A number or a message shown over a unit (FR-5, FR-6): from when, over whom (the blow's target; for a miss its attacker,
+    /// D31), where the unit was shown then.
+    /// </summary>
     public struct DamageNumber
     {
         public uint Starts;
@@ -64,16 +67,20 @@ namespace Uninarok.World
         public ProjectileKind Kind;
     }
 
-    /// <summary>The server's weapon value of a look to its base weapon type, 0 (bare hand) to 30 (PLAN-0011 4.7).</summary>
+    /// <summary>
+    /// Both hands the server sends (<c>Look.Weapon</c>, <c>Look.Shield</c>) of a job to one weapon type, 0 (bare hand) to 30
+    /// (PLAN-0011 4.7, D21): the hands rule of PLAN-0009 4.11.
+    /// </summary>
     public interface IWeaponTypes
     {
-        int TypeOf(int weapon);
+        int TypeOf(int job, int right, int left);
     }
 
-    /// <summary>The job whose sprites and attack rows a job uses: baby, high and transcendent jobs give their base job (D18).</summary>
-    public interface IJobBases
+    /// <summary>The job and sex of the attack row a job uses (PLAN-0011 4.7, D20, D24): the family table of FR-15.</summary>
+    public interface IJobRows
     {
-        int BaseJobOf(int job);
+        int RowJobOf(int job);
+        byte RowSexOf(int job, byte sex);
     }
 
     /// <summary>
@@ -135,7 +142,7 @@ namespace Uninarok.World
         public IWeaponTypes Weapons { get; set; }
 
         /// <summary>Until the catalog is loaded every job stands for itself.</summary>
-        public IJobBases Jobs { get; set; }
+        public IJobRows Jobs { get; set; }
 
         /// <summary>The world whose units the blows are of; a new map's model forgets everything.</summary>
         public void Use(WorldModel model)
@@ -150,32 +157,36 @@ namespace Uninarok.World
             var model = _model;
             if (model == null) return;
 
-            if (blow.AttackerId != blow.TargetId && blow.AttackMs > 0 && model.TryGetSlot(blow.AttackerId, out int attacker) &&
+            // D23: one both-hands type per blow, for the motion, the hit frame and the projectile.
+            bool known = model.TryGetSlot(blow.AttackerId, out int attacker);
+            int weapon = known ? WeaponTypeOf(model[attacker]) : 0;
+
+            if (blow.AttackerId != blow.TargetId && blow.AttackMs > 0 && known &&
                 attacker < _motions.Length && model[attacker].State != EntityState.Dead)
-                Start(model, attacker, MotionKind.Attack, blow.At, blow.AttackMs, AttackNumber(model[attacker]));
+                Start(model, attacker, MotionKind.Attack, blow.At, blow.AttackMs, AttackNumber(model[attacker], weapon));
 
             // H11: an attack time of 0 or less is at once.
             uint hit = unchecked(blow.At + (uint)Math.Max(0, blow.AttackMs));
-            // 4.7: a player's number waits for its arrow.
-            if (AddProjectile(model, blow, out uint arrives)) hit = arrives;
+            // 4.7, D33: a player's number waits launch + FlightMs.
+            if (AddProjectile(model, blow, weapon, out uint numberAt)) hit = numberAt;
             AddNumbers(blow, hit);
         }
 
         // FR-14: one projectile per blow, also a multi-hit, between the shown positions (taken again at the launch).
-        bool AddProjectile(WorldModel model, in Blow blow, out uint arrives)
+        // weapon: the both-hands type of the attacker (D23).
+        bool AddProjectile(WorldModel model, in Blow blow, int weapon, out uint numberAt)
         {
-            arrives = 0;
+            numberAt = 0;
             if (blow.AttackerId == blow.TargetId || !model.TryGetSlot(blow.AttackerId, out int attacker) || !model.TryGetSlot(blow.TargetId, out int target))
                 return false;
             ref readonly var a = ref model[attacker];
             ref readonly var t = ref model[target];
-            int weapon = a.Kind == EntityKind.Player && Weapons != null ? Weapons.TypeOf(a.Look.Weapon) : 0;
             var kind = ProjectileRules.Of(a.Kind, a.Look.Job, weapon);
             if (kind == ProjectileKind.None) return false;
 
             bool player = a.Kind == EntityKind.Player;
             float dx = t.PosX - a.PosX, dy = t.PosY - a.PosY;
-            float hitFrame = player ? AttackMotions.HitFrameOf(a.Look.Job, a.Look.Sex, weapon) : 0f;
+            float hitFrame = player ? AttackMotions.HitFrameOf(RowJobOf(a.Look.Job), RowSexOf(a.Look.Job, a.Look.Sex), weapon) : 0f;
             ProjectileRules.Times(blow, player, (float)Math.Sqrt(dx * dx + dy * dy), hitFrame, _settings.FlightMs, _settings.FlightFullCells,
                                   out uint launches, out uint lands, out bool waits);
             if (_projectileCount == _projectiles.Length) DropOldest(_projectiles, ref _projectileCount, "projectiles");
@@ -184,7 +195,8 @@ namespace Uninarok.World
                 Launches = launches, Arrives = lands, AttackerId = blow.AttackerId, TargetId = blow.TargetId,
                 FromX = a.PosX, FromY = a.PosY, ToX = t.PosX, ToY = t.PosY, Kind = kind,
             };
-            if (waits) arrives = lands;
+            // D33 (footage B): the number at launch + the full flight, whatever the distance; the arrow is gone at `lands`.
+            if (waits) numberAt = ProjectileRules.NumberAt(launches, _settings.FlightMs);
             return waits;
         }
 
@@ -221,30 +233,43 @@ namespace Uninarok.World
         {
             if (blow.Damage < 0) return; // heals are SPEC-0012's
             bool hurts = Hurts(blow);
+            // Lucky over the dodging unit (the target); a miss over the unit that missed, the attacker (D31, footage A).
             if (blow.Kind == BlowKind.LuckyDodge) Pend(hit, blow.TargetId, 0, NumberKind.Lucky, false, 0);
-            else if (blow.IsMiss) Pend(hit, blow.TargetId, 0, NumberKind.Miss, false, 0);
-            else if (blow.Damage > 0)
+            else if (blow.IsMiss) Pend(hit, blow.AttackerId, 0, NumberKind.Miss, false, 0);
+            // D28, D32: a running total for a split multi-hit over a target that is not a player, the second hand included.
+            bool totals = false;
+            int sum = 0;
+            if (!blow.IsMiss && blow.Kind != BlowKind.LuckyDodge && blow.Damage > 0)
             {
                 var kind = blow.Kind == BlowKind.Critical ? NumberKind.Critical : NumberKind.Normal;
                 int hits = blow.Kind == BlowKind.MultiHit ? blow.Hits : 1;
                 if (hits <= 1 || blow.Damage < hits) Pend(hit, blow.TargetId, blow.Damage, kind, hurts, blow.HurtMs);
                 else
                 {
-                    // Each part damage / n, the remainder on the last: they always sum to the total.
+                    totals = !TargetIsPlayer(blow.TargetId);
+                    // Each part damage / n, the remainder on the last: they always sum to the blow's damage.
                     int part = blow.Damage / hits;
+                    // D36: the gap depends on whether the blow has a second hand.
+                    int gap = Math.Max(0, blow.LeftDamage > 0 ? _settings.MultiHitMs : _settings.MultiHitNoLeftMs);
                     for (int i = 0; i < hits; i++)
                     {
-                        uint at = unchecked(hit + (uint)(i * Math.Max(0, _settings.MultiHitMs)));
-                        bool last = i == hits - 1;
-                        Pend(at, blow.TargetId, last ? blow.Damage - part * (hits - 1) : part, kind, hurts, blow.HurtMs);
-                        if (last) Pend(at, blow.TargetId, blow.Damage, NumberKind.Total, false, 0);
+                        uint at = unchecked(hit + (uint)(i * gap));
+                        int value = i == hits - 1 ? blow.Damage - part * (hits - 1) : part;
+                        sum += value;
+                        Pend(at, blow.TargetId, value, kind, hurts, blow.HurtMs);
+                        if (totals) Pend(at, blow.TargetId, sum, NumberKind.Total, false, 0);
                     }
                 }
             }
             if (blow.LeftDamage > 0)
-                Pend(unchecked(hit + (uint)Math.Max(0, _settings.LeftHandMs)), blow.TargetId, blow.LeftDamage, NumberKind.Normal,
-                     !blow.Endured && blow.HurtMs > 0, blow.HurtMs);
+            {
+                uint at = unchecked(hit + (uint)Math.Max(0, _settings.LeftHandMs));
+                Pend(at, blow.TargetId, blow.LeftDamage, NumberKind.Normal, !blow.Endured && blow.HurtMs > 0, blow.HurtMs);
+                if (totals) Pend(at, blow.TargetId, (int)Math.Min(int.MaxValue, (long)sum + blow.LeftDamage), NumberKind.Total, false, 0);
+            }
         }
+
+        bool TargetIsPlayer(uint id) => _model != null && _model.TryGetSlot(id, out int slot) && _model[slot].Kind == EntityKind.Player;
 
         /// <summary>A unit picked up an item (UNIT_ACT 1): a player bends down once (FR-10).</summary>
         public void AddPickUp(uint id, uint itemId, uint now)
@@ -311,7 +336,7 @@ namespace Uninarok.World
         {
             int count = 0;
             for (int i = 0; i < _hitCount; i++)
-                if (_hits[i].TargetId == id) count++;
+                if (_hits[i].TargetId == id && _hits[i].Kind != NumberKind.Miss) count++; // a miss is over its attacker (D31)
             return count;
         }
 
@@ -343,15 +368,31 @@ namespace Uninarok.World
         // FR-4: a hurt unless no damage, endured, a lucky dodge or no hurt time.
         static bool Hurts(in Blow blow) => blow.Damage > 0 && !blow.Endured && blow.Kind != BlowKind.LuckyDodge && blow.HurtMs > 0;
 
-        // 4.7: players by job, sex and weapon type; others always Attack. Dual wield is not told apart here: a shield's view id
-        // reads as a weapon type, so the second hand waits for the catalog's item kinds (T5.4).
-        byte AttackNumber(in Entity e)
+        // 4.7, D21: a player's type of both hands (the server's job, Look.Weapon, Look.Shield); others and no catalog: 0.
+        int WeaponTypeOf(in Entity e)
+        {
+            var weapons = Weapons;
+            return e.Kind == EntityKind.Player && weapons != null ? weapons.TypeOf(e.Look.Job, e.Look.Weapon, e.Look.Shield) : 0;
+        }
+
+        // FR-15 (D20, D24): the row job and row sex; without the catalog a job stands for itself.
+        int RowJobOf(int job)
+        {
+            var jobs = Jobs;
+            return jobs != null ? jobs.RowJobOf(job) : job;
+        }
+
+        byte RowSexOf(int job, byte sex)
+        {
+            var jobs = Jobs;
+            return jobs != null ? jobs.RowSexOf(job, sex) : sex;
+        }
+
+        // 4.7: players by the row job, row sex and the blow's type of both hands (D23); others always Attack.
+        byte AttackNumber(in Entity e, int weapon)
         {
             if (e.Kind != EntityKind.Player) return 1;
-            var weapons = Weapons;
-            int right = weapons != null ? weapons.TypeOf(e.Look.Weapon) : 0;
-            int job = Jobs != null ? Jobs.BaseJobOf(e.Look.Job) : e.Look.Job;
-            return (byte)AttackMotions.NumberOf(job, e.Look.Sex, right, false);
+            return (byte)AttackMotions.NumberOf(RowJobOf(e.Look.Job), RowSexOf(e.Look.Job, e.Look.Sex), weapon);
         }
 
         int LifeOf(NumberKind kind) => NumberMotion.LifeMs(kind, _settings);
@@ -362,17 +403,19 @@ namespace Uninarok.World
             _hits[_hitCount++] = new PendingHit { At = at, TargetId = targetId, Value = value, Kind = kind, Hurts = hurts, HurtMs = hurtMs };
         }
 
-        // The hit moment: the number where the target is shown now, and its hurt. No number without a known target.
+        // The hit moment: the number where its unit (the target; for a miss the attacker, D31) is shown now, and the target's
+        // hurt. No number without a known unit.
         void Show(WorldModel model, in PendingHit hit)
         {
             if (!model.TryGetSlot(hit.TargetId, out int target)) return;
             ref readonly var t = ref model[target];
+            if (hit.Kind == NumberKind.Total && !ReplaceTotal(hit)) return;
             if (_numberCount == _numbers.Length) DropOldest(_numbers, ref _numberCount, "numbers");
             _numbers[_numberCount++] = new DamageNumber
             {
                 Starts = hit.At, TargetId = hit.TargetId, Value = hit.Value, Kind = hit.Kind, OnPlayer = t.Kind == EntityKind.Player, X = t.PosX, Y = t.PosY,
             };
-            if (target >= _motions.Length) return;
+            if (target >= _motions.Length || hit.Kind == NumberKind.Miss) return; // a miss is no hit on the unit it is over
             bool deathShown = t.State == EntityState.Dead && DeathShown(target, t);
             _lastHitAt[target] = hit.At;
             _lastHitGeneration[target] = t.Generation;
@@ -380,6 +423,22 @@ namespace Uninarok.World
             if (!hit.Hurts || deathShown) return;
             if (_generations[target] == t.Generation && ServerClock.Diff(hit.At, _motions[target].Starts) < 0 && _motions[target].Kind != MotionKind.None) return;
             Start(model, target, MotionKind.Hurt, hit.At, hit.HurtMs, 0);
+        }
+
+        // D32: one total per unit on screen. A newer one (or, at the same moment, the larger running sum) replaces it in place;
+        // an older one that comes late in the same Advance is dropped. False: drop the new one.
+        bool ReplaceTotal(in PendingHit hit)
+        {
+            for (int i = 0; i < _numberCount; i++)
+            {
+                ref readonly var n = ref _numbers[i];
+                if (n.Kind != NumberKind.Total || n.TargetId != hit.TargetId) continue;
+                int diff = ServerClock.Diff(hit.At, n.Starts);
+                if (diff < 0 || (diff == 0 && hit.Value < n.Value)) return false;
+                _numbers[i] = _numbers[--_numberCount];
+                return true;
+            }
+            return true;
         }
 
         void Start(WorldModel model, int slot, MotionKind kind, uint starts, int durationMs, byte attackNumber)

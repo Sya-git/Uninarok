@@ -1,0 +1,28 @@
+995216201 item 2: attack a walking monster
+995216203 -> GLOBAL_CHAT
+995217890 RUN 1 start: poring 110033939 at 153,349 walking=True own 150,351 clientDistance=3
+995217891 -> REQUEST_MOVE Destination={X=152,Y=349,Direction=North}
+995217891 RUN 1 Attack() -> Approaching
+995218090 -> REQUEST_ACT TargetId=110033939 Action=7 [own 151,350 walking=True; target 153,349 walking=True; clientDistance=2 chebyshev=2]
+995218374 <- DAMAGE src=2000000 dst=110033939 dmg=68 left=15 count=2 type=8
+995219693 RUN 1 end: killed=True afterMs=1200 samplesTargetWalking=3/13 combatState=Idle
+995219695 -> GLOBAL_CHAT
+995220527 RUN 2 start: poring 110033868 at 149,341 walking=True own 152,349 clientDistance=8
+995220528 -> REQUEST_MOVE Destination={X=149,Y=343,Direction=North}
+995220529 RUN 2 Attack() -> Approaching
+995220744 -> REQUEST_MOVE Destination={X=150,Y=344,Direction=North}
+995221210 -> REQUEST_ACT TargetId=110033868 Action=7 [own 150,345 walking=True; target 150,342 walking=True; clientDistance=2 chebyshev=3]
+995221458 <- DAMAGE src=2000000 dst=110033868 dmg=34 left=15 count=1 type=0
+995222508 <- DAMAGE src=2000000 dst=110033868 dmg=34 left=15 count=1 type=0
+995222938 <- DAMAGE src=110033868 dst=2000000 dmg=0 left=0 count=1 type=0
+995223738 RUN 2 end: killed=True afterMs=2400 samplesTargetWalking=21/25 combatState=Idle
+995223739 -> GLOBAL_CHAT
+995224555 RUN 3 start: poring 110033943 at 152,347 walking=True own 150,344 clientDistance=3
+995224555 -> REQUEST_MOVE Destination={X=152,Y=346,Direction=North}
+995224556 RUN 3 Attack() -> Approaching
+995224755 -> REQUEST_ACT TargetId=110033943 Action=7 [own 151,345 walking=True; target 152,347 walking=True; clientDistance=2 chebyshev=2]
+995225072 <- DAMAGE src=2000000 dst=110033943 dmg=34 left=15 count=1 type=0
+995225705 <- DAMAGE src=110033943 dst=2000000 dmg=0 left=0 count=1 type=0
+995226122 <- DAMAGE src=2000000 dst=110033943 dmg=34 left=15 count=1 type=0
+995227275 RUN 3 end: killed=True afterMs=2000 samplesTargetWalking=4/21 combatState=Idle
+995227275 item 2 done

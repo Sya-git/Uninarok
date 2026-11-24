@@ -216,6 +216,122 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(2, Sent.Count, "the two attacks, nothing after");
         }
 
+        // ---- FR-16: the target mark ----
+
+        // Another character in a fresh rig (the sit and the death end what a scenario can do).
+        void Reset()
+        {
+            _rig.Dispose();
+            _rig = new Rig().ToInGame(OwnCharacterTests.Character());
+        }
+
+        [Test]
+        public void OwnCombat_Mark_ContinuousStaysSingleExpires()
+        {
+            Assert.AreEqual(0u, Combat.MarkedTarget(Now), "idle");
+            Monster(MonsterA, 151, 200);
+            Combat.Attack(MonsterA, true);
+            Assert.AreEqual(MonsterA, Combat.MarkedTarget(Now), "from the click");
+            Blow(Own, MonsterA);
+            Run(400);
+            Assert.AreEqual(MonsterA, Combat.MarkedTarget(Now), "a continuous attack keeps it after its blows");
+
+            // Approaching shows it too; a single attack's mark outlives its blow until the hit moment.
+            Monster(MonsterB, 165, 200);
+            Assert.AreEqual(AttackResult.Approaching, Combat.Attack(MonsterB, false));
+            Assert.AreEqual(MonsterB, Combat.MarkedTarget(Now), "while approaching");
+            Run(300);
+            Assert.AreEqual(MonsterB, Combat.MarkedTarget(Now));
+            Reset();
+
+            Monster(MonsterA, 151, 200);
+            Combat.Attack(MonsterA, false);
+            Blow(Own, MonsterA, 500);
+            Assert.AreEqual(CombatState.Idle, Combat.State);
+            Assert.AreEqual(MonsterA, Combat.MarkedTarget(Now), "after the blow, before the hit moment");
+            Run(450);
+            Assert.AreEqual(MonsterA, Combat.MarkedTarget(Now));
+            Run(50);
+            Assert.AreEqual(0u, Combat.MarkedTarget(Now), "at the hit moment, TargetMarkSingleMs 0");
+
+            Combat.TargetMarkSingleMs = 200;
+            Combat.Attack(MonsterA, false);
+            Blow(Own, MonsterA, 500);
+            Run(650);
+            Assert.AreEqual(MonsterA, Combat.MarkedTarget(Now));
+            Run(50);
+            Assert.AreEqual(0u, Combat.MarkedTarget(Now), "the hit moment plus the setting");
+        }
+
+        [Test]
+        public void OwnCombat_Mark_ClearedByGroundClickSitDeathTargetGone()
+        {
+            Monster(MonsterA, 151, 200);
+            Combat.Attack(MonsterA, true);
+            Assert.AreEqual(WalkRequestResult.Sent, _rig.Session.Own.RequestWalk(145, 200));
+            Assert.AreEqual(0u, Combat.MarkedTarget(Now), "ground click, continuous");
+            Reset();
+
+            Monster(MonsterA, 151, 200);
+            Combat.Attack(MonsterA, false);
+            Blow(Own, MonsterA);
+            Assert.AreEqual(MonsterA, Combat.MarkedTarget(Now));
+            Assert.AreEqual(WalkRequestResult.Sent, _rig.Session.Own.RequestWalk(145, 200));
+            Assert.AreEqual(0u, Combat.MarkedTarget(Now), "ground click after a single blow");
+            Reset();
+
+            Monster(MonsterA, 151, 200);
+            Combat.Attack(MonsterA, false);
+            Blow(Own, MonsterA);
+            Assert.IsTrue(_rig.Session.Own.Sit());
+            Assert.AreEqual(0u, Combat.MarkedTarget(Now), "sit");
+            Reset();
+
+            Monster(MonsterA, 151, 200);
+            Combat.Attack(MonsterA, true);
+            _rig.Client.Deliver(VanishPacket(Own, 1));
+            Assert.AreEqual(0u, Combat.MarkedTarget(Now), "own death");
+            Reset();
+
+            Monster(MonsterA, 151, 200);
+            Combat.Attack(MonsterA, true);
+            _rig.Client.Deliver(VanishPacket(MonsterA, 1));
+            Run(50);
+            Assert.AreEqual(0u, Combat.MarkedTarget(Now), "target gone");
+            Reset();
+
+            Monster(MonsterA, 151, 200);
+            Monster(MonsterB, 149, 200);
+            Combat.Attack(MonsterA, false);
+            Blow(Own, MonsterA);
+            Combat.Attack(MonsterB, true);
+            Assert.AreEqual(MonsterB, Combat.MarkedTarget(Now), "another target takes the mark at once");
+            Combat.Cancel();
+            Assert.AreEqual(0u, Combat.MarkedTarget(Now), "a map change");
+        }
+
+        [Test]
+        public void OwnCombat_Mark_OnlyAttackableMonster()
+        {
+            _rig.Client.Deliver(Stand(PlayerId, 151, 200, type: 0, gid: 150001, job: 0));
+            _rig.Client.Deliver(Stand(NpcId, 149, 200, type: 6, job: 100));
+            _rig.Client.Deliver(Stand(PetId, 150, 201, type: 7));
+            Monster(MonsterA, 150, 199, state: 1);
+            Item(ItemA, 151, 201);
+            foreach (var id in new[] { PlayerId, NpcId, PetId, MonsterA, ItemA, Own, 12345u })
+            {
+                Combat.Attack(id, false);
+                Assert.AreEqual(0u, Combat.MarkedTarget(Now), id.ToString());
+                Combat.Attack(id, true);
+                Assert.AreEqual(0u, Combat.MarkedTarget(Now), id.ToString());
+            }
+
+            Monster(MonsterB, 151, 200);
+            Combat.Attack(MonsterB, true);
+            Combat.Attack(PlayerId, true);
+            Assert.AreEqual(MonsterB, Combat.MarkedTarget(Now), "a refused click leaves the mark");
+        }
+
         // ---- FR-3: range and approach ----
 
         [Test]

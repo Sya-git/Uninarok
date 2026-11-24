@@ -15,10 +15,10 @@ namespace Uninarok.World.Tests
             public bool BlocksSight(int x, int y) => !IsPassable(x, y);
         }
 
-        // The look's weapon value is its type already.
+        // The look's right-hand value is its type already.
         sealed class SameTypes : IWeaponTypes
         {
-            public int TypeOf(int weapon) => weapon;
+            public int TypeOf(int job, int right, int left) => right;
         }
 
         const uint T = 10_000;
@@ -61,6 +61,8 @@ namespace Uninarok.World.Tests
             Assert.AreEqual((T + 288, T + 408, true), (launches, arrives, waits), "player: 6 frames of 24 ms at twice 432 ms");
             ProjectileRules.Times(Hit(1, 2, 1000), false, 9, 0, out launches, out arrives, out waits);
             Assert.AreEqual((T + 1000, T + 1192, false), (launches, arrives, waits), "monster: launched at the hit moment");
+            Assert.AreEqual(T + 192, ProjectileRules.NumberAt(T, 192), "the number: launch + the full flight (D33)");
+            Assert.AreEqual(T + 1, ProjectileRules.NumberAt(T, 0), "at least 1 ms");
         }
 
         [Test]
@@ -79,17 +81,30 @@ namespace Uninarok.World.Tests
                 var timeline = new CombatTimeline(settings, model.Capacity) { Weapons = new SameTypes() };
                 timeline.Use(model);
 
-                // A bow at 5 cells: launched at 6 × 24 ms, the number at its arrival 120 ms later.
+                // A bow at 5 cells: launched at 6 × 24 ms, the arrow gone at its arrival 120 ms later; the number at launch +
+                // FlightMs (192) whatever the distance (D33, footage B: 11 frames after the launch at 1.2 to 13 cells).
                 timeline.Add(Hit(1, 3));
                 Assert.AreEqual(1, timeline.Projectiles.Length);
                 var arrow = timeline.Projectiles[0];
                 Assert.AreEqual((ProjectileKind.Arrow, T + 144, T + 264), (arrow.Kind, arrow.Launches, arrow.Arrives));
                 Assert.AreEqual((10f, 10f, 15f, 10f), (arrow.FromX, arrow.FromY, arrow.ToX, arrow.ToY));
-                timeline.Advance(T + 263);
-                Assert.AreEqual(0, timeline.Numbers.Length, "the number waits for the arrow");
                 timeline.Advance(T + 264);
-                Assert.AreEqual(1, timeline.Numbers.Length);
                 Assert.AreEqual(0, timeline.Projectiles.Length, "arrived");
+                Assert.AreEqual(0, timeline.Numbers.Length, "the number does not come with the arrow");
+                timeline.Advance(T + 335);
+                Assert.AreEqual(0, timeline.Numbers.Length);
+                timeline.Advance(T + 336);
+                Assert.AreEqual(1, timeline.Numbers.Length, "launch + 192 ms");
+
+                // Adjacent (1 cell): the same wait.
+                model.Upsert(6, EntityKind.Monster, new EntityLook { Job = 1002 }, 200, 10, 11, UninarokDirection.West, HeadDirection.Straight, EntityState.Standing);
+                timeline.Clear();
+                timeline.Add(Hit(1, 6));
+                Assert.AreEqual(T + 144 + 24, timeline.Projectiles[0].Arrives, "a 1-cell flight is 24 ms");
+                timeline.Advance(T + 335);
+                Assert.AreEqual(0, timeline.Numbers.Length);
+                timeline.Advance(T + 336);
+                Assert.AreEqual(1, timeline.Numbers.Length);
 
                 // An archer monster: launched at the hit moment, the number at once.
                 timeline.Clear();
