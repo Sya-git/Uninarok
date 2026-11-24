@@ -41,6 +41,9 @@ namespace Uninarok.RoImport.Editor.Catalog
             list.Add(("sprite-sheets", art + "/" + Sprites.RoSpriteOutputPaths.SheetsFolder, false));
             foreach (var (group, folder) in SpriteFolders) list.Add((group, art + "/sprite/" + folder, false));
             list.Add(("palettes", art + "/palette", false));
+            // D27: the generated effect folder is written by the effect importer (not created here); the hand-made authored data folder is ours.
+            list.Add(("effects", art + "/effect", false));
+            list.Add(("effects", roots.Data.TrimEnd('/') + "/Effects", true));
             return list;
         }
 

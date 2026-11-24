@@ -117,8 +117,8 @@
 - [x] **T4.1** [core] Implement `EffectCatalog` (`Create`, `TryResolve` with an ordinal cache, `Release`, the prefix forms, unknown path → false with one warning per key per session) and `IEffectAssetSource`; `EffectCatalogTests` (EditMode, fake source). (FR-5, FR-9)
   *Done when:* `EffectCatalogTests` pass: `effect/firewall.str`, `FIREWALL.STR` and `data\texture\effect\firewall.str` resolve to one `EffectRef`; an unknown path gives false and one warning.
 
-- [ ] **T4.2** [quick] Add the `effects` Addressables group to `RoCatalogAddressables.Ensure`, with folder entries `Assets/Art/Imported/effect` and `Assets/Data/Effects`. (FR-5)
-  *Done when:* after Ensure the group `effects` has those two folder entries, and a second Ensure adds nothing.
+- [x] **T4.2** [quick] Add the `effects` Addressables group to `RoCatalogAddressables.Ensure`, with folder entries `Assets/Art/Imported/effect` and `Assets/Data/Effects`. (FR-5)
+  *Done when:* after Ensure the group `effects` has the `Assets/Data/Effects` entry (ours, created by Ensure) and no `Assets/Art/Imported/effect` entry while that folder is absent, which gains its entry on the first Ensure after the folder exists (D27); a second Ensure adds nothing; `RoCatalogAddressablesTests` passes.
 
 - [ ] **T4.3** [core] Implement `AddressablesEffectSource` and `EffectCatalog.LoadAsync` (the index through Addressables; assets loaded by GUID key); add `EffectCatalogLoadTests` (PlayMode). (FR-5, FR-6)
   *Done when:* the code compiles; `EffectCatalogLoadTests` passes after T6.9 has built the index (run in T9.6).
