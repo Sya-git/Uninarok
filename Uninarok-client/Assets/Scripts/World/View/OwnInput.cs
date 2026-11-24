@@ -165,11 +165,13 @@ namespace Uninarok.World.View
             else if (!_walk.IsPressed()) _holding = _onMonster = false;
             else if (_onMonster)
             {
-                // Held on a monster: after HoldAttackMs the attack goes on without end. Letting go does not stop it (T0.3).
+                // Held on a monster: after HoldAttackMs the attack goes on without end. Letting go does not stop it (T0.3). In range
+                // the single blow often came back already and ended the single attack: that one too (D38); another action did not.
                 if (combat != null && (now - _pressedAt) * 1000.0 >= HoldAttackMs)
                 {
                     _onMonster = false;
-                    if (combat.TargetId == _pressedTarget && !combat.Continuous) combat.Attack(_pressedTarget, true);
+                    bool ours = combat.TargetId == _pressedTarget || combat.SingleDoneTarget == _pressedTarget;
+                    if (ours && !combat.Continuous) combat.Attack(_pressedTarget, true);
                 }
             }
             else if (_holding && over && (x != _askedX || y != _askedY || (now - _askedAt) * 1000.0 >= RepeatMs) && !own.IsWalkingTo(x, y)) Ask(own, now, x, y);

@@ -322,6 +322,75 @@ namespace Uninarok.World.Tests
             Assert.IsTrue(_rig.Session.Combat.Continuous);
         }
 
+        // ---- Phase 12 (owner, 2026-11-24): holding the button on a monster, as it is played ----
+
+        void Blow(uint target) =>
+            _rig.Client.Deliver(new Uninarok.Networking.Packets.In.Map.DAMAGE(WorldSessionTests.Hex(WorldSessionTests.Le(OwnId) + WorldSessionTests.Le(target)
+                + WorldSessionTests.Le(_rig.Clock.Now) + WorldSessionTests.Le(500u) + WorldSessionTests.Le(300u) + WorldSessionTests.Le(10u) + "00"
+                + WorldSessionTests.Le16(1) + "00" + WorldSessionTests.Le(0u))));
+
+        // FR-2, D38: in range the single blow comes back before HoldAttackMs and ends the single attack; the hold still turns it
+        // into a continuous one.
+        [Test]
+        public void OwnInput_Hold_InRange_BlowBeforeHoldAttackMs_StillContinuous()
+        {
+            Monster();
+            _unit = MonsterA;
+            Press(_mouse.leftButton);
+            Frame();
+            InputSystem.Update();
+            Assert.AreEqual((1, Single), (Attacks, LastAttack));
+            Frame(0.1);
+            Blow(MonsterA);
+            Assert.AreEqual(CombatState.Idle, _rig.Session.Combat.State, "the single blow ended the single attack");
+            Frame(0.1);
+            Assert.AreEqual(1, Attacks, "200 ms: not yet");
+            Frame(0.11);
+            Assert.AreEqual((2, Continuous), (Attacks, LastAttack), "300 ms held: continuous");
+            Assert.AreEqual((CombatState.Attacking, MonsterA, true), (_rig.Session.Combat.State, _rig.Session.Combat.TargetId, _rig.Session.Combat.Continuous));
+            Blow(MonsterA);
+            Frame(1);
+            Release(_mouse.leftButton);
+            InputSystem.Update();
+            Frame(1);
+            Assert.AreEqual((2, 0, 0), (Attacks, Moves, _rig.Client.SentCount(PacketIds.STOP_ATTACK)), "once; letting go does not stop");
+            Assert.AreEqual((CombatState.Attacking, true), (_rig.Session.Combat.State, _rig.Session.Combat.Continuous));
+        }
+
+        // FR-2, FR-3: a monster 8 cells away; the approach is under way when the hold reaches HoldAttackMs.
+        [Test]
+        public void OwnInput_Hold_Approaching_BecomesContinuous()
+        {
+            _rig.Client.Deliver(WorldSessionTests.Stand(MonsterA, 158, 200));
+            _unit = MonsterA;
+            Press(_mouse.leftButton);
+            Frame();
+            InputSystem.Update();
+            Assert.AreEqual((0, CombatState.Approaching), (Attacks, _rig.Session.Combat.State));
+            Frame(0.31);
+            Assert.AreEqual((CombatState.Approaching, MonsterA, true), (_rig.Session.Combat.State, _rig.Session.Combat.TargetId, _rig.Session.Combat.Continuous));
+            Release(_mouse.leftButton);
+            InputSystem.Update();
+            Frame(1);
+            Assert.IsTrue(_rig.Session.Combat.Continuous, "letting go does not stop");
+        }
+
+        // D38: something else during the hold (here: sitting) is not undone by the hold.
+        [Test]
+        public void OwnInput_Hold_SitDuringHold_DoesNotAttackAgain()
+        {
+            Monster();
+            _unit = MonsterA;
+            Press(_mouse.leftButton);
+            Frame();
+            InputSystem.Update();
+            Frame(0.1);
+            Blow(MonsterA);
+            _rig.Session.Combat.Cancel();
+            Frame(0.3);
+            Assert.AreEqual(1, Attacks, "a cancelled attack is not started again by the hold");
+        }
+
         [Test]
         public void OwnInput_ShiftOnAMonster_Turns()
         {

@@ -95,6 +95,8 @@ namespace Uninarok.World
         // A single attack's mark after its blow (the state is Idle then): the monster and the server time it goes (FR-16).
         uint _markId;
         uint _markUntil;
+        // The monster whose single attack ended with its blow, until any other action (D38: a hold turns it continuous).
+        uint _singleDone;
         uint _item;
         bool _pickUpSent;
         int _pickupFailures;
@@ -126,6 +128,12 @@ namespace Uninarok.World
             return _markId != 0 && ServerClock.Diff(now, _markUntil) < 0 ? _markId : 0;
         }
 
+        /// <summary>
+        /// The monster whose single attack ended with its own blow, while nothing else happened since (idle); else 0 (D38). A hold
+        /// on that monster still asks for the continuous attack.
+        /// </summary>
+        public uint SingleDoneTarget => _state == CombatState.Idle ? _singleDone : 0;
+
         /// <summary><c>/noctrl</c>: plain clicks on a monster attack continuously.</summary>
         public bool NoCtrl { get; set; }
 
@@ -144,6 +152,7 @@ namespace Uninarok.World
             if (model[own].State == EntityState.Sitting) return AttackResult.Sitting;
             if (!IsAttackable(model, id, out _)) return AttackResult.NotAttackable;
             _markId = 0;
+            _singleDone = 0;
 
             if (_state == CombatState.Attacking && _target == id && _continuous == continuous) return AttackResult.Sent;
             if (_target != id || _state == CombatState.Idle || _state == CombatState.Fetching)
@@ -242,6 +251,7 @@ namespace Uninarok.World
             if (!_continuous)
             {
                 Idle();
+                _singleDone = blow.TargetId;
                 _markId = blow.TargetId; // the mark outlives the single attack until the blow's hit moment (FR-16)
                 _markUntil = unchecked(blow.At + (uint)blow.AttackMs + (uint)TargetMarkSingleMs);
             }
@@ -453,6 +463,7 @@ namespace Uninarok.World
             _state = CombatState.Idle;
             _target = 0;
             _markId = 0;
+            _singleDone = 0;
             _requested = false;
             _caution = 0;
             _retries = 0;
