@@ -18,6 +18,6 @@ MonoBehaviour:
   VerticalBaseCells: 0.5
   AngleUnitsPerTurn: 1024
   DepthBias: 0.5
-  PlaceholderTexture: {fileID: 0}
+  PlaceholderTexture: {fileID: 2800000, guid: ef08abda014ed894dab52a96c96b8292, type: 3}
   PlaceholderSeconds: 1
   AuthoredFrameRate: 60
