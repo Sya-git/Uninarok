@@ -123,7 +123,7 @@
 - [x] **T4.3** [core] Implement `AddressablesEffectSource` and `EffectCatalog.LoadAsync` (the index through Addressables; assets loaded by GUID key); add `EffectCatalogLoadTests` (PlayMode). (FR-5, FR-6)
   *Done when:* the code compiles; `EffectCatalogLoadTests` passes after T6.9 has built the index (run in T9.6).
 
-- [ ] **T4.4** [core] Implement `RoEffectSpriteEntryConverter`: one `EffectAsset` (Kind Sprite, `SpriteName` the SPEC-0008 name, `SpriteAction` 0) per ACT under `sprite/이팩트/`, at `Art/Imported/effect/sprite/이팩트/<name>.act.asset`; menu item `Convert Effect Sprites`. It references the sprite and imports nothing. (FR-4, FR-5)
+- [x] **T4.4** [core] Implement `RoEffectSpriteEntryConverter`: one `EffectAsset` (Kind Sprite, `SpriteName` the SPEC-0008 name, `SpriteAction` 0) per ACT under `sprite/이팩트/`, at `Art/Imported/effect/sprite/이팩트/<name>.act.asset`; menu item `Convert Effect Sprites`. It references the sprite and imports nothing. (FR-4, FR-5)
   *Done when:* the entry count equals the number of ACT outputs under `Art/Imported/sprite/이팩트/` (168 at 2026-11-24); the SPEC-0007 outputs keep their hashes after the run.
 
 - [ ] **T4.5** [core] Implement `RoEffectCatalogIndexConverter` (scans `Art/Imported/effect/**` and `Data/Effects/Authored/**`; `EffectKeyDuplicate` and `EffectKeyPathMismatch`; `SourceMissing`; writes `_index.asset` only when it changes), `RoImport.EffectIndex`, `RoJobKind.EffectIndex`, menu `Rebuild Effect Index`, and `EffectCatalogIndexTests` (one entry per asset; duplicate key → one warning, the first path wins; keys and references only; `SourceMissing` set when the source is gone). (FR-5, FR-10)

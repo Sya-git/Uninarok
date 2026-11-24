@@ -58,6 +58,9 @@ namespace Uninarok.RoImport.Editor.Pipeline
         /// <summary>A map scene was converted in this run, or is current.</summary>
         internal bool MapsConverted { get; set; }
 
+        /// <summary>An effect asset was written in this run, so the effect folder exists and needs its Addressables entry (PLAN-0012 4.10).</summary>
+        internal bool EffectsConverted { get; set; }
+
         /// <summary>Where the ledgers (and the sprite sheet index, PLAN-0007 4.2) live.</summary>
         public string LedgerFolder => _ledgerFolder;
 
