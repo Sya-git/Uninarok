@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) (rev. 2026-11-23) → [spec.md](spec.md) (rev. 2026-11-23) |
-| **Status** | Implementing (approved by the owner; owner, 2026-11-23: revision with phase 10 for FR-15 and the plan's revision; checked tasks unchanged; earlier version approved by the owner 2026-11-22) |
+| **Status** | Implemented (2026-11-23, T9.6; approved by the owner; owner, 2026-11-23: revision with phase 10 for FR-15 and the plan's revision; checked tasks unchanged; earlier version approved by the owner 2026-11-22) |
 
 **How to use this file**
 - Work on branch `feature/0011-combat`. Do tasks **in order**, except T0.3 and T0.4: they wait for the owner and do not block phases 1 to 8; phase 9 does not close without them.
@@ -187,7 +187,7 @@
 
 - [x] **T9.2** ~~Live checks with a second client.~~ **Removed by the owner, 2026-11-23**: the owner runs both clients and checks by hand.
 
-- [ ] **T9.3** Correct the leads with T0.3's and T0.4's results. (FR-2, FR-4 to FR-10, FR-14)
+- [x] **T9.3** Correct the leads with T0.3's and T0.4's results. (FR-2, FR-4 to FR-10, FR-14)
   *Done when:* no row of `combat-reference.md` is a bare lead; settings, tables and tests follow it; each rule changed has a Decisions note.
 
 - [x] **T9.4** ~~Side by side with the original client.~~ **Dropped by the owner, 2026-11-23** (plan D37): the original client connects to the original server; adapting one for Hercules is too much work. FR-6, FR-7, FR-14 and FR-16 are checked against the T0.3 measurements (T9.3).
@@ -199,7 +199,7 @@
 - [x] **T9.7** [core] Multi-hit colours (D28; spec FR-5, FR-6 revision 2026-11-23). Tests first, one commit: `CombatTimeline_MultiHit_TotalOnlyOverNonPlayer` (a multi-hit over a monster has the parts and a `Total`; over a player the parts and no `Total`) and `CombatOverlay` colour choice (parts white over a monster, red over a player; `Total` in `CombatSettings.NumberTotal`, (0.9, 0.9, 0.15)). `CombatSettings.NumberTotal` and its asset value; `combat-reference.md` row already written. Done after phase 10; it does not wait for T9.6's run. (FR-5, FR-6)
   *Done when:* the new tests pass, the existing `CombatTimeline_*` and overlay tests pass (a test that expected a total over a player is changed with a note); a screenshot of a multi-hit over a monster (white parts, yellow-green total) and over the own character (red parts, no total) is in `evidence/`.
 
-- [ ] **T9.6** Spec §5 run and close the spec. (all)
+- [x] **T9.6** Spec §5 run and close the spec. (all)
   Bootstrap to prt_fild08, 20 monsters with continuous attack, their loot, death, save point.
   *Done when:* no more than one too-far reply per target; own HP, SP and EXP equal `@stats` and `@exp`; every monster's last bar equals its HP; no unit is left behind; spec, plan and tasks are set to `Implemented`; leftovers are in `BACKLOG.md`.
 

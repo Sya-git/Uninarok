@@ -1,0 +1,424 @@
+         0 [wait-ingame] START T9.6 driver (real time 2026-11-23 22:35:01)
+1001274044 [wait-ingame] IN GAME map prt_fild08 own 112,179 Standing char 150005
+1001274045 [wait-ingame] PHASE -> settle
+1001278049 [settle] START STATUS HP 1012/1012 SP 110/110 base 99 exp 30/0 job 3 exp 2/28
+1001278051 [settle] COUNT start: model 3 (units 3, items 0) shown 3 items 0 activeUnitViews 3 activeItemViews 0 => OK
+1001278052 [settle] PHASE -> hunt
+1001278066 [hunt] ATTACK #1 id 110020422 class 1007 at 101,191 dist 12 hp -1/-1 own 112,179 Standing -> Approaching state Approaching
+1001278066 [hunt] PHASE -> fight
+1001281210 [fight] BLOW 2000000 > 110020422 dmg 44+0 Normal hits 1 aMT 440
+1001282141 [fight] BLOW 2000000 > 110020422 dmg 44+0 Normal hits 1 aMT 440
+1001282543 [fight] EXP_GAIN var 1 +54
+1001282543 [fight] EXP_GAIN var 2 +41
+1001282815 [fight] KILLED #1 id 110020422 at 98,195 after 4749 ms blows 2 dmg 88 lastBar 28/72 tooFar 0 combat Idle
+1001282815 [fight] PHASE -> loot-wait
+1001285315 [loot-wait] ITEM 60 item 914 x1 at 99,196 (1 from the death cell)
+1001285316 [loot-wait] COUNT after kill #1: model 3 (units 2, items 1) shown 2 items 1 activeUnitViews 2 activeItemViews 1 => OK
+1001285316 [loot-wait] PHASE -> loot
+1001285340 [loot] PICKUP 60 own 98,193 Standing -> True state Fetching
+1001285593 [loot] PICKUP_ACK item 0 result 6
+1001286008 [loot] PICKUP_ACK item 914 result 0
+1001286016 [loot] PICKED item 60 (gone from the model)
+1001286030 [loot] PHASE -> hunt
+1001286048 [hunt] no monster within 14 cells (nearest none)
+1001286050 [hunt] COMMAND @monster 1002 3 -> DevHero : @monster 1002 3
+1001286060 [hunt] SERVER_MSG "All monsters summoned!"
+1001286067 [hunt] ATTACK #2 id 110020480 class 1002 at 98,194 dist 1 hp -1/-1 own 99,194 Standing -> Sent state Attacking
+1001286067 [hunt] PHASE -> fight
+1001286076 [fight] BLOW 2000000 > 110020480 dmg 50+0 Normal hits 1 aMT 440
+1001286593 [fight] BLOW 110020480 > 2000000 dmg 0+0 Normal hits 1 aMT 672
+1001287008 [fight] BLOW 2000000 > 110020480 dmg 50+0 Normal hits 1 aMT 440
+1001287446 [fight] EXP_GAIN var 1 +36
+1001287446 [fight] EXP_GAIN var 2 +20
+1001287696 [fight] KILLED #2 id 110020480 at 0,0 after 1629 ms blows 2 dmg 100 lastBar 10/60 tooFar 0 combat Idle
+1001287696 [fight] PHASE -> loot-wait
+1001290196 [loot-wait] COUNT after kill #2: model 4 (units 4, items 0) shown 4 items 0 activeUnitViews 4 activeItemViews 0 => OK
+1001290196 [loot-wait] PHASE -> loot
+1001290213 [loot] PHASE -> hunt
+1001290230 [hunt] ATTACK #3 id 110020481 class 1002 at 98,192 dist 2 hp -1/-1 own 99,194 Standing -> Approaching state Approaching
+1001290230 [hunt] PHASE -> fight
+1001290594 [fight] BLOW 2000000 > 110020481 dmg 50+0 Normal hits 1 aMT 440
+1001291109 [fight] BLOW 110020481 > 2000000 dmg 0+0 Normal hits 1 aMT 672
+1001291495 [fight] BLOW 2000000 > 110020481 dmg 50+0 Normal hits 1 aMT 440
+1001291944 [fight] EXP_GAIN var 1 +36
+1001291944 [fight] EXP_GAIN var 2 +20
+1001292199 [fight] KILLED #3 id 110020481 at 98,192 after 1969 ms blows 2 dmg 100 lastBar 10/60 tooFar 0 combat Idle
+1001292199 [fight] PHASE -> loot-wait
+1001294716 [loot-wait] ITEM 63 item 909 x1 at 97,192 (1 from the death cell)
+1001294716 [loot-wait] COUNT after kill #3: model 4 (units 3, items 1) shown 3 items 1 activeUnitViews 3 activeItemViews 1 => OK
+1001294716 [loot-wait] PHASE -> loot
+1001294743 [loot] PICKUP 63 own 98,193 Standing -> True state Idle
+1001294743 [loot] PICKUP_ACK item 909 result 0
+1001294752 [loot] PICKED item 63 (gone from the model)
+1001294765 [loot] PHASE -> hunt
+1001294784 [hunt] ATTACK #4 id 110020482 class 1002 at 96,194 walking dist 2 hp -1/-1 own 98,193 Standing -> Sent state Attacking
+1001294784 [hunt] PHASE -> fight
+1001294793 [fight] BLOW 2000000 > 110020482 dmg 50+0 Normal hits 1 aMT 440
+1001295676 [fight] BLOW 2000000 > 110020482 dmg 50+0 Normal hits 1 aMT 440
+1001296111 [fight] EXP_GAIN var 1 +36
+1001296111 [fight] EXP_GAIN var 2 +20
+1001296399 [fight] KILLED #4 id 110020482 at 96,193 after 1615 ms blows 2 dmg 100 lastBar 10/60 tooFar 0 combat Idle
+1001296399 [fight] PHASE -> loot-wait
+1001298899 [loot-wait] ITEM 65 item 909 x1 at 95,194 (1 from the death cell)
+1001298899 [loot-wait] ITEM 67 item 909 x1 at 95,194 (1 from the death cell)
+1001298899 [loot-wait] ITEM 66 item 512 x1 at 96,192 (1 from the death cell)
+1001298899 [loot-wait] COUNT after kill #4: model 6 (units 3, items 3) shown 3 items 3 activeUnitViews 3 activeItemViews 3 => OK
+1001298899 [loot-wait] PHASE -> loot
+1001298916 [loot] PICKUP 65 own 98,193 Standing -> True state Fetching
+1001299151 [loot] PICKUP_ACK item 909 result 0
+1001299159 [loot] PICKED item 65 (gone from the model)
+1001299168 [loot] PICKUP 67 own 97,194 Standing -> True state Idle
+1001299177 [loot] PICKUP_ACK item 909 result 0
+1001299187 [loot] PICKED item 67 (gone from the model)
+1001299198 [loot] PICKUP 66 own 97,194 Standing -> True state Idle
+1001299210 [loot] PICKUP_ACK item 512 result 0
+1001299219 [loot] PICKED item 66 (gone from the model)
+1001299234 [loot] PHASE -> hunt
+1001299250 [hunt] ATTACK #5 id 110020351 class 1007 at 86,192 dist 11 hp -1/-1 own 97,194 Standing -> Approaching state Approaching
+1001299250 [hunt] PHASE -> fight
+1001300811 [fight] BLOW 2000000 > 110020351 dmg 44+0 Normal hits 1 aMT 440
+1001301711 [fight] BLOW 2000000 > 110020351 dmg 44+0 Normal hits 1 aMT 440
+1001302129 [fight] EXP_GAIN var 1 +54
+1001302129 [fight] EXP_GAIN var 2 +41
+1001302383 [fight] KILLED #5 id 110020351 at 86,192 after 3133 ms blows 2 dmg 88 lastBar 28/72 tooFar 0 combat Idle
+1001302383 [fight] PHASE -> loot-wait
+1001304900 [loot-wait] ITEM 69 item 914 x1 at 86,192 (0 from the death cell)
+1001304900 [loot-wait] ITEM 68 item 705 x1 at 87,192 (1 from the death cell)
+1001304900 [loot-wait] COUNT after kill #5: model 5 (units 3, items 2) shown 3 items 2 activeUnitViews 3 activeItemViews 2 => OK
+1001304900 [loot-wait] PHASE -> loot
+1001304916 [loot] PICKUP 69 own 88,192 Standing -> True state Idle
+1001304929 [loot] PICKUP_ACK item 914 result 0
+1001304942 [loot] PICKED item 69 (gone from the model)
+1001304953 [loot] PICKUP 68 own 88,192 Standing -> True state Idle
+1001304962 [loot] PICKUP_ACK item 705 result 0
+1001304968 [loot] PICKED item 68 (gone from the model)
+1001304986 [loot] PHASE -> hunt
+1001305000 [hunt] ATTACK #6 id 110020346 class 1063 at 84,189 dist 4 hp -1/-1 own 88,192 Standing -> Approaching state Approaching
+1001305000 [hunt] PHASE -> fight
+1001305762 [fight] BLOW 2000000 > 110020346 dmg 46+0 Normal hits 1 aMT 440
+1001306713 [fight] TOO_FAR target 110020346 range 1 own 85,189 Standing
+1001307214 [fight] BLOW 110020346 > 2000000 dmg 0+0 Normal hits 1 aMT 456
+1001307262 [fight] BLOW 2000000 > 110020346 dmg 46+0 Normal hits 1 aMT 440
+1001307729 [fight] EXP_GAIN var 1 +36
+1001307729 [fight] EXP_GAIN var 2 +27
+1001307983 [fight] KILLED #6 id 110020346 at 82,191 after 2983 ms blows 2 dmg 92 lastBar 9/55 tooFar 1 combat Idle
+1001307983 [fight] PHASE -> loot-wait
+1001310489 [loot-wait] ITEM 70 item 515 x1 at 82,192 (1 from the death cell)
+1001310489 [loot-wait] ITEM 71 item 512 x1 at 82,191 (0 from the death cell)
+1001310489 [loot-wait] ITEM 72 item 949 x1 at 82,191 (0 from the death cell)
+1001310489 [loot-wait] ITEM 73 item 705 x1 at 83,190 (1 from the death cell)
+1001310489 [loot-wait] COUNT after kill #6: model 9 (units 5, items 4) shown 5 items 4 activeUnitViews 5 activeItemViews 4 => OK
+1001310489 [loot-wait] PHASE -> loot
+1001310507 [loot] PICKUP 70 own 83,191 Standing -> True state Idle
+1001310517 [loot] PICKUP_ACK item 515 result 0
+1001310547 [loot] PICKED item 70 (gone from the model)
+1001310555 [loot] PICKUP 71 own 83,191 Standing -> True state Idle
+1001310555 [loot] PICKUP_ACK item 512 result 0
+1001310564 [loot] PICKED item 71 (gone from the model)
+1001310571 [loot] PICKUP 72 own 83,191 Standing -> True state Idle
+1001310579 [loot] PICKUP_ACK item 949 result 0
+1001310584 [loot] PICKED item 72 (gone from the model)
+1001310603 [loot] PICKUP 73 own 83,191 Standing -> True state Idle
+1001310613 [loot] PICKUP_ACK item 705 result 0
+1001310626 [loot] PICKED item 73 (gone from the model)
+1001310636 [loot] PHASE -> hunt
+1001310649 [hunt] ATTACK #7 id 110020453 class 2398 at 77,187 walking dist 6 hp -1/-1 own 83,191 Standing -> Approaching state Approaching
+1001310649 [hunt] PHASE -> fight
+1001311448 [fight] BLOW 2000000 > 110020453 dmg 50+0 Normal hits 1 aMT 440
+1001311947 [fight] EXP_GAIN var 1 +18
+1001311948 [fight] EXP_GAIN var 2 +10
+1001312203 [fight] KILLED #7 id 110020453 at 79,189 after 1554 ms blows 1 dmg 50 lastBar -1/-1 tooFar 0 combat Idle
+1001312203 [fight] PHASE -> loot-wait
+1001314719 [loot-wait] ITEM 74 item 909 x1 at 79,190 (1 from the death cell)
+1001314720 [loot-wait] COUNT after kill #7: model 7 (units 6, items 1) shown 6 items 1 activeUnitViews 6 activeItemViews 1 => OK
+1001314720 [loot-wait] PHASE -> loot
+1001314734 [loot] PICKUP 74 own 80,188 Standing -> True state Idle
+1001314746 [loot] PICKUP_ACK item 909 result 0
+1001314754 [loot] PICKED item 74 (gone from the model)
+1001314769 [loot] PHASE -> hunt
+1001314786 [hunt] ATTACK #8 id 110020352 class 1007 at 76,178 walking dist 10 hp -1/-1 own 80,188 Standing -> Approaching state Approaching
+1001314786 [hunt] PHASE -> fight
+1001316146 [fight] BLOW 2000000 > 110020352 dmg 44+0 Normal hits 1 aMT 440
+1001317063 [fight] BLOW 2000000 > 110020352 dmg 44+0 Normal hits 1 aMT 440
+1001317497 [fight] EXP_GAIN var 1 +54
+1001317497 [fight] EXP_GAIN var 2 +41
+1001317753 [fight] KILLED #8 id 110020352 at 76,179 after 2967 ms blows 2 dmg 88 lastBar 28/72 tooFar 0 combat Idle
+1001317753 [fight] PHASE -> loot-wait
+1001320269 [loot-wait] ITEM 76 item 914 x1 at 75,178 (1 from the death cell)
+1001320269 [loot-wait] ITEM 75 item 511 x1 at 76,180 (1 from the death cell)
+1001320269 [loot-wait] COUNT after kill #8: model 10 (units 8, items 2) shown 8 items 2 activeUnitViews 8 activeItemViews 2 => OK
+1001320269 [loot-wait] PHASE -> loot
+1001320286 [loot] PICKUP 76 own 76,181 Standing -> True state Fetching
+1001320535 [loot] PICKUP_ACK item 914 result 0
+1001320542 [loot] PICKED item 76 (gone from the model)
+1001320555 [loot] PICKUP 75 own 75,180 Standing -> True state Idle
+1001320564 [loot] PICKUP_ACK item 511 result 0
+1001320572 [loot] PICKED item 75 (gone from the model)
+1001320588 [loot] PHASE -> hunt
+1001320605 [hunt] ATTACK #9 id 110020221 class 1002 at 69,180 dist 6 hp -1/-1 own 75,180 Standing -> Approaching state Approaching
+1001320605 [hunt] PHASE -> fight
+1001321348 [fight] BLOW 2000000 > 110020221 dmg 50+0 Normal hits 1 aMT 440
+1001322261 [fight] BLOW 2000000 > 110020221 dmg 50+0 Normal hits 1 aMT 440
+1001322712 [fight] EXP_GAIN var 1 +36
+1001322712 [fight] EXP_GAIN var 2 +20
+1001322986 [fight] KILLED #9 id 110020221 at 69,180 after 2381 ms blows 2 dmg 100 lastBar 10/60 tooFar 0 combat Idle
+1001322986 [fight] PHASE -> loot-wait
+1001325501 [loot-wait] COUNT after kill #9: model 8 (units 8, items 0) shown 8 items 0 activeUnitViews 8 activeItemViews 0 => OK
+1001325501 [loot-wait] PHASE -> loot
+1001325517 [loot] PHASE -> hunt
+1001325542 [hunt] ATTACK #10 id 110020242 class 1002 at 72,174 dist 6 hp -1/-1 own 71,180 Standing -> Approaching state Approaching
+1001325542 [hunt] PHASE -> fight
+1001326462 [fight] BLOW 2000000 > 110020242 dmg 50+0 Normal hits 1 aMT 440
+1001327362 [fight] TOO_FAR target 110020242 range 1 own 72,175 Standing
+1001327795 [fight] BLOW 2000000 > 110020242 dmg 50+0 Normal hits 1 aMT 440
+1001327996 [fight] BLOW 110020242 > 2000000 dmg 0+0 Normal hits 1 aMT 672
+1001328246 [fight] EXP_GAIN var 1 +36
+1001328246 [fight] EXP_GAIN var 2 +20
+1001328536 [fight] KILLED #10 id 110020242 at 72,172 after 2994 ms blows 2 dmg 100 lastBar 10/60 tooFar 1 combat Idle
+1001328536 [fight] PHASE -> loot-wait
+1001331046 [loot-wait] ITEM 77 item 512 x1 at 72,173 (1 from the death cell)
+1001331046 [loot-wait] COUNT after kill #10: model 7 (units 6, items 1) shown 6 items 1 activeUnitViews 6 activeItemViews 1 => OK
+1001331046 [loot-wait] PHASE -> loot
+1001331049 [loot] PICKUP 77 own 72,173 Standing -> True state Idle
+1001331062 [loot] PICKUP_ACK item 512 result 0
+1001331073 [loot] PICKED item 77 (gone from the model)
+1001331085 [loot] PHASE -> hunt
+1001331102 [hunt] ATTACK #11 id 110020246 class 1002 at 75,173 walking dist 3 hp -1/-1 own 72,173 Standing -> Sent state Attacking
+1001331102 [hunt] PHASE -> fight
+1001331114 [fight] BLOW 2000000 > 110020246 dmg 50+0 Normal hits 1 aMT 440
+1001331613 [fight] BLOW 110020246 > 2000000 dmg 0+0 Normal hits 1 aMT 672
+1001331997 [fight] BLOW 2000000 > 110020246 dmg 50+0 Normal hits 1 aMT 440
+1001332480 [fight] EXP_GAIN var 1 +36
+1001332480 [fight] EXP_GAIN var 2 +20
+1001332771 [fight] KILLED #11 id 110020246 at 73,173 after 1670 ms blows 2 dmg 100 lastBar 10/60 tooFar 0 combat Idle
+1001332771 [fight] PHASE -> loot-wait
+1001335284 [loot-wait] ITEM 78 item 909 x1 at 73,174 (1 from the death cell)
+1001335284 [loot-wait] COUNT after kill #11: model 7 (units 6, items 1) shown 6 items 1 activeUnitViews 6 activeItemViews 1 => OK
+1001335284 [loot-wait] PHASE -> loot
+1001335301 [loot] PICKUP 78 own 72,173 Standing -> True state Idle
+1001335314 [loot] PICKUP_ACK item 909 result 0
+1001335318 [loot] PICKED item 78 (gone from the model)
+1001335336 [loot] PHASE -> hunt
+1001335349 [hunt] ATTACK #12 id 110020417 class 1007 at 77,174 dist 5 hp -1/-1 own 72,173 Standing -> Approaching state Approaching
+1001335349 [hunt] PHASE -> fight
+1001335964 [fight] BLOW 2000000 > 110020417 dmg 44+0 Normal hits 1 aMT 440
+1001336530 [fight] BLOW 110020417 > 2000000 dmg 0+0 Normal hits 1 aMT 672
+1001336864 [fight] BLOW 2000000 > 110020417 dmg 44+0 Normal hits 1 aMT 440
+1001337315 [fight] EXP_GAIN var 1 +54
+1001337315 [fight] EXP_GAIN var 2 +41
+1001337586 [fight] KILLED #12 id 110020417 at 76,173 after 2237 ms blows 2 dmg 88 lastBar 28/72 tooFar 0 combat Idle
+1001337586 [fight] PHASE -> loot-wait
+1001340101 [loot-wait] COUNT after kill #12: model 4 (units 4, items 0) shown 4 items 0 activeUnitViews 4 activeItemViews 0 => OK
+1001340101 [loot-wait] PHASE -> loot
+1001340118 [loot] PHASE -> hunt
+1001340149 [hunt] ATTACK #13 id 110020150 class 1002 at 79,173 dist 4 hp -1/-1 own 75,174 Standing -> Approaching state Approaching
+1001340149 [hunt] PHASE -> fight
+1001340648 [fight] BLOW 2000000 > 110020150 dmg 50+0 Normal hits 1 aMT 440
+1001341515 [fight] BLOW 2000000 > 110020150 dmg 50+0 Normal hits 1 aMT 440
+1001341965 [fight] EXP_GAIN var 1 +36
+1001341966 [fight] EXP_GAIN var 2 +20
+1001342219 [fight] KILLED #13 id 110020150 at 79,173 after 2070 ms blows 2 dmg 100 lastBar 10/60 tooFar 0 combat Idle
+1001342219 [fight] PHASE -> loot-wait
+1001344720 [loot-wait] ITEM 80 item 909 x1 at 79,172 (1 from the death cell)
+1001344720 [loot-wait] ITEM 79 item 512 x1 at 79,172 (1 from the death cell)
+1001344721 [loot-wait] COUNT after kill #13: model 4 (units 2, items 2) shown 2 items 2 activeUnitViews 2 activeItemViews 2 => OK
+1001344721 [loot-wait] PHASE -> loot
+1001344744 [loot] PICKUP 80 own 77,173 Standing -> True state Idle
+1001344748 [loot] PICKUP_ACK item 909 result 0
+1001344758 [loot] PICKED item 80 (gone from the model)
+1001344771 [loot] PICKUP 79 own 77,173 Standing -> True state Idle
+1001344781 [loot] PICKUP_ACK item 512 result 0
+1001344791 [loot] PICKED item 79 (gone from the model)
+1001344804 [loot] PHASE -> hunt
+1001344821 [hunt] no monster within 14 cells (nearest none)
+1001344823 [hunt] COMMAND @monster 1002 3 -> DevHero : @monster 1002 3
+1001344833 [hunt] SERVER_MSG "All monsters summoned!"
+1001344839 [hunt] ATTACK #14 id 110020483 class 1002 at 78,173 dist 1 hp -1/-1 own 77,173 Standing -> Sent state Attacking
+1001344839 [hunt] PHASE -> fight
+1001344848 [fight] BLOW 2000000 > 110020483 dmg 50+0 Normal hits 1 aMT 440
+1001345331 [fight] BLOW 110020483 > 2000000 dmg 0+0 Normal hits 1 aMT 672
+1001345748 [fight] BLOW 2000000 > 110020483 dmg 50+0 Normal hits 1 aMT 440
+1001346216 [fight] EXP_GAIN var 1 +36
+1001346217 [fight] EXP_GAIN var 2 +20
+1001346487 [fight] KILLED #14 id 110020483 at 0,0 after 1648 ms blows 2 dmg 100 lastBar 10/60 tooFar 0 combat Idle
+1001346487 [fight] PHASE -> loot-wait
+1001348989 [loot-wait] COUNT after kill #14: model 4 (units 4, items 0) shown 4 items 0 activeUnitViews 4 activeItemViews 0 => OK
+1001348989 [loot-wait] PHASE -> loot
+1001349003 [loot] PHASE -> hunt
+1001349021 [hunt] ATTACK #15 id 110020484 class 1002 at 76,172 dist 1 hp -1/-1 own 77,173 Standing -> Sent state Attacking
+1001349021 [hunt] PHASE -> fight
+1001349033 [fight] BLOW 2000000 > 110020484 dmg 50+0 Normal hits 1 aMT 440
+1001349533 [fight] BLOW 110020484 > 2000000 dmg 0+0 Normal hits 1 aMT 672
+1001349933 [fight] BLOW 2000000 > 110020484 dmg 50+0 Normal hits 1 aMT 440
+1001350400 [fight] EXP_GAIN var 1 +36
+1001350400 [fight] EXP_GAIN var 2 +20
+1001350654 [fight] KILLED #15 id 110020484 at 76,172 after 1633 ms blows 2 dmg 100 lastBar 10/60 tooFar 0 combat Idle
+1001350655 [fight] PHASE -> loot-wait
+1001353157 [loot-wait] COUNT after kill #15: model 3 (units 3, items 0) shown 3 items 0 activeUnitViews 3 activeItemViews 0 => OK
+1001353157 [loot-wait] PHASE -> loot
+1001353172 [loot] PHASE -> hunt
+1001353187 [hunt] ATTACK #16 id 110020485 class 1002 at 76,169 walking dist 4 hp -1/-1 own 77,173 Standing -> Approaching state Approaching
+1001353187 [hunt] PHASE -> fight
+1001353884 [fight] BLOW 2000000 > 110020485 dmg 50+0 Normal hits 1 aMT 440
+1001354767 [fight] TOO_FAR target 110020485 range 1 own 76,170 Standing
+1001355167 [fight] BLOW 2000000 > 110020485 dmg 50+0 Normal hits 1 aMT 440
+1001355451 [fight] BLOW 110020485 > 2000000 dmg 0+0 Normal hits 1 aMT 672
+1001355634 [fight] EXP_GAIN var 1 +36
+1001355634 [fight] EXP_GAIN var 2 +20
+1001355905 [fight] KILLED #16 id 110020485 at 76,167 after 2718 ms blows 2 dmg 100 lastBar 10/60 tooFar 1 combat Idle
+1001355905 [fight] PHASE -> loot-wait
+1001358421 [loot-wait] ITEM 85 item 909 x1 at 75,167 (1 from the death cell)
+1001358421 [loot-wait] ITEM 84 item 909 x1 at 77,167 (1 from the death cell)
+1001358421 [loot-wait] ITEM 83 item 909 x1 at 75,166 (1 from the death cell)
+1001358421 [loot-wait] COUNT after kill #16: model 5 (units 2, items 3) shown 2 items 3 activeUnitViews 2 activeItemViews 3 => OK
+1001358421 [loot-wait] PHASE -> loot
+1001358440 [loot] PICKUP 85 own 76,168 Standing -> True state Idle
+1001358451 [loot] PICKUP_ACK item 909 result 0
+1001358456 [loot] PICKED item 85 (gone from the model)
+1001358474 [loot] PICKUP 84 own 76,168 Standing -> True state Idle
+1001358483 [loot] PICKUP_ACK item 909 result 0
+1001358490 [loot] PICKED item 84 (gone from the model)
+1001358506 [loot] PICKUP 83 own 76,168 Standing -> True state Idle
+1001358516 [loot] PICKUP_ACK item 909 result 0
+1001358521 [loot] PICKED item 83 (gone from the model)
+1001358547 [loot] PHASE -> hunt
+1001358552 [hunt] no monster within 14 cells (nearest none)
+1001358553 [hunt] COMMAND @monster 1002 3 -> DevHero : @monster 1002 3
+1001358567 [hunt] SERVER_MSG "All monsters summoned!"
+1001358574 [hunt] ATTACK #17 id 110020488 class 1002 at 79,168 dist 3 hp -1/-1 own 76,168 Standing -> Approaching state Approaching
+1001358575 [hunt] PHASE -> fight
+1001358867 [fight] BLOW 2000000 > 110020488 dmg 50+0 Normal hits 1 aMT 440
+1001359767 [fight] BLOW 2000000 > 110020488 dmg 50+0 Normal hits 1 aMT 440
+1001360218 [fight] EXP_GAIN var 1 +36
+1001360219 [fight] EXP_GAIN var 2 +20
+1001360474 [fight] KILLED #17 id 110020488 at 79,168 after 1901 ms blows 2 dmg 100 lastBar 10/60 tooFar 0 combat Idle
+1001360474 [fight] PHASE -> loot-wait
+1001362988 [loot-wait] COUNT after kill #17: model 4 (units 4, items 0) shown 4 items 0 activeUnitViews 4 activeItemViews 0 => OK
+1001362988 [loot-wait] PHASE -> loot
+1001363005 [loot] PHASE -> hunt
+1001363022 [hunt] ATTACK #18 id 110020487 class 1002 at 77,167 dist 1 hp -1/-1 own 77,168 Standing -> Sent state Attacking
+1001363022 [hunt] PHASE -> fight
+1001363034 [fight] BLOW 2000000 > 110020487 dmg 50+0 Normal hits 1 aMT 440
+1001363534 [fight] BLOW 110020487 > 2000000 dmg 0+0 Normal hits 1 aMT 672
+1001363952 [fight] BLOW 2000000 > 110020487 dmg 50+0 Normal hits 1 aMT 440
+1001364368 [fight] EXP_GAIN var 1 +36
+1001364368 [fight] EXP_GAIN var 2 +20
+1001364640 [fight] KILLED #18 id 110020487 at 77,167 after 1618 ms blows 2 dmg 100 lastBar 10/60 tooFar 0 combat Idle
+1001364640 [fight] PHASE -> loot-wait
+1001367155 [loot-wait] COUNT after kill #18: model 4 (units 4, items 0) shown 4 items 0 activeUnitViews 4 activeItemViews 0 => OK
+1001367155 [loot-wait] PHASE -> loot
+1001367172 [loot] PHASE -> hunt
+1001367189 [hunt] ATTACK #19 id 110020486 class 1002 at 77,167 dist 1 hp -1/-1 own 77,168 Standing -> Sent state Attacking
+1001367189 [hunt] PHASE -> fight
+1001367201 [fight] BLOW 2000000 > 110020486 dmg 50+0 Normal hits 1 aMT 440
+1001367719 [fight] BLOW 110020486 > 2000000 dmg 0+0 Normal hits 1 aMT 672
+1001368135 [fight] BLOW 2000000 > 110020486 dmg 50+0 Normal hits 1 aMT 440
+1001368536 [fight] EXP_GAIN var 1 +36
+1001368536 [fight] EXP_GAIN var 2 +20
+1001368789 [fight] KILLED #19 id 110020486 at 77,167 after 1600 ms blows 2 dmg 100 lastBar 10/60 tooFar 0 combat Idle
+1001368789 [fight] PHASE -> loot-wait
+1001371306 [loot-wait] ITEM 90 item 512 x1 at 78,167 (1 from the death cell)
+1001371306 [loot-wait] ITEM 88 item 909 x1 at 77,167 (0 from the death cell)
+1001371306 [loot-wait] ITEM 89 item 909 x1 at 76,166 (1 from the death cell)
+1001371306 [loot-wait] ITEM 91 item 909 x1 at 77,166 (1 from the death cell)
+1001371307 [loot-wait] COUNT after kill #19: model 7 (units 3, items 4) shown 3 items 4 activeUnitViews 3 activeItemViews 4 => OK
+1001371307 [loot-wait] PHASE -> loot
+1001371323 [loot] PICKUP 90 own 77,168 Standing -> True state Idle
+1001371335 [loot] PICKUP_ACK item 512 result 0
+1001371350 [loot] PICKED item 90 (gone from the model)
+1001371357 [loot] PICKUP 88 own 77,168 Standing -> True state Idle
+1001371368 [loot] PICKUP_ACK item 909 result 0
+1001371376 [loot] PICKED item 88 (gone from the model)
+1001371391 [loot] PICKUP 89 own 77,168 Standing -> True state Idle
+1001371402 [loot] PICKUP_ACK item 909 result 0
+1001371410 [loot] PICKED item 89 (gone from the model)
+1001371427 [loot] PICKUP 91 own 77,168 Standing -> True state Idle
+1001371435 [loot] PICKUP_ACK item 909 result 0
+1001371446 [loot] PICKED item 91 (gone from the model)
+1001371458 [loot] PHASE -> hunt
+1001371475 [hunt] ATTACK #20 id 110020468 class 2398 at 65,176 dist 12 hp -1/-1 own 77,168 Standing -> Approaching state Approaching
+1001371475 [hunt] PHASE -> fight
+1001373587 [fight] BLOW 2000000 > 110020468 dmg 50+0 Normal hits 1 aMT 440
+1001374087 [fight] EXP_GAIN var 1 +18
+1001374087 [fight] EXP_GAIN var 2 +10
+1001374359 [fight] KILLED #20 id 110020468 at 65,176 after 2884 ms blows 1 dmg 50 lastBar -1/-1 tooFar 0 combat Idle
+1001374359 [fight] PHASE -> loot-wait
+1001376875 [loot-wait] ITEM 92 item 909 x1 at 65,177 (1 from the death cell)
+1001376875 [loot-wait] COUNT after kill #20: model 3 (units 2, items 1) shown 2 items 1 activeUnitViews 2 activeItemViews 1 => OK
+1001376875 [loot-wait] PHASE -> loot
+1001376891 [loot] PICKUP 92 own 67,176 Standing -> True state Idle
+1001376903 [loot] PICKUP_ACK item 909 result 0
+1001376910 [loot] PICKED item 92 (gone from the model)
+1001376924 [loot] PHASE -> hunt
+1001376940 [hunt] PHASE -> pre-death-stats
+1001377040 [pre-death-stats] PRE-DEATH STATUS HP 1012/1012 SP 110/110 base 99 exp 786/0 job 7 exp 163/205
+1001377041 [pre-death-stats] COMMAND @stats -> DevHero : @stats
+1001377054 [pre-death-stats] SERVER_MSG "'DevHero' stats:"
+1001377054 [pre-death-stats] SERVER_MSG "Base Level - 99"
+1001377054 [pre-death-stats] SERVER_MSG "Job - Novice (level 7)"
+1001377054 [pre-death-stats] SERVER_MSG "Hp - 1012"
+1001377056 [pre-death-stats] SERVER_MSG "MaxHp - 1012"
+1001377056 [pre-death-stats] SERVER_MSG "Sp - 110"
+1001377056 [pre-death-stats] SERVER_MSG "MaxSp - 110"
+1001377056 [pre-death-stats] SERVER_MSG "Str -   1"
+1001377056 [pre-death-stats] SERVER_MSG "Agi -   1"
+1001377056 [pre-death-stats] SERVER_MSG "Vit -  91"
+1001377056 [pre-death-stats] SERVER_MSG "Int -   1"
+1001377056 [pre-death-stats] SERVER_MSG "Dex -   1"
+1001377056 [pre-death-stats] SERVER_MSG "Luk -   1"
+1001377056 [pre-death-stats] SERVER_MSG "Zeny - 0"
+1001377056 [pre-death-stats] SERVER_MSG "Free SK Points - 6"
+1001377056 [pre-death-stats] SERVER_MSG "JobChangeLvl (2nd) - 0"
+1001377057 [pre-death-stats] SERVER_MSG "JobChangeLvl (3rd) - 0"
+1001379954 [pre-death-stats] COUNT before death: model 1 (units 1, items 0) shown 1 items 0 activeUnitViews 1 activeItemViews 0 => OK
+1001379955 [pre-death-stats] COMMAND @monster 1039 1 -> DevHero : @monster 1039 1
+1001379955 [pre-death-stats] PHASE -> dying
+1001379972 [dying] SERVER_MSG "All monsters summoned!"
+1001380203 [dying] BLOW 110020489 > 2000000 dmg 2903+0 Normal hits 1 aMT 768
+1001380455 [dying] BLOW 110020490 > 2000000 dmg 129+0 Normal hits 1 aMT 480
+1001380571 [dying] BLOW 110020493 > 2000000 dmg 79+0 Normal hits 1 aMT 480
+1001380704 [dying] BLOW 110020492 > 2000000 dmg 122+0 Normal hits 1 aMT 480
+1001380705 [dying] BLOW 110020491 > 2000000 dmg 139+0 Normal hits 1 aMT 480
+1001381026 [dying] OWN DEAD own 67,176 Dead HP 506/1012 SP 110/110 base 99 exp 786/0 job 7 exp 163/205
+1001381026 [dying] PHASE -> prompt
+1001383026 [prompt] RESTART PROMPT shown (view.Shown true, prompt open True)
+1001383031 [prompt] CLICK save-point button by NavigationSubmitEvent on the save-point button
+1001383310 [prompt] PHASE -> respawn
+1001383472 [respawn] RESPAWNED map prontera own 156,191 Standing prompt open False
+1001388312 [respawn] END STATUS (at @stats) HP 506/1012 SP 110/110 base 99 exp 786/0 job 7 exp 163/205
+1001388312 [respawn] COMMAND @stats -> DevHero : @stats
+1001388312 [respawn] PHASE -> end-exp
+1001388324 [end-exp] SERVER_MSG "'DevHero' stats:"
+1001388325 [end-exp] SERVER_MSG "Base Level - 99"
+1001388325 [end-exp] SERVER_MSG "Job - Novice (level 7)"
+1001388325 [end-exp] SERVER_MSG "Hp - 1012"
+1001388325 [end-exp] SERVER_MSG "MaxHp - 1012"
+1001388326 [end-exp] SERVER_MSG "Sp - 110"
+1001388326 [end-exp] SERVER_MSG "MaxSp - 110"
+1001388326 [end-exp] SERVER_MSG "Str -   1"
+1001388326 [end-exp] SERVER_MSG "Agi -   1"
+1001388326 [end-exp] SERVER_MSG "Vit -  91"
+1001388326 [end-exp] SERVER_MSG "Int -   1"
+1001388326 [end-exp] SERVER_MSG "Dex -   1"
+1001388326 [end-exp] SERVER_MSG "Luk -   1"
+1001388326 [end-exp] SERVER_MSG "Zeny - 0"
+1001388326 [end-exp] SERVER_MSG "Free SK Points - 6"
+1001388327 [end-exp] SERVER_MSG "JobChangeLvl (2nd) - 0"
+1001388327 [end-exp] SERVER_MSG "JobChangeLvl (3rd) - 0"
+1001390313 [end-exp] END STATUS (at @exp) HP 530/1012 SP 110/110 base 99 exp 786/0 job 7 exp 163/205
+1001390313 [end-exp] COMMAND @exp -> DevHero : @exp
+1001390313 [end-exp] PHASE -> end-clean
+1001390325 [end-clean] SERVER_MSG "Base Level: 99 (0.000%) | Job Level: 7 (79.512%)"
+1001392331 [end-clean] COMMAND @killmonster2 prt_fild08 -> DevHero : @killmonster2 prt_fild08
+1001392332 [end-clean] PHASE -> end-counts
+1001392342 [end-counts] SERVER_MSG "All monsters killed!"
+1001393357 [end-counts] COUNT end 0: model 11 (units 11, items 0) shown 11 items 0 activeUnitViews 11 activeItemViews 0 => OK
+1001394331 [end-counts] COUNT end 1: model 11 (units 11, items 0) shown 11 items 0 activeUnitViews 11 activeItemViews 0 => OK
+1001395325 [end-counts] COUNT end 2: model 11 (units 11, items 0) shown 11 items 0 activeUnitViews 11 activeItemViews 0 => OK
+1001396340 [end-counts] COUNT end 3: model 11 (units 11, items 0) shown 11 items 0 activeUnitViews 11 activeItemViews 0 => OK
+1001397346 [end-counts] COUNT end 4: model 11 (units 11, items 0) shown 11 items 0 activeUnitViews 11 activeItemViews 0 => OK
+1001398333 [end-counts] COUNT end 5: model 11 (units 11, items 0) shown 11 items 0 activeUnitViews 11 activeItemViews 0 => OK
+1001398333 [end-counts] FINAL STATUS HP 554/1012 SP 110/110 base 99 exp 786/0 job 7 exp 163/205
+1001398333 [end-counts] PHASE -> done
+1001398335 [done] FINISH phase done
+1001570694 [done] BLOW 2000000 > 2000000 dmg 337+0 Normal hits 1 aMT 0

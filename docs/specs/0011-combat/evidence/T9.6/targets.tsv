@@ -1,0 +1,43 @@
+n	id	class	startDist	tooFar	blows	misses	damage	maxHp	lastBarHp	lastBarMax	hpSeen	reclicks	end	ms	loot
+1	110020422	1007	12	0	2	0	88	72	28	72	28,0	0	killed	4749	914x1
+2	110020480	1002	1	0	2	0	100	60	10	60	10,0	0	killed	1629	
+3	110020481	1002	2	0	2	0	100	60	10	60	10,0	0	killed	1969	909x1
+4	110020482	1002	2	0	2	0	100	60	10	60	10,0	0	killed	1615	909x1 909x1 512x1
+5	110020351	1007	11	0	2	0	88	72	28	72	28,0	0	killed	3133	914x1 705x1
+6	110020346	1063	4	1	2	0	92	55	9	55	9,0	0	killed	2983	515x1 512x1 949x1 705x1
+7	110020453	2398	6	0	1	0	50	40	-1	-1	0	0	killed	1554	909x1
+8	110020352	1007	10	0	2	0	88	72	28	72	28,0	0	killed	2967	914x1 511x1
+9	110020221	1002	6	0	2	0	100	60	10	60	10,0	0	killed	2381	
+10	110020242	1002	6	1	2	0	100	60	10	60	10,0	0	killed	2994	512x1
+11	110020246	1002	3	0	2	0	100	60	10	60	10,0	0	killed	1670	909x1
+12	110020417	1007	5	0	2	0	88	72	28	72	28,0	0	killed	2237	
+13	110020150	1002	4	0	2	0	100	60	10	60	10,0	0	killed	2070	909x1 512x1
+14	110020483	1002	1	0	2	0	100	60	10	60	10,0	0	killed	1648	
+15	110020484	1002	1	0	2	0	100	60	10	60	10,0	0	killed	1633	
+16	110020485	1002	4	1	2	0	100	60	10	60	10,0	0	killed	2718	909x1 909x1 909x1
+17	110020488	1002	3	0	2	0	100	60	10	60	10,0	0	killed	1901	
+18	110020487	1002	1	0	2	0	100	60	10	60	10,0	0	killed	1618	
+19	110020486	1002	1	0	2	0	100	60	10	60	10,0	0	killed	1600	512x1 909x1 909x1 909x1
+20	110020468	2398	12	0	1	0	50	40	-1	-1	0	0	killed	2884	909x1
+picked 26 pickupFailed 0 countChecks 28 mismatches 0 click NavigationSubmitEvent on the save-point button
+endStats HP 506/1012 SP 110/110 base 99 exp 786/0 job 7 exp 163/205
+messages:
+  'DevHero' stats:
+  Base Level - 99
+  Job - Novice (level 7)
+  Hp - 1012
+  MaxHp - 1012
+  Sp - 110
+  MaxSp - 110
+  Str -   1
+  Agi -   1
+  Vit -  91
+  Int -   1
+  Dex -   1
+  Luk -   1
+  Zeny - 0
+  Free SK Points - 6
+  JobChangeLvl (2nd) - 0
+  JobChangeLvl (3rd) - 0
+  Base Level: 99 (0.000%) | Job Level: 7 (79.512%)
+  All monsters killed!

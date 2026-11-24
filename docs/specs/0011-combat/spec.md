@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Implementing (approved by the owner; owner, 2026-11-23: revision of FR-4 and new FR-15, §8; earlier: owner 2026-11-22, FR-7 amended by the owner 2026-11-22: a monster healed to full; §6 pickup results corrected by the owner 2026-11-22 after T0.1) |
+| **Status** | Implemented (2026-11-23, T9.6; approved by the owner; owner, 2026-11-23: revision of FR-4 and new FR-15, §8; earlier: owner 2026-11-22, FR-7 amended by the owner 2026-11-22: a monster healed to full; §6 pickup results corrected by the owner 2026-11-22 after T0.1) |
 | **Created** | 2026-11-21 |
 | **Owner** | Jhonnatan |
 | **Depends on** | [SPEC-0001](../0001-networking-core/spec.md) (packets), [SPEC-0009](../0009-unit-display/spec.md) (animations: attack, hurt, dead; play once and hold), [SPEC-0010](../0010-world-session/spec.md) (world model, server clock, own walk, vanish reasons, ground items) |
