@@ -26,9 +26,14 @@ namespace Uninarok.Effects
 
         public StrPart(EffectRuntime runtime) { this.runtime = runtime; }
 
+        public bool CanDraw => bound;
+
+        public string Problem { get; private set; }
+
         public float Bind(EffectInstance instance)
         {
             bound = false;
+            Problem = null;
             var asset = instance.Asset;
             layers = asset != null && asset.Layers != null ? asset.Layers.Length : 0;
             if (cursors.Length < layers)
@@ -44,7 +49,8 @@ namespace Uninarok.Effects
             float r = ConservativeRadius(asset, runtime.Settings);
             if (!writer.EndLayout(new Bounds(Vector3.zero, new Vector3(2f * r, 2f * r, 2f * r))))
             {
-                layers = 0;           // layout refused (too many layers): nothing drawn (placeholder is T5.8)
+                layers = 0;           // layout refused (too many layers): the runtime plays the placeholder
+                Problem = "has too many layers to draw";
                 return 0f;
             }
 

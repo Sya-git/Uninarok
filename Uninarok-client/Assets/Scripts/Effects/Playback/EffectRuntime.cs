@@ -25,9 +25,10 @@ namespace Uninarok.Effects
         int activeCount;
         int tickNumber;
         float timeScale = 1f;
-        bool warnedFull, disposed;
+        bool disposed;
         readonly EffectMaterials materials;
-        readonly HashSet<EffectAsset> blendWarned = new HashSet<EffectAsset>();
+        readonly HashSet<string> warnedKeys = new HashSet<string>(StringComparer.Ordinal);
+        const string PoolKey = "<pool>";
 
         public EffectRuntime(EffectCatalog catalog, EffectSettings settings, Transform root, int capacity = 512)
         {
@@ -67,11 +68,32 @@ namespace Uninarok.Effects
         /// <summary>Shared material of the sprite actors (<c>sprite_default.mat</c>); null keeps Unity's default sprite material.</summary>
         public Material SpriteMaterial { get; set; }
 
-        /// <summary>One warning per asset for an unknown blend code (plan 4.5 Blend). T5.8 folds this into <c>Warned</c>.</summary>
+        /// <summary>
+        /// Raised once per key per runtime with (key, message) the first time something cannot play as authored: an unknown
+        /// path, a failed or missing asset, a part that cannot draw, an unknown blend code, a full pool (plan 4.4, FR-5). The key
+        /// is the entry's canonical path (the pool's is <c>&lt;pool&gt;</c>). Every warning is also written to the log once:
+        /// by this runtime, except an unknown path and a failed or missing asset, which <see cref="EffectCatalog"/> already
+        /// logged once per key (the event still fires, the log is not repeated). Raised on the main thread inside a play or a tick.
+        /// </summary>
+        public event Action<string, string> Warned;
+
+        /// <summary>True once <see cref="Warn"/> has been called for the key (callers skip building the message then: no allocation).</summary>
+        internal bool HasWarned(string key) => warnedKeys.Contains(key ?? "<null>");
+
+        /// <summary>The one-warning-per-key rule: the first call per key raises <see cref="Warned"/> and logs a warning
+        /// (unless <paramref name="log"/> is false, the catalog having logged it); later calls do nothing.</summary>
+        internal void Warn(string key, string message, bool log = true)
+        {
+            if (!warnedKeys.Add(key ?? "<null>")) return;
+            if (log) Debug.LogWarning(message);
+            Warned?.Invoke(key, message);
+        }
+
+        /// <summary>One warning per asset for an unknown blend code (plan 4.5 Blend).</summary>
         internal void WarnBlendOnce(EffectAsset asset)
         {
-            if (asset == null || !blendWarned.Add(asset)) return;
-            Debug.LogWarning($"[Effects] Effect '{asset.Path}': a key has an unknown blend code (outside 1..11); SrcAlpha / OneMinusSrcAlpha is used.");
+            if (asset == null || HasWarned(asset.Path)) return;
+            Warn(asset.Path, $"[Effects] Effect '{asset.Path}': a key has an unknown blend code (outside 1..11); SrcAlpha / OneMinusSrcAlpha is used.");
         }
 
         /// <summary>Whole-runtime time scale (preview speed, pause at 0); default 1. Negative or non-finite → 0.</summary>
@@ -110,16 +132,43 @@ namespace Uninarok.Effects
             return inst != null ? inst.Handle : default;
         }
 
-        EffectInstance Acquire(EffectRef effect, bool loop, EffectPlace place, Vector3 position, Transform unit)
+        // ---- play by path (EffectSystem, T5.9): an unknown path plays the placeholder ----
+
+        /// <summary>Resolves <paramref name="path"/> through the catalog and plays it at a world point; an unknown path plays the
+        /// placeholder (one <see cref="Warned"/> per key; the catalog logs it once).</summary>
+        internal EffectHandle PlayPath(string path, Vector3 point, bool loop = false)
+        {
+            if (catalog.TryResolve(path, out var entry)) return Play(entry, point, loop);
+            var inst = Acquire(default, loop, EffectPlace.Point, point, null, path);
+            return inst != null ? inst.Handle : default;
+        }
+
+        /// <summary>As <see cref="PlayPath"/>, following the unit's position (a null unit plays nothing).</summary>
+        internal EffectHandle PlayOnPath(string path, Transform unit, bool loop = false)
+        {
+            if (unit == null) return default;
+            if (catalog.TryResolve(path, out var entry)) return PlayOn(entry, unit, loop);
+            var inst = Acquire(default, loop, EffectPlace.Unit, unit.position, unit, path);
+            return inst != null ? inst.Handle : default;
+        }
+
+        /// <summary>As <see cref="PlayPath"/>, at the centre of a map cell (a null map plays nothing).</summary>
+        internal EffectHandle PlayAtCellPath(string path, MapData map, int x, int y, bool loop = false)
+        {
+            if (map == null) return default;
+            if (catalog.TryResolve(path, out var entry)) return PlayAtCell(entry, map, x, y, loop);
+            var inst = Acquire(default, loop, EffectPlace.Cell, map.CellCenter(x, y), null, path);
+            return inst != null ? inst.Handle : default;
+        }
+
+        /// <param name="unknownPath">Non-null: the path the catalog could not resolve; the instance plays the placeholder at once.</param>
+        EffectInstance Acquire(EffectRef effect, bool loop, EffectPlace place, Vector3 position, Transform unit, string unknownPath = null)
         {
             ThrowIfDisposed();
             if (freeCount == 0)
             {
-                if (!warnedFull)
-                {
-                    warnedFull = true;
-                    Debug.LogWarning($"[Effects] Effect runtime: all {slots.Length} instance slots are in use; further plays are skipped.");
-                }
+                if (!HasWarned(PoolKey))
+                    Warn(PoolKey, $"[Effects] Effect runtime: all {slots.Length} instance slots are in use; further plays are skipped.");
                 return null;
             }
 
@@ -152,6 +201,14 @@ namespace Uninarok.Effects
             t.SetPositionAndRotation(position, Quaternion.identity);
             inst.Object.SetActive(true);
 
+            if (unknownPath != null)
+            {
+                string key = string.IsNullOrEmpty(unknownPath) ? "<empty>" : EffectPath.TryNormalize(unknownPath, out string normalized) ? normalized : unknownPath;
+                if (!HasWarned(key)) Warn(key, $"[Effects] Effect '{unknownPath}' is not in the catalog; the placeholder is shown.", log: false);   // the catalog logged it
+                UsePlaceholder(inst);
+                return inst;
+            }
+
             catalog.RequestAsset(effect);                     // no callback: polled (D29); sync sources complete here
             TryBind(inst);
             return inst;
@@ -174,8 +231,31 @@ namespace Uninarok.Effects
             }
 
             inst.Asset = asset;                               // null: failed, placeholder rule
-            inst.Part = CreatePart(inst);
-            float partLength = inst.Part != null ? inst.Part.Bind(inst) : 0f;
+            var part = CreatePart(inst);
+            if (part == null)
+            {
+                if (asset == null)
+                {
+                    string key = catalog.KeyOf(inst.Entry);
+                    if (!HasWarned(key)) Warn(key, $"[Effects] Effect '{key}' could not be loaded; the placeholder is shown.", log: false);   // the catalog logged it
+                }
+                else if (!HasWarned(asset.Path))
+                {
+                    Warn(asset.Path, $"[Effects] Effect '{asset.Path}': kind {asset.Kind} has no player; the placeholder is shown.");
+                }
+                UsePlaceholder(inst);
+                return;
+            }
+
+            float partLength = part.Bind(inst);
+            if (!part.CanDraw)
+            {
+                if (!HasWarned(asset.Path)) Warn(asset.Path, $"[Effects] Effect '{asset.Path}' {part.Problem}; the placeholder is shown.");
+                UsePlaceholder(inst);
+                return;
+            }
+
+            inst.Part = part;
             inst.Length = LengthOf(asset, partLength, settings);
             inst.FrameRate = asset != null && asset.Kind == EffectKind.Str && asset.Fps > 0f && !float.IsInfinity(asset.Fps)
                 ? asset.Fps
@@ -184,7 +264,19 @@ namespace Uninarok.Effects
             Normalize(inst);
         }
 
-        /// <summary>The part that draws this instance's kind; STR and the authored kinds exist (T5.7-T5.8 add the rest; others only keep time).</summary>
+        /// <summary>Switches the instance to the placeholder part: <c>PlaceholderSeconds</c> long, the authored frame rate for
+        /// <see cref="FrameOf"/>; the asset (when there is one) stays on the instance.</summary>
+        void UsePlaceholder(EffectInstance inst)
+        {
+            var part = inst.PlaceholderPart ?? (inst.PlaceholderPart = new PlaceholderPart(this));
+            inst.Part = part;
+            inst.Length = LengthOf(null, part.Bind(inst), settings);
+            inst.FrameRate = settings.AuthoredFrameRate;
+            inst.State = EffectInstanceState.Playing;
+            Normalize(inst);
+        }
+
+        /// <summary>The part that draws this instance's kind; null for a failed load or a kind with no part (the placeholder plays).</summary>
         IEffectPart CreatePart(EffectInstance inst)
         {
             var asset = inst.Asset;

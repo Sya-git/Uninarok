@@ -4,7 +4,7 @@ namespace Uninarok.Effects
 {
     /// <summary>
     /// What draws one instance (SPEC-0012 plan 4.5 "Parts"): <c>StrPart</c>, <c>AuthoredPart</c>, <c>SpritePart</c>,
-    /// <c>ModelPart</c>, <c>PlaceholderPart</c> (T5.5-T5.8). The runtime owns the clock; a part only reads it. Main thread only.
+    /// <c>ModelPart</c>, <c>PlaceholderPart</c> . The runtime owns the clock; a part only reads it. Main thread only.
     /// </summary>
     internal interface IEffectPart
     {
@@ -13,6 +13,12 @@ namespace Uninarok.Effects
         /// cycle in effect seconds when the part knows it (the sprite action length), or a value ≤ 0 for the runtime's rule (D29).
         /// </summary>
         float Bind(EffectInstance instance);
+
+        /// <summary>False when the last <see cref="Bind"/> could not draw; the runtime then plays the placeholder instead (FR-4, D20).</summary>
+        bool CanDraw { get; }
+
+        /// <summary>Why the last bind could not draw; null when it can.</summary>
+        string Problem { get; }
 
         /// <summary>Draws the instance at <see cref="EffectInstance.Age"/>, after the clock moved; no allocation.</summary>
         void Tick(EffectInstance instance);
@@ -78,6 +84,8 @@ namespace Uninarok.Effects
         public SpritePart SpritePart;
         /// <summary>This slot's pooled <c>ModelPart</c> (and its prefab instance; kept between plays).</summary>
         public ModelPart ModelPart;
+        /// <summary>This slot's pooled <c>PlaceholderPart</c> (kept between plays).</summary>
+        public PlaceholderPart PlaceholderPart;
 
         public EffectInstance(int slot) { Slot = slot; }
 

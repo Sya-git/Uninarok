@@ -14,7 +14,7 @@ namespace Uninarok.Effects
     /// offset's height. uv is the full rectangle, v flipped to Unity's bottom-up convention exactly as in <see cref="StrPart"/>
     /// (top-left (0, 1)). Cylinder: <see cref="EffectMeshWriter.WriteCylinder"/>, ground (object space), RepeatU &gt; 1 enables
     /// repeat wrap. A part that cannot draw (invalid Sides, unknown procedure) writes nothing and says so in
-    /// <see cref="CanDraw"/>; the placeholder is <c>PlaceholderPart</c> (T5.8).</para>
+    /// <see cref="CanDraw"/>; the runtime then plays <see cref="PlaceholderPart"/>.</para>
     /// </summary>
     internal sealed class AuthoredPart : IEffectPart
     {
@@ -27,7 +27,7 @@ namespace Uninarok.Effects
 
         public AuthoredPart(EffectRuntime runtime) { this.runtime = runtime; }
 
-        /// <summary>False when the last bind could not draw (the caller shows the placeholder, T5.8).</summary>
+        /// <summary>False when the last bind could not draw (the runtime plays the placeholder).</summary>
         public bool CanDraw => bound;
 
         /// <summary>Why the last bind could not draw; null when it can.</summary>

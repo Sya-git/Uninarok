@@ -189,6 +189,9 @@ namespace Uninarok.Effects
             indexHandle = default;
         }
 
+        /// <summary>The canonical key of an entry (the runtime's warning key); null when out of range.</summary>
+        internal string KeyOf(EffectRef entry) => InRange(entry) && index.Keys != null && entry.Index < index.Keys.Length ? index.Keys[entry.Index] : null;
+
         bool InRange(EffectRef entry) => entry.Index >= 0 && entry.Index < states.Length;
 
         void WarnOnce(string key, string raw, string why = "unknown path")

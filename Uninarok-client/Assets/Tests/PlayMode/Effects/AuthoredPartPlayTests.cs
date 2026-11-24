@@ -205,13 +205,14 @@ namespace Uninarok.Effects.PlayTests
         {
             var w = DrawAt(BadSides, 0.1f, out var inst);
 
-            var part = inst.Part as AuthoredPart;
+            var part = inst.AuthoredPart;
             Assert.IsNotNull(part);
             Assert.IsFalse(part.CanDraw);
             StringAssert.Contains("Sides", part.Problem);
-            Assert.AreEqual(0, w.VertexCount);
-            Assert.AreEqual(0, w.Mesh.vertexCount);
-            Assert.IsTrue(runtime.IsActive(inst.Handle), "the instance still keeps time (T5.8 adds the placeholder)");
+            Assert.IsInstanceOf<PlaceholderPart>(inst.Part, "the part that cannot draw is replaced by the placeholder (T5.8)");
+            Assert.AreEqual(4, w.VertexCount, "only the placeholder quad is drawn");
+            Assert.AreEqual(4, w.Mesh.vertexCount);
+            Assert.IsTrue(runtime.IsActive(inst.Handle), "the instance still keeps time");
         }
 
         // ---- the warp portal's parts: each its own instance ----
@@ -260,12 +261,13 @@ namespace Uninarok.Effects.PlayTests
         {
             var w = DrawAt(Unknown, 0.1f, out var inst);
 
-            var part = inst.Part as AuthoredPart;
+            var part = inst.AuthoredPart;
             Assert.IsNotNull(part);
             Assert.IsFalse(part.CanDraw);
             StringAssert.Contains("nope", part.Problem);
-            Assert.AreEqual(0, w.VertexCount);
-            Assert.AreEqual(0, w.Mesh.vertexCount);
+            Assert.IsInstanceOf<PlaceholderPart>(inst.Part, "the part that cannot draw is replaced by the placeholder (T5.8)");
+            Assert.AreEqual(4, w.VertexCount, "only the placeholder quad is drawn");
+            Assert.AreEqual(4, w.Mesh.vertexCount);
             Assert.IsFalse(EffectProcedures.TryGet("nope", out var p));
             Assert.IsNull(p);
             Assert.IsFalse(EffectProcedures.TryGet(null, out _));

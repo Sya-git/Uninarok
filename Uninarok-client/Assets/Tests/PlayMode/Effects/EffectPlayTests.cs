@@ -13,7 +13,7 @@ namespace Uninarok.Effects.PlayTests
     public class EffectPlayTests
     {
         const float Dt = 1f / 60f;
-        const int Str1s = 0, Cylinder05s = 1, Deferred = 2, Sprite = 3, Missing = 4, ThreeLayers = 5;
+        const int Str1s = 0, Cylinder05s = 1, Deferred = 2, Sprite = 3, Missing = 4, ThreeLayers = 5, Procedural = 6;
 
         sealed class FakeSource : IEffectAssetSource
         {
@@ -68,6 +68,7 @@ namespace Uninarok.Effects.PlayTests
             str.Path = "texture/effect/test.str"; str.Kind = EffectKind.Str; str.Fps = 10f; str.FrameCount = 10;   // 1 s
             var cyl = Make<EffectAsset>();
             cyl.Path = "texture/effect/_authored/test.cylinder"; cyl.Kind = EffectKind.Cylinder; cyl.Length = 0.5f;
+            cyl.Authored = new AuthoredData { BottomRadius = 1f, TopRadius = 1f, Height = 1f, Sides = 8 };   // drawable: a cylinder with no data plays the placeholder
             var late = Make<EffectAsset>();
             late.Path = "texture/effect/late.str"; late.Kind = EffectKind.Str; late.Fps = 10f; late.FrameCount = 5;  // 0.5 s
             var sprite = Make<EffectAsset>();
@@ -75,9 +76,13 @@ namespace Uninarok.Effects.PlayTests
 
             var three = MakeThreeLayers();
 
-            var assets = new[] { str, cyl, late, sprite, null, three };
+            var procedural = Make<EffectAsset>();
+            procedural.Path = "texture/effect/_authored/test.proc"; procedural.Kind = EffectKind.Procedural; procedural.Length = 1f;
+            procedural.Authored = new AuthoredData { Procedure = "nope" };       // the registry is empty in this spec (D20)
+
+            var assets = new[] { str, cyl, late, sprite, null, three, procedural };
             var index = Make<EffectCatalogIndex>();
-            index.Keys = new[] { str.Path, cyl.Path, late.Path, sprite.Path, "texture/effect/missing.str", three.Path };
+            index.Keys = new[] { str.Path, cyl.Path, late.Path, sprite.Path, "texture/effect/missing.str", three.Path, procedural.Path };
             index.Assets = new EffectAssetRef[assets.Length];
             index.SourceMissing = new bool[assets.Length];
             for (int i = 0; i < assets.Length; i++)
@@ -394,6 +399,129 @@ namespace Uninarok.Effects.PlayTests
                 Assert.IsFalse(small.Play(Ref(Str1s), Vector3.zero).IsValid);
                 Assert.IsFalse(small.Play(Ref(Str1s), Vector3.zero).IsValid);   // no second warning
                 Assert.AreEqual(2, small.ActiveCount);
+            }
+            finally
+            {
+                small.Dispose();
+            }
+        }
+
+        // ---- placeholder and the one-warning rule (FR-1, FR-4, FR-5; plan 4.4, D20) ----
+
+        sealed class WarnedLog
+        {
+            public readonly List<string> Keys = new List<string>();
+            public void On(string key, string message) => Keys.Add(key);
+        }
+
+        static void ExpectWarning(string regex) =>
+            LogAssert.Expect(LogType.Warning, new System.Text.RegularExpressions.Regex(regex));
+
+        [Test]
+        public void UnknownKey_PlaysThePlaceholder_WithExactlyOneWarning_EvenWhenPlayedTwice()
+        {
+            var log = new WarnedLog();
+            runtime.Warned += log.On;
+            ExpectWarning("unknown path.*ghost");                      // logged once, by the catalog
+
+            var h = runtime.PlayPath("effect/GHOST.str", Vector3.zero);
+            Assert.IsTrue(h.IsValid);
+            Assert.AreEqual(1, runtime.ActiveCount);
+            var inst = runtime.InstanceOf(h);
+            Assert.IsInstanceOf<PlaceholderPart>(inst.Part);
+            var w = inst.GetWriter();
+            Assert.AreEqual(1, w.SubMeshCount);
+            Assert.AreEqual(4, w.VertexCount);
+            Assert.That(w.Vertices[1].Position.x - w.Vertices[0].Position.x, Is.EqualTo(0.5f).Within(1e-5f), "one cell wide");
+            Assert.That(inst.Length, Is.EqualTo(0.25f));
+
+            var again = runtime.PlayPath("effect/GHOST.str", Vector3.zero);   // no second log, no second event
+            Assert.IsTrue(again.IsValid);
+            Assert.AreEqual(2, runtime.ActiveCount);
+
+            Assert.AreEqual(1, log.Keys.Count, "one Warned per key");
+            StringAssert.Contains("ghost", log.Keys[0]);
+            Assert.That(TicksUntilInactive(h), Is.InRange(14, 16), "ends after PlaceholderSeconds");
+            Assert.IsFalse(runtime.IsActive(again));
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [Test]
+        public void UnbuiltProceduralEntry_PlaysThePlaceholder_WithOneWarning()
+        {
+            var log = new WarnedLog();
+            runtime.Warned += log.On;
+            ExpectWarning("unknown procedure 'nope'");
+
+            var a = runtime.Play(Ref(Procedural), Vector3.zero);
+            var b = runtime.Play(Ref(Procedural), Vector3.zero);
+
+            Assert.IsInstanceOf<PlaceholderPart>(runtime.InstanceOf(a).Part);
+            Assert.AreEqual(4, runtime.InstanceOf(a).GetWriter().VertexCount);
+            Assert.That(runtime.InstanceOf(a).Length, Is.EqualTo(0.25f));
+            Assert.AreEqual(new[] { "texture/effect/_authored/test.proc" }, log.Keys.ToArray());
+            Assert.IsTrue(runtime.IsActive(b));
+            Assert.That(TicksUntilInactive(a), Is.InRange(14, 16));
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [Test]
+        public void SpriteEntryWithNoSpriteCatalog_PlaysThePlaceholder_WithOneWarning()
+        {
+            var log = new WarnedLog();
+            runtime.Warned += log.On;
+            ExpectWarning("placeholder is shown");
+
+            var h = runtime.Play(Ref(Sprite), Vector3.zero);
+            runtime.Play(Ref(Sprite), Vector3.zero);
+
+            Assert.IsInstanceOf<PlaceholderPart>(runtime.InstanceOf(h).Part);
+            Assert.AreEqual(1, log.Keys.Count);
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [Test]
+        public void FailedAsset_PlaysThePlaceholder_WithOneWarningEvent()
+        {
+            var log = new WarnedLog();
+            runtime.Warned += log.On;
+            ExpectWarning("asset failed to load");                      // the catalog's own log
+
+            var h = runtime.Play(Ref(Missing), Vector3.zero);
+            runtime.Play(Ref(Missing), Vector3.zero);
+
+            Assert.IsInstanceOf<PlaceholderPart>(runtime.InstanceOf(h).Part);
+            Assert.AreEqual(new[] { "texture/effect/missing.str" }, log.Keys.ToArray());
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [Test]
+        public void LoopedPlaceholder_KeepsPlaying()
+        {
+            ExpectWarning("unknown path.*ghost");
+            var h = runtime.PlayPath("texture/effect/ghost.str", Vector3.zero, loop: true);
+            for (int i = 0; i < 100; i++) runtime.Tick(Dt);
+
+            Assert.IsTrue(runtime.IsActive(h));
+            var inst = runtime.InstanceOf(h);
+            Assert.GreaterOrEqual(inst.Cycle, 5, "0.25 s cycles wrap");
+            Assert.That(inst.Age, Is.InRange(0f, 0.25f));
+            Assert.AreEqual(4, inst.GetWriter().VertexCount);
+        }
+
+        [Test]
+        public void FullPool_RaisesWarnedOnce()
+        {
+            var small = new EffectRuntime(catalog, settings, root.transform, capacity: 1);
+            try
+            {
+                var log = new WarnedLog();
+                small.Warned += log.On;
+                small.Play(Ref(Str1s), Vector3.zero);
+                ExpectWarning("instance slots are in use");
+                small.Play(Ref(Str1s), Vector3.zero);
+                small.Play(Ref(Str1s), Vector3.zero);
+                Assert.AreEqual(1, log.Keys.Count);
             }
             finally
             {

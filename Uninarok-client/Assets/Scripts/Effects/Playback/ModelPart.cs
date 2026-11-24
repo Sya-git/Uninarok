@@ -14,7 +14,7 @@ namespace Uninarok.Effects
         GameObject source;
         bool bound;
 
-        /// <summary>False when the last bind could not draw (the caller shows the placeholder, T5.8).</summary>
+        /// <summary>False when the last bind could not draw (the runtime plays the placeholder).</summary>
         public bool CanDraw => bound;
 
         /// <summary>Why the last bind could not draw; null when it can.</summary>
