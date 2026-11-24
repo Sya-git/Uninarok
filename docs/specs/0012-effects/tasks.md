@@ -76,7 +76,7 @@
 - [x] **T3.2** [core] Test-first: `RoStrCompilerTests` (flattening keeps every key field and order, including each key's own source and destination blend, shown by a synthetic layer with two blends; texture ranges; reflection: `EffectAsset` has no asset-level start delay, duplicate, wav/sound or attachment field (authored mapping data of another spec); `KeyData.Delay`, the STR file's per-key animation delay, stays in the asset as imported from the file and the test asserts it is present, plan §4.2), with a `RoStrCompiler` stub; every case `[Ignore("pending T3.3")]`. (FR-2, FR-10)
   *Done when:* the test class compiles and the run shows its cases ignored, 0 failed.
 
-- [ ] **T3.3** [core] Implement `RoStrCompiler` (flatten, stable sort by frame, no value converted) and remove the Ignores. (FR-2)
+- [x] **T3.3** [core] Implement `RoStrCompiler` (flatten, stable sort by frame, no value converted) and remove the Ignores. (FR-2)
   *Done when:* `RoStrCompilerTests` pass.
 
 - [ ] **T3.4** [core] Test-first: `RoEffectTextureLookupTests` (own folder wins; root found when absent from the own folder; neither → placeholder with one warning naming the file, in a temp folder; a name with an extension resolves to that file only; a bare name with `.tga` and `.bmp` gives the `.tga`; folder order beats extension preference; `pok1.tga` and `pok1.bmp` give two textures with no collision; `jong_mini.str` and `new_splash.str` resolve all their textures (NeedsData)), with a `RoEffectTextureLookup` stub; every case `[Ignore("pending T3.5")]`. (FR-2, FR-10)

@@ -33,7 +33,7 @@ namespace Uninarok.RoImport.Tests.Effects
         static RoStrLayer Layer(string[] textures, params RoStrKey[] keys) =>
             new RoStrLayer { TextureNames = textures, Keys = keys };
 
-        [Test, Ignore("pending T3.3")]
+        [Test]
         public void Compile_KeepsHeader()
         {
             RoCompiledStr c = RoStrCompiler.Compile(Str(Layer(new[] { "a.bmp" }, Key(0, 0, 5, 6, 0))));
@@ -41,7 +41,7 @@ namespace Uninarok.RoImport.Tests.Effects
             Assert.AreEqual(40, c.FrameCount);
         }
 
-        [Test, Ignore("pending T3.3")]
+        [Test]
         public void Compile_KeepsEveryKeyFieldRaw()
         {
             RoStrKey k = Key(3, 1, 5, 6, 100f);
@@ -69,7 +69,7 @@ namespace Uninarok.RoImport.Tests.Effects
             Assert.AreEqual(k.Color, d.Color);   // raw 0..255, not divided
         }
 
-        [Test, Ignore("pending T3.3")]
+        [Test]
         public void Compile_KeepsEachKeysOwnSourceAndDestinationBlend()
         {
             // One layer whose keys carry different blend pairs (FR-2: blend per key, not per layer).
@@ -79,7 +79,7 @@ namespace Uninarok.RoImport.Tests.Effects
             CollectionAssert.AreEqual(new[] { 6, 6, 2, 1 }, c.Keys.Select(k => (int)k.DstBlend).ToArray());
         }
 
-        [Test, Ignore("pending T3.3")]
+        [Test]
         public void Compile_KeepsFileOrderAcrossLayers()
         {
             RoCompiledStr c = RoStrCompiler.Compile(Str(
@@ -90,7 +90,7 @@ namespace Uninarok.RoImport.Tests.Effects
             CollectionAssert.AreEqual(new[] { 0, 4, 1, 2, 9 }, c.Keys.Select(k => k.Frame).ToArray());
         }
 
-        [Test, Ignore("pending T3.3")]
+        [Test]
         public void Compile_KeyRangesPerLayer()
         {
             RoCompiledStr c = RoStrCompiler.Compile(Str(
@@ -106,7 +106,7 @@ namespace Uninarok.RoImport.Tests.Effects
             Assert.AreEqual(3, c.Layers[2].KeyCount);
         }
 
-        [Test, Ignore("pending T3.3")]
+        [Test]
         public void Compile_TextureRangesAndNamesAsTheFileNamesThem()
         {
             RoCompiledStr c = RoStrCompiler.Compile(Str(
@@ -122,7 +122,7 @@ namespace Uninarok.RoImport.Tests.Effects
             Assert.AreEqual(1, c.Layers[2].TextureCount);
         }
 
-        [Test, Ignore("pending T3.3")]
+        [Test]
         public void Compile_SortsKeysByFrame_StableForEqualFrames()
         {
             // Frames out of order; the two frame-3 keys (markers 1 then 2) keep their relative order. Delay = marker + 20.
@@ -134,7 +134,7 @@ namespace Uninarok.RoImport.Tests.Effects
             Assert.AreEqual(22f, c.Keys[2].Delay);
         }
 
-        [Test, Ignore("pending T3.3")]
+        [Test]
         public void Compile_SortIsPerLayer()
         {
             RoCompiledStr c = RoStrCompiler.Compile(Str(
@@ -156,7 +156,7 @@ namespace Uninarok.RoImport.Tests.Effects
 
         static readonly string[] ForbiddenNameParts = { "delay", "duplicate", "wav", "sound", "attach" };
 
-        [Test, Ignore("pending T3.3")]
+        [Test]
         public void EffectAsset_HasNoPlayDataFields()
         {
             string[] fields = typeof(EffectAsset)
@@ -172,7 +172,7 @@ namespace Uninarok.RoImport.Tests.Effects
             }
         }
 
-        [Test, Ignore("pending T3.3")]
+        [Test]
         public void KeyData_HasPerKeyDelay()
         {
             FieldInfo delay = typeof(EffectAsset.KeyData).GetField("Delay");
