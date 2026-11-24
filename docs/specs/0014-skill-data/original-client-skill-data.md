@@ -1,0 +1,40 @@
+# Original client: where skills get their motion, effect, cursor and cast rules
+
+Research notes (2026-11-24) for SPEC-0012 (effects) and SPEC-0013 (skills). Facts only; checked against the client data in `Assets/Editor/GRF Resources~/data` and the Hercules source in `Hercules-2026.09/src/map`. roBrowserLegacy (GPL v3, <https://github.com/MrAntares/roBrowserLegacy>, `src/DB/Skills/*`, `src/DB/Effects/*`, `src/Engine/MapEngine/{Entity,Skill}.js`) is a **lead for facts only**: nothing of it is copied; our tables are written from these facts and checked against the client data. Status of each fact: **Data** = in the client data we have; **Lead** = seen in roBrowserLegacy only; **Server** = Hercules.
+
+## 1. What is where
+
+| Question | Answer | Status |
+|---|---|---|
+| Which effect plays for a skill, and when | Two layers. (a) Newer skills: `luafiles514/lua files/skilleffectinfo/skilleffectinfolist.lub` (compiled Lua 5.1, 199 strings, only about 60 skills: `KO_*`, `KG_*`, `OB_*`, `ECL_*`, `RL_*`, `SU_*`, …). Row fields: `SKID`, `beginMotionType` (an `ACTOR_STATE` such as `ST_ATTACK2`, `ST_NINJASKILL2`, `ST_NINJAREADY`), `waveFileName`, `effectNum`/`effectID` (`EFID`, on the caster), `targetEffectNum`/`targetEffectID` (on the target, `onTarget`), `toTargetEffectNum`/`toTargetEffectID` (flies caster→target), `groundEffectNum`/`groundEffectID` (on a cell), `beginEffectID` (while casting; `EF_BEGINSPELL2..7`, `EF_BLUECASTING`), `LaunchZC_USE_SKILL`. Accessors in `skilleffectinfo_f.lub`; effect names in `effectid.lub`; motions in `actorstate.lub` (`ST_STAND, ST_MOVE, ST_ATTACK, ST_DEAD, ST_DAMAGE, ST_PICKUP, ST_SIT, ST_SKILL, ST_BEGIN_SKILL, ST_ATTACK2, ST_SLEEP, ST_ATTACKWAIT, ST_THROW, ST_AUTOCOUNTER, ST_DANCE, ST_SING, ST_READYSHOT, ST_READYJUMP, ST_LANDJUMP, ST_R_STORM…ST_R_COUNTER, ST_A_*, ST_NINJASKILL1/2, ST_NINJAREADY, ST_GUNSKILL1-3, ST_GUNREADY(2), ST_MADOSKILL(2), ST_AB_SPECIAL`). (b) Classic skills (Bash, Fire Bolt, Heal…): not in any data file; they are in the client executable. | Data |
+| What a skill's effect is made of | An effect id (`EF_*`, numeric, `effectid.lub`) expands to one or more parts: a **STR** animation (`data/texture/effect/*.str`, keyframed textured quads), an **SPR/ACT** sprite, a textured 3D quad, a cylinder, an RSM model, or a hand-coded procedure; plus a `.wav` (`wav/effect`, 640 files present). In roBrowserLegacy's table: 1,053 STR parts, 276 3D, 149 cylinder, 145 FUNC (procedural), 70 SPR, 19 RSM, 16 2D. | Lead |
+| Skill → effect for classic skills | roBrowserLegacy `SkillEffect.js` (about 1,950 lines), per skill: `effectId` (on the target), `effectIdOnCaster`, `groundEffectId`, `hitEffectId` (each hit with damage), `beforeHitEffectId`, `releaseEffectId` (cast end, travelling to the target), `beginCastEffectId`, `successEffectId*`, `hideCastBar`, `hideCastAura`, `castAuraEffectId`. E.g. Magnum Break: caster 17, hit `[49, 17]`; Storm Gust: ground 89, hit 51; Grand Cross: 226. | Lead |
+| The caster's own "motion effect" | The original (kRO 2025) plays one effect on the caster as each skill damage packet arrives, effect 16 (`EF_BASH`) unless the skill is listed (12 `EF_BEGINSPELL` for most magic; none for bolts, a few others), only for damage types 4, 5, 6, 8, 9, 13, 14 and not for a splash packet that hit an actor. | Lead |
+| Effects present in our data | `data/texture/effect/` holds only empty sub-folders and one bmp: **no STR and no effect texture is extracted yet** (BACKLOG, warp portal). `wav/effect` has 640 wavs. `sprite/` holds the effect SPRs the GRF had at extraction; `luafiles514/lua files/effecttool/*.lub` (175 files, compiled Lua) are the effect tool tables for the newer, scripted effects. The STR and textures must be extracted from the GRF first. | Data |
+
+## 2. The skill's own motion (animation)
+
+- **Use packet with a cast time (`ZC_USESKILL_ACK`)**: the caster turns to the target or cell and, if a player, plays the `SKILL` action (cast pose) **frozen on frame 0** for the whole cast time (no loop, no animation); a monster plays nothing. A skill may name another action (`ActionType`; default `SKILL`). Cast bar over the head for the cast time; skill name shouted over the caster ("name !!", not for monsters or hiding skills). Cast aura (element: yellow, water, earth, fire, wind, poison, holy, dark, ghost, undead by the packet's property) and a lock-on on the target or a cell marker for the cast time. **Lead.**
+- **Use result packet (`ZC_NOTIFY_SKILL`, damage; `ZC_USE_SKILL`, no damage)**: the caster plays the skill's action **once** (not a loop), holds the last frame for `max(attackMT, 400)` ms, then goes to idle (or ready-to-fight). The action comes from a per-skill table: default `SKILL`; monks `IDLE` (no motion); dorams `ATTACK2`; weapon-style skills (Bash, Magnum Break, Pierce, Brandish, Spear Stab, Bowling Bash, Raid, Back Stab, Holy Cross, Charge Arrow, the Taekwon kicks, gunslinger and ninja strikes, …) `ATTACK`; and special states for the others. A skill with no animation of its own therefore has **no loop**: it is the cast pose held for the cast time, then the `SKILL` action once, held `max(attackMT, 400)`. **Lead.** Newer skills name their motion in `beginMotionType` (**Data**).
+- Speed: the action is stretched to the server's `attackMT` for attack-style actions; the `SKILL`/cast pose plays at the ACT's own frame time. **Lead**, to be checked in the plan against the ACT.
+- Moves during skills: Body Relocation, Shadow Jump, Fallen Angel, Lope fast-move the caster to the cell with the attack or skill action (**Lead**); knock-back is the position in the damage packet.
+
+## 3. Cursor
+
+- `sprite/cursors.act` (**Data**): action 0 default, 5 attack, 13 cannot walk (all used by SPEC-0010/0011). roBrowserLegacy names action **10 = TARGET** (hot spot 20,28; plays at half the ACT's frame time, as the default cursor does) and others (talk, warp, rotate, pick). The "ring" sprite is part of that action. Target skills (unit or ground) switch to it until the click or a cancel; **self skills never change the cursor**: they are asked at once. **Lead, action number to be verified on the ACT.**
+- Cell picking for ground skills draws the skill's cell cursor (the "magic target" ring on the ground), roBrowserLegacy `MagicTarget`. **Lead.**
+
+## 4. Movement and cast (server rules, Hercules)
+
+- A player cannot walk while a skill is casting (`ud->skilltimer`), unless: the player has **Free Cast** (`SA_FREECAST`, a sage skill) — moving then slows the cast ("reduced") — or the skill carries `FreeCastNormal`/`FreeCastReduced` in `db/re/skill_db.conf` (e.g. `LG_EXEEDBREAK` always); guild skills ignore Free Cast. `unit.cpp` lines 1233-1245 (`unit_can_move`), 1879, 2040, 2397, 2561. A card or item that gives free cast does so through the same status. Monsters never move while casting. **Server.**
+- Hence the client sends no walk during a cast unless it knows it may; what it may know: the skill's inf2 flag and Free Cast level. The server refuses the rest.
+- Damage, a stun or a Cast Cancel (`SA_CASTCANCEL`) interrupts a cast; the server then sends `ZC_DISPEL`-like cancel. After a cast, the after-cast and per-skill delays apply (the client keeps `skilldelaylist.lub`: `SkillCastFixedDelay`, `SkillCastStatDelay`, `SkillGlobalPostDelay`, `SkillSinglePostDelay`, **Data**; the server's values rule).
+
+## 5. Hit timing of a skill
+
+Per hit: the target's damage number and hurt at `attackMT` plus `C_MULTIHIT_DELAY × i` for hit `i` (as SPEC-0011); "before hit" effects (flying balls) 200 ms before; heal numbers: the heal amount is carried in the level field of the no-damage use packet, shown as a green number. **Lead.**
+
+## 6. Open points for the plan
+
+- The extracted effect set must be completed from the GRF (STR, textures, effect SPR) before any STR can be imported; the GRF file is not in the repository.
+- Whether the Lead tables are right for the classics can only be checked by looking at the original client, which the owner does not want to film; accept roBrowserLegacy plus the client data, and record each doubtful row as a configurable data entry.
