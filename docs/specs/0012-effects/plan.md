@@ -123,7 +123,7 @@ public readonly struct RoStrKey
 }
 public static class RoStrReader
 {
-    public static bool TryReadVersion(byte[] bytes, out int version);      // magic + version only (header check)
+    public static bool TryReadVersion(byte[] bytes, out int version);      // version from GRF's StrHeader (GRF constructs it; no raw byte parsing here)
     public static bool TryRead(RoPath path, byte[] bytes, out RoStr str, out string reason);   // never throws
 }
 ```
@@ -435,7 +435,7 @@ Satisfies FR-1 to FR-11. EditMode NUnit unless marked PlayMode. `NeedsData` = ne
 
 | Test class | FR | Checks | Data |
 |---|---|---|---|
-| `RoStrReaderTests` | 2, 10 | the 10 reference files: version, fps, frame count, layer count read by GRF equal the header bytes read independently by the test; per-layer key and texture counts equal T0.1's record; truncated, junk and wrong-version input return false with the right issue, never throw | NeedsData |
+| `RoStrReaderTests` | 2, 10 | the 10 reference files: version, fps, frame count, layer count read by `RoStrReader` (GRF) equal the T0.1 record, held as constants in the test (no raw byte parsing in the importer or in its test: RO files are read only through GRF); per-layer key and texture counts equal T0.1's record; truncated, junk and wrong-version input return false with the right issue, never throw | NeedsData |
 | `RoStrCompilerTests` | 2 | flattening keeps every key field and order, including each key's own source and destination blend (a synthetic layer with two blends keeps both); texture ranges; reflection: `EffectAsset` has no asset-level start delay, duplicate, wav/sound or attachment field, while `KeyData.Delay` (the file's per-key animation delay) is present and allowed | — |
 | `RoEffectTextureLookupTests` | 2, 10 | own folder wins; root found when absent from own folder; neither → placeholder, one warning naming it (temp source folder); a name with extension resolves to that file only; a bare name with both `.tga` and `.bmp` returns the `.tga`; folder order beats extension preference; `pok1.tga` and `pok1.bmp` convert to two textures with no `OutputCollision` warning; `jong_mini.str` and `new_splash.str` resolve all their textures | both |
 | `RoEffectColorKeyTests` | 2, 10 | pink keyed; black keyed; `None` keeps pixels; tolerances; overrides beat defaults; rules read from JSON; key written to userData | — |
