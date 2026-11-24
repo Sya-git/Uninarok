@@ -89,9 +89,10 @@ namespace Uninarok.World.PlayTests
             Assert.AreEqual(DisplayStyle.Flex, _view.Window.resolvedStyle.display);
             var buttons = _view.Window.Query<Button>().ToList();
             Assert.AreEqual(2, buttons.Count, "two choices");
-            Assert.AreSame(_view.SavePoint, buttons[0], "return to save point first (provisional until T0.4)");
+            Assert.AreSame(_view.SavePoint, buttons[0], "go to saved area first (T0.4)");
             Assert.AreSame(_view.CloseButton, buttons[1]);
-            Assert.AreEqual(("Return to Save Point", "Cancel"), (buttons[0].text, buttons[1].text), "provisional labels (T0.4)");
+            Assert.AreEqual(("Go to saved area", "Return to game"), (buttons[0].text, buttons[1].text), "labels of the original client (T0.4)");
+            Assert.AreEqual("Game setting window", _view.Window.Q<Label>("restart-title")?.text, "title of the original client (T0.4)");
 
             yield return Click(_view.CloseButton);
             Assert.IsFalse(_view.Shown, "the mouse closes it");

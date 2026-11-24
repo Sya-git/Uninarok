@@ -261,8 +261,9 @@ Arrow picture (B, `B_arrowpicture_22-39-21_10.74s.jpg`, new, nothing to change):
 | `HoldAttackMs` | 300 ms | plan choice | as plan choice: shot 14 (click, ctrl + click, hold, `/noctrl`) confirmed by the owner playing the game on 2026-11-23 (spec revision of FR-16); not in the footage (A: no hold or release sample) |
 | `PickMinPx` | 24 screen pixels | plan choice | as plan choice: shot 14 confirmed by the owner playing the game on 2026-11-23; not in the footage |
 | `RestartTimeoutMs` | 3,000 ms | plan choice | not displayed |
-| restart prompt labels and order | "Return to Save Point", then "Cancel" (provisional) | T0.4 (owner); until then a placeholder of T7.5 | waiting for T0.4 (owner) |
-| restart prompt window | 200 px wide, plain USS (`RestartPrompt.uss`), centred, no images (D8) | provisional (T7.5) | waiting for T0.4 (owner) |
+| restart prompt labels and order | "Go to saved area", then "Return to game" | T0.4 (owner) | owner's screenshot of the original client, 2026-11-23 (`evidence/T0.4/restart-prompt-original.png`); whether the original shows the same window on death, and its Esc/close behaviour, are not in the screenshot |
+| restart prompt window title | "Game setting window". The "(251-437)" suffix of the original is **not implemented** (probably a message id or debug suffix; unconfirmed) | T0.4 (owner) | same screenshot |
+| restart prompt window | about 280 px wide, a blue-to-white title bar about 17 px high, white body, two stacked full-width buttons about 215 x 20 px with light-grey gradient and rounded corners; plain USS (`RestartPrompt.uss`), centred, no extracted images (D8); styling approximate (matched by eye, hover look and screen position not in the screenshot) | T0.4 (owner) | same screenshot |
 
 ## Rules and surprises (T9.3, from the footage)
 

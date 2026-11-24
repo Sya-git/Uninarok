@@ -35,7 +35,7 @@
   The 17 shots of plan §6.3. The owner's footage of 2026-11-22 (`C:\Users\catdo\Videos\Captures`, four files, listed in plan §6.3) covers shots 1, 3, 4, 11, 13, 14, 16 and 17 in part; dual wield (shots 5, 6) comes from three YouTube Shorts the owner named, as files the owner provides. FR-16's mark (shot 17) is measured here too.
   *Done when:* every row of `combat-reference.md` (T4.1) has a measured value or "as lead", with the shot and frame numbers, and the frames used are in `evidence/`.
 
-- [ ] **T0.4** Owner: the restart prompt of the original client. (FR-8)
+- [x] **T0.4** Owner: the restart prompt of the original client. (FR-8)
   The labels, their order, a screenshot, Esc and close; the `esc_*.bmp` images if they can be extracted.
   *Done when:* labels, order and layout are in `combat-reference.md`, and whether the images exist (D8).
 
