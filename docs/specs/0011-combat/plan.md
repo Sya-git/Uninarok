@@ -583,6 +583,7 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 | D34 | Number and miss motion from footage A: scale 4 → 1 smooth-step over `NumberShrinkMs` 400, then 1; x drift 3.1 cells, `sin(π t / 2)` (decelerating); miss 1,500 ms rising at a constant speed from 0.4 to 3.5 cells; lucky keeps the lead (800 ms, 3.5 → 7) in settings of its own (`LuckyMs`, `LuckyHeightStart`, `LuckyHeightEnd`). The drift's sign, the height arc, alpha and the bars' gap stay leads | Scale 4 → 0 over the life, linear drift of 4 (lead); changing the lucky with the miss | Two or more clear samples for each change (scale: 1 full curve and 6 final sizes; drift: a monster and a player number; miss: 2). Lucky has one sample (0.55 s, no rise), so it keeps its lead, which needs its own settings once the miss changes. The arc's amplitude cannot be converted (a height cell is not measurable apart from a ground cell) |
 | D35 | `AttackMotions.HitFrameOf` gives 4 for the whip (type 14), 6 otherwise | 6 for all (lead) | Footage B: the whip's number 84 ms after it unfurls at `attackMT` about 380 (2 samples); the bow's 5.8 confirms 6. Only a projectile's launch reads the hit frame, so nothing visible changes today; the whip's early number against FR-4's hit moment is left to the spec (BACKLOG) |
 | D36 | The gap between the parts of a multi-hit depends on the second hand: `MultiHitMs` (100) when the blow has `LeftDamage` > 0, new `MultiHitNoLeftMs` (200) when it has none. D32's running total and `LeftHandMs` are unchanged. Each split part starts its own hurt at its number's time, so the hurt follows the new gap with no further change | 100 for every multi-hit (D32, T9.3) | roBrowserLegacy `Entity.js` `onEntityAction`: the parts at `attackMT` and `+C/2` (100) with a left hand, `+C` (200) without (`C_MULTIHIT_DELAY` 200). Footage C has only dual-wield samples (100); the no-left value is the lead's, **no footage sample**. The gaps are constants, not scaled by the attack speed |
+| D37 | (Owner, 2026-11-23) T9.4 dropped: no side-by-side comparison with the original client; the evidence is our screenshots checked against the T0.3 footage measurements | Filming both clients on the same blows | The original client connects to the original server; adapting one for Hercules is too much work for the gain |
 
 ## 9. Risks
 
@@ -606,14 +607,14 @@ EditMode unless marked. `NeedsData`: needs imported maps, the catalog or the fix
 | FR-3 | 4.1, 4.4, 4.5 | `AttackRange_*`, `OwnCombat_Approach_*`; 10 tries live, bow live |
 | FR-4 | 4.2, 4.6, 4.7 (the motion FR-15 chooses), 4.9 | `CombatTimeline_*`, `UnitClock_FitMs_*`, `AttackMotions_Rows` |
 | FR-5 | 4.2, 4.6 | `Blow_From_*`, `CombatTimeline_Kinds` |
-| FR-6 | 4.6, 4.8 | `NumberMotion_Table`; side by side (shots 1 to 7) |
-| FR-7 | 4.2, 4.8 | `CombatOverlay_Bars*`; side by side (shot 10) |
+| FR-6 | 4.6, 4.8 | `NumberMotion_Table`; the T0.3 measurements (shots 1 to 7) |
+| FR-7 | 4.2, 4.8 | `CombatOverlay_Bars*`; the T0.3 measurements (shot 10) |
 | FR-8 | 4.1, 4.5, 4.10, 4.11 | `RestartPrompt_*`, `RestartPromptView_*`; live check, release build |
 | FR-9 | 4.2, 4.6, 4.9 | `CombatTimeline_Death*`, `WorldPresenter_DeathAfterHurt`; second client |
 | FR-10 | 4.1, 4.4, 4.5, 4.6, 4.10 | `OwnCombat_PickUp_*`; live check, second client |
 | FR-11 | 4.3, 4.12 | `CombatDebugView_*`; live check; release build contains no dev type |
 | FR-12 | 4.2, 4.6, 4.8, 4.10 | `Combat_ZeroAllocation_*`, `CombatOverlay_ZeroAllocation_*`; profiler capture |
 | FR-13 | 3, 4.4 to 4.7, 6 | the EditMode suite and the replay test |
-| FR-14 | 4.6, 4.7, 4.8 | `ProjectileRules_*`; side by side (shots 11 to 13) |
+| FR-14 | 4.6, 4.7, 4.8 | `ProjectileRules_*`; the T0.3 measurements (shots 11 to 13) |
 | FR-15 | 3, 4.6, 4.7 (hands table, family table, reference doc), 7, 8 (D20 to D27) | `JobFamilies_RowJobOf_Table`, `JobFamilies_RowSexOf_SoulReaperMale`, `JobFamilies_IsAssassinFamily_*`, `AttackMotions_JobFamilies_*`, `_TaekwonFamily_*`, `_SoulReaper_*`, `_NoRowJobs_Attack1`, `AttackMotions_Hands_*`, `_ShieldNeverChangesMotion`, `CatalogWeaponTypes_TypeOf_BothHands_*`, `_LeftShieldViewId_IsShield`, `CombatTimeline_AttackNumber_*`, `WorldSession_CombatReplay_DualWield`; `combat-reference.md` "Attack animation" |
-| FR-16 | 4.5, 4.8, 8 (D29) | `OwnCombat_Mark_*`, `CombatOverlay_TargetMark_*`; side by side (shot 17) |
+| FR-16 | 4.5, 4.8, 8 (D29) | `OwnCombat_Mark_*`, `CombatOverlay_TargetMark_*`; the T0.3 measurements (shot 17) |

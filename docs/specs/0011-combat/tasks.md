@@ -193,8 +193,7 @@
 - [ ] **T9.3** Correct the leads with T0.3's and T0.4's results. (FR-2, FR-4 to FR-10, FR-14)
   *Done when:* no row of `combat-reference.md` is a bare lead; settings, tables and tests follow it; each rule changed has a Decisions note.
 
-- [ ] **T9.4** Side by side with the original client. (FR-6, FR-7, FR-14)
-  *Done when:* the same blows filmed in both clients are in `evidence/` (numbers, 20 numbers per second over one monster, bars, arrows at 2, 5 and 9 cells, an archer skeleton, one attack of each other weapon type), and the owner accepts them.
+- [x] **T9.4** ~~Side by side with the original client.~~ **Dropped by the owner, 2026-11-23** (plan D37): the original client connects to the original server; adapting one for Hercules is too much work. FR-6, FR-7, FR-14 and FR-16 are checked against the T0.3 measurements (T9.3).
 
 - [x] **T9.5** Cost (plan §6.1). (FR-12)
   300 units, 100 fighting, 100 numbers on screen.
