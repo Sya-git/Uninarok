@@ -114,7 +114,7 @@
 
 ## Phase 4: Catalog (run time index, sources, sprite entries)
 
-- [ ] **T4.1** [core] Implement `EffectCatalog` (`Create`, `TryResolve` with an ordinal cache, `Release`, the prefix forms, unknown path → false with one warning per key per session) and `IEffectAssetSource`; `EffectCatalogTests` (EditMode, fake source). (FR-5, FR-9)
+- [x] **T4.1** [core] Implement `EffectCatalog` (`Create`, `TryResolve` with an ordinal cache, `Release`, the prefix forms, unknown path → false with one warning per key per session) and `IEffectAssetSource`; `EffectCatalogTests` (EditMode, fake source). (FR-5, FR-9)
   *Done when:* `EffectCatalogTests` pass: `effect/firewall.str`, `FIREWALL.STR` and `data\texture\effect\firewall.str` resolve to one `EffectRef`; an unknown path gives false and one warning.
 
 - [ ] **T4.2** [quick] Add the `effects` Addressables group to `RoCatalogAddressables.Ensure`, with folder entries `Assets/Art/Imported/effect` and `Assets/Data/Effects`. (FR-5)
