@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Uninarok.Map;
 using UnityEngine;
 
@@ -25,6 +26,8 @@ namespace Uninarok.Effects
         int tickNumber;
         float timeScale = 1f;
         bool warnedFull, disposed;
+        readonly EffectMaterials materials;
+        readonly HashSet<EffectAsset> blendWarned = new HashSet<EffectAsset>();
 
         public EffectRuntime(EffectCatalog catalog, EffectSettings settings, Transform root, int capacity = 512)
         {
@@ -32,6 +35,7 @@ namespace Uninarok.Effects
             this.settings = settings != null ? settings : throw new ArgumentNullException(nameof(settings));
             this.root = root != null ? root : throw new ArgumentNullException(nameof(root));
             if (capacity < 1) throw new ArgumentOutOfRangeException(nameof(capacity), "capacity must be at least 1");
+            materials = new EffectMaterials(settings);
 
             slots = new EffectInstance[capacity];
             free = new int[capacity];
@@ -46,6 +50,14 @@ namespace Uninarok.Effects
         public EffectCatalog Catalog => catalog;
         public EffectSettings Settings => settings;
         public int Capacity => slots.Length;
+        internal EffectMaterials Materials => materials;
+
+        /// <summary>One warning per asset for an unknown blend code (plan 4.5 Blend). T5.8 folds this into <c>Warned</c>.</summary>
+        internal void WarnBlendOnce(EffectAsset asset)
+        {
+            if (asset == null || !blendWarned.Add(asset)) return;
+            Debug.LogWarning($"[Effects] Effect '{asset.Path}': a key has an unknown blend code (outside 1..11); SrcAlpha / OneMinusSrcAlpha is used.");
+        }
 
         /// <summary>Whole-runtime time scale (preview speed, pause at 0); default 1. Negative or non-finite → 0.</summary>
         public float TimeScale
@@ -157,9 +169,11 @@ namespace Uninarok.Effects
             Normalize(inst);
         }
 
-        /// <summary>The part that draws this instance's kind; none exists before T5.5-T5.8 (the instance then only keeps time).</summary>
+        /// <summary>The part that draws this instance's kind; only STR exists before T5.6-T5.8 (others only keep time).</summary>
         IEffectPart CreatePart(EffectInstance inst)
         {
+            if (inst.Asset != null && inst.Asset.Kind == EffectKind.Str)
+                return inst.StrPart ?? (inst.StrPart = new StrPart(this));
             return null;
         }
 
@@ -356,12 +370,14 @@ namespace Uninarok.Effects
             disposed = true;
             for (int i = 0; i < slots.Length; i++)
             {
+                slots[i].DisposeWriter();
                 var o = slots[i].Object;
                 slots[i].Object = null;
                 if (o == null) continue;
                 if (Application.isPlaying) UnityEngine.Object.Destroy(o);
                 else UnityEngine.Object.DestroyImmediate(o);
             }
+            materials.Dispose();
         }
     }
 }

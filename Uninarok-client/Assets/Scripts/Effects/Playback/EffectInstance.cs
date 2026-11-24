@@ -67,8 +67,32 @@ namespace Uninarok.Effects
         internal int BornTick;
 
         public GameObject Object;
+        /// <summary>The instance's one mesh writer (MeshFilter and MeshRenderer on <see cref="Object"/>), made at the slot's
+        /// first drawing bind and kept; parts of every drawing kind share it.</summary>
+        EffectMeshWriter writer;
+        /// <summary>This slot's pooled <c>StrPart</c> (kept between plays).</summary>
+        public StrPart StrPart;
 
         public EffectInstance(int slot) { Slot = slot; }
+
+        public EffectMeshWriter GetWriter()
+        {
+            if (writer == null)
+            {
+                var filter = Object.GetComponent<MeshFilter>();
+                if (filter == null) filter = Object.AddComponent<MeshFilter>();
+                var renderer = Object.GetComponent<MeshRenderer>();
+                if (renderer == null) renderer = Object.AddComponent<MeshRenderer>();
+                writer = new EffectMeshWriter(filter, renderer);
+            }
+            return writer;
+        }
+
+        public void DisposeWriter()
+        {
+            writer?.Dispose();
+            writer = null;
+        }
 
         public EffectHandle Handle => new EffectHandle(Slot, Generation);
     }

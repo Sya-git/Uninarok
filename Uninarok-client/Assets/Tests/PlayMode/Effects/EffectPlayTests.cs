@@ -13,7 +13,7 @@ namespace Uninarok.Effects.PlayTests
     public class EffectPlayTests
     {
         const float Dt = 1f / 60f;
-        const int Str1s = 0, Cylinder05s = 1, Deferred = 2, Sprite = 3, Missing = 4;
+        const int Str1s = 0, Cylinder05s = 1, Deferred = 2, Sprite = 3, Missing = 4, ThreeLayers = 5;
 
         sealed class FakeSource : IEffectAssetSource
         {
@@ -62,6 +62,7 @@ namespace Uninarok.Effects.PlayTests
             settings = Make<EffectSettings>();
             settings.PlaceholderSeconds = 0.25f;
             settings.AuthoredFrameRate = 60f;
+            settings.Shader = Shader.Find("Uninarok/RoEffect");
 
             var str = Make<EffectAsset>();
             str.Path = "texture/effect/test.str"; str.Kind = EffectKind.Str; str.Fps = 10f; str.FrameCount = 10;   // 1 s
@@ -72,9 +73,11 @@ namespace Uninarok.Effects.PlayTests
             var sprite = Make<EffectAsset>();
             sprite.Path = "sprite/이팩트/test.act"; sprite.Kind = EffectKind.Sprite; sprite.SpriteName = "test";
 
-            var assets = new[] { str, cyl, late, sprite, null };
+            var three = MakeThreeLayers();
+
+            var assets = new[] { str, cyl, late, sprite, null, three };
             var index = Make<EffectCatalogIndex>();
-            index.Keys = new[] { str.Path, cyl.Path, late.Path, sprite.Path, "texture/effect/missing.str" };
+            index.Keys = new[] { str.Path, cyl.Path, late.Path, sprite.Path, "texture/effect/missing.str", three.Path };
             index.Assets = new EffectAssetRef[assets.Length];
             index.SourceMissing = new bool[assets.Length];
             for (int i = 0; i < assets.Length; i++)
@@ -87,6 +90,124 @@ namespace Uninarok.Effects.PlayTests
 
             root = new GameObject("EffectPlayTestsRoot");
             runtime = new EffectRuntime(catalog, settings, root.transform);
+        }
+
+        // Three layers, 10 fps, 10 frames, one white texture each:
+        //   layer 0: base at frame 0 (blend 5/6, angle 0, Position (330, 300)), base at frame 5 (blend 2/2), base at frame 9
+        //   layer 1: base at frame 0, angle 256 units (90 degrees)
+        //   layer 2: first base key at frame 3 (hidden before it)
+        EffectAsset MakeThreeLayers()
+        {
+            var tex = new Texture2D(2, 2);
+            created.Add(tex);
+            var a = Make<EffectAsset>();
+            a.Path = "texture/effect/three.str"; a.Kind = EffectKind.Str; a.Fps = 10f; a.FrameCount = 10;
+            a.Textures = new[] { tex }; a.TextureNames = new[] { "white" };
+            a.Layers = new[]
+            {
+                new EffectAsset.LayerData { FirstKey = 0, KeyCount = 3, FirstTexture = 0, TextureCount = 1 },
+                new EffectAsset.LayerData { FirstKey = 3, KeyCount = 1, FirstTexture = 0, TextureCount = 1 },
+                new EffectAsset.LayerData { FirstKey = 4, KeyCount = 2, FirstTexture = 0, TextureCount = 1 },
+            };
+            a.Keys = new[]
+            {
+                StrKey(0, new Vector2(330f, 300f), 0f, 5, 6),
+                StrKey(5, new Vector2(330f, 300f), 0f, 2, 2),
+                StrKey(9, new Vector2(330f, 300f), 0f, 2, 2),
+                StrKey(0, new Vector2(320f, 320f), 256f, 5, 6),
+                StrKey(3, new Vector2(320f, 320f), 0f, 5, 6),
+                StrKey(8, new Vector2(320f, 320f), 0f, 5, 6),
+            };
+            return a;
+        }
+
+        static EffectAsset.KeyData StrKey(int frame, Vector2 position, float angle, byte src, byte dst) => new EffectAsset.KeyData
+        {
+            Frame = frame, Type = 0, SrcBlend = src, DstBlend = dst, Position = position, Angle = angle,
+            Uv0 = new Vector2(0f, 0f), Uv1 = new Vector2(1f, 1f), Uv2 = new Vector2(0f, 0f), Uv3 = new Vector2(1f, 1f),
+            Xy0 = new Vector2(-32f, -32f), Xy1 = new Vector2(32f, -32f), Xy2 = new Vector2(32f, 32f), Xy3 = new Vector2(-32f, 32f),
+            Color = new Vector4(255f, 255f, 255f, 255f),
+        };
+
+        // Draws the three-layer asset at one effect second (TimeScale 0: the tick draws without moving the clock).
+        EffectMeshWriter DrawThreeLayersAt(float seconds, out EffectInstance inst)
+        {
+            runtime.TimeScale = 0f;
+            var h = runtime.Play(Ref(ThreeLayers), Vector3.zero, loop: true);
+            runtime.Seek(h, seconds);
+            runtime.Tick(Dt);
+            inst = runtime.InstanceOf(h);
+            return inst.GetWriter();
+        }
+
+        // pixels (y down) to object-space units, by hand from plan 4.5: x / (35 / 0.5), y flipped, lowered 0.5 x 0.5
+        static Vector3 Units(float px, float py) => new Vector3(px * 0.5f / 35f, -py * 0.5f / 35f - 0.25f, 0f);
+
+        // ---- STR drawing (FR-2, FR-3) ----
+
+        [Test]
+        public void Str_ThreeLayers_GiveThreeSubmeshes_AndPlaceLayerZeroAtFrameZero()
+        {
+            var w = DrawThreeLayersAt(0f, out _);
+
+            Assert.AreEqual(3, w.SubMeshCount);
+            Assert.AreEqual(12, w.VertexCount);
+            // layer 0, frame 0: Xy (+-32) + (Position - Pivot) = + (10, -20), no rotation
+            var expected = new[] { Units(-22f, -52f), Units(42f, -52f), Units(42f, 12f), Units(-22f, 12f) };
+            for (int i = 0; i < 4; i++)
+                Assert.That(Vector3.Distance(expected[i], w.Vertices[i].Position), Is.LessThan(1e-5f), "corner " + i);
+            // uv: the full rectangle, v counted from the image's top row
+            Assert.AreEqual(new Vector2(0f, 1f), w.Vertices[0].Uv);
+            Assert.AreEqual(new Vector2(1f, 1f), w.Vertices[1].Uv);
+            Assert.AreEqual(new Vector2(1f, 0f), w.Vertices[2].Uv);
+            Assert.AreEqual(new Vector2(0f, 0f), w.Vertices[3].Uv);
+            Assert.AreEqual(new Color32(255, 255, 255, 255), w.Vertices[0].Color);
+        }
+
+        [Test]
+        public void Str_LayerOne_IsRotatedByItsAngle()
+        {
+            var w = DrawThreeLayersAt(0f, out _);
+            // 256 of 1024 units = 90 degrees: (x, y) -> (-y, x) on the pixel coordinates; Position = Pivot
+            var expected = new[] { Units(32f, -32f), Units(32f, 32f), Units(-32f, 32f), Units(-32f, -32f) };
+            for (int i = 0; i < 4; i++)
+                Assert.That(Vector3.Distance(expected[i], w.Vertices[4 + i].Position), Is.LessThan(1e-5f), "corner " + i);
+        }
+
+        [Test]
+        public void Str_LayerHiddenBeforeItsFirstKey_ThenShown()
+        {
+            var w = DrawThreeLayersAt(0.1f, out var inst);          // frame 1, layer 2 starts at frame 3
+            for (int i = 8; i < 12; i++) Assert.AreEqual(default(EffectVertex), w.Vertices[i], "layer 2 hidden at frame 1");
+            Assert.AreNotEqual(default(EffectVertex), w.Vertices[0], "layer 0 shown");
+
+            runtime.Seek(inst.Handle, 0.4f);
+            runtime.Tick(Dt);
+            Assert.AreNotEqual(default(EffectVertex), w.Vertices[8], "layer 2 shown at frame 4");
+        }
+
+        [Test]
+        public void Str_BlendChangeAtAKey_SwapsTheSubmeshMaterial()
+        {
+            var w = DrawThreeLayersAt(0.1f, out var inst);
+            var renderer = inst.Object.GetComponent<MeshRenderer>();
+            var before = renderer.sharedMaterials[0];
+            int uploads = w.MaterialUploads;
+            Assert.AreEqual(3, renderer.sharedMaterials.Length);
+            Assert.AreEqual((float)UnityEngine.Rendering.BlendMode.SrcAlpha, before.GetFloat("_SrcBlend"));
+            Assert.IsTrue(before.IsKeywordEnabled("_FACING_CAMERA"));
+
+            runtime.Seek(inst.Handle, 0.6f);                        // frame 6: past layer 0's second base key
+            runtime.Tick(Dt);
+
+            var after = renderer.sharedMaterials[0];
+            Assert.AreNotSame(before, after);
+            Assert.AreEqual((float)UnityEngine.Rendering.BlendMode.One, after.GetFloat("_SrcBlend"));
+            Assert.AreEqual((float)UnityEngine.Rendering.BlendMode.One, after.GetFloat("_DstBlend"));
+            Assert.AreSame(renderer.sharedMaterials[2], before, "layer 2 keeps the first blend");
+            Assert.AreEqual(uploads + 1, w.MaterialUploads, "one renderer update for the swap");
+            runtime.Tick(Dt);
+            Assert.AreEqual(uploads + 1, w.MaterialUploads, "none while nothing changes");
         }
 
         [TearDown]
