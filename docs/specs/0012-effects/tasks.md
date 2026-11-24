@@ -120,7 +120,7 @@
 - [x] **T4.2** [quick] Add the `effects` Addressables group to `RoCatalogAddressables.Ensure`, with folder entries `Assets/Art/Imported/effect` and `Assets/Data/Effects`. (FR-5)
   *Done when:* after Ensure the group `effects` has the `Assets/Data/Effects` entry (ours, created by Ensure) and no `Assets/Art/Imported/effect` entry while that folder is absent, which gains its entry on the first Ensure after the folder exists (D27); a second Ensure adds nothing; `RoCatalogAddressablesTests` passes.
 
-- [ ] **T4.3** [core] Implement `AddressablesEffectSource` and `EffectCatalog.LoadAsync` (the index through Addressables; assets loaded by GUID key); add `EffectCatalogLoadTests` (PlayMode). (FR-5, FR-6)
+- [x] **T4.3** [core] Implement `AddressablesEffectSource` and `EffectCatalog.LoadAsync` (the index through Addressables; assets loaded by GUID key); add `EffectCatalogLoadTests` (PlayMode). (FR-5, FR-6)
   *Done when:* the code compiles; `EffectCatalogLoadTests` passes after T6.9 has built the index (run in T9.6).
 
 - [ ] **T4.4** [core] Implement `RoEffectSpriteEntryConverter`: one `EffectAsset` (Kind Sprite, `SpriteName` the SPEC-0008 name, `SpriteAction` 0) per ACT under `sprite/이팩트/`, at `Art/Imported/effect/sprite/이팩트/<name>.act.asset`; menu item `Convert Effect Sprites`. It references the sprite and imports nothing. (FR-4, FR-5)

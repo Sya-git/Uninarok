@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Uninarok.Effects
 {
@@ -33,10 +35,55 @@ namespace Uninarok.Effects
             assets = new EffectAsset[n];
         }
 
-        /// <summary>Catalog over an index and an asset source (editor, tests; the game path is LoadAsync, T4.3).</summary>
+        /// <summary>Catalog over an index and an asset source (editor, tests; the game path is <see cref="LoadAsync()"/>).</summary>
         public static EffectCatalog Create(EffectCatalogIndex index, IEffectAssetSource source)
         {
             return new EffectCatalog(index, source);
+        }
+
+        /// <summary>The Addressables address of the generated index (plan 3).</summary>
+        public static string IndexKey => "Assets/Art/Imported/effect/_index.asset";
+
+        /// <summary>
+        /// Loads the index through Addressables and builds the catalog over an <see cref="AddressablesEffectSource"/> (assets
+        /// load by GUID on request). The operation fails when the index cannot be loaded. The handle is the caller's;
+        /// <see cref="Release"/> releases the assets and the index.
+        /// </summary>
+        public static AsyncOperationHandle<EffectCatalog> LoadAsync() => LoadAsync(IndexKey);
+
+        internal static AsyncOperationHandle<EffectCatalog> LoadAsync(string indexKey)
+        {
+            var load = Addressables.LoadAssetAsync<EffectCatalogIndex>(indexKey);
+            return Addressables.ResourceManager.StartOperation(new LoadOperation(load), default);
+        }
+
+        AsyncOperationHandle<EffectCatalogIndex> indexHandle;
+
+        sealed class LoadOperation : AsyncOperationBase<EffectCatalog>
+        {
+            readonly AsyncOperationHandle<EffectCatalogIndex> load;
+
+            public LoadOperation(AsyncOperationHandle<EffectCatalogIndex> load) => this.load = load;
+
+            protected override void Execute()
+            {
+                if (load.IsDone) OnLoaded(load);
+                else load.Completed += OnLoaded;
+            }
+
+            void OnLoaded(AsyncOperationHandle<EffectCatalogIndex> h)
+            {
+                if (h.Status != AsyncOperationStatus.Succeeded || h.Result == null)
+                {
+                    var error = h.OperationException ?? new InvalidOperationException("the effect catalog index could not be loaded");
+                    if (h.IsValid()) Addressables.Release(h);
+                    Complete(null, false, error);
+                    return;
+                }
+                var catalog = new EffectCatalog(h.Result, new AddressablesEffectSource());
+                catalog.indexHandle = h;
+                Complete(catalog, true, null);
+            }
         }
 
         public int Count => states.Length;
@@ -138,6 +185,8 @@ namespace Uninarok.Effects
                 states[i] = EffectAssetState.NotLoaded;
                 assets[i] = null;
             }
+            if (indexHandle.IsValid()) Addressables.Release(indexHandle);
+            indexHandle = default;
         }
 
         bool InRange(EffectRef entry) => entry.Index >= 0 && entry.Index < states.Length;
