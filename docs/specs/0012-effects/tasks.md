@@ -59,7 +59,7 @@
 - [x] **T2.1** [core] Test-first: `EffectSamplerTests` (plan §6: base held; base plus delta morph; delta not adjacent → held; hidden before the first and after the last key; anitype 0 to 4; angle units; colour / 255; seek equals continuous play), with an `EffectSampler` stub; every case `[Ignore("pending T2.2")]`. (FR-3, FR-10)
   *Done when:* the test class compiles and the run shows its cases ignored, 0 failed.
 
-- [ ] **T2.2** [critical] Implement `EffectSampler` (plan §4.2 sampling semantics, `cursor`, pure, no allocation) and remove the Ignore. (FR-3, FR-9)
+- [x] **T2.2** [critical] Implement `EffectSampler` (plan §4.2 sampling semantics, `cursor`, pure, no allocation) and remove the Ignore. (FR-3, FR-9)
   *Done when:* `EffectSamplerTests` pass; 10,000 samples allocate 0 B (`GC.GetAllocatedBytesForCurrentThread` around the loop).
 
 - [ ] **T2.3** [core] Test-first: `AuthoredSamplerTests` and the `EffectRandom` cases (plan §6: warp cylinder values at t 0, 0.25, 0.5, 0.75, 1; null curves give their neutral values; quad offset inside the start box at t 0 and the end box at t 1; size = `SizePixels` / `PixelsPerCell`; same seed → same sample; same offset in a later cycle; different seeds differ; 0 B over 10,000 samples). The cylinder strip's vertex count and uv are checked in T5.3. Stubs, every case `[Ignore("pending T2.4")]`. (FR-4, FR-7, FR-10)

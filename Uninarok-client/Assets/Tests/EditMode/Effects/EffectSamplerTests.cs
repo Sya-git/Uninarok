@@ -6,13 +6,12 @@ namespace Uninarok.Effects.Tests
     /// <summary>
     /// Pins the STR sampling rule of plan 4.2 (SPEC-0012 FR-3, FR-10; lead D17). Owner questions of
     /// str-reference.md section 8 are not pinned: O2 (last frame / length), O3 (anitype 0 with a non-zero base
-    /// aniframe), O4 (whose delay anitypes 2..4 use), O5 (anitypes 5 and 6). Cases below avoid them.
-    /// Angle: Sample has no settings parameter (plan 4.2), so the tests assume the lead default of 1024 units per
-    /// turn (EffectSettings.AngleUnitsPerTurn); how the sampler gets the setting is open (reported with T2.1).
+    /// aniframe), O4 (whose delay anitypes 2..4 use), O5 (anitypes 5 and 6). Cases below avoid them;
+    /// EffectSampler.Length (FrameCount / Fps) is not pinned here because of O2.
+    /// Angle: the sampler takes EffectSettings (plan D23); the tests use its defaults (1024 units per turn).
     /// </summary>
     public class EffectSamplerTests
     {
-        const string Pending = "pending T2.2";
         const float Tol = 1e-4f;
 
         static EffectAsset.KeyData Base(int frame, Vector2 pos, float aniFrame = 0f, float angle = 0f,
@@ -46,16 +45,21 @@ namespace Uninarok.Effects.Tests
             return a;
         }
 
-        static bool Sample(EffectAsset a, float frame, out QuadSample q)
+        EffectSettings settings;
+
+        [SetUp] public void SetUp() => settings = ScriptableObject.CreateInstance<EffectSettings>();
+        [TearDown] public void TearDown() => Object.DestroyImmediate(settings);
+
+        bool Sample(EffectAsset a, float frame, out QuadSample q)
         {
             int cursor = 0;
             return Sample(a, frame, ref cursor, out q);
         }
 
-        static bool Sample(EffectAsset a, float frame, ref int cursor, out QuadSample q)
-            => EffectSampler.Sample(a, 0, frame, ref cursor, out q);
+        bool Sample(EffectAsset a, float frame, ref int cursor, out QuadSample q)
+            => EffectSampler.Sample(a, settings, 0, frame, ref cursor, out q);
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void BaseOnly_IsHeldUntilNextBaseKey()
         {
             var a = Make(1,
@@ -72,7 +76,7 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(3, q.Dst);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void BasePlusDelta_Morphs_PositionAngleColour()
         {
             var a = Make(1,
@@ -91,7 +95,7 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(17f, q.Position.x, Tol);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void DeltaNotAdjacent_IsIgnoredAndBaseHeld()
         {
             // The delta sits at another frame than the base key: it is not the base's delta key, base is held.
@@ -104,7 +108,7 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(20f, q.Position.y, Tol);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void Hidden_BeforeFirstKey_AndAfterLastKey()
         {
             var a = Make(1, Base(5, new Vector2(1, 1)), Base(10, new Vector2(2, 2)));
@@ -118,7 +122,7 @@ namespace Uninarok.Effects.Tests
         // Anitype cases use base aniframe 0 and the delta key's delay (O3, O4 undecided); n = 4 textures.
         // d = f - base.Frame.
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void AniType0_ShowsTextureZero()
         {
             var a = Make(4, Base(0, Vector2.zero), Delta(0, Vector2.zero, aniType: 0, aniFrame: 3f, delay: 1f));
@@ -126,7 +130,7 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(0, q.Texture);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void AniType1_BasePlusDeltaAniFrameTimesD()
         {
             var a = Make(8, Base(0, Vector2.zero), Delta(0, Vector2.zero, aniType: 1, aniFrame: 1f));
@@ -134,7 +138,7 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(5, q.Texture);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void AniType2_AdvancesThenClampsToLast()
         {
             var a = Make(4, Base(0, Vector2.zero), Delta(0, Vector2.zero, aniType: 2, delay: 1f));
@@ -144,7 +148,7 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(3, q.Texture, "min(.., n - 1)");
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void AniType3_WrapsModuloCount()
         {
             var a = Make(4, Base(0, Vector2.zero), Delta(0, Vector2.zero, aniType: 3, delay: 1f));
@@ -152,7 +156,7 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(2, q.Texture);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void AniType4_RunsBackwardsWrappedPositive()
         {
             var a = Make(4, Base(0, Vector2.zero), Delta(0, Vector2.zero, aniType: 4, delay: 1f));
@@ -162,7 +166,7 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(3, q.Texture, "-5 mod 4, positive");
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void AngleUnits_ConvertToDegreesByTurn()
         {
             var a = Make(1, Base(0, Vector2.zero, angle: 256f));   // 1024 units per turn (lead default)
@@ -170,7 +174,7 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(90f, q.AngleDegrees, Tol);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void Colour_IsDividedBy255()
         {
             var a = Make(1, Base(0, Vector2.zero, color: new Vector4(255, 51, 0, 127.5f)));
@@ -181,7 +185,7 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(0.5f, q.Color.a, Tol);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void Seek_EqualsContinuousPlay()
         {
             var a = Make(4,
@@ -204,6 +208,79 @@ namespace Uninarok.Effects.Tests
                 Assert.AreEqual(seek.Color, play.Color, "colour at " + f);
                 Assert.AreEqual(seek.Texture, play.Texture, "texture at " + f);
             }
+        }
+
+        [Test]
+        public void Seek_BackwardsWithStaleCursor_EqualsFresh()
+        {
+            var a = Make(1, Base(0, new Vector2(1, 0)), Base(10, new Vector2(2, 0)), Base(20, new Vector2(3, 0)));
+            int cursor = 0;
+            Assert.IsTrue(Sample(a, 20f, ref cursor, out var q));
+            Assert.AreEqual(3f, q.Position.x, Tol);
+            Assert.IsTrue(Sample(a, 4f, ref cursor, out q), "stale cursor ahead of the frame");
+            Assert.AreEqual(1f, q.Position.x, Tol);
+            cursor = 1000;                           // out-of-range hint is clamped, never indexes out of range
+            Assert.IsTrue(Sample(a, 12f, ref cursor, out q));
+            Assert.AreEqual(2f, q.Position.x, Tol);
+            cursor = -7;
+            Assert.IsTrue(Sample(a, 12f, ref cursor, out q));
+            Assert.AreEqual(2f, q.Position.x, Tol);
+        }
+
+        // FR-3 robustness: malformed assets give "hidden" or a safe texture index, never an exception.
+        [Test]
+        public void Malformed_LayerRangeOrIndex_IsHidden()
+        {
+            var a = Make(1, Base(0, Vector2.zero));
+            int c = 0;
+            Assert.IsFalse(EffectSampler.Sample(a, settings, 1, 0f, ref c, out _), "layer out of range");
+            Assert.IsFalse(EffectSampler.Sample(a, settings, -1, 0f, ref c, out _), "negative layer");
+            Assert.IsFalse(EffectSampler.Sample(a, settings, 0, float.NaN, ref c, out _), "NaN frame");
+            a.Layers[0].KeyCount = 5;                // past the end of Keys
+            Assert.IsFalse(EffectSampler.Sample(a, settings, 0, 0f, ref c, out _), "key range past the array");
+            a.Layers[0].KeyCount = 1; a.Layers[0].FirstKey = int.MaxValue;
+            Assert.IsFalse(EffectSampler.Sample(a, settings, 0, 0f, ref c, out _), "overflowing first key");
+        }
+
+        [Test]
+        public void NoTextures_GivesMinusOne_AndHugeAniFrameIsClamped()
+        {
+            var a = Make(0, Base(0, Vector2.zero), Delta(0, Vector2.zero, aniType: 3, delay: 1f));
+            Assert.IsTrue(Sample(a, 5f, out var q));
+            Assert.AreEqual(-1, q.Texture);
+            var b = Make(4, Base(0, Vector2.zero, aniFrame: 1e30f));
+            Assert.IsTrue(Sample(b, 0f, out q));
+            Assert.AreEqual(3, q.Texture, "held aniframe beyond the layer clamps to the last texture");
+            var c = Make(4, Base(0, Vector2.zero), Delta(0, Vector2.zero, aniType: 2, delay: float.PositiveInfinity));
+            Assert.IsTrue(Sample(c, 0f, out q), "+inf delay at d = 0 (inf x 0) does not give NaN");
+            Assert.AreEqual(0, q.Texture);
+        }
+
+        // FR-9: sampling allocates nothing (tasks.md T2.2 "Done when").
+        [Test]
+        public void TenThousandSamples_AllocateZeroBytes()
+        {
+            var a = Make(4,
+                Base(0, new Vector2(1, 1)),
+                Delta(0, new Vector2(1, 0.5f), aniType: 3, delay: 0.5f, angle: 2f),
+                Base(12, new Vector2(40, 40)),
+                Base(20, new Vector2(5, 5)),
+                Delta(20, new Vector2(-1, 1), aniType: 4, delay: 1f),
+                Base(30, new Vector2(9, 9)));
+            int cursor = 0;
+            float sum = 0f;
+            for (int i = 0; i < 100; i++)            // warm-up (JIT)
+                if (EffectSampler.Sample(a, settings, 0, i * 0.33f, ref cursor, out var w)) sum += w.Position.x;
+            cursor = 0;
+            long before = System.GC.GetAllocatedBytesForCurrentThread();
+            for (int i = 0; i < 10000; i++)
+            {
+                if ((i & 1023) == 0) cursor = 0;     // include seeks
+                if (EffectSampler.Sample(a, settings, 0, (i % 1300) * 0.025f, ref cursor, out var q)) sum += q.Position.x;
+            }
+            long after = System.GC.GetAllocatedBytesForCurrentThread();
+            Assert.AreEqual(0L, after - before, "bytes allocated by 10,000 samples");
+            Assert.IsFalse(float.IsNaN(sum));
         }
     }
 }

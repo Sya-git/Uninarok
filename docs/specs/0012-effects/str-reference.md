@@ -113,6 +113,8 @@ The rule is the plan's (lead, accepted by the owner, D17). What the data and GRF
 | Colour / 255 | Candidate (raw range 0..255 confirmed) |
 | Texture frame by anitype: 0 → 0, 1 → base + delta.aniframe × d, 2 → min(base + delay × d, n − 1), 3 → wrap modulo n, 4 → reverse, wrapped positive | Lead; wording open on anitype 0, the delay used and anitypes 5 and 6 (§8 O3 to O5) |
 
+`EffectSampler` (T2.2) applies the plan rule as written until the owner decides O2 to O5: anitype 0 gives texture frame 0 (O3); anitypes 2 to 4 use the delta key's delay (O4), and a non-finite delay (the `+inf` file values) reads as 0, as GRF reads it; anitypes 5, 6 and unknown hold the base key's aniframe (O5); length is frame count / fps (O2). The texture frame is floored and clamped to the layer's textures (anitype 4 wraps positive first: n = 4, d = 1 gives 3); a layer with no texture gives texture index −1.
+
 Corner placement and uv (Candidate, from §3): corner i of the quad is `Xy_i` (0 top-left, 1 top-right, 2 bottom-right, 3 bottom-left, pixels, y down) placed relative to `Position`. The stored uv is a rectangle from `Uv0` (top-left) to `Uv1` (bottom-right), so the corner uvs are top-left `(Uv0.x, Uv0.y)`, top-right `(Uv1.x, Uv0.y)`, bottom-right `(Uv1.x, Uv1.y)`, bottom-left `(Uv0.x, Uv1.y)`, with v counted from the image's top row. `Uv2` and `Uv3` are kept raw and not used. Every file holds the full rectangle (§5), so the data cannot tell this from another layout; the owner's visual check stands.
 
 ## 7. GRF's interpolation compared with the plan rule
