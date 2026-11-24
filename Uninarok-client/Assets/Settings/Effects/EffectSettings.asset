@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35f279f97a59f3c4a9aeaa3edaf54db8, type: 3}
   m_Name: EffectSettings
   m_EditorClassIdentifier: Uninarok.Effects::Uninarok.Effects.EffectSettings
-  Shader: {fileID: 0}
+  Shader: {fileID: 4800000, guid: 6374181f31e0b9a4fb0cc283cbb054e6, type: 3}
   PixelsPerCell: 35
   Pivot: {x: 320, y: 320}
   VerticalBaseCells: 0.5

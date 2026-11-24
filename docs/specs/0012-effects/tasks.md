@@ -131,7 +131,7 @@
 
 ## Phase 5: Player (run time)
 
-- [ ] **T5.1** [core] Write the shader `Uninarok/RoEffect` at `Assets/Shaders/Effects/RoEffect.shader` (plan §4.5: URP unlit, transparent queue, `Blend [_SrcBlend] [_DstBlend]`, ZWrite Off, Cull Off, ZTest LEqual, vertex colour × texture, keywords `_FACING_CAMERA` and `_UV_REPEAT`, `_DepthBias`), and assign it to `EffectSettings.Shader`. (FR-3, FR-4, FR-9)
+- [x] **T5.1** [core] Write the shader `Uninarok/RoEffect` at `Assets/Shaders/Effects/RoEffect.shader` (plan §4.5: URP unlit, transparent queue, `Blend [_SrcBlend] [_DstBlend]`, ZWrite Off, Cull Off, ZTest LEqual, vertex colour × texture, keywords `_FACING_CAMERA` and `_UV_REPEAT`, `_DepthBias`), and assign it to `EffectSettings.Shader`. (FR-3, FR-4, FR-9)
   *Done when:* `Logs/Editor.log` has no shader error for either keyword variant; `EffectSettings.Shader` references the shader.
 
 - [ ] **T5.2** [core] Implement `EffectMaterials` (one material per (texture, src, dst, facing, wrap), created on first use and kept), assign a placeholder texture asset to `EffectSettings.PlaceholderTexture`, and `EffectMaterialsTests`: the same key gives the same instance; a different wrap gives another material. (FR-3, FR-9)
