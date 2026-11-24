@@ -221,11 +221,11 @@ namespace Uninarok.Effects
 Satisfies FR-1, FR-2.
 
 ```csharp
-public static class RoEffectTextureLookup                       // pure
+public static class RoEffectTextureLookup                       // import time only
 {
-    public static readonly RoPath EffectRoot;                   // "texture/effect"
-    public static readonly string[] BareNamePreference = { ".tga", ".bmp" };   // FR-2: by name alone, .tga first
-    public static bool TryResolve(IRoSource src, RoPath str, string name, out RoPath texture);   // own folder, then EffectRoot
+    public static RoPath EffectRoot { get; }                    // static property: "texture/effect"
+    public static string[] BareNamePreference { get; }          // static property: { ".tga", ".bmp" }, FR-2: by name alone, .tga first
+    public static bool TryResolve(IRoSource src, RoPath str, string name, RoReport report, out RoPath texture);   // own folder, then EffectRoot; a miss warns on report (D25)
 }
 public enum RoEffectKey : byte { None, Pink, Black, PinkAndBlack }
 public sealed class RoEffectKeyRules                            // loaded from Rules/effect-textures.json
@@ -505,6 +505,7 @@ Satisfies FR-2, FR-4, FR-5, FR-7.
 | D22 | STR quads draw with the uv stored in the STR keys (owner decision 2026-11-24, R5 resolved; FR-2, FR-3) | Full-rectangle uv as the lead draws (ignores what the file holds); a setting switching between both (a second path to test with no use) |
 | D23 | `EffectSampler.Sample` takes the `EffectSettings` as a parameter (like `AuthoredSampler`), so the angle units per turn stay data (T2.2: the §4.2 signature had no way to reach `AngleUnitsPerTurn`; FR-3) | A fixed 1024 in the sampler (the value would no longer be data); a static reference to the settings asset (hidden global state, the sampler would no longer be pure) |
 | D24 | **STR version and issue code through GRF only (T3.1 audit).** What was wrong: D1 and str-reference §3, §9 checked magic and version by reading the first 8 bytes, against the owner's rule that RO files are read only through GRF; and the §4.1 `TryRead` gave no issue code, so a caller could not tell `CorruptFile` from `UnsupportedStrVersion`. What changed: `TryReadVersion` and `TryRead` build GRF's `StrHeader(new ByteReader(bytes, 0), new Str())`, which parses only the header and rejects a wrong magic (`GrfException`); the version is `MajorVersion \| MinorVersion << 8` (GRF gives 148, minor 0, for `0x94`) and must equal `RoStrReader.SupportedVersion` (`0x94`) before `new Str(bytes)` reads the body. `TryRead` gains an overload with `out RoIssueCode code`; the §4.1 form stays and delegates. The reader also rejects fps ≤ 0 and a negative frame count as `CorruptFile` (length = frames / fps downstream). Wrong-version test input is written by GRF itself (`Header.SetVersion`, `Save`) through an internal test helper in `Core/Formats`, so neither the importer nor its test touches bytes | Patching or checking header bytes by hand (forbidden by the owner); reading the version from `Str.Header` after the full parse (GRF reads any version with the 0x94 layout, so the body of another version could throw or read garbage before the check); a referenced GRF in the test assembly (GRF types stay in `Core/Formats`) |
+| D25 | **The lookup issues `TextureMissing` itself (T3.4 finding).** The §4.3 signature had no way to report, so "`TextureMissing` once per (texture, STR)" could not come from the lookup. `TryResolve` takes the run's `RoReport` (the existing pattern: `RoGndReader`, `RsmMeshBuilder`) and warns with the STR as referrer; `RoReport` dedupes per (code, item), so the item is `<str>: <name>` and a second STR asking the same name gets its own warning. `EffectRoot` and `BareNamePreference` are static properties, not fields (the repo's static-field analyzer, UAL0010/UAL0013) | The converter issuing the warning from the false return (it would have to rebuild the (texture, STR) dedupe and the lookup could not be tested for it alone) |
 
 **Revision 2026-11-24 (owner decisions on task review).** (1) `EffectPath` normalises on its own at run time and does not reference `RoPath` (editor code); `EffectPathAgreementTests` checks that both agree on a sample set (§4.4, §6, D21). (2) `KeyData.Delay`, the file's per-key animation delay, stays in the asset as imported; the reflection test forbids only asset-level start delay, duplicate, wav/sound and attachment fields (§4.2, §6). (3) The cylinder vertex-count check sits with the mesh writer tests (tasks only). (4) R5 resolved: STR quads use the uv from the STR keys, not the full rectangle (§9, D22). Rejected alternatives: see D21 and D22. No code exists yet, so nothing implemented is reworked.
 

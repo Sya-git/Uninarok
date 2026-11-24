@@ -82,7 +82,7 @@
 - [x] **T3.4** [core] Test-first: `RoEffectTextureLookupTests` (own folder wins; root found when absent from the own folder; neither → placeholder with one warning naming the file, in a temp folder; a name with an extension resolves to that file only; a bare name with `.tga` and `.bmp` gives the `.tga`; folder order beats extension preference; `pok1.tga` and `pok1.bmp` give two textures with no collision; `jong_mini.str` and `new_splash.str` resolve all their textures (NeedsData)), with a `RoEffectTextureLookup` stub; every case `[Ignore("pending T3.5")]`. (FR-2, FR-10)
   *Done when:* the test class compiles and the run shows its cases ignored, 0 failed.
 
-- [ ] **T3.5** [core] Implement `RoEffectTextureLookup` (`EffectRoot`, `BareNamePreference`, `TryResolve`; a name found nowhere gives `TextureMissing` once per (texture, STR)) and remove the Ignores. (FR-2)
+- [x] **T3.5** [core] Implement `RoEffectTextureLookup` (`EffectRoot`, `BareNamePreference`, `TryResolve`; a name found nowhere gives `TextureMissing` once per (texture, STR)) and remove the Ignores. (FR-2)
   *Done when:* `RoEffectTextureLookupTests` pass.
 
 - [ ] **T3.6** [core] Test-first: `RoEffectColorKeyTests` (pink keyed; black keyed; `None` keeps pixels; tolerances; overrides beat defaults; rules read from JSON; key written to userData), with stubs of `RoEffectKeyRules` and the `RoColorKey` key-set overload; every case `[Ignore("pending T3.7")]`, except that "rules read from JSON" is `[Ignore("pending T3.8")]`. (FR-2, FR-10)
