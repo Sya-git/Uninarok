@@ -25,6 +25,7 @@ Subsystem rules (threading, allocation, packet formats and so on) live in that s
 - **Reference docs:** a doc that is normative for a topic (for example the packet reference of SPEC-0001) is updated in the same commit as the code it describes.
 - **Dependencies:** no new third-party libraries without a plan entry.
 - **Diagrams:** architecture and flow diagrams in specs, plans and reference docs are written in Mermaid (a `mermaid` code block), not ASCII art.
+- **Dev-only code:** every dev command, dev hotkey, debug HUD, viewer and test hook exists only in the editor or development builds, behind `#if UNITY_EDITOR || DEVELOPMENT_BUILD` (the project's one dev guard), and is absent from release builds. Specs state this for each such FR.
 - **Secrets:** never commit credentials. Dev-only credential fields must be stripped from release builds.
 
 ### Commands
