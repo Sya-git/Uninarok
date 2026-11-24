@@ -160,7 +160,7 @@
 
 ## Phase 6: Data check and authored content (warp portal, must-list)
 
-- [ ] **T6.1** [core] Test-first: `RoEffectDataCheckTests` (counts per kind on a temp folder; each missing file once; two runs give equal text; folder hashes unchanged after a run; deleting one STR lists it), with `RoEffectDataReport` and `RoEffectDataCheck` stubs; every case `[Ignore("pending T6.2")]`. (FR-1, FR-5, FR-10)
+- [x] **T6.1** [core] Test-first: `RoEffectDataCheckTests` (counts per kind on a temp folder; each missing file once; two runs give equal text; folder hashes unchanged after a run; deleting one STR lists it), with `RoEffectDataReport` and `RoEffectDataCheck` stubs; every case `[Ignore("pending T6.2")]`. (FR-1, FR-5, FR-10)
   *Done when:* the test class compiles and the run shows its cases ignored, 0 failed.
 
 - [ ] **T6.2** [core] Implement `RoEffectDataCheck` (read only; counts for `.str`, images under `texture/effect/`, `.spr` and `.act` under `sprite/이팩트/`, `.lub` under `luafiles514/lua files/effecttool/`; missing lists; deterministic `ToText`) and menu `Tools/Ragnarok/Effects/Check Effect Data` (logs the text). Remove the Ignores. (FR-1)
