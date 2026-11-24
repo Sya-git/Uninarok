@@ -45,7 +45,7 @@
 - [x] **T1.4** [quick] Add `EffectSettings` (plan §4.6) and its asset `Assets/Settings/Effects/EffectSettings.asset` with the lead values (PixelsPerCell 35, Pivot (320, 320), VerticalBaseCells 0.5, AngleUnitsPerTurn 1024, DepthBias 0.5, PlaceholderSeconds 1, AuthoredFrameRate 60) and a tooltip on each lead value naming its source. Shader and placeholder texture are set in T5.1 and T5.2. (FR-3, FR-4, FR-11)
   *Done when:* the asset loads with those values; each lead value has a tooltip.
 
-- [ ] **T1.5** [core] Implement `EffectBlend.ToUnity(byte code)` with the Direct3D code table of plan §4.5, and `EffectBlendTests`: the table is pinned; an unknown code gives SrcAlpha / OneMinusSrcAlpha and reports unknown, so the caller logs one warning per asset. (FR-3)
+- [x] **T1.5** [core] Implement `EffectBlend.ToUnity(byte code)` with the Direct3D code table of plan §4.5, and `EffectBlendTests`: the table is pinned; an unknown code gives SrcAlpha / OneMinusSrcAlpha and reports unknown, so the caller logs one warning per asset. (FR-3)
   *Done when:* `EffectBlendTests` pass.
 
 - [ ] **T1.6** [core] Test-first: `EffectPathTests` (plan §6: case, slashes, `data\` and relative forms reach one key; unknown → false; normalisation table pinned), with an `EffectPath` stub; every case `[Ignore("pending T1.7")]`. (FR-5, FR-10)

@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Belongs to** | [SPEC-0012](spec.md) (reference material, normative for its topic: STR format, GRF mapping, sampling semantics; plan [PLAN-0012](plan.md) §4.1, §4.2) |
-| **Status** | T0.1 survey of 2026-11-24. Sections still to be written by later tasks: colour key (T0.2b), blend code table, scale and pivot, authored-entry rules |
+| **Status** | T0.1 survey of 2026-11-24. Sections still to be written by later tasks: colour key (T0.2b), scale and pivot, authored-entry rules |
 | **Data set** | `Uninarok-client/Assets/Editor/GRF Resources~/data`: every file whose name ends in `.str` (2,995: 2,994 under `texture/effect/`, 1 under `sprite/이팩트/`) |
 | **Method** | Every file read twice: through `GRF.dll` (`GRF.FileFormats.StrFormat.Str`, in a scratch PowerShell tool) and by an independent byte reader (Python `struct`, layout of §2), compared field by field. GRF's interpolation API called on every integer frame of the 10 reference files and compared with the plan §4.2 rule. Raw output: [evidence/str-survey.txt](evidence/str-survey.txt). The scratch tools are not committed. |
 
@@ -157,3 +157,23 @@ So the reader must check magic and version itself (§3) and catch every exceptio
 ## 10. Colour key
 
 Written by T0.2b.
+
+## 11. Blend codes (plan §4.5, `EffectBlend`)
+
+STR keys and authored assets store Direct3D blend codes (uint32 in the STR). The table is pinned by `EffectBlendTests`:
+
+| Code | Unity `BlendMode` |
+|---|---|
+| 1 | Zero |
+| 2 | One |
+| 3 | SrcColor |
+| 4 | OneMinusSrcColor |
+| 5 | SrcAlpha |
+| 6 | OneMinusSrcAlpha |
+| 7 | DstAlpha |
+| 8 | OneMinusDstAlpha |
+| 9 | DstColor |
+| 10 | OneMinusDstColor |
+| 11 | SrcAlphaSaturate |
+
+Any other code (0, 12, 255, ...) falls back to SrcAlpha / OneMinusSrcAlpha for the whole pair and is reported unknown, so the caller logs one warning per asset. Code 12 occurs in 95 base keys of the data set (pair 12 / 12, §5). The most common pair is (5, 7) = SrcAlpha / DstAlpha.
