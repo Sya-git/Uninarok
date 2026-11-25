@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
+using Uninarok.RoImport.Core.Effects;
 using Uninarok.RoImport.Core.Imaging;
 using Uninarok.RoImport.Core.Materials;
 using Uninarok.RoImport.Core.Paths;
@@ -126,6 +128,44 @@ namespace Uninarok.RoImport.Editor.Pipeline
             if (!TryGetMemo(key, out TextureMemo memo))
             {
                 var result = RoTextureConverter.ConvertTexture(this, path, referrer, out string hash, ground: true);
+                memo = new TextureMemo { Result = result, Hash = hash };
+                Memo(key, memo);
+                AddDependency(path, hash);
+                return result;
+            }
+
+            AddDependency(path, memo.Hash);
+            return memo.Result.Status == RoStatus.Failed ? memo.Result : RoResult<Texture2D>.Skipped(memo.Result.Value);
+        }
+
+        /// <summary>The path of the effect texture colour key rules (PLAN-0012 4.3, D6).</summary>
+        public const string EffectKeyRulesPath = "Assets/Editor/RoImport/Rules/effect-textures.json";
+
+        RoEffectKeyRules _effectKeyRules;
+
+        /// <summary>
+        /// The colour key rules of the effect textures: <see cref="EffectKeyRulesPath"/> unless a test sets its own; keys nothing
+        /// when that file is missing.
+        /// </summary>
+        public RoEffectKeyRules EffectKeyRules
+        {
+            get => _effectKeyRules ?? (_effectKeyRules = File.Exists(EffectKeyRulesPath)
+                ? RoEffectKeyRules.FromJson(File.ReadAllText(EffectKeyRulesPath))
+                : new RoEffectKeyRules());
+            set => _effectKeyRules = value;
+        }
+
+        /// <summary>
+        /// The texture of an effect texture path (<c>texture/effect/pok1.tga</c>), converted on demand when missing, stale or
+        /// keyed differently from the rules (PLAN-0012 4.3, FR-2). Repeat requests in a run are free; the same failure rules as
+        /// <see cref="Texture"/>.
+        /// </summary>
+        public RoResult<Texture2D> EffectTexture(RoPath path, string referrer = null)
+        {
+            string key = "effecttexture:" + path.Canonical;
+            if (!TryGetMemo(key, out TextureMemo memo))
+            {
+                var result = Effects.RoEffectTextureConverter.ConvertTexture(this, path, referrer, out string hash);
                 memo = new TextureMemo { Result = result, Hash = hash };
                 Memo(key, memo);
                 AddDependency(path, hash);

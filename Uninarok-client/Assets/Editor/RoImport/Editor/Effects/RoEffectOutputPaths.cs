@@ -35,5 +35,12 @@ namespace Uninarok.RoImport.Editor.Effects
             if (source.IsEmpty) throw new ArgumentException("An effect output needs a source path.", nameof(source));
             return Root(roots) + "/" + source.Canonical + ".asset";
         }
+
+        /// <summary>The texture of an effect texture source, extension kept: <c>effect/texture/effect/pok1.tga.png</c> (D7).</summary>
+        public static string Texture(RoOutputRoots roots, RoPath source)
+        {
+            if (source.IsEmpty) throw new ArgumentException("An effect output needs a source path.", nameof(source));
+            return Root(roots) + "/" + source.Canonical + ".png";
+        }
     }
 }
