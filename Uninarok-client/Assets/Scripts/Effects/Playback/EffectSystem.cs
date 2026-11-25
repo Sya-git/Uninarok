@@ -110,6 +110,15 @@ namespace Uninarok.Effects
 
         public static bool IsActive(EffectHandle h) => s_runtime != null && s_runtime.IsActive(h);
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        /// <summary>Clears <paramref name="into"/> and fills it with one entry per active effect (the F11 list; dev only).</summary>
+        public static void FillDebug(System.Collections.Generic.List<EffectDebugInfo> into)
+        {
+            into.Clear();
+            s_runtime?.FillDebug(into);
+        }
+#endif
+
         /// <summary>Called by the driver's LateUpdate.</summary>
         internal static void Tick(float deltaSeconds) => s_runtime?.Tick(deltaSeconds);
 

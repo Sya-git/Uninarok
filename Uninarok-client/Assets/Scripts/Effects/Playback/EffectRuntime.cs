@@ -129,7 +129,10 @@ namespace Uninarok.Effects
         {
             if (map == null) return default;
             var inst = Acquire(effect, loop, EffectPlace.Cell, map.CellCenter(x, y), null);
-            return inst != null ? inst.Handle : default;
+            if (inst == null) return default;
+            inst.CellX = x;
+            inst.CellY = y;
+            return inst.Handle;
         }
 
         // ---- play by path (EffectSystem, T5.9): an unknown path plays the placeholder ----
@@ -158,7 +161,10 @@ namespace Uninarok.Effects
             if (map == null) return default;
             if (catalog.TryResolve(path, out var entry)) return PlayAtCell(entry, map, x, y, loop);
             var inst = Acquire(default, loop, EffectPlace.Cell, map.CellCenter(x, y), null, path);
-            return inst != null ? inst.Handle : default;
+            if (inst == null) return default;
+            inst.CellX = x;
+            inst.CellY = y;
+            return inst.Handle;
         }
 
         /// <param name="unknownPath">Non-null: the path the catalog could not resolve; the instance plays the placeholder at once.</param>
@@ -188,6 +194,8 @@ namespace Uninarok.Effects
             inst.Place = place;
             inst.Position = position;
             inst.Unit = unit;
+            inst.CellX = inst.CellY = 0;
+            inst.UnknownKey = null;
             inst.BornTick = tickNumber;
             inst.Seed = Seed(inst.Slot, inst.Generation, effect.Index);
             inst.State = EffectInstanceState.Waiting;
@@ -204,6 +212,7 @@ namespace Uninarok.Effects
             if (unknownPath != null)
             {
                 string key = string.IsNullOrEmpty(unknownPath) ? "<empty>" : EffectPath.TryNormalize(unknownPath, out string normalized) ? normalized : unknownPath;
+                inst.UnknownKey = key;
                 if (!HasWarned(key)) Warn(key, $"[Effects] Effect '{unknownPath}' is not in the catalog; the placeholder is shown.", log: false);   // the catalog logged it
                 UsePlaceholder(inst);
                 return inst;
@@ -368,6 +377,36 @@ namespace Uninarok.Effects
             float rate = inst.State == EffectInstanceState.Playing ? inst.FrameRate : 0f;
             return inst.Age * rate;
         }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        /// <summary>Appends one <see cref="EffectDebugInfo"/> per active instance, in slot order (the F11 list; dev only). The caller clears the list.</summary>
+        public void FillDebug(List<EffectDebugInfo> into)
+        {
+            if (into == null) throw new ArgumentNullException(nameof(into));
+            for (int i = 0; i < slots.Length; i++)
+            {
+                var inst = slots[i];
+                if (inst.State == EffectInstanceState.Free) continue;
+                var asset = inst.Asset;
+                int parts = inst.Part == null ? 0
+                    : asset != null && asset.Kind == EffectKind.Str && !(inst.Part is PlaceholderPart) ? (asset.Layers != null ? asset.Layers.Length : 0)
+                    : 1;
+                into.Add(new EffectDebugInfo
+                {
+                    Key = inst.UnknownKey ?? (asset != null ? asset.Path : null) ?? catalog.KeyOf(inst.Entry) ?? "?",
+                    Place = inst.Place,
+                    Position = inst.Position,
+                    CellX = inst.CellX,
+                    CellY = inst.CellY,
+                    UnitName = inst.Place == EffectPlace.Unit ? (inst.Unit != null ? inst.Unit.name : "(gone)") : null,
+                    Parts = parts,
+                    Age = inst.Age,
+                    Loop = inst.Loop,
+                    Waiting = inst.State == EffectInstanceState.Waiting,
+                });
+            }
+        }
+#endif
 
         /// <summary>The instance behind an active handle (tests, parts, dev tools); null otherwise.</summary>
         internal EffectInstance InstanceOf(EffectHandle h) => TryGet(h, out var inst) ? inst : null;

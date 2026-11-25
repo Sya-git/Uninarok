@@ -69,6 +69,10 @@ namespace Uninarok.Effects
         public EffectPlace Place;
         public Vector3 Position;
         public Transform Unit;
+        /// <summary>Map cell of a <see cref="EffectPlace.Cell"/> play (dev list only).</summary>
+        public int CellX, CellY;
+        /// <summary>Key of a play whose path the catalog did not know (the placeholder plays); null otherwise (dev list only).</summary>
+        public string UnknownKey;
         public IEffectPart Part;
         internal int BornTick;
 
