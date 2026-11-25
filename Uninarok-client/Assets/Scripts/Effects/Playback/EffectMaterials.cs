@@ -31,6 +31,10 @@ namespace Uninarok.Effects
         static readonly int SrcBlendId = Shader.PropertyToID("_SrcBlend");
         static readonly int DstBlendId = Shader.PropertyToID("_DstBlend");
         static readonly int DepthBiasId = Shader.PropertyToID("_DepthBias");
+        static readonly int CutoffId = Shader.PropertyToID("_Cutoff");
+
+        /// <summary>Texture alpha below which a texel is discarded when the pair's source factor is not SrcAlpha (plan D37).</summary>
+        public const float KeyedCutoff = 0.5f;
 
         readonly EffectSettings settings;
         readonly Dictionary<Key, Material> materials = new Dictionary<Key, Material>();
@@ -68,6 +72,8 @@ namespace Uninarok.Effects
             material.SetFloat(SrcBlendId, (float)src);
             material.SetFloat(DstBlendId, (float)dst);
             material.SetFloat(DepthBiasId, settings.DepthBias);
+            // A source factor that ignores the texture's alpha (One, SrcColor, ...) would draw the RGB under a keyed texel: discard it (D37).
+            material.SetFloat(CutoffId, src == BlendMode.SrcAlpha ? 0f : KeyedCutoff);
             if (facing == EffectFacing.Camera) material.EnableKeyword("_FACING_CAMERA");
             if (repeatWrap) material.EnableKeyword("_UV_REPEAT");
             materials[key] = material;

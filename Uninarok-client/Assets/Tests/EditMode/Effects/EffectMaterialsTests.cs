@@ -122,6 +122,19 @@ namespace Uninarok.Effects.Tests
         }
 
         [Test]
+        public void KeyedTexelsAreDiscarded_ForPairsThatIgnoreTextureAlpha_FR3_D37()
+        {
+            // One / Zero (2, 1, angelus.str) and the other non-SrcAlpha sources would draw the RGB under a keyed texel.
+            Assert.AreEqual(EffectMaterials.KeyedCutoff, materials.Get(texA, 2, 1, EffectFacing.Camera, false).GetFloat("_Cutoff"));
+            Assert.AreEqual(EffectMaterials.KeyedCutoff, materials.Get(texA, 2, 2, EffectFacing.Camera, false).GetFloat("_Cutoff"));
+            // SrcAlpha pairs (5 / 7 additive, 5 / 6) already weigh by alpha: no cutoff, soft alpha stays soft.
+            Assert.AreEqual(0f, materials.Get(texA, 5, 7, EffectFacing.Camera, false).GetFloat("_Cutoff"));
+            Assert.AreEqual(0f, materials.Get(texA, 5, 6, EffectFacing.Camera, false).GetFloat("_Cutoff"));
+            // An unknown code falls back to SrcAlpha / OneMinusSrcAlpha.
+            Assert.AreEqual(0f, materials.Get(texA, 99, 6, EffectFacing.Camera, false).GetFloat("_Cutoff"));
+        }
+
+        [Test]
         public void Clear_DestroysMaterials()
         {
             var m = materials.Get(texA, 5, 6, EffectFacing.Camera, false);

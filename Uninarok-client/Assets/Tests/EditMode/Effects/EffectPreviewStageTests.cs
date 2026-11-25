@@ -147,5 +147,50 @@ namespace Uninarok.Effects.Tests
                 Object.DestroyImmediate(tex);
             }
         }
+
+        // T8.8 (FR-2, FR-3, plan D37): angelus.str layers 1 and 8 use One / Zero on colour-keyed BMPs; the keyed texels must draw
+        // nothing, so the 64 px quad of frame 59 shows the bell only, not the texture's RGB under the key.
+        [Test]
+        public void AngelusFrame59_KeyedBackground_DrawsNothing_FR3()
+        {
+            Assert.That(CountNonBackdrop("texture/effect/angelus.str", 59), Is.LessThan(256 * 256 / 25),
+                "only the bell, not the quad's background");
+        }
+
+        int CountNonBackdrop(string key, int frame)
+        {
+            var index = AssetDatabase.LoadAssetAtPath<EffectCatalogIndex>(EffectCatalog.IndexKey);
+            Assert.That(index, Is.Not.Null);
+            stage = new EffectPreviewStage(EffectCatalog.Create(index, new AssetDatabaseEffectSource()));
+            stage.Distance = 10f;
+            var handle = stage.Play(key, loop: true);
+            Assert.That(stage.Runtime.IsActive(handle), Is.True, key);
+            stage.Tick(0.01f);
+            stage.Runtime.Seek(handle, frame / 60f);
+            stage.Tick(0f);
+            var window = stage.Render(new Rect(0, 0, 256, 256));
+            var rt = RenderTexture.GetTemporary(window.width, window.height, 0, RenderTextureFormat.ARGB32);
+            var tex = new Texture2D(window.width, window.height, TextureFormat.RGBA32, false);
+            var previous = RenderTexture.active;
+            try
+            {
+                Graphics.Blit(window, rt);
+                RenderTexture.active = rt;
+                tex.ReadPixels(new Rect(0, 0, window.width, window.height), 0, 0);
+                tex.Apply(false);
+                var px = tex.GetPixels32();
+                var bg = px[0];
+                int n = 0;
+                foreach (var p in px) if (Mathf.Abs(p.r - bg.r) + Mathf.Abs(p.g - bg.g) + Mathf.Abs(p.b - bg.b) > 30) n++;
+                Debug.Log("[T8.8] non-backdrop pixels " + n + " of " + px.Length + " (" + key + " f" + frame + ")");
+                return n;
+            }
+            finally
+            {
+                RenderTexture.active = previous;
+                RenderTexture.ReleaseTemporary(rt);
+                Object.DestroyImmediate(tex);
+            }
+        }
     }
 }

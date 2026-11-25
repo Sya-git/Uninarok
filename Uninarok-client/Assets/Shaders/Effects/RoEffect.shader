@@ -10,6 +10,9 @@
 // textures are clamp, so the default samples with the texture's own sampler.
 // _DepthBias: as Uninarok/RoSprite (PLAN-0009 D7): the depth the pixel is tested with moves toward the camera along the view
 // axis, in world units; the position on screen does not change. 0 renders without a bias.
+// _Cutoff: texels whose texture alpha is below it are discarded (the colour-keyed background of the texture draws nothing, as in
+// the client). EffectMaterials sets 0.5 for pairs whose source factor is not SrcAlpha (for example One / Zero), where the
+// converted texture's RGB under a keyed texel would otherwise draw (plan D37); 0 keeps every texel.
 Shader "Uninarok/RoEffect"
 {
     Properties
@@ -18,6 +21,7 @@ Shader "Uninarok/RoEffect"
         [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend ("Src Blend", Float) = 5 // SrcAlpha
         [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("Dst Blend", Float) = 10 // OneMinusSrcAlpha
         _DepthBias ("Depth Bias (world units toward the camera)", Float) = 0
+        _Cutoff ("Alpha cutoff (texture alpha below it is discarded)", Range(0, 1)) = 0
     }
 
     SubShader
@@ -67,6 +71,7 @@ Shader "Uninarok/RoEffect"
                 float _SrcBlend;
                 float _DstBlend;
                 float _DepthBias;
+                float _Cutoff;
             CBUFFER_END
 
             Varyings RoEffectVertex(Attributes input)
@@ -100,6 +105,7 @@ Shader "Uninarok/RoEffect"
             #else
                 half4 c = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, input.uv);
             #endif
+                if (_Cutoff > 0.0) clip(c.a - _Cutoff);
                 return c * input.color;
             }
             ENDHLSL
