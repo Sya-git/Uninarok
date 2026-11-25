@@ -184,7 +184,7 @@
 - [x] **T6.8** [core] `AuthoredAssetTests` (EditMode): each authored entry has a valid kind, `Length` > 0, a valid texture index whose `TextureNames` entry matches the converted texture, blend codes in the `EffectBlend` table, `Sides` ≥ 3, curves covering t 0 to 1, and `Doubtful` lines for every lead value; the three warp keys are present, both rings on `ring_blue.tga`, the sparkle on `pok1.tga` (not `pok1.bmp`). (FR-4, FR-5, FR-7)
   *Done when:* `AuthoredAssetTests` pass.
 
-- [ ] **T6.9** [quick] Run Rebuild Effect Index (Unity-MCP). (FR-5, FR-7)
+- [x] **T6.9** [quick] Run Rebuild Effect Index (Unity-MCP). (FR-5, FR-7)
   *Done when:* `Art/Imported/effect/_index.asset` exists; its keys include `texture/effect/firewall.str`, `sprite/이팩트/fireball.act`, the three warp keys and `model/외부소품/트랩01.rsm`; no EffectKeyDuplicate warning; a re-run changes nothing.
 
 ## Phase 7: Dev tools (World.Dev, dev guard)

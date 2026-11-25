@@ -1,6 +1,15 @@
 {
     "entries": [
         {
+            "Source": "effect/_index",
+            "SourceHash": "93f62a6ffcc8eb3944279dd2ff25c328af8fb17473e1d22dbeba621d12b8fb21",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/_index.asset"
+            ],
+            "Dependencies": []
+        },
+        {
             "Source": "sprite/이팩트/05vallentine.act",
             "SourceHash": "05vallentine",
             "Rules": 1,
