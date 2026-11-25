@@ -14,6 +14,7 @@
 - Spike code (T0.1, T0.3) is not committed under `Assets/Scripts/`; only the notes and evidence under `docs/specs/0012-effects/`.
 - Tasks that run the editor or a build are done through Unity-MCP.
 - Revision 2026-11-24 (owner decisions, plan D21, D22): T1.7 unblocked and rewritten (`EffectPath` normalises on its own at run time, `EffectPathAgreementTests` checks it against `RoPath`); T3.2 states that `KeyData.Delay` stays and only asset-level start delay, duplicate, wav/sound and attachment fields are forbidden; the cylinder vertex-count check stays in T5.3; T10.1 is a visual confirmation only (R5 resolved: uv from the STR keys).
+- Revision 2026-11-25 (added during execution): tasks T6.10 (data check, full-path texture names), T8.5 (preview sprite lookup), T8.6 (destination alpha) and T9.7 (docs sync); plan decisions D31 to D36 (D31 dev wiring, D32 hidden allocations, D33 destination alpha, D34 preview sprite lookup, D35 data check full paths, D36 preview browse source). T0.2b and T3.8 were decided by the owner; the colour key is recorded in str-reference.md §10.
 
 ---
 
@@ -254,6 +255,9 @@
 - [ ] **T9.6** [quick] Run the full EditMode and PlayMode suites (Unity-MCP) with the working data present; save the results to `docs/specs/0012-effects/evidence/test-run.txt`; no `pending T` Ignore remains in the Effects tests. (FR-10)
   *Done when:* 0 failed, 0 ignored from the pending list, and the file is written.
   *Status (2026-11-25, redo):* not met; left unticked. Evidence in `evidence/test-run.txt`: no `pending T` Ignore remains and 0 are ignored; Effects.Tests (163) and Effects.PlayTests (78) are green, as are all other assemblies except 6 failures outside the Effects code: Networking `PacketTableTests` CRLF fixture and `SocketThreadHookTests`; RoImport 180 s timeouts in `RsmReferenceConversionTests` (2), `RsmWriterTests.ThousandNodesWithOneTexture_ReferenceOneMaterial` and `RoMapReferenceTests`. All reproduced on rerun; not investigated on main. Excluded (Slow): `RoEffectImportReferenceTests` (T3.12), `EffectBuildStrippingTests` (T9.5).
+
+- [x] **T9.7** [core] Docs sync (coordinator-added): plan §3 and §4.9 and §4.11 match the code after T6.10, T8.2, T8.5, T8.6 (decisions D34 to D36, asmdef tables, file lists); `RoArchitectureTests` expects the Effects.Editor reference set as it is. (FR-1, FR-11)
+  *Done when:* `RoArchitectureTests` passes and the plan lists the assemblies and files that exist.
 
 ## Phase 10: Owner gates and final verification
 

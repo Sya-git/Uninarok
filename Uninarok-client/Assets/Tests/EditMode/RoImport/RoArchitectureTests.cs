@@ -211,7 +211,7 @@ namespace Uninarok.RoImport.Tests
             CollectionAssert.IsEmpty(asmdef.excludePlatforms ?? new string[0]);
             // No GRF DLL reference: GRF stays in Core/Formats.
             CollectionAssert.AreEquivalent(
-                new[] { "Uninarok.Effects", "Uninarok.Sprites", "Uninarok.SpriteCatalog", "Uninarok.RoImport.Core", "Uninarok.RoImport.Editor" },
+                new[] { "Uninarok.Effects", "Uninarok.Sprites", "Uninarok.SpriteCatalog", "Uninarok.RoImport.Core", "Uninarok.RoImport.Editor", "Unity.Addressables" },   // Addressables: the SpriteCatalog API of the preview stage (plan D34)
                 asmdef.references ?? new string[0]);
         }
 
