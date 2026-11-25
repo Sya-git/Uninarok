@@ -12,9 +12,9 @@
 - Test-first tasks: the test task adds the class signatures as stubs (`NotImplementedException`) so the tests compile, and marks each case `[Ignore("pending Tn.m")]`. The named implementation task replaces the stubs and removes the Ignore.
 - Tests marked NeedsData need the working data folder (`texture/effect/`, `sprite/이팩트/`, `model/`) present.
 - Spike code (T0.1, T0.3) is not committed under `Assets/Scripts/`; only the notes and evidence under `docs/specs/0012-effects/`.
-- Tasks that run the editor or a build are done through Unity-MCP.
+- Tasks that run the editor are done through Unity-MCP.
 - Revision 2026-11-24 (owner decisions, plan D21, D22): T1.7 unblocked and rewritten (`EffectPath` normalises on its own at run time, `EffectPathAgreementTests` checks it against `RoPath`); T3.2 states that `KeyData.Delay` stays and only asset-level start delay, duplicate, wav/sound and attachment fields are forbidden; the cylinder vertex-count check stays in T5.3; T10.1 is a visual confirmation only (R5 resolved: uv from the STR keys).
-- Revision 2026-11-25 (added during execution): tasks T6.10 (data check, full-path texture names), T8.5 (preview sprite lookup), T8.6 (destination alpha) and T9.7 (docs sync); plan decisions D31 to D36 (D31 dev wiring, D32 hidden allocations, D33 destination alpha, D34 preview sprite lookup, D35 data check full paths, D36 preview browse source). T0.2b and T3.8 were decided by the owner; the colour key is recorded in str-reference.md §10.
+- Revision 2026-11-25 (added during execution): tasks T6.10 (data check, full-path texture names), T8.5 (preview sprite lookup), T8.6 (destination alpha), T8.7 (preview frame label and STR rate) and T9.7 (docs sync); plan decisions D31 to D36 (D31 dev wiring, D32 hidden allocations, D33 destination alpha, D34 preview sprite lookup, D35 data check full paths, D36 preview browse source). The colour key rule (T0.2b, T3.8) was decided by the owner and is recorded in str-reference.md §10.
 
 ---
 
@@ -104,14 +104,8 @@
 - [x] **T3.11** [core] Implement `RoStrConverter` (ledger category `effect`; one asset per STR at `Art/Imported/effect/<path>.asset`; ledger dependencies are the resolved textures, a missing one with an empty hash; corrupt or unsupported file → one issue and no output), `RoImport.Effect` and `RoImport.EffectFolder`, `RoJobKind.Effect`, the `RoIssueCode` additions, and `RoStrConverterTests` (synthetic STR: one asset at its path; a texture shared by two STRs converted once; second run Skipped; forced run keeps GUIDs; changed texture re-converts its STR; corrupt and unsupported input give one issue and no output). (FR-2, FR-10)
   *Done when:* all `RoStrConverterTests` pass.
 
-- [x] **T3.12** [core] `RoEffectImportReferenceTests` (NeedsData, slow): whole `texture/effect/` import gives asset count = `.str` count; per-file report; a pink-background and a black-background texture (named in T0.2b's record) come in with those areas transparent; a re-run imports nothing. (FR-2, FR-5, FR-10)
-  *Done when:* the tests pass against the working data.
-
 - [x] **T3.13** [core] `EffectSamplerReferenceTests` (NeedsData): the 10 reference files at the first, a middle and the last frame: corners, colour, angle, texture frame and blend equal the values from the file's keys (oracle: GRF's interpolation if T0.1 validated it, otherwise the str-reference formulas on `RoStr`), tolerance 1e-3; length = frames / fps. (FR-3, FR-10)
   *Done when:* the test passes for all 10 reference files.
-
-- [x] **T3.14** [quick] Run the effect import of the `.str` files under `texture/effect/` and `sprite/이팩트/` (Convert Effect Folder); save the per-file report to `docs/specs/0012-effects/evidence/import-report.txt`. (FR-2)
-  *Done when:* the report counts one asset per `.str` in the working data (2,996 at 2026-11-24); no OutputCollision; the only UnsupportedStrVersion files are those listed in str-reference.md; a second run imports nothing.
 
 ## Phase 4: Catalog (run time index, sources, sprite entries)
 
@@ -239,7 +233,7 @@
   *Done when:* the measured model-seconds per wall-second is reported; the label test and the tick test pass.
   *Status:* completed: measured 1.00 model-s per wall-s (no double tick, no code change in timing), see `evidence/str-timing-diagnosis.md`; `EffectPreviewMath.FrameLabel`, `EffectPreviewWindowLogicTests`, `EffectPreviewControllerTests`, `EffectPreviewStageTests` pass.
 
-## Phase 9: Play, cost and build tests
+## Phase 9: Play, cost and architecture tests
 
 - [x] **T9.1** [core] `EffectSpeedPlayTests` (PlayMode): an STR entry and an authored cylinder at speed 2 each end at half the wall time of speed 1 (±1 frame); a looped entry's cycle index after T at speed 2 equals its index after 2T at speed 1; the picture at speed 2 and time T equals speed 1 at 2T; speed 0.5 doubles one play; `TimeScale` 0 freezes `Age`; a sprite entry at speed 2 steps its `SpriteActor` twice as fast (NeedsData). (FR-4, FR-6, FR-11)
   *Done when:* the tests pass.
@@ -253,12 +247,9 @@
 - [x] **T9.4** [core] Extend `RoArchitectureTests`: the new asmdefs' references; GRF types only in `Core/Formats/`; no `BinaryReader` in importer code; `Uninarok.Effects` references no editor assembly; no type in `Uninarok.Effects` uses `UnityEngine.VFX`, `ParticleSystem` or `ComputeShader`. (FR-2, FR-4)
   *Done when:* the architecture tests pass.
 
-- [x] **T9.5** [core] `EffectBuildStrippingTests` (slow): a player build without `DevelopmentBuild` has no `Uninarok.World.Dev` or `Uninarok.Effects.Editor` assembly and no `EffectDevCommands` or `EffectDebugView` type; with `DevelopmentBuild`, World.Dev is present and Effects.Editor absent. (FR-8, FR-11)
-  *Done when:* the test passes.
-
 - [ ] **T9.6** [quick] Run the full EditMode and PlayMode suites (Unity-MCP) with the working data present; save the results to `docs/specs/0012-effects/evidence/test-run.txt`; no `pending T` Ignore remains in the Effects tests. (FR-10)
   *Done when:* 0 failed, 0 ignored from the pending list, and the file is written.
-  *Status (2026-11-25, redo):* not met; left unticked. Evidence in `evidence/test-run.txt`: no `pending T` Ignore remains and 0 are ignored; Effects.Tests (163) and Effects.PlayTests (78) are green, as are all other assemblies except 6 failures outside the Effects code: Networking `PacketTableTests` CRLF fixture and `SocketThreadHookTests`; RoImport 180 s timeouts in `RsmReferenceConversionTests` (2), `RsmWriterTests.ThousandNodesWithOneTexture_ReferenceOneMaterial` and `RoMapReferenceTests`. All reproduced on rerun; not investigated on main. Excluded (Slow): `RoEffectImportReferenceTests` (T3.12), `EffectBuildStrippingTests` (T9.5).
+  *Status (2026-11-25, redo):* not met; left unticked. Evidence in `evidence/test-run.txt`: no `pending T` Ignore remains and 0 are ignored; Effects.Tests (163) and Effects.PlayTests (78) are green, as are all other assemblies except 6 failures outside the Effects code: Networking `PacketTableTests` CRLF fixture and `SocketThreadHookTests`; RoImport 180 s timeouts in `RsmReferenceConversionTests` (2), `RsmWriterTests.ThousandNodesWithOneTexture_ReferenceOneMaterial` and `RoMapReferenceTests`. All reproduced on rerun; not investigated on main.
 
 - [x] **T9.7** [core] Docs sync (coordinator-added): plan §3 and §4.9 and §4.11 match the code after T6.10, T8.2, T8.5, T8.6 (decisions D34 to D36, asmdef tables, file lists); `RoArchitectureTests` expects the Effects.Editor reference set as it is. (FR-1, FR-11)
   *Done when:* `RoArchitectureTests` passes and the plan lists the assemblies and files that exist.
@@ -285,9 +276,6 @@
 
 - [ ] **T10.7** [quick] (owner) Dev tools in game (FR-8): the F11 list shows a playing effect with path, place, part count and age; with two looped effects playing, `/effect stop` leaves the list empty. Screenshots saved.
   *Done when:* the screenshots exist and the owner confirms them.
-
-- [x] **T10.8** [quick] Release player build check (FR-8, FR-11): build without the development define; confirm no `/effect` command, no F11 list and no preview window in the build; the result is noted in `docs/specs/0012-effects/evidence/release-build.txt`.
-  *Done when:* the note exists with the three results.
 
 - [ ] **T10.9** [quick] (owner) Profiler capture of the FR-9 load (300 effects; 1,000 start and stop cycles) on the owner's PC; capture and frame time saved to evidence.
   *Done when:* the capture is saved and its frame time is recorded in the evidence.

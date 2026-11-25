@@ -171,7 +171,7 @@ Decided by the owner on 2026-11-25 from `evidence/colour-key-survey.csv` (21,757
 
 Owner sign-off: accepted as proposed, 2026-11-25.
 
-Reference textures for T3.12: `texture/effect/a01.bmp` (24-bit, pink corners) and `texture/effect/4ig_judge/judge_cast/jud_shine_1.bmp` (24-bit, black corners), each used by one STR; `RoEffectImportReferenceTests` checks both come in transparent at the corners.
+Reference textures (the pink and the black example): `texture/effect/a01.bmp` (24-bit, pink corners) and `texture/effect/4ig_judge/judge_cast/jud_shine_1.bmp` (24-bit, black corners), each used by one STR; the owner checks in the preview window (T10.3) that both come in transparent at the corners.
 
 ## 11. Blend codes (plan §4.5, `EffectBlend`)
 

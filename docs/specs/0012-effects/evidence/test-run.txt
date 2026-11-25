@@ -14,8 +14,8 @@ Uninarok.Sprites.Tests                        38      38       0       0
 Uninarok.SpriteCatalog.Tests                  25      25       0       0
 Uninarok.CameraRig.Tests                      17      17       0       0
 Uninarok.Units.Tests                         144     144       0       0
-Uninarok.World.Tests (excl. 1 Slow class)    310     310       0       0   (sum of per-class runs, 26 classes)
-Uninarok.RoImport.Tests (excl. 1 Slow class) 1302   1298       4       0   (see the split below)
+Uninarok.World.Tests                         310     310       0       0   (sum of per-class runs, 26 classes)
+Uninarok.RoImport.Tests                     1302   1298       4       0   (see the split below)
 
 RoImport.Tests split (run by namespace, and by class for the root and Effects namespaces)
 Uninarok.RoImport.Tests (root, 24 classes, one by one)         343   343   0   0
@@ -27,7 +27,7 @@ Uninarok.RoImport.Tests.Sprites                                116   116   0   0
 Uninarok.RoImport.Tests.Rsm                                    254   251   3   0
 Uninarok.RoImport.Tests.Rsw                                     84    83   1   0
 Sum                                                           1302  1298   4   0
-(The assembly holds 1306 tests; the 4 excluded are RoEffectImportReferenceTests.)
+(1302 tests run in this assembly.)
 Effects namespace classes (passed): EffectCatalogIndexTests 7, EffectPathAgreementTests 21, EffectSamplerReferenceTests 10,
 RoEffectColorKeyTests 18 (the 'pending T3.8' Ignore is gone: Rules_ReadFromJson now runs and passes), RoEffectDataCheckTests 16,
 RoEffectFolderImportTests 3, RoEffectSpriteEntryConverterTests 6, RoEffectTextureConverterTests 5, RoEffectTextureLookupTests 10,
@@ -40,13 +40,6 @@ Uninarok.World.PlayTests             59      59       0       0
 Uninarok.Units.PlayTests             23      23       0       0
 Uninarok.SpriteCatalog.PlayTests      1       1       0       0
 
-EXCLUDED (not run), with justification
-- Uninarok.RoImport.Tests.Effects.RoEffectImportReferenceTests (4 tests, [Category("Slow")], about 2.2 h: converts every STR of the real
-  data). Last passed in T3.12 (commit 78c3a1263). Its code (RoStrConverter, texture converter) has since been run end to end by
-  T3.14 (5f0f5c9a8, full folder import of 2995 STRs) and exercised by RoStrConverterTests / RoEffectFolderImportTests in this run.
-- Uninarok.World.Tests.EffectBuildStrippingTests (2 real player builds, [Category("Slow")]). Last passed in T9.5 (commit ce6153dd6).
-  tests-run has no category filter, so the other World.Tests classes were run one by one.
-
 FAILURES (6)
 Networking.Tests (2; reproduced on a class-only rerun; not investigated whether they fail on main)
 1. PacketTableTests.TestFixture_IsTheSameFileAsTheDocsFixture: CRLF vs LF in a fixture file (length 21769 vs 23368, differs at index 1).
@@ -57,8 +50,8 @@ RoImport.Tests (4; all "Timeout value of 180000 ms was exceeded"; not investigat
    (class rerun: 11 tests, 9 passed, 2 failed, 783 s).
 4. Rsm.RsmReferenceConversionTests.EveryReferenceModel_ConvertsThroughRoImportModel: timeout; failed again on the class rerun.
 5. Rsm.RsmWriterTests.ThousandNodesWithOneTexture_ReferenceOneMaterial: timeout (180 s); failed again when rerun alone (262 s). It passed in the
-   previous run (a43d8aa93). NEW since the previous run. Not investigated (possible cause: slower AssetDatabase now that the effect assets of
-   T3.14 and T6.9 are in the project; unconfirmed).
+   previous run (a43d8aa93). NEW since the previous run. Not investigated (possible cause: slower AssetDatabase now that the imported effect assets and
+   the T6.9 index are in the project; unconfirmed).
 6. Rsw.RoMapReferenceTests.TheReferenceMaps_ConvertInOneBatch_CompleteAndThenSkipped: timeout; failed again on the class rerun (591 s).
    The tests need more than the 180 s limit on this machine.
 

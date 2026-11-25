@@ -1,6 +1,6 @@
 T10.10 warnings of the effect work (SPEC-0012 FR-1, FR-5)
 
-1. Import warnings: TextureMissing, from import-report.txt (T3.14), grouped by STR file
+1. Import warnings: TextureMissing, from the effect import report, grouped by STR file
 
 STR texture/effect/allbloom/allbloom_cast_bottm/allbloom_cast_bottom.str
   all_flare_01.bmp (referenced by texture/effect/allbloom/allbloom_cast_bottm/allbloom_cast_bottom.str): texture 'all_flare_01.bmp' is in neither the STR's folder nor texture/effect
