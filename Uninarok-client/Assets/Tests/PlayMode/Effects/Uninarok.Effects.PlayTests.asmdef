@@ -8,6 +8,8 @@
         "Uninarok.Map",
         "Uninarok.Sprites",
         "Uninarok.SpriteCatalog",
+        "Uninarok.Units",
+        "Uninarok.Networking",
         "Unity.Addressables",
         "Unity.ResourceManager",
         "Unity.Addressables.Editor"

@@ -228,7 +228,7 @@
 - [x] **T9.1** [core] `EffectSpeedPlayTests` (PlayMode): an STR entry and an authored cylinder at speed 2 each end at half the wall time of speed 1 (±1 frame); a looped entry's cycle index after T at speed 2 equals its index after 2T at speed 1; the picture at speed 2 and time T equals speed 1 at 2T; speed 0.5 doubles one play; `TimeScale` 0 freezes `Age`; a sprite entry at speed 2 steps its `SpriteActor` twice as fast (NeedsData). (FR-4, FR-6, FR-11)
   *Done when:* the tests pass.
 
-- [ ] **T9.2** [core] `EffectOnUnitPlayTests` (PlayMode, NeedsData): a warp entry played on a walking poring `UnitView` (Entity Sandbox loader) stays on it as the unit moves. (FR-6, FR-7)
+- [x] **T9.2** [core] `EffectOnUnitPlayTests` (PlayMode, NeedsData): a warp entry played on a walking poring `UnitView` (Entity Sandbox loader) stays on it as the unit moves. (FR-6, FR-7)
   *Done when:* the test passes.
 
 - [ ] **T9.3** [critical] `EffectAllocationTests` (PlayMode): 300 instances (STR, sprite, authored cylinder and quad; 100 on moving transforms) give 0 B GC per frame over 300 frames, measured with `ProfilerRecorder` "GC.Alloc" over the whole frame against a no-effect baseline and around `EffectRuntime.Tick`; 1,000 start and stop cycles after warm-up give 0 B; frame time is written to `docs/specs/0012-effects/evidence/alloc-report.txt`. (FR-9)
