@@ -202,7 +202,7 @@
 - [x] **T7.4** [core] Implement `EffectDebugView` (F11 list: path, place, part count, age; text rebuilt 4 times a second) and `EffectSystem.FillDebug(List<EffectDebugInfo>)`, both under `#if UNITY_EDITOR || DEVELOPMENT_BUILD`. (FR-8) (automated: FillDebug and the text are tested with a playing effect; the on-screen F11 list is deferred to the T10.7 owner gate, not seen)
   *Done when:* in a development build the F11 list shows path, place, part count and age for a playing effect.
 
-- [ ] **T7.5** [core] `EffectDevStopPlayTests` (PlayMode, development): two looped effects started through the dev commands, then `/effect stop`: 0 active and `FillDebug` empty. (FR-8)
+- [x] **T7.5** [core] `EffectDevStopPlayTests` (PlayMode, development): two looped effects started through the dev commands, then `/effect stop`: 0 active and `FillDebug` empty. (FR-8)
   *Done when:* the test passes.
 
 ## Phase 8: Effect preview window (editor only)
