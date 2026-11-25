@@ -94,7 +94,7 @@
 - [x] **T3.8** [quick] (owner) Write `Assets/Editor/RoImport/Rules/effect-textures.json` with exactly the values recorded in str-reference.md's colour-key section (T0.2b), and remove the last Ignore from `RoEffectColorKeyTests`. (FR-2)
   *Done when:* the file holds those values, and every `RoEffectColorKeyTests` case passes.
 
-- [ ] **T3.9** [quick] Stop `RoTextureConverter` from handling `texture/effect/**` (its `Handles` excludes that folder, plan §7, D7). (FR-2)
+- [x] **T3.9** [quick] Stop `RoTextureConverter` from handling `texture/effect/**` (its `Handles` excludes that folder, plan §7, D7). (FR-2)
   *Done when:* a unit check shows `Handles` false for `texture/effect/x.bmp`, and the existing world texture tests pass.
 
 - [ ] **T3.10** [core] Implement `RoEffectTextureConverter` (ledger category `effecttexture`, output `Art/Imported/effect/<path>.png` with the extension kept, key in userData as `alpha=…;key=…`, re-converted when the stored key differs from `RoEffectKeyRules.For`) and `RoImportContext.EffectTexture` (memoised per run). (FR-2)

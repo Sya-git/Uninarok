@@ -364,6 +364,26 @@ namespace Uninarok.RoImport.Tests
             LogAssert.NoUnexpectedReceived();
         }
 
+        // ---- Handles (plan 7, D7, FR-2) ----
+
+        [TestCase("texture/effect/x.bmp")]
+        [TestCase("texture/effect/x.tga")]
+        [TestCase("texture/effect/x.png")]
+        [TestCase("texture/effect/x.jpg")]
+        [TestCase("texture/effect/sub/x.bmp")]
+        [TestCase("data\\TEXTURE\\Effect\\X.BMP")]
+        public void Handles_False_ForEffectFolder(string raw)
+        {
+            Assert.IsFalse(new RoTextureConverter().Handles(RoPath.Parse(raw)));
+        }
+
+        [TestCase("texture/유저인터페이스/x.bmp")]
+        [TestCase("texture/effectfoo/x.bmp")]
+        public void Handles_True_ForOrdinaryTextures(string raw)
+        {
+            Assert.IsTrue(new RoTextureConverter().Handles(RoPath.Parse(raw)));
+        }
+
         // ---- Pipeline types ----
 
         [Test]

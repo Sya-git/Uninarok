@@ -1,6 +1,7 @@
 using System;
 using UnityEditor;
 using UnityEngine;
+using Uninarok.RoImport.Core.Effects;
 using Uninarok.RoImport.Core.Formats;
 using Uninarok.RoImport.Core.Imaging;
 using Uninarok.RoImport.Core.Output;
@@ -32,8 +33,13 @@ namespace Uninarok.RoImport.Editor.Pipeline
 
         public RoJobKind Kind => RoJobKind.Texture;
 
-        /// <summary>BMP, PNG, JPG and TGA files.</summary>
-        public bool Handles(RoPath path) => RoImageReader.IsSupportedExtension(path.Extension);
+        /// <summary>Canonical folder prefix of effect textures, which belong to the effect category, not here (plan 7, D7, FR-2).</summary>
+        static readonly string EffectFolderPrefix = RoEffectTextureLookup.EffectRoot.Canonical + "/";
+
+        /// <summary>BMP, PNG, JPG and TGA files outside <c>texture/effect/</c>.</summary>
+        public bool Handles(RoPath path) =>
+            RoImageReader.IsSupportedExtension(path.Extension)
+            && !path.Canonical.StartsWith(EffectFolderPrefix, StringComparison.OrdinalIgnoreCase);
 
         public RoResult<UnityEngine.Object> Convert(RoImportContext ctx, RoPath path)
         {
