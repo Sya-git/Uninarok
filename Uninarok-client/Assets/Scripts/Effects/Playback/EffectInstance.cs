@@ -106,6 +106,10 @@ namespace Uninarok.Effects
             return writer;
         }
 
+        /// <summary>Hides what the instance's mesh last drew (no-op before its first drawing bind). The object is reused by the
+        /// slot's next play, whatever its kind: a sprite or model part never writes the mesh, so a stale one would show (D40).</summary>
+        public void HideMesh() => writer?.HideAll();
+
         public void DisposeWriter()
         {
             writer?.Dispose();

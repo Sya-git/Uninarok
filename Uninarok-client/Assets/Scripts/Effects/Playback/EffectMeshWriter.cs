@@ -277,6 +277,15 @@ namespace Uninarok.Effects
             for (; v < end; v++) vertices[v] = default;
         }
 
+        /// <summary>Every vertex of the bound layout zero-area and uploaded now: nothing of the last frame stays drawn. The layout,
+        /// the materials and the index buffer stay, so the next bind of the same layout uploads none of them (D40).</summary>
+        public void HideAll()
+        {
+            if (disposed || usedVertices == 0) return;
+            for (int v = 0; v < usedVertices; v++) vertices[v] = default;
+            mesh.SetVertexBufferData(vertices, 0, 0, usedVertices, 0, FrameFlags);
+        }
+
         /// <summary>
         /// Writes a cylinder strip from <paramref name="c"/> (units, object space, plan 4.5): vertex 2i is bottom ring
         /// point i (y 0, radius Bottom), 2i + 1 the top point i (y Height, radius Top), i = 0..Sides (the last repeats

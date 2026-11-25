@@ -245,6 +245,10 @@
   *Done when:* a test renders the sparkle at frame 38 and finds the ring around the glow equal to the backdrop and the centre bright (fails with the floor at 0); unit tests pin the remap and the neutral default; plan D39 written.
   *Status:* completed: worst ring deviation from the backdrop 87 before, 0 after; non-backdrop pixels 2,417 before, 826 after; `EffectPreviewStageTests.WarpSparkleFrame38_NoSquareOutline_FR7`, `EffectMaterialsTests` (remap, key), `AuthoredAssetTests.Sparkle_AlphaFloorIsTenthAndOthersNeutral_FR7`.
 
+- [x] **T8.11** [core] Fix the previous effect staying on the stage after switching to a sprite effect (owner bug, gate T10.4): the slot object's one mesh is reused by the next play and a sprite or model part never writes it, so the last STR / authored frame stayed drawn (plan D40; the game's `EffectSystem` had the same defect on slot reuse). `EffectRuntime.Release` hides the mesh (`EffectMeshWriter.HideAll`). (FR-6, FR-11)
+  *Done when:* tests render STR then sprite, authored then sprite, sprite then STR and authored then STR on one stage and equal a fresh stage's render of the last effect (the first two fail without the fix); a controller test does the same through the play state; a mesh writer test pins `HideAll`; plan D40 written.
+  *Status:* completed: before the fix 1,150 and 944 pixels of the previous effect remained (STR to sprite, authored to sprite), 0 after; `EffectPreviewStageTests` 15/15, `EffectPreviewControllerTests` 9/9, `EffectMeshWriterTests` 12/12, PlayMode `EffectAllocationTests` 1/1.
+
 ## Phase 9: Play, cost and architecture tests
 
 - [x] **T9.1** [core] `EffectSpeedPlayTests` (PlayMode): an STR entry and an authored cylinder at speed 2 each end at half the wall time of speed 1 (±1 frame); a looped entry's cycle index after T at speed 2 equals its index after 2T at speed 1; the picture at speed 2 and time T equals speed 1 at 2T; speed 0.5 doubles one play; `TimeScale` 0 freezes `Age`; a sprite entry at speed 2 steps its `SpriteActor` twice as fast (NeedsData). (FR-4, FR-6, FR-11)

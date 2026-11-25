@@ -1,6 +1,7 @@
 using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
+using Object = UnityEngine.Object;
 using Uninarok.Effects.Editor;
 
 namespace Uninarok.Effects.Tests
@@ -44,6 +45,51 @@ namespace Uninarok.Effects.Tests
                 "texture/effect/_authored/warp_portal/sparkle.quad",
             }));
             Assert.That(keys.SequenceEqual(keys.OrderBy(k => k, System.StringComparer.Ordinal)), Is.True, "keys sorted ordinal");
+        }
+
+        // T8.11 (FR-6, FR-11, plan D40): selecting a sprite effect after a mesh effect shows the sprite alone, as on a fresh stage
+        [Test]
+        public void Play_SpriteAfterSparkle_RendersLikeAFreshStage_FR11()
+        {
+            const string sprite = "sprite/이팩트/fireball.act";
+            stage.Distance = 6f;
+            Assert.That(player.Play(SparkleKey), Is.True);
+            player.SeekSeconds(38f / 60f);
+            var sparkle = Capture(stage);
+            Assert.That(player.Play(sprite), Is.True);
+            player.SeekSeconds(0.2f);
+            var after = Capture(stage);
+
+            using (var freshSource = EffectBrowseSource.Load())
+            using (var freshStage = new EffectPreviewStage(freshSource.CreateCatalog()))
+            {
+                freshStage.Distance = 6f;
+                var freshPlayer = new EffectPreviewController(freshStage);
+                Assert.That(freshPlayer.Play(sprite), Is.True);
+                freshPlayer.SeekSeconds(0.2f);
+                var fresh = Capture(freshStage);
+                int differing = 0, sparkleDiffers = 0;
+                for (int i = 0; i < fresh.Length; i++)
+                {
+                    if (Delta(fresh[i], after[i]) > 12) differing++;
+                    if (Delta(sparkle[i], fresh[i]) > 12) sparkleDiffers++;
+                }
+                Assert.That(sparkleDiffers, Is.GreaterThan(50), "the two frames differ at all (the check can fail)");
+                Assert.That(differing, Is.EqualTo(0), "pixels of the sparkle left on the stage after selecting the sprite");
+            }
+        }
+
+        static int Delta(Color32 a, Color32 b) => Mathf.Abs(a.r - b.r) + Mathf.Abs(a.g - b.g) + Mathf.Abs(a.b - b.b);
+
+        static Color32[] Capture(EffectPreviewStage s)
+        {
+            var tex = new Texture2D(2, 2);
+            try
+            {
+                Assert.That(tex.LoadImage(EffectEvidence.CapturePng(s, 256, 256)), Is.True);
+                return tex.GetPixels32();
+            }
+            finally { Object.DestroyImmediate(tex); }
         }
 
         [Test]

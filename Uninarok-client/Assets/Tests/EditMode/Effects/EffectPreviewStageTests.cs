@@ -195,6 +195,88 @@ namespace Uninarok.Effects.Tests
             Assert.That(worst, Is.LessThanOrEqualTo(9), "backdrop-equal outside the glow");
         }
 
+        // T8.11 (FR-6, FR-11, plan D40): switching the effect leaves nothing of the previous one on the stage. The pooled slot's
+        // object is reused by the next play; a sprite or model part never writes its mesh, so the last STR / authored frame stayed.
+        const string StrKey = "texture/effect/angelus.str";
+        const string QuadKey = "texture/effect/_authored/warp_portal/sparkle.quad";
+        const string SpriteKey = "sprite/이팩트/fireball.act";
+
+        [TestCase(StrKey, 59, SpriteKey, 10)]
+        [TestCase(QuadKey, 38, SpriteKey, 10)]
+        [TestCase(SpriteKey, 10, StrKey, 59)]
+        [TestCase(QuadKey, 38, StrKey, 59)]
+        // (a mesh effect after a mesh effect is not compared: the authored sparkle seeds its random start from the slot generation)
+        public void SwitchEffect_RendersLikeAFreshStage_FR11(string first, int firstFrame, string second, int secondFrame)
+        {
+            var fresh = RenderPixels(second, secondFrame, out int size);
+            stage.Dispose(); stage = null;
+
+            var index = AssetDatabase.LoadAssetAtPath<EffectCatalogIndex>(EffectCatalog.IndexKey);
+            stage = new EffectPreviewStage(EffectCatalog.Create(index, new AssetDatabaseEffectSource()));
+            stage.Distance = 10f;
+            var h1 = stage.Play(first, loop: true);
+            Assert.That(stage.Runtime.IsActive(h1), Is.True, first);
+            stage.Tick(0.01f);
+            stage.Runtime.Seek(h1, firstFrame / 60f);
+            stage.Tick(0f);
+            stage.Render(new Rect(0, 0, 256, 256));
+            stage.Runtime.Stop(h1);
+
+            var after = RenderPixels(stage, second, secondFrame);
+            int differing = 0;
+            for (int i = 0; i < fresh.Length; i++)
+            {
+                var a = fresh[i]; var b = after[i];
+                if (Mathf.Abs(a.r - b.r) + Mathf.Abs(a.g - b.g) + Mathf.Abs(a.b - b.b) > 12) differing++;
+            }
+            Assert.That(differing, Is.EqualTo(0), "pixels of " + first + " left on the stage after switching to " + second);
+        }
+
+        // stopped and nothing else playing: the stage is the backdrop again
+        [TestCase(StrKey, 59)]
+        [TestCase(QuadKey, 38)]
+        public void StopEffect_LeavesOnlyTheBackdrop_FR6(string key, int frame)
+        {
+            Assert.That(CountNonBackdrop(key, frame), Is.GreaterThan(100), "the effect draws before the stop");
+            stage.Runtime.StopAll();
+            var px = RenderPixels(stage, null, 0);
+            var bg = px[0];
+            int n = 0;
+            foreach (var p in px) if (Mathf.Abs(p.r - bg.r) + Mathf.Abs(p.g - bg.g) + Mathf.Abs(p.b - bg.b) > 12) n++;
+            Assert.That(n, Is.EqualTo(0), "nothing drawn after StopAll");
+        }
+
+        // renders the stage after (optionally) playing key at frame; null key renders as is
+        Color32[] RenderPixels(EffectPreviewStage s, string key, int frame)
+        {
+            if (key != null)
+            {
+                var handle = s.Play(key, loop: true);
+                Assert.That(s.Runtime.IsActive(handle), Is.True, key);
+                s.Tick(0.01f);
+                s.Runtime.Seek(handle, frame / 60f);
+                s.Tick(0f);
+            }
+            var window = s.Render(new Rect(0, 0, 256, 256));
+            var rt = RenderTexture.GetTemporary(window.width, window.height, 0, RenderTextureFormat.ARGB32);
+            var tex = new Texture2D(window.width, window.height, TextureFormat.RGBA32, false);
+            var previous = RenderTexture.active;
+            try
+            {
+                Graphics.Blit(window, rt);
+                RenderTexture.active = rt;
+                tex.ReadPixels(new Rect(0, 0, window.width, window.height), 0, 0);
+                tex.Apply(false);
+                return tex.GetPixels32();
+            }
+            finally
+            {
+                RenderTexture.active = previous;
+                RenderTexture.ReleaseTemporary(rt);
+                Object.DestroyImmediate(tex);
+            }
+        }
+
         Color32[] RenderPixels(string key, int frame, out int size)
         {
             var index = AssetDatabase.LoadAssetAtPath<EffectCatalogIndex>(EffectCatalog.IndexKey);

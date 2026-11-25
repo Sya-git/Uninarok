@@ -216,6 +216,19 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(4 + 20, writer.Mesh.vertexCount);
         }
 
+        // T8.11 (FR-6, plan D40): HideAll zeroes the uploaded vertices and keeps the layout
+        [Test]
+        public void HideAll_ZeroesUploadedVerticesAndKeepsLayout_FR6()
+        {
+            writer.BeginLayout(); writer.AddQuads(); writer.AddCylinder(8); writer.EndLayout(bounds);
+            WriteLayer(0, 3); writer.WriteCylinder(1, Cylinder(), 1f); writer.Upload();
+            Assert.IsTrue(System.Linq.Enumerable.Any(ReadBack(), v => !v.Equals(default(EffectVertex))), "something was drawn");
+            writer.HideAll();
+            foreach (var v in ReadBack()) Assert.AreEqual(default(EffectVertex), v, "uploaded vertices zeroed");
+            Assert.AreEqual(2, writer.SubMeshCount);
+            Assert.AreEqual(1, writer.LayoutUploads);
+        }
+
         [Test]
         public void OverLimitOrBadSides_FailsAndLeavesMeshEmpty()
         {

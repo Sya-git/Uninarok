@@ -427,6 +427,7 @@ namespace Uninarok.Effects
             inst.Part = null;
             inst.State = EffectInstanceState.Free;     // inactive before the part's callback can observe it
             part?.Release(inst);
+            inst.HideMesh();                           // the slot's next play may be a kind that never writes the mesh (D40)
             if (inst.Object != null) inst.Object.SetActive(false);
             inst.Asset = null;
             inst.Unit = null;
