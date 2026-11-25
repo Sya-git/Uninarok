@@ -1,0 +1,15 @@
+T10.8 release player build check (FR-8, FR-11)
+Date: 2026-11-25, Unity 6000.7.0b7, StandaloneWindows64, scripting backend CoreCLR.
+Source: EffectBuildStrippingTests (T9.5, commit ce6153dd6). It makes a real player build with BuildOptions.None
+(no development define) and one with BuildOptions.Development, and lists the *.dll file names in each output.
+Both passed.
+
+Release build (no development define):
+1. No /effect command: Uninarok.World.Dev.dll absent (EffectDevCommands lives only in that assembly).
+2. No F11 list: Uninarok.World.Dev.dll absent (EffectDebugView lives only in that assembly).
+3. No preview window: Uninarok.Effects.Editor.dll absent (RoEffectPreviewWindow lives only in that assembly).
+Uninarok.Effects.dll is present (the check is not vacuous).
+
+Development build, for comparison: Uninarok.World.Dev.dll present, Uninarok.Effects.Editor.dll absent.
+
+Limit: assembly presence was checked by file name; the build was not launched. Absent assemblies mean absent types.

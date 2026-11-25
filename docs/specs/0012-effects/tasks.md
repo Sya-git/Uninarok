@@ -267,7 +267,7 @@
 - [ ] **T10.7** [quick] (owner) Dev tools in game (FR-8): the F11 list shows a playing effect with path, place, part count and age; with two looped effects playing, `/effect stop` leaves the list empty. Screenshots saved.
   *Done when:* the screenshots exist and the owner confirms them.
 
-- [ ] **T10.8** [quick] Release player build check (FR-8, FR-11): build without the development define; confirm no `/effect` command, no F11 list and no preview window in the build; the result is noted in `docs/specs/0012-effects/evidence/release-build.txt`.
+- [x] **T10.8** [quick] Release player build check (FR-8, FR-11): build without the development define; confirm no `/effect` command, no F11 list and no preview window in the build; the result is noted in `docs/specs/0012-effects/evidence/release-build.txt`.
   *Done when:* the note exists with the three results.
 
 - [ ] **T10.9** [quick] (owner) Profiler capture of the FR-9 load (300 effects; 1,000 start and stop cycles) on the owner's PC; capture and frame time saved to evidence.
