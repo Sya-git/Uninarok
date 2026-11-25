@@ -185,10 +185,10 @@ STR keys and authored assets store Direct3D blend codes (uint32 in the STR). The
 | 4 | OneMinusSrcColor |
 | 5 | SrcAlpha |
 | 6 | OneMinusSrcAlpha |
-| 7 | DstAlpha |
-| 8 | OneMinusDstAlpha |
+| 7 | One (DESTALPHA, destination alpha 1) |
+| 8 | Zero (INVDESTALPHA, 1 − 1) |
 | 9 | DstColor |
 | 10 | OneMinusDstColor |
-| 11 | SrcAlphaSaturate |
+| 11 | Zero (SRCALPHASAT, min(As, 1 − 1)) |
 
-Any other code (0, 12, 255, ...) falls back to SrcAlpha / OneMinusSrcAlpha for the whole pair and is reported unknown, so the caller logs one warning per asset. Code 12 occurs in 95 base keys of the data set (pair 12 / 12, §5). The most common pair is (5, 7) = SrcAlpha / DstAlpha.
+The client draws into a backbuffer with no alpha channel, so Direct3D reads destination alpha as 1: codes 7, 8 and 11 use that constant, never the Unity target's alpha, and `Uninarok/RoEffect` keeps the target's alpha (`Blend …, Zero One`) (plan D33). Any other code (0, 12, 255, ...) falls back to SrcAlpha / OneMinusSrcAlpha for the whole pair and is reported unknown, so the caller logs one warning per asset. Code 12 occurs in 95 base keys of the data set (pair 12 / 12, §5). The most common pair is (5, 7) = SrcAlpha / DESTALPHA, which plays as additive SrcAlpha / One.

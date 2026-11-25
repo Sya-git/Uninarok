@@ -107,5 +107,45 @@ namespace Uninarok.Effects.Tests
             Debug.Log("[T8.5] non-background pixel ratio " + (diff / (float)px.Length).ToString("F4") + " of " + px.Length);
             Assert.That(diff, Is.GreaterThan(px.Length / 200), "something is drawn");
         }
+
+        // T8.6, FR-3, plan D33: the most common STR pair 5 > 7 (SrcAlpha / DstAlpha) drawn into the window's HDR target
+        // (ARGBHalf, alpha not clamped) must not brighten whole quads. Before D33 the destination alpha grew above 1 inside
+        // earlier quads and the DstAlpha factor amplified them to white rectangles; the real client's backbuffer has no alpha.
+        [Test]
+        public void HastyFireFrame32_WindowTarget_HasNoWhiteQuads_FR3()
+        {
+            const string key = "texture/effect/night_watch/nw_hasty_fire_in_the_hole/hasty_fire_in_the_hole/hasty_fire_in_the_hole_7x7.str";
+            var index = AssetDatabase.LoadAssetAtPath<EffectCatalogIndex>(EffectCatalog.IndexKey);
+            Assert.That(index, Is.Not.Null);
+            stage = new EffectPreviewStage(EffectCatalog.Create(index, new AssetDatabaseEffectSource()));
+            stage.Distance = 10f;
+            var handle = stage.Play(key, loop: true);
+            Assert.That(stage.Runtime.IsActive(handle), Is.True, key);
+            stage.Tick(0.01f);
+            stage.Runtime.Seek(handle, 32f / 60f);
+            stage.Tick(0f);
+
+            var window = stage.Render(new Rect(0, 0, 256, 256));   // the preview window's own target
+            var rt = RenderTexture.GetTemporary(window.width, window.height, 0, RenderTextureFormat.ARGB32);
+            var tex = new Texture2D(window.width, window.height, TextureFormat.RGBA32, false);
+            var previous = RenderTexture.active;
+            try
+            {
+                Graphics.Blit(window, rt);
+                RenderTexture.active = rt;
+                tex.ReadPixels(new Rect(0, 0, window.width, window.height), 0, 0);
+                tex.Apply(false);
+                int white = 0;
+                foreach (var p in tex.GetPixels32()) if (p.r > 220 && p.g > 220 && p.b > 200) white++;
+                Debug.Log("[T8.6] near-white pixels " + white + " of " + (window.width * window.height));
+                Assert.That(white, Is.LessThan(window.width * window.height / 500), "no near-white quads at frame 32");
+            }
+            finally
+            {
+                RenderTexture.active = previous;
+                RenderTexture.ReleaseTemporary(rt);
+                Object.DestroyImmediate(tex);
+            }
+        }
     }
 }

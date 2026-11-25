@@ -9,8 +9,9 @@ namespace Uninarok.Effects.Tests
         static readonly BlendMode[] Table =
         {
             BlendMode.Zero, BlendMode.One, BlendMode.SrcColor, BlendMode.OneMinusSrcColor,
-            BlendMode.SrcAlpha, BlendMode.OneMinusSrcAlpha, BlendMode.DstAlpha, BlendMode.OneMinusDstAlpha,
-            BlendMode.DstColor, BlendMode.OneMinusDstColor, BlendMode.SrcAlphaSaturate,
+            // 7, 8, 11: the client's backbuffer has no alpha channel, so Direct3D reads destination alpha as 1 (plan D33)
+            BlendMode.SrcAlpha, BlendMode.OneMinusSrcAlpha, BlendMode.One, BlendMode.Zero,
+            BlendMode.DstColor, BlendMode.OneMinusDstColor, BlendMode.Zero,
         };
 
         [Test]
@@ -46,12 +47,13 @@ namespace Uninarok.Effects.Tests
         }
 
         [Test]
-        public void MostCommonStrPair_5_7_IsSrcAlphaDstAlpha()
+        public void MostCommonStrPair_5_7_IsSrcAlphaOne_D33()
         {
+            // SrcAlpha / DstAlpha with destination alpha 1 (no alpha in the client's backbuffer) = additive SrcAlpha / One
             EffectBlend.ToUnityPair(5, 7, out var src, out var dst, out bool known);
             Assert.IsTrue(known);
             Assert.AreEqual(BlendMode.SrcAlpha, src);
-            Assert.AreEqual(BlendMode.DstAlpha, dst);
+            Assert.AreEqual(BlendMode.One, dst);
         }
     }
 }

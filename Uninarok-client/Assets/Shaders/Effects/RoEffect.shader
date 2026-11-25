@@ -29,7 +29,9 @@ Shader "Uninarok/RoEffect"
             Name "RoEffect"
             Tags { "LightMode" = "UniversalForward" }
 
-            Blend [_SrcBlend] [_DstBlend]
+            // Colour by the material's pair; the target's alpha is kept as is (Zero One), as the client's backbuffer has no
+            // alpha: the destination-alpha codes read the constant 1 (EffectBlend, plan D33), never this channel.
+            Blend [_SrcBlend] [_DstBlend], Zero One
             ZWrite Off
             ZTest LEqual
             Cull Off

@@ -5,6 +5,10 @@ namespace Uninarok.Effects
     /// <summary>
     /// Direct3D blend code (STR keys and authored assets) to Unity <see cref="BlendMode"/> (SPEC-0012 FR-3,
     /// plan 4.5). Table pinned by EffectBlendTests; documented in str-reference.md section 11.
+    /// <para>Plan D33: the client draws into a backbuffer with no alpha channel, where Direct3D reads destination alpha as 1.
+    /// So the destination-alpha codes are emulated with that constant (7 DESTALPHA = One, 8 INVDESTALPHA = Zero,
+    /// 11 SRCALPHASAT = min(As, 1 - 1) = Zero), never with the Unity target's alpha, which other draws write and which an
+    /// HDR target does not clamp (the most common pair 5 / 7 is additive SrcAlpha / One).</para>
     /// </summary>
     public static class EffectBlend
     {
@@ -25,11 +29,11 @@ namespace Uninarok.Effects
                 case 4: return BlendMode.OneMinusSrcColor;
                 case 5: return BlendMode.SrcAlpha;
                 case 6: return BlendMode.OneMinusSrcAlpha;
-                case 7: return BlendMode.DstAlpha;
-                case 8: return BlendMode.OneMinusDstAlpha;
+                case 7: return BlendMode.One;              // DESTALPHA, destination alpha 1 (D33)
+                case 8: return BlendMode.Zero;             // INVDESTALPHA, 1 - 1 (D33)
                 case 9: return BlendMode.DstColor;
                 case 10: return BlendMode.OneMinusDstColor;
-                case 11: return BlendMode.SrcAlphaSaturate;
+                case 11: return BlendMode.Zero;            // SRCALPHASAT, min(As, 1 - 1) (D33)
                 default:
                     known = false;
                     return BlendMode.SrcAlpha;

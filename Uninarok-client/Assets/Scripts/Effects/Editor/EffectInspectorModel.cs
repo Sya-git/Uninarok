@@ -87,9 +87,16 @@ namespace Uninarok.Effects.Editor
         /// <summary>Name of a Direct3D blend code with the code, e.g. <c>SrcAlpha(5)</c>; <c>?(n)</c> outside 1..11.</summary>
         public static string BlendName(byte code)
         {
-            var mode = EffectBlend.ToUnity(code, out bool known);
-            return (known ? mode.ToString() : "?") + "(" + code.ToString(CultureInfo.InvariantCulture) + ")";
+            // the file's Direct3D factor, not the Unity factor it plays with (7, 8, 11 read destination alpha 1, plan D33)
+            EffectBlend.ToUnity(code, out bool known);
+            return (known ? D3DBlendNames[code - 1] : "?") + "(" + code.ToString(CultureInfo.InvariantCulture) + ")";
         }
+
+        static readonly string[] D3DBlendNames =
+        {
+            "Zero", "One", "SrcColor", "OneMinusSrcColor", "SrcAlpha", "OneMinusSrcAlpha",
+            "DstAlpha", "OneMinusDstAlpha", "DstColor", "OneMinusDstColor", "SrcAlphaSaturate",
+        };
 
         /// <summary>The <c>key=</c> value of an importer userData string (tokens split by ';', ',', space or line end), or null.</summary>
         public static string AppliedKeyOf(string userData)

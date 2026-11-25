@@ -230,6 +230,10 @@
   *Done when:* an EditMode test plays `sprite/이팩트/05vallentine.act` and `fireball.act` in the stage with no warning and a drawable sprite part; a 512x512 frame of fireball shows the real sprite.
   *Status:* completed: `EffectPreviewStageTests` (sprite cases, render ratio 0.0355 non-background), evidence `evidence/preview-sprite-fireball-f10.png`; `Unity.Addressables` added to `Uninarok.Effects.Editor` references (editor only).
 
+- [x] **T8.6** [critical] Fix the white quads of STR layers in the preview window (owner bug, `hasty_fire_in_the_hole_7x7.str` frame 32): blend codes 7, 8, 11 read destination alpha as the constant 1 (the client's backbuffer has no alpha) and the shader keeps the target's alpha (plan D33). (FR-3, FR-11)
+  *Done when:* an EditMode test renders frame 32 into the window's own target and finds no near-white quads (fails before the fix); `EffectBlendTests` pins the new table; the after image matches the owner's reference.
+  *Status:* completed: `EffectPreviewStageTests.HastyFireFrame32_WindowTarget_HasNoWhiteQuads_FR3` 2,217 near-white pixels before, 0 after; `EffectBlendTests`, `EffectMaterialsTests`, `EffectShaderTests`, `EffectMeshWriterTests`, `EffectInspectorModelTests`, `EffectPreviewStageTests` (EditMode) and `EffectPlayTests` (PlayMode) pass; evidence `evidence/hasty-fire-f32-before.png`, `evidence/hasty-fire-f32-after.png`.
+
 ## Phase 9: Play, cost and build tests
 
 - [x] **T9.1** [core] `EffectSpeedPlayTests` (PlayMode): an STR entry and an authored cylinder at speed 2 each end at half the wall time of speed 1 (±1 frame); a looped entry's cycle index after T at speed 2 equals its index after 2T at speed 1; the picture at speed 2 and time T equals speed 1 at 2T; speed 0.5 doubles one play; `TimeScale` 0 freezes `Age`; a sprite entry at speed 2 steps its `SpriteActor` twice as fast (NeedsData). (FR-4, FR-6, FR-11)
