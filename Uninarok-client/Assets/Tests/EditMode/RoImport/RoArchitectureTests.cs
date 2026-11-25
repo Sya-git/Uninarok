@@ -183,6 +183,140 @@ namespace Uninarok.RoImport.Tests
             Assert.IsTrue(Forbidden.IsMatch(CodeOnly("var r = new BinaryReader(stream); // read")));
         }
 
+        // ---- SPEC-0012 FR-2, FR-4 (TASKS-0012 T9.4): the effects assemblies ----
+
+        static string AssetsPath(string relative) => Path.Combine(Application.dataPath, relative);
+
+        static string[] ReferencesOf(string asmdefRelative) =>
+            JsonUtility.FromJson<AsmdefPlatforms>(File.ReadAllText(AssetsPath(asmdefRelative))).references ?? new string[0];
+
+        [Test]
+        public void EffectsRuntimeAssembly_IsForAllPlatforms_WithOnlyItsPlannedReferences()
+        {
+            var asmdef = JsonUtility.FromJson<AsmdefPlatforms>(File.ReadAllText(AssetsPath("Scripts/Effects/Uninarok.Effects.asmdef")));
+
+            CollectionAssert.IsEmpty(asmdef.includePlatforms ?? new string[0]);
+            CollectionAssert.IsEmpty(asmdef.excludePlatforms ?? new string[0]);
+            CollectionAssert.AreEquivalent(
+                new[] { "Uninarok.Sprites", "Uninarok.SpriteCatalog", "Uninarok.Map", "Unity.Addressables", "Unity.ResourceManager" },
+                asmdef.references ?? new string[0]);
+        }
+
+        [Test]
+        public void EffectsEditorAssembly_IsEditorOnly_WithOnlyItsPlannedReferences()
+        {
+            var asmdef = JsonUtility.FromJson<AsmdefPlatforms>(File.ReadAllText(AssetsPath("Scripts/Effects/Editor/Uninarok.Effects.Editor.asmdef")));
+
+            CollectionAssert.AreEqual(new[] { "Editor" }, asmdef.includePlatforms);
+            CollectionAssert.IsEmpty(asmdef.excludePlatforms ?? new string[0]);
+            // No GRF DLL reference: GRF stays in Core/Formats.
+            CollectionAssert.AreEquivalent(
+                new[] { "Uninarok.Effects", "Uninarok.Sprites", "Uninarok.SpriteCatalog", "Uninarok.RoImport.Core", "Uninarok.RoImport.Editor" },
+                asmdef.references ?? new string[0]);
+        }
+
+        [Test]
+        public void EffectsTestAssemblies_HaveTheirJustifiedReferences()
+        {
+            // Edit mode: the editor assembly, and the importer core (tests build STR fixtures through it).
+            var edit = JsonUtility.FromJson<AsmdefPlatforms>(File.ReadAllText(AssetsPath("Tests/EditMode/Effects/Uninarok.Effects.Tests.asmdef")));
+            CollectionAssert.AreEqual(new[] { "Editor" }, edit.includePlatforms);
+            CollectionAssert.AreEquivalent(
+                new[] { "UnityEngine.TestRunner", "UnityEditor.TestRunner", "Uninarok.Effects", "Uninarok.Effects.Editor", "Uninarok.RoImport.Core" },
+                edit.references ?? new string[0]);
+
+            // Play mode (editor runs only, UNITY_EDITOR constraint): units and networking drive the walking-unit tests,
+            // the Addressables editor assembly builds the test catalog.
+            var play = JsonUtility.FromJson<AsmdefPlatforms>(File.ReadAllText(AssetsPath("Tests/PlayMode/Effects/Uninarok.Effects.PlayTests.asmdef")));
+            CollectionAssert.IsEmpty(play.includePlatforms ?? new string[0]);
+            CollectionAssert.AreEquivalent(
+                new[]
+                {
+                    "UnityEngine.TestRunner", "UnityEditor.TestRunner", "Uninarok.Effects", "Uninarok.Map", "Uninarok.Sprites", "Uninarok.SpriteCatalog",
+                    "Uninarok.Units", "Uninarok.Networking", "Unity.Addressables", "Unity.ResourceManager", "Unity.Addressables.Editor"
+                },
+                play.references ?? new string[0]);
+        }
+
+        [Serializable]
+        sealed class AsmdefDefineConstraints
+        {
+            public string[] references;
+            public string[] defineConstraints;
+        }
+
+        [Test]
+        public void WorldDevAssembly_ReachesEffectsAndUnits_UnderTheDevGuard()
+        {
+            var asmdef = JsonUtility.FromJson<AsmdefDefineConstraints>(File.ReadAllText(AssetsPath("Scripts/World/Dev/Uninarok.World.Dev.asmdef")));
+
+            CollectionAssert.Contains(asmdef.references, "Uninarok.Effects");
+            CollectionAssert.Contains(asmdef.references, "Uninarok.Units");
+            CollectionAssert.AreEqual(new[] { "UNITY_EDITOR || DEVELOPMENT_BUILD" }, asmdef.defineConstraints);
+        }
+
+        [Test]
+        public void EffectsRuntimeAssembly_ReferencesNoEditorAssembly()
+        {
+            foreach (string reference in ReferencesOf("Scripts/Effects/Uninarok.Effects.asmdef"))
+                Assert.IsFalse(reference.Contains("Editor") || reference.StartsWith("Uninarok.RoImport", StringComparison.Ordinal) || reference.StartsWith("GRF", StringComparison.Ordinal),
+                    "Uninarok.Effects ships in players: " + reference);
+
+            var effects = Assembly.Load("Uninarok.Effects");
+            var offenders = effects.GetReferencedAssemblies().Select(r => r.Name)
+                .Where(n => n.StartsWith("UnityEditor", StringComparison.Ordinal) || n.Contains(".Editor") || n.StartsWith("Uninarok.RoImport", StringComparison.Ordinal) || n == "GRF")
+                .ToArray();
+
+            CollectionAssert.IsEmpty(offenders);
+        }
+
+        // FR-4: no particle system, no visual effect graph, no compute.
+        static readonly Regex ForbiddenEffectApi = new Regex(@"\bParticleSystem\w*\b|\bUnityEngine\.VFX\b|\bVisualEffect\b|\bComputeShader\b|\bComputeBuffer\b");
+
+        static string[] EffectsRuntimeSources() =>
+            Directory.GetFiles(AssetsPath("Scripts/Effects"), "*.cs", SearchOption.AllDirectories)
+                .Where(f => !f.Replace('\\', '/').Contains("/Scripts/Effects/Editor/")).ToArray();
+
+        [Test]
+        public void EffectsRuntimeTypes_UseNoVfxParticleOrComputeApi()
+        {
+            var files = EffectsRuntimeSources();
+            Assume.That(files.Length, Is.GreaterThan(10), "the effects runtime sources were found");
+
+            var offenders = new List<string>();
+            foreach (string file in files)
+                foreach (Match m in ForbiddenEffectApi.Matches(CodeOnly(File.ReadAllText(file))))
+                    offenders.Add($"{Path.GetFileName(file)}: {m.Value}");
+
+            CollectionAssert.IsEmpty(offenders);
+            Assert.IsTrue(ForbiddenEffectApi.IsMatch("new ParticleSystem(); using UnityEngine.VFX; ComputeShader c;"), "the scan recognizes the APIs");
+        }
+
+        [Test]
+        public void EffectsRuntimeSources_UseNoEditorApi_AndNoGrf()
+        {
+            var forbidden = new Regex(@"\busing\s+UnityEditor\b|\bUnityEditor\s*\.|\busing\s+GRF\b|\bGRF\s*\.|\busing\s+Uninarok\.RoImport\b");
+            var offenders = new List<string>();
+            foreach (string file in EffectsRuntimeSources())
+                foreach (Match m in forbidden.Matches(CodeOnly(File.ReadAllText(file))))
+                    offenders.Add($"{Path.GetFileName(file)}: {m.Value}");
+
+            CollectionAssert.IsEmpty(offenders);
+        }
+
+        // FR-2: the header check reads 8 bytes with BitConverter; a BinaryReader is never the tool, even in Core/Formats.
+        [Test]
+        public void ImporterCode_UsesNoBinaryReader_AnywhereIncludingFormats()
+        {
+            var files = Directory.GetFiles(ImporterRoot, "*.cs", SearchOption.AllDirectories);
+            Assume.That(files.Length, Is.GreaterThan(20), "the importer sources were found");
+
+            var binaryReader = new Regex(@"\bBinaryReader\b");
+            var offenders = files.Where(f => binaryReader.IsMatch(CodeOnly(File.ReadAllText(f)))).Select(f => f.Substring(ImporterRoot.Length + 1)).ToArray();
+
+            CollectionAssert.IsEmpty(offenders);
+        }
+
         /// <summary>Source text without comments and string literals, so names in prose or paths do not count.</summary>
         static string CodeOnly(string source) =>
             Regex.Replace(source, @"//[^\n]*|/\*.*?\*/|@""(?:[^""]|"""")*""|""(?:\\.|[^""\\\n])*""|'(?:\\.|[^'\\\n])'", " ", RegexOptions.Singleline);
