@@ -14,7 +14,7 @@
 - Spike code (T0.1, T0.3) is not committed under `Assets/Scripts/`; only the notes and evidence under `docs/specs/0012-effects/`.
 - Tasks that run the editor are done through Unity-MCP.
 - Revision 2026-11-24 (owner decisions, plan D21, D22): T1.7 unblocked and rewritten (`EffectPath` normalises on its own at run time, `EffectPathAgreementTests` checks it against `RoPath`); T3.2 states that `KeyData.Delay` stays and only asset-level start delay, duplicate, wav/sound and attachment fields are forbidden; the cylinder vertex-count check stays in T5.3; T10.1 is a visual confirmation only (R5 resolved: uv from the STR keys).
-- Revision 2026-11-25 (added during execution): tasks T6.10 (data check, full-path texture names), T8.5 (preview sprite lookup), T8.6 (destination alpha), T8.7 (preview frame label and STR rate) and T9.7 (docs sync); plan decisions D31 to D36 (D31 dev wiring, D32 hidden allocations, D33 destination alpha, D34 preview sprite lookup, D35 data check full paths, D36 preview browse source). The colour key rule (T0.2b, T3.8) was decided by the owner and is recorded in str-reference.md §10.
+- Revision 2026-11-25 (added during execution; the owner's visual gates T10.3 to T10.7 are confirmed by eye, no images are saved): tasks T6.10 (data check, full-path texture names), T8.5 (preview sprite lookup), T8.6 (destination alpha), T8.7 (preview frame label and STR rate) and T9.7 (docs sync); plan decisions D31 to D36 (D31 dev wiring, D32 hidden allocations, D33 destination alpha, D34 preview sprite lookup, D35 data check full paths, D36 preview browse source). The colour key rule (T0.2b, T3.8) was decided by the owner and is recorded in str-reference.md §10.
 
 ---
 
@@ -266,20 +266,20 @@
 - [ ] **T10.2** [quick] (owner) Interpolation (D17): the owner decides each difference T0.1 listed against GRF. Blocks only the sign-off below.
   *Done when:* each listed difference is marked accepted, or changed through a plan revision first.
 
-- [ ] **T10.3** [quick] (owner) Preview acceptance (FR-11) on a warp entry and the 10 reference files: filter, play looped, pause holds, step, scrubber to the end, speed 0.5 doubles one play, stop returns to frame 0, loop off plays once; each background; orbit 90° (camera-facing layer faces the camera, ground quad seen edge-on); inspector counts; a pink-keyed and a black-keyed texture show their key and transparency; delete one texture in a copy of the data and check the missing marker and its one warning. Save the images under `docs/specs/0012-effects/evidence/`.
-  *Done when:* saved images exist for the warp entries and the 10 reference files, and the owner's confirmation is recorded in str-reference.md under "Owner review".
+- [ ] **T10.3** [quick] (owner) Preview acceptance (FR-11) on a warp entry and the 10 reference files: filter, play looped, pause holds, step, scrubber to the end, speed 0.5 doubles one play, stop returns to frame 0, loop off plays once; each background; orbit 90° (camera-facing layer faces the camera, ground quad seen edge-on); inspector counts; a pink-keyed and a black-keyed texture show their key and transparency; delete one texture in a copy of the data and check the missing marker and its one warning. The owner confirms by eye; no image is saved.
+  *Done when:* the owner's confirmation for the warp entries and the 10 reference files is recorded in str-reference.md under "Owner review".
 
-- [ ] **T10.4** [quick] (owner) Must-list look (FR-5, FR-7): each must-list entry (`firewall.str`, `fireball.act`, the sparkle, both rings, the trap model) plays with its real parts and no missing texture; the owner confirms the warp parts (rings shrinking and rising, sparkle moving and fading, additive blue) from saved images.
-  *Done when:* the saved images exist and the sign-off is recorded in str-reference.md.
+- [ ] **T10.4** [quick] (owner) Must-list look (FR-5, FR-7): each must-list entry (`firewall.str`, `fireball.act`, the sparkle, both rings, the trap model) plays with its real parts and no missing texture; the owner confirms the warp parts (rings shrinking and rising, sparkle moving and fading, additive blue) by eye in the preview window; no image is saved.
+  *Done when:* the owner's confirmation is recorded in str-reference.md under "Owner review".
 
-- [ ] **T10.5** [quick] (owner) Speed in the preview (FR-4): `firewall.str` and a warp entry at speed 1 and speed 2; one cycle is halved. Saved images.
-  *Done when:* the images exist and the owner's sign-off is recorded.
+- [ ] **T10.5** [quick] (owner) Speed in the preview (FR-4): `firewall.str` and a warp entry at speed 1 and speed 2; one cycle is halved. The owner confirms by eye in the preview window; no image is saved.
+  *Done when:* the owner's confirmation is recorded in str-reference.md under "Owner review".
 
-- [ ] **T10.6** [quick] (owner) In-game check (FR-7): development build on a local Hercules, Bootstrap; `/effect <path> <x> <y> loop` with each of the three warp paths on a prontera warp cell; one screenshot each; no warning in the log; job 45 units still draw nothing in normal play.
-  *Done when:* three screenshots are saved under `docs/specs/0012-effects/evidence/` and the owner confirms them.
+- [ ] **T10.6** [quick] (owner) In-game check (FR-7): development build on a local Hercules, Bootstrap; `/effect <path> <x> <y> loop` with each of the three warp paths on a prontera warp cell; the owner confirms each by eye in the game, no screenshot is saved; no warning in the log; job 45 units still draw nothing in normal play.
+  *Done when:* the owner's confirmation of the three paths is recorded in str-reference.md under "Owner review".
 
-- [ ] **T10.7** [quick] (owner) Dev tools in game (FR-8): the F11 list shows a playing effect with path, place, part count and age; with two looped effects playing, `/effect stop` leaves the list empty. Screenshots saved.
-  *Done when:* the screenshots exist and the owner confirms them.
+- [ ] **T10.7** [quick] (owner) Dev tools in game (FR-8): the F11 list shows a playing effect with path, place, part count and age; with two looped effects playing, `/effect stop` leaves the list empty. The owner confirms in the game; no screenshot is saved.
+  *Done when:* the owner's confirmation is recorded in str-reference.md under "Owner review".
 
 - [ ] **T10.9** [quick] (owner) Profiler capture of the FR-9 load (300 effects; 1,000 start and stop cycles) on the owner's PC; capture and frame time saved to evidence.
   *Done when:* the capture is saved and its frame time is recorded in the evidence.
