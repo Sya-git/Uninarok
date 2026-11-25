@@ -103,7 +103,7 @@
 - [x] **T3.11** [core] Implement `RoStrConverter` (ledger category `effect`; one asset per STR at `Art/Imported/effect/<path>.asset`; ledger dependencies are the resolved textures, a missing one with an empty hash; corrupt or unsupported file → one issue and no output), `RoImport.Effect` and `RoImport.EffectFolder`, `RoJobKind.Effect`, the `RoIssueCode` additions, and `RoStrConverterTests` (synthetic STR: one asset at its path; a texture shared by two STRs converted once; second run Skipped; forced run keeps GUIDs; changed texture re-converts its STR; corrupt and unsupported input give one issue and no output). (FR-2, FR-10)
   *Done when:* all `RoStrConverterTests` pass.
 
-- [ ] **T3.12** [core] `RoEffectImportReferenceTests` (NeedsData, slow): whole `texture/effect/` import gives asset count = `.str` count; per-file report; a pink-background and a black-background texture (named in T0.2b's record) come in with those areas transparent; a re-run imports nothing. (FR-2, FR-5, FR-10)
+- [x] **T3.12** [core] `RoEffectImportReferenceTests` (NeedsData, slow): whole `texture/effect/` import gives asset count = `.str` count; per-file report; a pink-background and a black-background texture (named in T0.2b's record) come in with those areas transparent; a re-run imports nothing. (FR-2, FR-5, FR-10)
   *Done when:* the tests pass against the working data.
 
 - [x] **T3.13** [core] `EffectSamplerReferenceTests` (NeedsData): the 10 reference files at the first, a middle and the last frame: corners, colour, angle, texture frame and blend equal the values from the file's keys (oracle: GRF's interpolation if T0.1 validated it, otherwise the str-reference formulas on `RoStr`), tolerance 1e-3; length = frames / fps. (FR-3, FR-10)
