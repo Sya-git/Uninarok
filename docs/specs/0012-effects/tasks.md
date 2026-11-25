@@ -260,7 +260,7 @@
 
 ## Phase 10: Owner gates and final verification
 
-- [ ] **T10.1** [quick] (owner) UV confirmation (R5, resolved by the owner 2026-11-24, plan D22): STR quads use the uv from the STR keys. The owner looks at the reference STR quads in the preview and confirms they look right with the file's uv. Visual confirmation only; no plan change depends on it. Blocks only the sign-off below.
+- [x] **T10.1** [quick] (owner) UV confirmation (R5, resolved by the owner 2026-11-24, plan D22): STR quads use the uv from the STR keys. The owner looks at the reference STR quads in the preview and confirms they look right with the file's uv. Visual confirmation only; no plan change depends on it. Blocks only the sign-off below.
   *Done when:* the owner's confirmation is recorded in str-reference.md.
 
 - [ ] **T10.2** [quick] (owner) Interpolation (D17): the owner decides each difference T0.1 listed against GRF. Blocks only the sign-off below.

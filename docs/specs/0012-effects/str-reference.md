@@ -194,3 +194,7 @@ STR keys and authored assets store Direct3D blend codes (uint32 in the STR). The
 The client draws into a backbuffer with no alpha channel, so Direct3D reads destination alpha as 1: codes 7, 8 and 11 use that constant, never the Unity target's alpha, and `Uninarok/RoEffect` keeps the target's alpha (`Blend …, Zero One`) (plan D33). Any other code (0, 12, 255, ...) falls back to SrcAlpha / OneMinusSrcAlpha for the whole pair and is reported unknown, so the caller logs one warning per asset. Code 12 occurs in 95 base keys of the data set (pair 12 / 12, §5). The most common pair is (5, 7) = SrcAlpha / DESTALPHA, which plays as additive SrcAlpha / One.
 
 **Keyed texels (plan D37).** The converted textures keep their RGB under the colour-keyed texels (alpha 0). A pair whose source factor weighs by the texture alpha (SrcAlpha, so 5 / x) needs nothing more; a pair whose source does not (One, SrcColor, ... so `angelus.str`'s 2 / 1, One / Zero, layers 1 and 8, 5 base keys of layer 1 from frame 21) would draw that RGB, so `Uninarok/RoEffect` discards texels with texture alpha below 0.5 for those pairs (`EffectMaterials.KeyedCutoff`). The keyed area draws nothing, as FR-2 says.
+
+## Owner review
+
+- **T10.1, UV (2026-11-25):** the owner confirmed in the preview window that the 10 reference files look right with the file's uv (D22). `angelus.str` first showed an opaque background and an extra quad; fixed in T8.8 (D37) and rechecked by the owner.
