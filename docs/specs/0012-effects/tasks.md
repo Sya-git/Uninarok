@@ -231,7 +231,7 @@
 - [x] **T9.2** [core] `EffectOnUnitPlayTests` (PlayMode, NeedsData): a warp entry played on a walking poring `UnitView` (Entity Sandbox loader) stays on it as the unit moves. (FR-6, FR-7)
   *Done when:* the test passes.
 
-- [ ] **T9.3** [critical] `EffectAllocationTests` (PlayMode): 300 instances (STR, sprite, authored cylinder and quad; 100 on moving transforms) give 0 B GC per frame over 300 frames, measured with `ProfilerRecorder` "GC.Alloc" over the whole frame against a no-effect baseline and around `EffectRuntime.Tick`; 1,000 start and stop cycles after warm-up give 0 B; frame time is written to `docs/specs/0012-effects/evidence/alloc-report.txt`. (FR-9)
+- [x] **T9.3** [critical] `EffectAllocationTests` (PlayMode): 300 instances (STR, sprite, authored cylinder and quad; 100 on moving transforms) give 0 B GC per frame over 300 frames, measured with `ProfilerRecorder` "GC.Alloc" over the whole frame against a no-effect baseline and around `EffectRuntime.Tick`; 1,000 start and stop cycles after warm-up give 0 B; frame time is written to `docs/specs/0012-effects/evidence/alloc-report.txt`. (FR-9)
   *Done when:* the test passes and the report file exists.
 
 - [ ] **T9.4** [core] Extend `RoArchitectureTests`: the new asmdefs' references; GRF types only in `Core/Formats/`; no `BinaryReader` in importer code; `Uninarok.Effects` references no editor assembly; no type in `Uninarok.Effects` uses `UnityEngine.VFX`, `ParticleSystem` or `ComputeShader`. (FR-2, FR-4)

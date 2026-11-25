@@ -140,8 +140,10 @@ namespace Uninarok.Effects
             {
                 if (keys[i].Type != 0) continue;
                 float shift = (keys[i].Position - s.Pivot).magnitude;
-                max = Mathf.Max(max, keys[i].Xy0.magnitude + shift, keys[i].Xy1.magnitude + shift,
-                    keys[i].Xy2.magnitude + shift, keys[i].Xy3.magnitude + shift);
+                // two-argument Max only: the params overload allocates an array per call (plan D32)
+                float corner = Mathf.Max(Mathf.Max(keys[i].Xy0.magnitude, keys[i].Xy1.magnitude),
+                    Mathf.Max(keys[i].Xy2.magnitude, keys[i].Xy3.magnitude));
+                max = Mathf.Max(max, corner + shift);
             }
             float r = max * k + Mathf.Abs(lower);
             return float.IsNaN(r) || float.IsInfinity(r) ? 1f : r + 0.01f;

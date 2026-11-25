@@ -170,7 +170,9 @@ namespace Uninarok.Effects
         static float MaxAbs(Vector3 a, Vector3 b, Vector3 c, Vector3 d)
         {
             float m = 0f;
-            for (int i = 0; i < 3; i++) m = Mathf.Max(m, Mathf.Abs(a[i]), Mathf.Abs(b[i]), Mathf.Abs(c[i]), Mathf.Abs(d[i]));
+            // two-argument Max only: the params overload allocates an array per call (plan D32)
+            for (int i = 0; i < 3; i++)
+                m = Mathf.Max(Mathf.Max(m, Mathf.Abs(a[i])), Mathf.Max(Mathf.Max(Mathf.Abs(b[i]), Mathf.Abs(c[i])), Mathf.Abs(d[i])));
             return m;
         }
 

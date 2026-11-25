@@ -1,0 +1,30 @@
+SPEC-0012 FR-9 allocation and frame time report (EffectAllocationTests, T9.3)
+Generated: 2026-11-24 23:22:25  Unity 6000.7.0b7  Editor play mode  Direct3D12  Intel(R) Core(TM) i5-14600KF
+
+Load: 300 looped instances (STR 75 (3 layers, texture and blend changes), sprite 75 (converted fireball), cylinder 75 (20 sides), quad 75); 100 on moving transforms (25 per kind)
+Warm-up: 90 frames with the load, and 1000 start and stop cycles before the measured 1000
+Measured: 300 frames each; baseline = the same harness (camera, 100 moving transforms, runtime ticking) with no effect
+Recorders: ProfilerRecorder "GC Allocated In Frame" (bytes, whole frame) and "GC.Alloc" marker (main thread, allocations per frame); around Tick and the cycles: in-frame deltas
+Materials created: 6  Runtime warnings: 0
+
+GC, whole frame (300 frames)          baseline      with effects
+  bytes total                         6746730       6790276
+  bytes max in one frame                88881         60145
+  main-thread allocations total        134200        134182
+  frames with any allocation              300           300
+  difference (effects - baseline)  43546 B, -18 allocations
+  per-frame median of main-thread allocations  447 baseline, 447 with effects
+GC around EffectRuntime.Tick (300 ticks of 300): 0 main-thread allocations; 0 B process-wide
+GC over 1000 start and stop cycles: 0 main-thread allocations; 202 B process-wide
+GC per kind, 50 plays at a point + 50 on a unit, each stopped: STR 0 sprite 0 cylinder 0 quad 0 main-thread allocations
+Main-thread allocations are the "GC.Alloc" marker (CollectOnlyOnCurrentThread): 0 there is 0 B allocated by the effect code.
+"GC Allocated In Frame" counts every thread (editor background work too), so its bytes are reported, not asserted.
+
+Frame time (ms)              mean     median   p95      max
+  frame, baseline             16.670   16.690   18.222   18.427
+  frame, with effects         16.675   16.674   18.185   18.334
+  Tick, baseline (0 inst.)     0.009    0.009    0.013    0.022
+  Tick, 300 instances        0.531    0.501    0.689    0.798
+
+Editor numbers (Unity's editor loop, the test runner and this machine); frame time is held near 16.7 ms by the
+editor's frame pacing, so the Tick time is the effect cost. The owner's player Profiler capture is T10.9.

@@ -165,6 +165,13 @@ namespace Uninarok.Effects
             }
 
             states[i] = EffectAssetState.Loading;
+            StartLoad(i, done);
+        }
+
+        // The completion lambda lives here, not in RequestAsset: a lambda capturing a parameter makes the compiler allocate
+        // its closure at method entry, so every RequestAsset (one per play) allocated, even when the asset was loaded (plan D32).
+        void StartLoad(int i, Action<EffectAsset> done)
+        {
             source.Load(index.Assets[i], asset =>
             {
                 if (states[i] != EffectAssetState.Loading) return;   // released meanwhile
