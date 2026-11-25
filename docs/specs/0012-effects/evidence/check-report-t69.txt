@@ -2,7 +2,7 @@ str: 2995
 textures: 21757
 sprite/act: 459
 tool tables: 174
-missing: 89
+missing: 87
 missing 14copy~1.bmp (referenced by texture/effect/aura.str)
 missing 15coip~1.bmp (referenced by texture/effect/aura.str)
 missing all_flare_01.bmp (referenced by texture/effect/allbloom/allbloom_cast_bottm/allbloom_cast_bottom.str)
@@ -57,8 +57,6 @@ missing sto_hit_01.bmp (referenced by texture/effect/stormcannon/stormcannon_hit
 missing sto_hit_02.bmp (referenced by texture/effect/stormcannon/stormcannon_hit/min_stormcannon_hit.str)
 missing sto_hit_03.bmp (referenced by texture/effect/stormcannon/stormcannon_hit/min_stormcannon_hit.str)
 missing sto_hit_04.bmp (referenced by texture/effect/stormcannon/stormcannon_hit/min_stormcannon_hit.str)
-missing texture/effect/pok1.tga (referenced by texture/effect/_authored/warp_portal/sparkle.quad)
-missing texture/effect/ring_blue.tga (referenced by texture/effect/_authored/warp_portal/ring_inner.cylinder)
 missing var_elecbomb_06.bmp (referenced by texture/effect/mineffect/new_varetyrspear/new_varetyrspear_bottom/new_varetyrspear_bottom.str)
 missing vlo_cast_00.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str)
 missing vlo_cast_01.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str)
@@ -92,6 +90,6 @@ missing vlo_sand_10.bmp (referenced by texture/effect/violentquake/violentquake_
 missing vlo_sand_11.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str)
 missing vlo_sand_12.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str)
 missing win_target_loop.tga (referenced by texture/effect/windsign/windtarget_loop/min_windsign_loop.str)
-warp portal texture/effect/_authored/warp_portal/sparkle.quad: missing
-warp portal texture/effect/_authored/warp_portal/ring_outer.cylinder: missing
-warp portal texture/effect/_authored/warp_portal/ring_inner.cylinder: missing
+warp portal texture/effect/_authored/warp_portal/sparkle.quad: present
+warp portal texture/effect/_authored/warp_portal/ring_outer.cylinder: present
+warp portal texture/effect/_authored/warp_portal/ring_inner.cylinder: present

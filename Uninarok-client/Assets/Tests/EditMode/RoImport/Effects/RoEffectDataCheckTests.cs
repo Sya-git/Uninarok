@@ -190,6 +190,19 @@ namespace Uninarok.RoImport.Tests.Effects
         }
 
         [Test]
+        public void AuthoredAsset_TextureNamedByFullPath_IsFoundWhenInTheSource_AndMissingWhenAbsent()
+        {
+            // FR-1: authored entries (warp portal) name textures as full source paths; the importer takes those as they are.
+            var src = Source("texture/effect/pok1.tga");
+            var good = Asset(SparkleKey, EffectKind.Quad, "texture/effect/pok1.tga");
+            var bad = Asset(OuterKey, EffectKind.Cylinder, "texture/effect/ring_gone.tga");
+            var report = Run(src, new[] { good, bad });
+            Assert.AreEqual(("texture/effect/ring_gone.tga", OuterKey), report.Missing.Single());
+            Assert.IsTrue(report.WarpPortal[0].Present, "sparkle");
+            Assert.IsFalse(report.WarpPortal[1].Present, "ring_outer");
+        }
+
+        [Test]
         public void AssetInTheIndexAndInAuthored_IsExaminedOnce()
         {
             var src = Source("texture/effect/ok.tga");

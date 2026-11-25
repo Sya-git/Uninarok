@@ -118,8 +118,16 @@ namespace Uninarok.RoImport.Core.Effects
         {
             if (asset.TextureNames == null) return;
             foreach (var name in asset.TextureNames)
-                if (!RoEffectTextureLookup.TryResolve(source, str, name, null, out _)) miss(name ?? string.Empty, asset.Path);
+                if (!IsFullPathThatExists(source, name) && !RoEffectTextureLookup.TryResolve(source, str, name, null, out _))
+                    miss(name ?? string.Empty, asset.Path);
         }
+
+        // Authored entries name their textures as full source paths ("texture/effect/pok1.tga"); the importer
+        // (RoEffectFolderImport.TryFind) takes such a name as it is, so the check does too. A path that is absent
+        // still falls through to the folder lookup and, failing that, is reported.
+        static bool IsFullPathThatExists(IRoSource source, string name) =>
+            !string.IsNullOrWhiteSpace(name) && (name.IndexOf('/') >= 0 || name.IndexOf('\\') >= 0)
+            && RoPath.TryParse(name, out var full) && source.TryGetFile(full, out _);
 
         static void RequireFile(IRoSource source, string file, string referrer, Action<string, string> miss)
         {

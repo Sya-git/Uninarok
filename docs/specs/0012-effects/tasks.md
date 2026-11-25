@@ -187,6 +187,9 @@
 - [x] **T6.9** [quick] Run Rebuild Effect Index (Unity-MCP). (FR-5, FR-7)
   *Done when:* `Art/Imported/effect/_index.asset` exists; its keys include `texture/effect/firewall.str`, `sprite/이팩트/fireball.act`, the three warp keys and `model/외부소품/트랩01.rsm`; no EffectKeyDuplicate warning; a re-run changes nothing.
 
+- [x] **T6.10** [core] Fix the effect data check so authored textures named by a full source path (`texture/effect/pok1.tga`) are not reported missing (the importer takes such names as they are; the check passed them to the folder lookup only). A truly absent path is still reported. Report `evidence/check-report-t69.txt` regenerated. (FR-1)
+  *Done when:* `RoEffectDataCheckTests` pass (a full-path case present and one absent); the report lists the three warp keys present.
+
 ## Phase 7: Dev tools (World.Dev, dev guard)
 
 - [x] **T7.1** [core] Test-first: `EffectCommandParseTests` (World EditMode: `/effect a b.str 10 20 loop`, `/effect "x y.str"`, `/effect p loop`, `/effect stop` and `/effect STOP` → `Stop`, `/effect "stop"` → a path, `/effect stop loop` → a path `stop` looped, bad numbers), with an `EffectCommand` stub; every case `[Ignore("pending T7.2")]`. (FR-8, FR-10)
