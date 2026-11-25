@@ -237,7 +237,7 @@
 - [x] **T9.4** [core] Extend `RoArchitectureTests`: the new asmdefs' references; GRF types only in `Core/Formats/`; no `BinaryReader` in importer code; `Uninarok.Effects` references no editor assembly; no type in `Uninarok.Effects` uses `UnityEngine.VFX`, `ParticleSystem` or `ComputeShader`. (FR-2, FR-4)
   *Done when:* the architecture tests pass.
 
-- [ ] **T9.5** [core] `EffectBuildStrippingTests` (slow): a player build without `DevelopmentBuild` has no `Uninarok.World.Dev` or `Uninarok.Effects.Editor` assembly and no `EffectDevCommands` or `EffectDebugView` type; with `DevelopmentBuild`, World.Dev is present and Effects.Editor absent. (FR-8, FR-11)
+- [x] **T9.5** [core] `EffectBuildStrippingTests` (slow): a player build without `DevelopmentBuild` has no `Uninarok.World.Dev` or `Uninarok.Effects.Editor` assembly and no `EffectDevCommands` or `EffectDebugView` type; with `DevelopmentBuild`, World.Dev is present and Effects.Editor absent. (FR-8, FR-11)
   *Done when:* the test passes.
 
 - [ ] **T9.6** [quick] Run the full EditMode and PlayMode suites (Unity-MCP) with the working data present; save the results to `docs/specs/0012-effects/evidence/test-run.txt`; no `pending T` Ignore remains in the Effects tests. (FR-10)
