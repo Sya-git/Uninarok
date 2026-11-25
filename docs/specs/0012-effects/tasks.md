@@ -284,7 +284,7 @@
 - [x] **T10.4** [quick] (owner) Must-list look (FR-5, FR-7): each must-list entry (`firewall.str`, `fireball.act`, the sparkle, both rings, the trap model) plays with its real parts and no missing texture; the owner confirms the warp parts (rings shrinking and rising, sparkle moving and fading, additive blue) by eye in the preview window; no image is saved.
   *Done when:* the owner's confirmation is recorded in str-reference.md under "Owner review".
 
-- [ ] **T10.5** [quick] (owner) Speed in the preview (FR-4): `firewall.str` and a warp entry at speed 1 and speed 2; one cycle is halved. The owner confirms by eye in the preview window; no image is saved.
+- [x] **T10.5** [quick] (owner) Speed in the preview (FR-4): `firewall.str` and a warp entry at speed 1 and speed 2; one cycle is halved. The owner confirms by eye in the preview window; no image is saved.
   *Done when:* the owner's confirmation is recorded in str-reference.md under "Owner review".
 
 - [ ] **T10.6** [quick] (owner) In-game check (FR-7): development build on a local Hercules, Bootstrap; `/effect <path> <x> <y> loop` with each of the three warp paths on a prontera warp cell; the owner confirms each by eye in the game, no screenshot is saved; no warning in the log; job 45 units still draw nothing in normal play.
