@@ -169,7 +169,7 @@
 - [x] **T6.3** [quick] Import the trap model `model/외부소품/트랩01.rsm` with the SPEC-0003 model import, so a prefab exists for `ModelPart`. (FR-4, FR-5)
   *Done when:* the prefab exists at the path RoImport.Model gives, with no warning in the report.
 
-- [ ] **T6.4** [quick] Author the three warp portal entries as `EffectAsset` data at `Assets/Data/Effects/Authored/texture/effect/_authored/warp_portal/`: `sparkle.quad`, `ring_outer.cylinder`, `ring_inner.cylinder`, with the values, curves, `Length`, texture names and `Doubtful` lines of plan §4.7. (FR-4, FR-5, FR-7)
+- [x] **T6.4** [quick] Author the three warp portal entries as `EffectAsset` data at `Assets/Data/Effects/Authored/texture/effect/_authored/warp_portal/`: `sparkle.quad`, `ring_outer.cylinder`, `ring_inner.cylinder`, with the values, curves, `Length`, texture names and `Doubtful` lines of plan §4.7. (FR-4, FR-5, FR-7)
   *Done when:* the three assets exist; each `Path` equals its key; the values equal plan §4.7; `Doubtful` lists every lead value with its source.
 
 - [ ] **T6.5** [quick] Author the trap model entry at `Assets/Data/Effects/Authored/model/외부소품/트랩01.rsm.asset` (Kind Model, `Model` = the T6.3 prefab, `Length` authored and listed in `Doubtful`). (FR-4, FR-5)
