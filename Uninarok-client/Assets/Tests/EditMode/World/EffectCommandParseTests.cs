@@ -6,8 +6,6 @@ namespace Uninarok.World.Tests
     // SPEC-0012 FR-8 (PLAN-0012 4.8): /effect arguments, parsed from the end.
     public class EffectCommandParseTests
     {
-        const string Pending = "pending T7.2";
-
         static EffectCommand Parse(string args)
         {
             Assert.IsTrue(EffectCommand.TryParse(args, out var cmd, out var error), $"'{args}' failed: {error}");
@@ -20,7 +18,7 @@ namespace Uninarok.World.Tests
             Assert.IsFalse(string.IsNullOrEmpty(error));
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void PathWithSpacesCellAndLoop()
         {
             var c = Parse("a b.str 10 20 loop");
@@ -31,7 +29,7 @@ namespace Uninarok.World.Tests
             Assert.IsTrue(c.Loop);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void QuotedPathWithSpaces()
         {
             var c = Parse("\"x y.str\"");
@@ -40,7 +38,7 @@ namespace Uninarok.World.Tests
             Assert.IsFalse(c.Loop);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void QuotedPathWithCell()
         {
             var c = Parse("\"x y.str\" 10 20");
@@ -51,7 +49,7 @@ namespace Uninarok.World.Tests
             Assert.IsFalse(c.Loop);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void PathAndLoopPlaysOnSelfLooped()
         {
             var c = Parse("p loop");
@@ -60,7 +58,7 @@ namespace Uninarok.World.Tests
             Assert.IsTrue(c.Loop);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void LoopOnlyCountsAsLastToken()
         {
             // "loop" in front of the cell is part of the path (parsing from the end).
@@ -72,14 +70,14 @@ namespace Uninarok.World.Tests
             Assert.AreEqual(4, c.CellY);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void StopIsCaseInsensitive()
         {
             Assert.AreEqual(EffectCommandKind.Stop, Parse("stop").Kind);
             Assert.AreEqual(EffectCommandKind.Stop, Parse("STOP").Kind);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void QuotedStopIsAPath()
         {
             var c = Parse("\"stop\"");
@@ -87,7 +85,7 @@ namespace Uninarok.World.Tests
             Assert.AreEqual("stop", c.Path);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void StopWithLoopIsAPathNamedStopLooped()
         {
             var c = Parse("stop loop");
@@ -96,7 +94,7 @@ namespace Uninarok.World.Tests
             Assert.IsTrue(c.Loop);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void SingleOrNonNumericTrailingTokensStayInThePath()
         {
             // Only two trailing integers make a cell (PLAN-0012 4.8); anything else is path text.
@@ -113,7 +111,18 @@ namespace Uninarok.World.Tests
             Assert.AreEqual("a.str 99999999999 5", overflow.Path);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
+        public void NegativeCellIsAccepted()
+        {
+            // Range checking is PlayAtCell's job, not the parser's.
+            var c = Parse("a.str -3 -4");
+            Assert.AreEqual(EffectCommandKind.PlayAtCell, c.Kind);
+            Assert.AreEqual("a.str", c.Path);
+            Assert.AreEqual(-3, c.CellX);
+            Assert.AreEqual(-4, c.CellY);
+        }
+
+        [Test]
         public void MissingPathIsAnError()
         {
             AssertError("loop");
@@ -122,7 +131,7 @@ namespace Uninarok.World.Tests
             AssertError("\"\"");
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void EmptyArgumentsAreAUsageError()
         {
             AssertError("");

@@ -192,7 +192,7 @@
 - [x] **T7.1** [core] Test-first: `EffectCommandParseTests` (World EditMode: `/effect a b.str 10 20 loop`, `/effect "x y.str"`, `/effect p loop`, `/effect stop` and `/effect STOP` → `Stop`, `/effect "stop"` → a path, `/effect stop loop` → a path `stop` looped, bad numbers), with an `EffectCommand` stub; every case `[Ignore("pending T7.2")]`. (FR-8, FR-10)
   *Done when:* the test class compiles and the run shows its cases ignored, 0 failed.
 
-- [ ] **T7.2** [core] Implement `EffectCommand.TryParse` (parsing from the end, quotes, `loop`, cell, `stop`, plan §4.8) and remove the Ignores. (FR-8)
+- [x] **T7.2** [core] Implement `EffectCommand.TryParse` (parsing from the end, quotes, `loop`, cell, `stop`, plan §4.8) and remove the Ignores. (FR-8)
   *Done when:* `EffectCommandParseTests` pass.
 
 - [ ] **T7.3** [core] Implement `EffectDevCommands` (`/effect` forms through `DevCommandLine.AddWithArguments`; the list of handles it started; `stop` stops only those; messages "playing <key>", "stopped <n>", unknown path, no map, no character; lazy `EffectCatalog.LoadAsync` on first use), `WorldDevTools.Attach` registration, and `EffectSystem.StopAll()` on map change. (FR-6, FR-8)
