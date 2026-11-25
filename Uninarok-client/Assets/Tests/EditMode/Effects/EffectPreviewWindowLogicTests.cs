@@ -171,6 +171,16 @@ namespace Uninarok.Effects.Tests
             Assert.That(EffectPreviewMath.LastFrame(1f, 0f, false), Is.EqualTo(0));
         }
 
+        [Test]
+        public void FrameLabel_ShowsShownFrameOverFrameCount_LikeGrfEditor_FR11()
+        {
+            Assert.That(EffectPreviewMath.FrameLabel(69, 70f / 60f, 60f), Is.EqualTo("frame 69 / 70"));
+            Assert.That(EffectPreviewMath.FrameLabel(0, 70f / 60f, 60f), Is.EqualTo("frame 0 / 70"));
+            Assert.That(EffectPreviewMath.FrameCount(0.5083f, 60f), Is.EqualTo(31), "30.5 frames: 31");
+            Assert.That(EffectPreviewMath.FrameCount(0f, 60f), Is.EqualTo(0));
+            Assert.That(EffectPreviewMath.LastFrame(70f / 60f, 60f, true), Is.EqualTo(69), "scrubber range unchanged");
+        }
+
         // ---- speed ----
 
         [Test]

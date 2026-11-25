@@ -251,7 +251,7 @@ namespace Uninarok.Effects.Editor
             float length = Mathf.Max(player.Length, 0.0001f);
             EditorGUILayout.BeginHorizontal();
             float seconds = GUILayout.HorizontalSlider(player.Seconds, 0f, length, GUILayout.ExpandWidth(true));
-            GUILayout.Label($"frame {player.ShownFrame}/{player.LastFrame}  {player.Seconds:0.00}/{player.Length:0.00} s", GUILayout.Width(190f));
+            GUILayout.Label($"{EffectPreviewMath.FrameLabel(player.ShownFrame, player.Length, player.FrameRate)}  {player.Seconds:0.00}/{player.Length:0.00} s", GUILayout.Width(210f));
             EditorGUILayout.EndHorizontal();
             if (has && GUI.changed && !Mathf.Approximately(seconds, player.Seconds))
             {

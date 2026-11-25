@@ -38,6 +38,16 @@ namespace Uninarok.Effects.Editor
             return Math.Max(0, last);
         }
 
+        /// <summary>The frames in one cycle (<c>length x fps</c>, rounded up with float tolerance): 70 for an STR of 70 frames. 0 when unknown.</summary>
+        public static int FrameCount(float length, float frameRate)
+        {
+            if (!(length > 0f) || !(frameRate > 0f) || float.IsInfinity(length) || float.IsInfinity(frameRate)) return 0;
+            return (int)Math.Ceiling((double)length * frameRate - FrameEpsilon);
+        }
+
+        /// <summary>The scrubber's frame text in the GRF Editor form <c>frame n / total</c>: n is the 0-based shown frame, total the frame count.</summary>
+        public static string FrameLabel(int shownFrame, float length, float frameRate) => $"frame {shownFrame} / {FrameCount(length, frameRate)}";
+
         /// <summary>
         /// The frame a step of <paramref name="delta"/> frames reaches, clamped to [0, <paramref name="lastFrame"/>]. From a
         /// fractional frame a forward step goes to the next whole frame and a backward step to the whole frame at or before

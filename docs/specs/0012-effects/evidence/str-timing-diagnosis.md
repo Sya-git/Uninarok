@@ -31,3 +31,7 @@ Changing the playback rate would change plan 4.2 / D29 (length = FrameCount / Fp
 1. Keep header fps (current). Matches the file's own data; 1.29x faster than GRF Editor's preview.
 2. Add an EffectSettings STR speed factor (for example 46.7 / 60 = 0.78) to match GRF Editor's look. A constant taken from a preview timer, not from the file; not recommended unless the client rate is shown to match.
 3. Label only: show "n / FrameCount" like GRF (a loop's denominator 70 instead of 69), no timing change.
+
+## Measurement in the real window (T8.7)
+
+`RoEffectPreviewWindow` open and focused, `hasty_fire_in_the_hole_7x7.str` looped at speed 1, `Age` sampled at every `EditorApplication.update` for 4.0 s of wall time (about 67 updates per second): the loop wrapped at wall 1.150 s, 2.321 s, 3.491 s, so one cycle is 1.170 s of wall time for 1.1667 s of model time. Rate 1.00 model second per wall second (60 frames per wall second). No double tick or doubled speed: the window ticks once per `OnUpdate`. The "almost 2x" is the GRF Editor preview being slower (1.5 s per cycle), not our window being fast. Timing code unchanged. The scrubber label now reads `frame n / FrameCount` (option 3 above).

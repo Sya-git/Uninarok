@@ -235,6 +235,10 @@
   *Done when:* an EditMode test renders frame 32 into the window's own target and finds no near-white quads (fails before the fix); `EffectBlendTests` pins the new table; the after image matches the owner's reference.
   *Status:* completed: `EffectPreviewStageTests.HastyFireFrame32_WindowTarget_HasNoWhiteQuads_FR3` 2,217 near-white pixels before, 0 after; `EffectBlendTests`, `EffectMaterialsTests`, `EffectShaderTests`, `EffectMeshWriterTests`, `EffectInspectorModelTests`, `EffectPreviewStageTests` (EditMode) and `EffectPlayTests` (PlayMode) pass; evidence `evidence/hasty-fire-f32-before.png`, `evidence/hasty-fire-f32-after.png`.
 
+- [x] **T8.7** [core] Measure the real preview window STR rate (owner: "almost 2x faster than GRF Editor") and relabel the scrubber "frame n / FrameCount" like GRF. (FR-11)
+  *Done when:* the measured model-seconds per wall-second is reported; the label test and the tick test pass.
+  *Status:* completed: measured 1.00 model-s per wall-s (no double tick, no code change in timing), see `evidence/str-timing-diagnosis.md`; `EffectPreviewMath.FrameLabel`, `EffectPreviewWindowLogicTests`, `EffectPreviewControllerTests`, `EffectPreviewStageTests` pass.
+
 ## Phase 9: Play, cost and build tests
 
 - [x] **T9.1** [core] `EffectSpeedPlayTests` (PlayMode): an STR entry and an authored cylinder at speed 2 each end at half the wall time of speed 1 (±1 frame); a looped entry's cycle index after T at speed 2 equals its index after 2T at speed 1; the picture at speed 2 and time T equals speed 1 at 2T; speed 0.5 doubles one play; `TimeScale` 0 freezes `Age`; a sprite entry at speed 2 steps its `SpriteActor` twice as fast (NeedsData). (FR-4, FR-6, FR-11)

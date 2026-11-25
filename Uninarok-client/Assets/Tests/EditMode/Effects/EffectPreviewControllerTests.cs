@@ -47,6 +47,16 @@ namespace Uninarok.Effects.Tests
         }
 
         [Test]
+        public void Tick_NTicksOfDt_AdvanceTheAgeByExactlyNDt_AtSpeedOne_FR11()
+        {
+            Assert.That(player.Play(SparkleKey), Is.True);
+            player.SetLoop(true);
+            float dt = 0.01f;
+            for (int i = 0; i < 10; i++) player.Tick(dt);
+            Assert.That(player.Seconds, Is.EqualTo(10 * dt).Within(1e-4f));
+        }
+
+        [Test]
         public void Step_ChangesTheShownFrameByOne_FR11()
         {
             Assert.That(player.Play(SparkleKey), Is.True);
