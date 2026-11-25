@@ -7,28 +7,26 @@ namespace Uninarok.Effects.Tests
 {
     /// <summary>
     /// FR-11: an effect asset is loaded through <see cref="AssetDatabaseEffectSource"/> and played in an
-    /// <see cref="EffectPreviewStage"/>. The firewall.str asset does not exist until the STR conversion (T3.8 to T3.12, owner gate);
-    /// until then the test runs against an already imported effect asset, a sprite entry.
+    /// <see cref="EffectPreviewStage"/>; the play test uses firewall.str resolved through the real effect index.
     /// </summary>
     public sealed class EffectPreviewStageTests
     {
-        // an imported effect asset that exists today (SPEC-0008 sprite entry); replace by firewall.str when T3.11 has produced it
+        // an imported sprite effect asset (SPEC-0008), used by the GUID source test
         const string AssetPath = "Assets/Art/Imported/effect/sprite/이팩트/05vallentine.act.asset";
 
         EffectPreviewStage stage;
 
         [TearDown] public void TearDown() { stage?.Dispose(); stage = null; }
 
+        // the real catalog index (T6.9) and the imported firewall.str asset (T3.14)
+        const string FirewallKey = "texture/effect/firewall.str";
+
         EffectCatalog CatalogOf(out string key)
         {
-            var asset = AssetDatabase.LoadAssetAtPath<EffectAsset>(AssetPath);
-            Assert.That(asset, Is.Not.Null, "effect asset present at " + AssetPath);
-            key = asset.Path;
-            var index = ScriptableObject.CreateInstance<EffectCatalogIndex>();
-            index.hideFlags = HideFlags.HideAndDontSave;
-            index.Keys = new[] { key };
-            index.Assets = new[] { new EffectAssetRef { Guid = AssetDatabase.AssetPathToGUID(AssetPath) } };
-            index.SourceMissing = new[] { false };
+            var index = AssetDatabase.LoadAssetAtPath<EffectCatalogIndex>(EffectCatalog.IndexKey);
+            Assert.That(index, Is.Not.Null, "effect index present at " + EffectCatalog.IndexKey);
+            key = FirewallKey;
+            Assert.That(System.Array.IndexOf(index.Keys, key), Is.GreaterThanOrEqualTo(0), "index lists " + key);
             return EffectCatalog.Create(index, new AssetDatabaseEffectSource());
         }
 
