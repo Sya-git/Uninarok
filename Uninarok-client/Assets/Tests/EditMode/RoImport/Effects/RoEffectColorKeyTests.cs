@@ -166,7 +166,6 @@ namespace Uninarok.RoImport.Tests.Effects
 
         // The JSON mechanism, with a temp file written here. The real Rules/effect-textures.json is owner-gated (T0.2b, T3.8).
         [Test]
-        [Ignore("pending T3.8")]
         public void Rules_ReadFromJson()
         {
             string temp = Path.Combine(Path.GetTempPath(), "ro-effect-keys-" + Guid.NewGuid().ToString("N") + ".json");

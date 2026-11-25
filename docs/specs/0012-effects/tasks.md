@@ -91,7 +91,7 @@
 - [x] **T3.7** [core] Implement `RoEffectKeyRules` (loads `Rules/effect-textures.json`, `For(texture, sourceHadAlpha)`) and the `RoColorKey` key-set overload; `RoColorKey.Apply(RoImage)` keeps its behaviour. Remove the Ignores except T3.8's. (FR-2)
   *Done when:* all `RoEffectColorKeyTests` pass except the JSON case; the existing world texture tests still pass.
 
-- [ ] **T3.8** [quick] (owner) Write `Assets/Editor/RoImport/Rules/effect-textures.json` with exactly the values recorded in str-reference.md's colour-key section (T0.2b), and remove the last Ignore from `RoEffectColorKeyTests`. (FR-2)
+- [x] **T3.8** [quick] (owner) Write `Assets/Editor/RoImport/Rules/effect-textures.json` with exactly the values recorded in str-reference.md's colour-key section (T0.2b), and remove the last Ignore from `RoEffectColorKeyTests`. (FR-2)
   *Done when:* the file holds those values, and every `RoEffectColorKeyTests` case passes.
 
 - [ ] **T3.9** [quick] Stop `RoTextureConverter` from handling `texture/effect/**` (its `Handles` excludes that folder, plan §7, D7). (FR-2)
