@@ -209,6 +209,7 @@
 
 - [ ] **T8.1** [core] Implement `AssetDatabaseEffectSource` and `EffectPreviewStage` (`PreviewRenderUtility` scene with its own `EffectRuntime`; orbit camera with yaw, pitch and distance; backgrounds dark, grey, checker and ground grid; 15° perspective), in `Uninarok.Effects.Editor`; add an EditMode test that loads `firewall.str` through `AssetDatabaseEffectSource` and plays it in the stage (`ActiveCount` 1). (FR-11)
   *Done when:* that test passes.
+  *Status:* stage and source done (commit below); NOT ticked: the test runs against the imported sprite effect `05vallentine.act` (ActiveCount 1 passes); the `firewall.str` version is pending the STR conversion (T3.8 to T3.12, owner gate).
 
 - [ ] **T8.2** [core] Implement `RoEffectPreviewWindow` browse and play (menu `Tools/Ragnarok/Effect Preview`; flat list or tree; text filter; virtualised list; `SourceMissing` marks; play, pause, stop, loop, step ±1 frame (authored entries at `AuthoredFrameRate`), scrubber, speed field 0.1 to 4 through `SetSpeed`; ticked from `EditorApplication.update`; disposed on close). (FR-11)
   *Done when:* with no scene open, filter `warp_portal` lists exactly the three warp keys; a step changes the shown frame by one.
