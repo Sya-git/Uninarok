@@ -1,0 +1,13 @@
+{
+    "entries": [
+        {
+            "Source": "_placeholders/missing_texture",
+            "SourceHash": "",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/_placeholders/missing_texture.png"
+            ],
+            "Dependencies": []
+        }
+    ]
+}

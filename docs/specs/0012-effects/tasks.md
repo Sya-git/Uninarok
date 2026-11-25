@@ -109,7 +109,7 @@
 - [x] **T3.13** [core] `EffectSamplerReferenceTests` (NeedsData): the 10 reference files at the first, a middle and the last frame: corners, colour, angle, texture frame and blend equal the values from the file's keys (oracle: GRF's interpolation if T0.1 validated it, otherwise the str-reference formulas on `RoStr`), tolerance 1e-3; length = frames / fps. (FR-3, FR-10)
   *Done when:* the test passes for all 10 reference files.
 
-- [ ] **T3.14** [quick] Run the effect import of the `.str` files under `texture/effect/` and `sprite/이팩트/` (Convert Effect Folder); save the per-file report to `docs/specs/0012-effects/evidence/import-report.txt`. (FR-2)
+- [x] **T3.14** [quick] Run the effect import of the `.str` files under `texture/effect/` and `sprite/이팩트/` (Convert Effect Folder); save the per-file report to `docs/specs/0012-effects/evidence/import-report.txt`. (FR-2)
   *Done when:* the report counts one asset per `.str` in the working data (2,996 at 2026-11-24); no OutputCollision; the only UnsupportedStrVersion files are those listed in str-reference.md; a second run imports nothing.
 
 ## Phase 4: Catalog (run time index, sources, sprite entries)
