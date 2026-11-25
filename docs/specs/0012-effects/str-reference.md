@@ -158,7 +158,18 @@ So the reader takes magic and version from GRF's `StrHeader` before the body is 
 
 ## 10. Colour key
 
-Written by T0.2b.
+Decided by the owner on 2026-11-25 from `evidence/colour-key-survey.csv` (21,757 images; 18,586 used by an STR). Task T0.2b.
+
+| Field | Value | Why (survey) |
+|---|---|---|
+| DefaultOpaque (BMP, 24-bit TGA, JPG, PNG without alpha) | `PinkAndBlack` | 97% of the used 24-bit BMPs have black corners; 135 + 91 used BMPs have pink corners |
+| DefaultWithAlpha (32-bit TGA, PNG with alpha) | `None` (use the file's alpha) | 5,975 of the 6,401 used 32-bit TGAs already have alpha 0 at the corner |
+| PinkTolerance | 0 (exact 255,0,255) | the survey does not measure it; owner choice |
+| BlackTolerance | 8 (of 255) | the survey does not measure it; allows for compression noise in 8-bit BMPs; owner choice |
+| Per-texture overrides | none | to be added if the visual review (T10.3) finds a wrong texture |
+| `ByBlend` | no | no evidence that the background follows the blend; it follows the file format |
+
+Owner sign-off: accepted as proposed, 2026-11-25.
 
 ## 11. Blend codes (plan §4.5, `EffectBlend`)
 

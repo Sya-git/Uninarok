@@ -25,7 +25,7 @@
 - [x] **T0.2** [core] Survey the colour of every effect texture: for each image under `texture/effect/`, its corner colour class (pink, black, other) and the blend pairs of the layers that use it (from the T0.1 reads). Write `docs/specs/0012-effects/evidence/colour-key-survey.csv`. (FR-2)
   *Done when:* the CSV's first line gives the file count of the same glob, and it has one row per image with its corner class and distinct user blend pairs; the row count equals that count.
 
-- [ ] **T0.2b** [quick] (owner) Owner decides the colour-key rule from the survey: defaults for BMP, 24-bit TGA, JPG and for 32-bit TGA and PNG with alpha, the pink and black tolerances, per-texture overrides, and whether a `ByBlend` rule is needed (plan §4.3, R2, D6). Blocks T3.8 and every task that converts effect textures.
+- [x] **T0.2b** [quick] (owner) Owner decides the colour-key rule from the survey: defaults for BMP, 24-bit TGA, JPG and for 32-bit TGA and PNG with alpha, the pink and black tolerances, per-texture overrides, and whether a `ByBlend` rule is needed (plan §4.3, R2, D6). Blocks T3.8 and every task that converts effect textures.
   *Done when:* str-reference.md section "Colour key" records DefaultOpaque, DefaultWithAlpha, PinkTolerance, BlackTolerance, the overrides, `ByBlend` yes or no, and the owner's sign-off line.
 
 - [x] **T0.3** [critical] Spike draw order and cost: in a throwaway scene (not under `Assets/Scripts/`), two overlapping alpha-blended submesh layers drawn in both orders; then the FR-9 load (300 effects, 100 on moving transforms, cylinders and quads mixed) with submesh layers and with the per-layer renderer fallback (plan §4.5, D4, R3). (FR-3, FR-9)
