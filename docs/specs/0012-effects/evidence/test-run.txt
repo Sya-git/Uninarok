@@ -1,0 +1,45 @@
+T9.6 test run (SPEC-0012), 2026-11-25, Unity 6000.7.0b7, Unity-MCP tests-run, working RO data present.
+
+RESULT: NOT CLEAN. 5 failed (2 Networking, 3 RoImport), 1 ignored (pending T3.8). T9.6 is NOT ticked.
+
+EXCLUDED
+- EffectBuildStrippingTests (Uninarok.World.Tests, [Category("Slow")], 2 real player builds): passed in T9.5; tests-run has no category filter, so the other 27 World.Tests classes were run one by one.
+
+EDITMODE (per assembly)
+Assembly                          Total  Passed  Failed  Ignored
+Uninarok.Effects.Tests              145     145       0       0
+Uninarok.Networking.Tests           518     516       2       0
+Uninarok.Map.Tests                   41      41       0       0
+Uninarok.Sprites.Tests               38      38       0       0
+Uninarok.SpriteCatalog.Tests         25      25       0       0
+Uninarok.CameraRig.Tests             17      17       0       0
+Uninarok.Units.Tests                144     144       0       0
+Uninarok.World.Tests (excl. Slow)   310     310       0       0   (sum of 27 per-class runs)
+Uninarok.RoImport.Tests            1277    1273       3       1   (whole assembly, 48 min)
+
+PLAYMODE (per assembly)
+Uninarok.Effects.PlayTests           78      78       0       0
+Uninarok.World.PlayTests             58      58       0       0
+Uninarok.Units.PlayTests             23      23       0       0
+Uninarok.SpriteCatalog.PlayTests      1       1       0       0
+
+FAILURES
+1. Networking.Tests PacketTableTests.TestFixture_IsTheSameFileAsTheDocsFixture
+   Expected string length 21769 but was 23368; differ at index 1 ("{\n" vs "{\r\n"): CRLF vs LF in a fixture file. Not missing data, not Effects.
+2. Networking.Tests SocketThreadHookTests.SocketThreadCounters_StartedAndStopped_ReturnToZeroRunning_AfterEveryConnectionIsClosed
+   "Expected: True But was: False". Reproduced on a class-only rerun (12 tests, 1 failed). Likely environment/pollution (socket threads); not Effects.
+3. RoImport.Tests Rsm.RsmReferenceConversionTests.BatchOverTheWholeModelFolder_ConvertsEveryFileOrListsEachFailureOnce
+   "Timeout value of 180000 ms was exceeded" (320 s in the full run, 318 s on class rerun). Reproduced on rerun: environmental slowness, not a pass.
+4. RoImport.Tests Rsm.RsmReferenceConversionTests.EveryReferenceModel_ConvertsThroughRoImportModel
+   Same timeout (193 s full run, 191 s rerun). Reproduced on rerun.
+5. RoImport.Tests Rsw.RoMapReferenceTests.TheReferenceMaps_ConvertInOneBatch_CompleteAndThenSkipped
+   Full run: "Unhandled log message: '[Exception] SocketException: An existing connection was forcibly closed by the remote host.'" (407 s).
+   Class rerun: "Timeout value of 180000 ms was exceeded" (406 s). The test needs more than the 180 s limit on this machine.
+   Rerun of RsmReferenceConversionTests: 11 total, 9 passed, 2 failed (the two timeouts above).
+
+IGNORED (pending list)
+- RoImport.Tests Effects.RoEffectColorKeyTests.Rules_ReadFromJson: Ignore("pending T3.8") (RoEffectColorKeyTests.cs:169), waits for owner-blocked T3.8. Not removed or weakened. Effects namespace alone: 117 total, 116 passed, 1 ignored.
+
+NOTES
+- No failure is in the Effects assemblies (Effects.Tests and Effects.PlayTests are fully green).
+- Test runs modified AddressableAssetSettings.asset and evidence/alloc-report.txt; both restored. Assets/__RoImportTests removed.

@@ -242,6 +242,7 @@
 
 - [ ] **T9.6** [quick] Run the full EditMode and PlayMode suites (Unity-MCP) with the working data present; save the results to `docs/specs/0012-effects/evidence/test-run.txt`; no `pending T` Ignore remains in the Effects tests. (FR-10)
   *Done when:* 0 failed, 0 ignored from the pending list, and the file is written.
+  *Status (2026-11-25):* not met; left unticked. Evidence in `evidence/test-run.txt`: Effects EditMode and PlayMode assemblies are green; remaining are 1 `pending T3.8` Ignore (`RoEffectColorKeyTests.Rules_ReadFromJson`), 2 Networking failures (CRLF fixture, socket thread counter) and 3 RoImport 180 s timeout/SocketException failures (environmental, reproduced on rerun). `EffectBuildStrippingTests` (Slow) excluded.
 
 ## Phase 10: Owner gates and final verification
 
