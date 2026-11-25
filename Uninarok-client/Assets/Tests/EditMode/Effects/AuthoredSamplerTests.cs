@@ -195,6 +195,26 @@ namespace Uninarok.Effects.Tests
             Assert.AreEqual(2f, q.Size, Tol);
         }
 
+        // T8.9, plan D38: Unity serializes an unset curve as an empty one; it must mean "unset", not 0 (the sparkle drew at size 0)
+        [Test]
+        public void EmptyCurves_MeanUnset_NotZero_FR7()
+        {
+            var d = WarpSparkle();
+            d.SizeScale = new AnimationCurve(); d.Motion = new AnimationCurve(); d.Rotation = new AnimationCurve();
+            AuthoredSampler.SampleQuad(d, settings, 0.5f, 3u, out var q);
+            Assert.AreEqual(50f / 35f, q.Size, Tol, "empty SizeScale = 1");
+            Assert.AreEqual(0f, q.AngleDegrees, Tol);
+            AuthoredSampler.SampleQuad(WarpSparkle(), settings, 0.5f, 3u, out var unset);
+            Assert.AreEqual(unset.Offset.x, q.Offset.x, Tol, "empty Motion = linear, as null");
+            Assert.AreEqual(unset.Offset.y, q.Offset.y, Tol);
+
+            var c = WarpOuter();
+            c.RadiusScale = new AnimationCurve(); c.HeightScale = new AnimationCurve();
+            AuthoredSampler.SampleCylinder(c, settings, 0.5f, out var cs);
+            Assert.AreEqual(c.BottomRadius * EffectUnits.GatCell, cs.Bottom, Tol, "empty RadiusScale = 1");
+            Assert.AreEqual(c.Height * EffectUnits.GatCell, cs.Height, Tol, "empty HeightScale = 1");
+        }
+
         [Test]
         public void Quad_SizeScaleAndRotationFollowTheirCurves()
         {

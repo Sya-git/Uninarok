@@ -26,13 +26,13 @@ namespace Uninarok.Effects
             // Start and end are drawn from the seed only (D19), so every cycle repeats the same path.
             Vector3 start = DrawBox(d.StartMin, d.StartMax, seed, ChannelStart);
             Vector3 end = DrawBox(d.EndMin, d.EndMax, seed, ChannelEnd);
-            float m = d.Motion != null ? d.Motion.Evaluate(t) : t;
+            float m = HasKeys(d.Motion) ? d.Motion.Evaluate(t) : t;
             Vector3 cells = start + (end - start) * m;
             // Authored offsets are x, y on the ground and z up (RO cells). Unity is y up, so ground y -> Unity z, up z -> Unity y
             // (the same sign as RoSpace: x and the row axis keep their sign, only "up" is the vertical axis).
             q.Offset = new Vector3(cells.x, cells.z, cells.y) * EffectUnits.GatCell;
             q.Size = d.SizePixels * Scale(d.SizeScale, t) / s.PixelsPerCell;
-            q.AngleDegrees = d.Rotation != null ? d.Rotation.Evaluate(t) : 0f;
+            q.AngleDegrees = HasKeys(d.Rotation) ? d.Rotation.Evaluate(t) : 0f;
             q.Color = ColorAt(d, t);
         }
 
@@ -42,11 +42,15 @@ namespace Uninarok.Effects
             c.Bottom = d.BottomRadius * r;
             c.Top = d.TopRadius * r;
             c.Height = d.Height * Scale(d.HeightScale, t) * EffectUnits.GatCell;
-            c.AngleDegrees = d.Rotation != null ? d.Rotation.Evaluate(t) : 0f;
+            c.AngleDegrees = HasKeys(d.Rotation) ? d.Rotation.Evaluate(t) : 0f;
             c.Color = ColorAt(d, t);
         }
 
-        static float Scale(AnimationCurve curve, float t) => curve != null ? curve.Evaluate(t) : 1f;
+        // An unset curve is null in code but an empty curve once Unity has serialized the asset: both mean 1 (plan D38).
+        // An empty curve evaluates to 0, which made the warp sparkle zero-sized.
+        internal static bool HasKeys(AnimationCurve curve) => curve != null && curve.length > 0;
+
+        static float Scale(AnimationCurve curve, float t) => HasKeys(curve) ? curve.Evaluate(t) : 1f;
 
         static Color ColorAt(AuthoredData d, float t)
         {

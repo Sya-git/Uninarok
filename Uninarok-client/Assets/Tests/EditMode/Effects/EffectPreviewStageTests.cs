@@ -157,6 +157,15 @@ namespace Uninarok.Effects.Tests
                 "only the bell, not the quad's background");
         }
 
+        // T8.9 (FR-7, plan D38): the warp sparkle, camera-facing on pok1.tga, drew nothing because its serialized SizeScale was an
+        // empty curve (size 0). At frame 38 (alpha 1) the glow must show.
+        [Test]
+        public void WarpSparkleFrame38_Draws_FR7()
+        {
+            Assert.That(CountNonBackdrop("texture/effect/_authored/warp_portal/sparkle.quad", 38), Is.GreaterThan(100),
+                "the sparkle glow is drawn");
+        }
+
         int CountNonBackdrop(string key, int frame)
         {
             var index = AssetDatabase.LoadAssetAtPath<EffectCatalogIndex>(EffectCatalog.IndexKey);

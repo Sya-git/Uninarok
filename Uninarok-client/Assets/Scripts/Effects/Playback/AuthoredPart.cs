@@ -161,7 +161,7 @@ namespace Uninarok.Effects
 
         static float MaxOf(AnimationCurve curve)
         {
-            if (curve == null) return 1f;
+            if (!AuthoredSampler.HasKeys(curve)) return 1f;
             float max = 0f;
             for (int i = 0; i <= 32; i++) max = Mathf.Max(max, Mathf.Abs(curve.Evaluate(i / 32f)));
             return max;

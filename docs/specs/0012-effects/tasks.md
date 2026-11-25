@@ -237,6 +237,10 @@
   *Done when:* frames 21 to 129 show no background layer and frames 117 to 124 no extra quad (evidence images of frames 59 and 120, before and after); a test renders `angelus.str` frame 59 and finds only the bell (fails before the fix); `EffectMaterialsTests` pins the cutoff per pair; str-reference.md §11, plan D37, FR-3 acceptance and the traceability are updated.
   *Status:* completed: root cause in D37 (layers 1 and 8 are One / Zero on keyed `jong*.bmp` / `tul0003.bmp`; blend table, sampler and key selection were right); `EffectPreviewStageTests.AngelusFrame59_KeyedBackground_DrawsNothing_FR3` 1,150 non-backdrop pixels of 65,536 after (about 7,000 before); evidence `evidence/angelus-f59-before.png`, `-after.png`, `angelus-f120-before.png`, `-after.png`.
 
+- [x] **T8.9** [core] Fix the warp sparkle drawing nothing in the preview (owner bug): `sparkle.quad` (camera-facing, `pok1.tga`, SizePixels 50) showed only the grid while the rings drew. Root cause in plan D38: an unset `SizeScale` is an empty curve once serialized and evaluates to 0, so the size was 0. Optional curves treat empty as unset. (FR-4, FR-7, FR-11)
+  *Done when:* a test renders the sparkle at frame 38 and finds non-backdrop pixels (0 before the fix); a sampler test pins that empty curves mean unset; plan D38 written.
+  *Status:* completed: sparkle frame 38 non-backdrop pixels 2,417 of 65,536 after (0 before); `EffectPreviewStageTests.WarpSparkleFrame38_Draws_FR7`, `AuthoredSamplerTests.EmptyCurves_MeanUnset_NotZero_FR7`; `EffectPreviewStageTests`, `AuthoredSamplerTests`, `AuthoredAssetTests` pass. No data value changed; the owner can recheck the look in the preview.
+
 ## Phase 9: Play, cost and architecture tests
 
 - [x] **T9.1** [core] `EffectSpeedPlayTests` (PlayMode): an STR entry and an authored cylinder at speed 2 each end at half the wall time of speed 1 (±1 frame); a looped entry's cycle index after T at speed 2 equals its index after 2T at speed 1; the picture at speed 2 and time T equals speed 1 at 2T; speed 0.5 doubles one play; `TimeScale` 0 freezes `Age`; a sprite entry at speed 2 steps its `SpriteActor` twice as fast (NeedsData). (FR-4, FR-6, FR-11)
