@@ -221,6 +221,7 @@
 
 - [ ] **T8.4** [quick] Add the "Save image" button (renders the stage to a `RenderTexture` at window size and writes a PNG named from key and frame under `docs/specs/0012-effects/evidence/`) and the "Save check report" button (writes the `RoEffectDataCheck` text to `docs/specs/0012-effects/evidence/`). (FR-1, FR-11)
   *Done when:* each button writes its file; the saved check report equals the text logged by the menu item.
+  *Status:* code and writer tests done (`EffectEvidenceTests`, 6 passed). Not ticked: the buttons were not clicked in the editor, no file was written from a button, and the "equals the menu item" check is by code reading only (both call `RoEffectMenu.RunEffectDataCheck().ToText()`).
 
 ## Phase 9: Play, cost and build tests
 

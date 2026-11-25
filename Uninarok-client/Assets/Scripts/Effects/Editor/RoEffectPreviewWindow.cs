@@ -132,6 +132,7 @@ namespace Uninarok.Effects.Editor
             string text = GUILayout.TextField(filter, EditorStyles.toolbarSearchField, GUILayout.Width(ListWidth - 120f));
             if (text != filter) { filter = text; rowsDirty = true; listScroll = Vector2.zero; }
             if (GUILayout.Button("Rescan", EditorStyles.toolbarButton, GUILayout.Width(52f))) Build();
+            if (GUILayout.Button("Save check report", EditorStyles.toolbarButton, GUILayout.Width(110f))) SaveCheckReport();
             GUILayout.FlexibleSpace();
             GUILayout.Label((source.FromIndex ? "index" : "scan") + ", " + source.Keys.Count + " keys", EditorStyles.miniLabel);
             var bg = (EffectPreviewStage.BackgroundKind)EditorGUILayout.EnumPopup(stage.Background, EditorStyles.toolbarPopup, GUILayout.Width(70f));
@@ -244,6 +245,7 @@ namespace Uninarok.Effects.Editor
             GUILayout.Label("Speed", GUILayout.Width(40f));
             float speed = EditorGUILayout.DelayedFloatField(player.Speed, GUILayout.Width(48f));
             if (!Mathf.Approximately(speed, player.Speed)) player.SetSpeed(speed);
+            if (GUILayout.Button("Save image", GUILayout.Width(80f))) SaveImage();
             EditorGUILayout.EndHorizontal();
 
             float length = Mathf.Max(player.Length, 0.0001f);
@@ -282,6 +284,30 @@ namespace Uninarok.Effects.Editor
         {
             try { checkReport = Uninarok.RoImport.Editor.Effects.RoEffectMenu.RunEffectDataCheck(); }
             catch (System.Exception e) { Debug.LogWarning("[Effects] Effect data check failed: " + e.Message); }
+        }
+
+        /// <summary>Renders the stage at the window size and writes it to the evidence folder as <c>&lt;key&gt;-f&lt;frame&gt;.png</c> (T8.4).</summary>
+        void SaveImage()
+        {
+            if (stage == null || player.Key == null) return;
+            byte[] png = EffectEvidence.CapturePng(stage, (int)position.width, (int)position.height);
+            string path = EffectEvidence.WriteImage(png, EffectEvidence.DefaultFolder, player.Key, player.ShownFrame);
+            Debug.Log("[Effects] Saved image " + path);
+        }
+
+        /// <summary>Runs the same check as the "Check Effect Data" menu item and writes its <c>ToText()</c> to the evidence folder (T8.4).</summary>
+        void SaveCheckReport()
+        {
+            Uninarok.RoImport.Core.Effects.RoEffectDataReport report;
+            try { report = Uninarok.RoImport.Editor.Effects.RoEffectMenu.RunEffectDataCheck(); }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning("[Effects] Effect data check failed: " + e.Message);
+                return;
+            }
+            checkReport = report;
+            string path = EffectEvidence.WriteCheckReport(report.ToText(), EffectEvidence.DefaultFolder);
+            Debug.Log("[Effects] Saved check report " + path);
         }
 
         void OnRuntimeWarned(string key, string message)
