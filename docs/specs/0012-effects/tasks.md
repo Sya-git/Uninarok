@@ -222,9 +222,9 @@
   *Done when:* for the 10 reference files the layer, key and texture counts equal the T0.1 record; the sparkle's curves plot.
   *Status:* completed: `EffectInspectorReferenceTests` (10 cases) checks the model of the 10 real imported STR assets against the T0.1 record (layers incl. the empty layer 0, keys and textures per layer, distinct textures, fps, frames, seconds); the sparkle's curves plot (`EffectInspectorModelTests`). The panel was not seen in a window (owner gate); the window passes no ledger lines yet.
 
-- [ ] **T8.4** [quick] Add the "Save image" button (renders the stage to a `RenderTexture` at window size and writes a PNG named from key and frame under `docs/specs/0012-effects/evidence/`) and the "Save check report" button (writes the `RoEffectDataCheck` text to `docs/specs/0012-effects/evidence/`). (FR-1, FR-11)
+- [x] **T8.4** [quick] Add the "Save image" button (renders the stage to a `RenderTexture` at window size and writes a PNG named from key and frame under `docs/specs/0012-effects/evidence/`) and the "Save check report" button (writes the `RoEffectDataCheck` text to `docs/specs/0012-effects/evidence/`). (FR-1, FR-11)
   *Done when:* each button writes its file; the saved check report equals the text logged by the menu item.
-  *Status:* code and writer tests done (`EffectEvidenceTests`, 6 passed). Not ticked: the buttons were not clicked in the editor, no file was written from a button, and the "equals the menu item" check is by code reading only (both call `RoEffectMenu.RunEffectDataCheck().ToText()`).
+  *Status:* completed: image `evidence/texture_effect_firewall.str-f20.png` written through the button call sequence; saved check report text equals `RoEffectMenu.RunEffectDataCheck().ToText()` of a second run (10046 chars).
 
 ## Phase 9: Play, cost and build tests
 
