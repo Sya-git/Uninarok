@@ -189,7 +189,7 @@
 
 ## Phase 7: Dev tools (World.Dev, dev guard)
 
-- [ ] **T7.1** [core] Test-first: `EffectCommandParseTests` (World EditMode: `/effect a b.str 10 20 loop`, `/effect "x y.str"`, `/effect p loop`, `/effect stop` and `/effect STOP` → `Stop`, `/effect "stop"` → a path, `/effect stop loop` → a path `stop` looped, bad numbers), with an `EffectCommand` stub; every case `[Ignore("pending T7.2")]`. (FR-8, FR-10)
+- [x] **T7.1** [core] Test-first: `EffectCommandParseTests` (World EditMode: `/effect a b.str 10 20 loop`, `/effect "x y.str"`, `/effect p loop`, `/effect stop` and `/effect STOP` → `Stop`, `/effect "stop"` → a path, `/effect stop loop` → a path `stop` looped, bad numbers), with an `EffectCommand` stub; every case `[Ignore("pending T7.2")]`. (FR-8, FR-10)
   *Done when:* the test class compiles and the run shows its cases ignored, 0 failed.
 
 - [ ] **T7.2** [core] Implement `EffectCommand.TryParse` (parsing from the end, quotes, `loop`, cell, `stop`, plan §4.8) and remove the Ignores. (FR-8)

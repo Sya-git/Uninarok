@@ -5,6 +5,8 @@
         "Uninarok.World",
         "Uninarok.World.View",
         "Uninarok.Map",
+        "Uninarok.Effects",
+        "Uninarok.Units",
         "Uninarok.Networking",
         "Uninarok.Networking.Core",
         "Unity.InputSystem",
