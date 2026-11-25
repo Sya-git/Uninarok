@@ -198,3 +198,4 @@ The client draws into a backbuffer with no alpha channel, so Direct3D reads dest
 ## Owner review
 
 - **T10.1, UV (2026-11-25):** the owner confirmed in the preview window that the 10 reference files look right with the file's uv (D22). `angelus.str` first showed an opaque background and an extra quad; fixed in T8.8 (D37) and rechecked by the owner.
+- **T10.3, preview acceptance (2026-11-25):** the owner checked the 12 items (filter, play looped, pause, step, scrubber to the end, speed 0.5, stop, loop off, backgrounds, orbit 90 degrees, inspector counts, pink and black keyed textures, missing texture marker) on the warp entries and the 10 reference files: all fine.
