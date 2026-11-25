@@ -220,6 +220,7 @@ namespace Uninarok.World.Dev
             view.Use(world);
             if (!go.TryGetComponent<CombatDebugView>(out var combat)) combat = go.AddComponent<CombatDebugView>();
             combat.Use(world);
+            EffectDevCommands.Register(line, world);
             // Before the connection: the items are listed at entry.
             var client = NetworkClient.Instance != null ? NetworkClient.Instance : Object.FindAnyObjectByType<NetworkClient>();
             if (client == null) return;

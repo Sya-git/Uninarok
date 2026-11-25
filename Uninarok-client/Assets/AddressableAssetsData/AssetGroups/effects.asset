@@ -15,6 +15,12 @@ MonoBehaviour:
   m_GroupName: effects
   m_GUID: 1bfc52b56ec15f14e9262768b3da0cbd
   m_SerializeEntries:
+  - m_GUID: 5873cbfa98370c24493f89e0cbf20050
+    m_Address: Assets/Settings/Effects/EffectSettings.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+    m_FolderGuid: 
   - m_GUID: 9f9af4fc0b1c44b48bf25c730f02937b
     m_Address: Assets/Data/Effects
     m_ReadOnly: 0

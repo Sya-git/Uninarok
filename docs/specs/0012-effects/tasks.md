@@ -197,6 +197,7 @@
 
 - [ ] **T7.3** [core] Implement `EffectDevCommands` (`/effect` forms through `DevCommandLine.AddWithArguments`; the list of handles it started; `stop` stops only those; messages "playing <key>", "stopped <n>", unknown path, no map, no character; lazy `EffectCatalog.LoadAsync` on first use), `WorldDevTools.Attach` registration, and `EffectSystem.StopAll()` on map change. (FR-6, FR-8)
   *Done when:* in a development build, `/effect texture/effect/firewall.str 10 10 loop` plays (one active effect) and an unknown path prints the unknown-path message.
+  *Status:* code and unit tests done (commit below); NOT ticked: the real flow needs `_index.asset` (T6.9, owner gate) and a live map session.
 
 - [ ] **T7.4** [core] Implement `EffectDebugView` (F11 list: path, place, part count, age; text rebuilt 4 times a second) and `EffectSystem.FillDebug(List<EffectDebugInfo>)`, both under `#if UNITY_EDITOR || DEVELOPMENT_BUILD`. (FR-8)
   *Done when:* in a development build the F11 list shows path, place, part count and age for a playing effect.
