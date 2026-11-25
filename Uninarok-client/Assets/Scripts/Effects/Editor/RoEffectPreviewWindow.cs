@@ -30,6 +30,9 @@ namespace Uninarok.Effects.Editor
         Vector2 listScroll;
         int selectedKey = -1;
         double lastTime;
+        Vector2 inspectScroll;
+        Uninarok.RoImport.Core.Effects.RoEffectDataReport checkReport;
+        readonly Dictionary<string, List<string>> runtimeWarnings = new Dictionary<string, List<string>>();
 
         [MenuItem("Tools/Ragnarok/Effect Preview")]
         static void Open()
@@ -76,12 +79,15 @@ namespace Uninarok.Effects.Editor
             stage = new EffectPreviewStage(catalog);
             player = new EffectPreviewController(stage);
             player.SetSpeed(1f);
+            stage.Runtime.Warned += OnRuntimeWarned;
+            runtimeWarnings.Clear();
             selectedKey = -1;
             rowsDirty = true;
         }
 
         void Teardown()
         {
+            if (stage != null) stage.Runtime.Warned -= OnRuntimeWarned;
             stage?.Dispose();
             stage = null;
             player = null;
@@ -256,11 +262,56 @@ namespace Uninarok.Effects.Editor
         void DrawInfo()
         {
             if (player.Key == null) { EditorGUILayout.LabelField("Select an effect on the left."); return; }
-            string kind = "?";
-            if (catalog.TryResolve(player.Key, out var entry) && catalog.TryGetAsset(entry, out var asset)) kind = asset.Kind.ToString();
-            EditorGUILayout.LabelField(player.Key, EditorStyles.miniBoldLabel);
-            EditorGUILayout.LabelField($"kind {kind}   {player.FrameRate:0.##} fps   length {player.Length:0.###} s ({player.LastFrame + (player.Loop ? 1 : 0)} frames)   speed {player.Speed:0.##}", EditorStyles.miniLabel);
             if (!player.HasEffect) EditorGUILayout.LabelField("Nothing is playing for this key (unknown to the catalog or it failed to load).", EditorStyles.miniLabel);
+            if (!catalog.TryResolve(player.Key, out var entry) || !catalog.TryGetAsset(entry, out var asset)) return;
+
+            var input = MakeInput(asset);
+            input.Speed = player.Speed;
+            input.CheckLines = EffectInspectorModel.CheckLinesFor(checkReport, player.Key);
+            if (runtimeWarnings.TryGetValue(player.Key, out var lines)) input.RuntimeLines = lines;
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Run check", GUILayout.Width(80f))) RunCheck();
+            GUILayout.Label(checkReport == null ? "check not run" : "check run", EditorStyles.miniLabel);
+            EditorGUILayout.EndHorizontal();
+            inspectScroll = EditorGUILayout.BeginScrollView(inspectScroll, GUILayout.MaxHeight(260f));
+            EffectInspectorPanel.Draw(EffectInspectorModel.Build(asset, input));
+            EditorGUILayout.EndScrollView();
+        }
+
+        void RunCheck()
+        {
+            try { checkReport = Uninarok.RoImport.Editor.Effects.RoEffectMenu.RunEffectDataCheck(); }
+            catch (System.Exception e) { Debug.LogWarning("[Effects] Effect data check failed: " + e.Message); }
+        }
+
+        void OnRuntimeWarned(string key, string message)
+        {
+            if (key == null) return;
+            if (!runtimeWarnings.TryGetValue(key, out var list)) runtimeWarnings[key] = list = new List<string>();
+            list.Add(message);
+        }
+
+        /// <summary>The inspector input from the project's effect settings and importer userData (no scene needed).</summary>
+        public static EffectInspectorInput MakeInput(EffectAsset asset)
+        {
+            var settings = AssetDatabase.LoadAssetAtPath<EffectSettings>(EffectPreviewStage.SettingsPath);
+            var input = new EffectInspectorInput
+            {
+                UserDataOf = t =>
+                {
+                    string path = AssetDatabase.GetAssetPath(t);
+                    return string.IsNullOrEmpty(path) ? null : AssetImporter.GetAtPath(path)?.userData;
+                },
+            };
+            if (settings != null) { input.AuthoredFrameRate = settings.AuthoredFrameRate; input.Placeholder = settings.PlaceholderTexture; }
+            return input;
+        }
+
+        /// <summary>Opens the window and plays the key (used by the "Open preview" button of <see cref="EffectAssetEditor"/>).</summary>
+        public static void OpenFor(string key)
+        {
+            Open();
+            GetWindow<RoEffectPreviewWindow>().Select(key);
         }
     }
 }

@@ -5,7 +5,8 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Uninarok.Effects",
-        "Uninarok.Effects.Editor"
+        "Uninarok.Effects.Editor",
+        "Uninarok.RoImport.Core"
     ],
     "includePlatforms": [
         "Editor"
