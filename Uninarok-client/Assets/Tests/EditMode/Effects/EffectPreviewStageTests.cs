@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 using Uninarok.Effects.Editor;
 
 namespace Uninarok.Effects.Tests
@@ -64,6 +65,47 @@ namespace Uninarok.Effects.Tests
             }
             stage.Runtime.Stop(handle);
             Assert.That(stage.Runtime.ActiveCount, Is.EqualTo(0));
+        }
+
+        // T8.5, FR-11: sprite effects show their real sprites in the preview (no sprite catalog warning, no placeholder)
+        [TestCase("sprite/이팩트/05vallentine.act")]
+        [TestCase("sprite/이팩트/fireball.act")]
+        public void SpriteEffect_DrawsRealSprite_FR11(string key)
+        {
+            var index = AssetDatabase.LoadAssetAtPath<EffectCatalogIndex>(EffectCatalog.IndexKey);
+            Assert.That(index, Is.Not.Null);
+            stage = new EffectPreviewStage(EffectCatalog.Create(index, new AssetDatabaseEffectSource()));
+            string warning = null;
+            stage.Runtime.Warned += (k, m) => warning = m;
+            var handle = stage.Play(key, loop: true);
+            Assert.That(stage.Runtime.IsActive(handle), Is.True, key);
+            for (int i = 0; i < 5; i++) stage.Tick(0.05f);
+            Assert.That(warning, Is.Null, "no warning (placeholder) for " + key);
+            Assert.That(stage.Runtime.SpriteMaterial, Is.Not.Null, "sprite material");
+            Assert.That(stage.DrawsSprite(handle), Is.True, "drawable sprite part for " + key);
+        }
+
+        [Test]
+        public void SpriteEffect_RenderIsNotFlat_FR11()
+        {
+            var index = AssetDatabase.LoadAssetAtPath<EffectCatalogIndex>(EffectCatalog.IndexKey);
+            stage = new EffectPreviewStage(EffectCatalog.Create(index, new AssetDatabaseEffectSource()));
+            var handle = stage.Play("sprite/이팩트/fireball.act", loop: true);
+            for (int i = 0; i < 10; i++) stage.Tick(0.05f);
+            stage.Distance = 6f;
+            byte[] png = EffectEvidence.CapturePng(stage, 512, 512);
+            var tex = new Texture2D(2, 2);
+            Assert.That(tex.LoadImage(png), Is.True);
+            var px = tex.GetPixels32();
+            var bg = px[0];
+            int diff = 0;
+            foreach (var p in px) if (System.Math.Abs(p.r - bg.r) + System.Math.Abs(p.g - bg.g) + System.Math.Abs(p.b - bg.b) > 24) diff++;
+            Object.DestroyImmediate(tex);
+            string dir = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "preview-sprite");
+            System.IO.Directory.CreateDirectory(dir);
+            System.IO.File.WriteAllBytes(System.IO.Path.Combine(dir, "fireball.png"), png);
+            Debug.Log("[T8.5] non-background pixel ratio " + (diff / (float)px.Length).ToString("F4") + " of " + px.Length);
+            Assert.That(diff, Is.GreaterThan(px.Length / 200), "something is drawn");
         }
     }
 }

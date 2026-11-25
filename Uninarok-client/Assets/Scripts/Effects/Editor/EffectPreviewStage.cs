@@ -1,6 +1,10 @@
 using System;
 using UnityEditor;
 using UnityEngine;
+using Uninarok.Catalog;
+using Uninarok.RoImport.Core.Output;
+using Uninarok.RoImport.Editor.Catalog;
+using Uninarok.Sprites;
 using Object = UnityEngine.Object;
 
 namespace Uninarok.Effects.Editor
@@ -15,6 +19,8 @@ namespace Uninarok.Effects.Editor
     {
         public enum BackgroundKind { Dark, Grey, Checker, Grid }
 
+        /// <summary>The effect sprite material of the game's sprites (what <c>WorldBootstrap.UnitMaterial</c> holds).</summary>
+        public const string SpriteMaterialPath = "Assets/Art/Materials/sprite_unit.mat";
         public const string SettingsPath = "Assets/Settings/Effects/EffectSettings.asset";
         public const float FieldOfView = 15f;
         public const float GridCell = 0.5f;
@@ -31,6 +37,8 @@ namespace Uninarok.Effects.Editor
         readonly bool ownsSettings;
         BackgroundKind background;
         bool disposed;
+        SpriteCatalog spriteCatalog;
+        bool spriteCatalogLoaded;
 
         public EffectPreviewStage(EffectCatalog catalog, EffectSettings settings = null)
         {
@@ -51,6 +59,10 @@ namespace Uninarok.Effects.Editor
             root = new GameObject("Effect Preview Root") { hideFlags = HideFlags.HideAndDontSave };
             preview.AddSingleGO(root);
             Runtime = new EffectRuntime(catalog, this.settings, root.transform, 64);
+            // Sprite entries draw their real sprites with no Addressables and no play mode: the catalog is read from the imported
+            // index assets once, on the first sprite lookup, and the animation is loaded through the AssetDatabase (T8.5).
+            Runtime.SpriteMaterial = AssetDatabase.LoadAssetAtPath<Material>(SpriteMaterialPath);
+            Runtime.SpriteAnimations.Resolver = ResolveSprite;
 
             var unlit = Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Texture");
             checkerTexture = MakeTexture(2, 16, new Color(0.30f, 0.30f, 0.30f), new Color(0.42f, 0.42f, 0.42f), false);
@@ -63,6 +75,29 @@ namespace Uninarok.Effects.Editor
             gridQuad.transform.localScale = new Vector3(GridHalfSize * 2f, GridHalfSize * 2f, 1f);
             gridMaterial.mainTextureScale = new Vector2(GridHalfSize * 2f / GridCell, GridHalfSize * 2f / GridCell);
             Background = BackgroundKind.Dark;
+        }
+
+        /// <summary>The sprite catalog read from the imported index assets; null until the first sprite lookup, and when none is imported.</summary>
+        public SpriteCatalog SpriteCatalog => spriteCatalog;
+
+        SpriteAnimation ResolveSprite(string name)
+        {
+            if (!spriteCatalogLoaded)
+            {
+                spriteCatalogLoaded = true;
+                spriteCatalog = RoCatalogLookupWindow.LoadInEditor(new RoOutputRoots());
+                Runtime.SpriteCatalog = spriteCatalog;   // clears the lookup's cache, so only here, before anything is found
+            }
+            if (spriteCatalog == null || !spriteCatalog.TryGetEffect(name, out var reference) || !reference.HasAnimation) return null;
+            string path = AssetDatabase.GUIDToAssetPath(reference.Animation.AssetGUID);
+            return string.IsNullOrEmpty(path) ? null : AssetDatabase.LoadAssetAtPath<SpriteAnimation>(path);
+        }
+
+        /// <summary>True when the effect is a sprite entry that bound a drawable actor (not the placeholder); tests and the window.</summary>
+        public bool DrawsSprite(EffectHandle handle)
+        {
+            var part = Runtime.InstanceOf(handle)?.SpritePart;
+            return part != null && part.CanDraw && part.Actor != null && part.Actor.gameObject.activeSelf;
         }
 
         public EffectCatalog Catalog { get; }

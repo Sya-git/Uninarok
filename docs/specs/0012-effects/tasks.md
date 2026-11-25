@@ -226,6 +226,10 @@
   *Done when:* each button writes its file; the saved check report equals the text logged by the menu item.
   *Status:* completed: image `evidence/texture_effect_firewall.str-f20.png` written through the button call sequence; saved check report text equals `RoEffectMenu.RunEffectDataCheck().ToText()` of a second run (10046 chars).
 
+- [x] **T8.5** [core] Give `EffectPreviewStage` a working sprite lookup in edit mode (owner bug: every sprite effect logged "has no sprite catalog" and showed the placeholder): the stage reads the SpriteCatalog from the imported index assets (`RoCatalogLookupWindow.LoadInEditor`) once, lazily, loads the animation through the AssetDatabase (the runtime's `Resolver`, no Addressables) and uses `Assets/Art/Materials/sprite_unit.mat` as `SpriteMaterial`; no runtime change. (FR-11)
+  *Done when:* an EditMode test plays `sprite/이팩트/05vallentine.act` and `fireball.act` in the stage with no warning and a drawable sprite part; a 512x512 frame of fireball shows the real sprite.
+  *Status:* completed: `EffectPreviewStageTests` (sprite cases, render ratio 0.0355 non-background), evidence `evidence/preview-sprite-fireball-f10.png`; `Unity.Addressables` added to `Uninarok.Effects.Editor` references (editor only).
+
 ## Phase 9: Play, cost and build tests
 
 - [x] **T9.1** [core] `EffectSpeedPlayTests` (PlayMode): an STR entry and an authored cylinder at speed 2 each end at half the wall time of speed 1 (±1 frame); a looped entry's cycle index after T at speed 2 equals its index after 2T at speed 1; the picture at speed 2 and time T equals speed 1 at 2T; speed 0.5 doubles one play; `TimeScale` 0 freezes `Age`; a sprite entry at speed 2 steps its `SpriteActor` twice as fast (NeedsData). (FR-4, FR-6, FR-11)

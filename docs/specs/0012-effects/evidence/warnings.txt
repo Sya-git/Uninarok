@@ -138,11 +138,10 @@ The FR-1 check report (check-report.txt, two runs, identical, 10046 chars) lists
 3. Runtime Warned lines, real catalog index (3223 keys), ~1 s of ticks (10 x 0.1 s, loop) in EffectPreviewStage with AssetDatabaseEffectSource
 
 texture/effect/firewall.str: none
-sprite/이팩트/fireball.act: 1 line (harness artefact, see note):
-  [Effects] Effect 'sprite/이팩트/fireball.act' has no sprite catalog (sprite 'fireball'); the placeholder is shown.
+sprite/이팩트/fireball.act: none
 texture/effect/_authored/warp_portal/sparkle.quad: none
 texture/effect/_authored/warp_portal/ring_outer.cylinder: none
 texture/effect/_authored/warp_portal/ring_inner.cylinder: none
 model/외부소품/트랩01.rsm: none
 
-Note: the preview stage was created without an effect SpriteCatalog (Addressables did not complete in the editor script run), so the sprite entry played its placeholder and warned once. This is a property of this check run, not of the effect. The sprite effect with the real sprite catalog is covered by the PlayMode tests (SpriteModelPartPlayTests, EffectDevRealCatalogPlayTests).
+Note (T8.5): the first run of this check had no sprite catalog in the preview stage (fireball.act warned 'has no sprite catalog'). EffectPreviewStage now reads the sprite catalog from the imported index assets and loads animations through the AssetDatabase; the 1 s check was re-run and fireball.act gives no warning (the sprite part draws).

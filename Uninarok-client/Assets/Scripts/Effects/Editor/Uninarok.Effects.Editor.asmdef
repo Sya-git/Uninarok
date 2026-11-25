@@ -6,7 +6,8 @@
         "Uninarok.Sprites",
         "Uninarok.SpriteCatalog",
         "Uninarok.RoImport.Core",
-        "Uninarok.RoImport.Editor"
+        "Uninarok.RoImport.Editor",
+        "Unity.Addressables"
     ],
     "includePlatforms": [
         "Editor"
