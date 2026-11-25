@@ -1,45 +1,78 @@
-T9.6 test run (SPEC-0012), 2026-11-25, Unity 6000.7.0b7, Unity-MCP tests-run, working RO data present.
+T9.6 test run (SPEC-0012), redo, 2026-11-25, Unity 6000.7.0b7, Unity-MCP tests-run, working RO data present.
+Previous run: commit a43d8aa93 (superseded by this file).
 
-RESULT: NOT CLEAN. 5 failed (2 Networking, 3 RoImport), 1 ignored (pending T3.8). T9.6 is NOT ticked.
+RESULT: NOT CLEAN. 4 failed (all RoImport.Tests, 180 s timeouts in the Rsm and Rsw reference/batch tests), plus 2 Networking
+failures that reproduce on rerun: 6 failed in total. 0 ignored. No 'pending T' Ignore remains. T9.6 is NOT ticked.
+No failure is in an Effects assembly or in an Effects test class.
 
-EXCLUDED
-- EffectBuildStrippingTests (Uninarok.World.Tests, [Category("Slow")], 2 real player builds): passed in T9.5; tests-run has no category filter, so the other 27 World.Tests classes were run one by one.
+EDITMODE (per assembly; counts are the final state after the single rerun of the failing tests)
+Assembly                                   Total  Passed  Failed  Ignored
+Uninarok.Effects.Tests                       163     163       0       0
+Uninarok.Networking.Tests                    518     516       2       0
+Uninarok.Map.Tests                            41      41       0       0
+Uninarok.Sprites.Tests                        38      38       0       0
+Uninarok.SpriteCatalog.Tests                  25      25       0       0
+Uninarok.CameraRig.Tests                      17      17       0       0
+Uninarok.Units.Tests                         144     144       0       0
+Uninarok.World.Tests (excl. 1 Slow class)    310     310       0       0   (sum of per-class runs, 26 classes)
+Uninarok.RoImport.Tests (excl. 1 Slow class) 1302   1298       4       0   (see the split below)
 
-EDITMODE (per assembly)
-Assembly                          Total  Passed  Failed  Ignored
-Uninarok.Effects.Tests              145     145       0       0
-Uninarok.Networking.Tests           518     516       2       0
-Uninarok.Map.Tests                   41      41       0       0
-Uninarok.Sprites.Tests               38      38       0       0
-Uninarok.SpriteCatalog.Tests         25      25       0       0
-Uninarok.CameraRig.Tests             17      17       0       0
-Uninarok.Units.Tests                144     144       0       0
-Uninarok.World.Tests (excl. Slow)   310     310       0       0   (sum of 27 per-class runs)
-Uninarok.RoImport.Tests            1277    1273       3       1   (whole assembly, 48 min)
+RoImport.Tests split (run by namespace, and by class for the root and Effects namespaces)
+Uninarok.RoImport.Tests (root, 24 classes, one by one)         343   343   0   0
+Uninarok.RoImport.Tests.Effects (12 classes, one by one)       134   134   0   0
+Uninarok.RoImport.Tests.Catalog                                190   190   0   0   (first run 187 passed, 3 failed; see 'Rerun passed')
+Uninarok.RoImport.Tests.Gat                                     76    76   0   0
+Uninarok.RoImport.Tests.Gnd                                    105   105   0   0
+Uninarok.RoImport.Tests.Sprites                                116   116   0   0
+Uninarok.RoImport.Tests.Rsm                                    254   251   3   0
+Uninarok.RoImport.Tests.Rsw                                     84    83   1   0
+Sum                                                           1302  1298   4   0
+(The assembly holds 1306 tests; the 4 excluded are RoEffectImportReferenceTests.)
+Effects namespace classes (passed): EffectCatalogIndexTests 7, EffectPathAgreementTests 21, EffectSamplerReferenceTests 10,
+RoEffectColorKeyTests 18 (the 'pending T3.8' Ignore is gone: Rules_ReadFromJson now runs and passes), RoEffectDataCheckTests 16,
+RoEffectFolderImportTests 3, RoEffectSpriteEntryConverterTests 6, RoEffectTextureConverterTests 5, RoEffectTextureLookupTests 10,
+RoStrCompilerTests 10, RoStrConverterTests 8, RoStrReaderTests 20.
 
 PLAYMODE (per assembly)
+Assembly                          Total  Passed  Failed  Ignored
 Uninarok.Effects.PlayTests           78      78       0       0
-Uninarok.World.PlayTests             58      58       0       0
+Uninarok.World.PlayTests             59      59       0       0
 Uninarok.Units.PlayTests             23      23       0       0
 Uninarok.SpriteCatalog.PlayTests      1       1       0       0
 
-FAILURES
-1. Networking.Tests PacketTableTests.TestFixture_IsTheSameFileAsTheDocsFixture
-   Expected string length 21769 but was 23368; differ at index 1 ("{\n" vs "{\r\n"): CRLF vs LF in a fixture file. Not missing data, not Effects.
-2. Networking.Tests SocketThreadHookTests.SocketThreadCounters_StartedAndStopped_ReturnToZeroRunning_AfterEveryConnectionIsClosed
-   "Expected: True But was: False". Reproduced on a class-only rerun (12 tests, 1 failed). Likely environment/pollution (socket threads); not Effects.
-3. RoImport.Tests Rsm.RsmReferenceConversionTests.BatchOverTheWholeModelFolder_ConvertsEveryFileOrListsEachFailureOnce
-   "Timeout value of 180000 ms was exceeded" (320 s in the full run, 318 s on class rerun). Reproduced on rerun: environmental slowness, not a pass.
-4. RoImport.Tests Rsm.RsmReferenceConversionTests.EveryReferenceModel_ConvertsThroughRoImportModel
-   Same timeout (193 s full run, 191 s rerun). Reproduced on rerun.
-5. RoImport.Tests Rsw.RoMapReferenceTests.TheReferenceMaps_ConvertInOneBatch_CompleteAndThenSkipped
-   Full run: "Unhandled log message: '[Exception] SocketException: An existing connection was forcibly closed by the remote host.'" (407 s).
-   Class rerun: "Timeout value of 180000 ms was exceeded" (406 s). The test needs more than the 180 s limit on this machine.
-   Rerun of RsmReferenceConversionTests: 11 total, 9 passed, 2 failed (the two timeouts above).
+EXCLUDED (not run), with justification
+- Uninarok.RoImport.Tests.Effects.RoEffectImportReferenceTests (4 tests, [Category("Slow")], about 2.2 h: converts every STR of the real
+  data). Last passed in T3.12 (commit 78c3a1263). Its code (RoStrConverter, texture converter) has since been run end to end by
+  T3.14 (5f0f5c9a8, full folder import of 2995 STRs) and exercised by RoStrConverterTests / RoEffectFolderImportTests in this run.
+- Uninarok.World.Tests.EffectBuildStrippingTests (2 real player builds, [Category("Slow")]). Last passed in T9.5 (commit ce6153dd6).
+  tests-run has no category filter, so the other World.Tests classes were run one by one.
 
-IGNORED (pending list)
-- RoImport.Tests Effects.RoEffectColorKeyTests.Rules_ReadFromJson: Ignore("pending T3.8") (RoEffectColorKeyTests.cs:169), waits for owner-blocked T3.8. Not removed or weakened. Effects namespace alone: 117 total, 116 passed, 1 ignored.
+FAILURES (6)
+Networking.Tests (2; reproduced on a class-only rerun; not investigated whether they fail on main)
+1. PacketTableTests.TestFixture_IsTheSameFileAsTheDocsFixture: CRLF vs LF in a fixture file (length 21769 vs 23368, differs at index 1).
+2. SocketThreadHookTests.SocketThreadCounters_StartedAndStopped_ReturnToZeroRunning_AfterEveryConnectionIsClosed: "Expected: True But was: False"
+   (failed on the second assembly run and on the class rerun; passed once in the first assembly run: flaky, socket thread counters).
+RoImport.Tests (4; all "Timeout value of 180000 ms was exceeded"; not investigated whether they fail on main)
+3. Rsm.RsmReferenceConversionTests.BatchOverTheWholeModelFolder_ConvertsEveryFileOrListsEachFailureOnce: timeout; failed again on the class rerun
+   (class rerun: 11 tests, 9 passed, 2 failed, 783 s).
+4. Rsm.RsmReferenceConversionTests.EveryReferenceModel_ConvertsThroughRoImportModel: timeout; failed again on the class rerun.
+5. Rsm.RsmWriterTests.ThousandNodesWithOneTexture_ReferenceOneMaterial: timeout (180 s); failed again when rerun alone (262 s). It passed in the
+   previous run (a43d8aa93). NEW since the previous run. Not investigated (possible cause: slower AssetDatabase now that the effect assets of
+   T3.14 and T6.9 are in the project; unconfirmed).
+6. Rsw.RoMapReferenceTests.TheReferenceMaps_ConvertInOneBatch_CompleteAndThenSkipped: timeout; failed again on the class rerun (591 s).
+   The tests need more than the 180 s limit on this machine.
+
+RERUN PASSED
+Catalog namespace first run had 3 failures, all "Unhandled log message" from the Unity-MCP plugin's own SignalR connection (SocketException /
+WebSocketException) logged during the 16 minute run: RoCatalogImporterTests.TheSecondRun_IsSkipped_AndReportsTheSameNumbers,
+RoCatalogIndexTests.ASecondRun_RewritesNoIndex, RoCatalogIndexTests.TheEquipmentIndex_AndTheClassTable. Each passed when rerun alone.
+Environmental (editor to MCP server connection), not a product failure.
+
+IGNORED
+- None. 0 ignored in every assembly run. Check: grep -rn "pending T" Uninarok-client/Assets/Tests returns no hit. The Assert.Ignore('NeedsData')
+  calls in Effects PlayTests did not trigger (data present).
+  The one previous 'pending T3.8' Ignore (RoEffectColorKeyTests.Rules_ReadFromJson) was removed by T3.8 (f7c0952d3) and passes.
 
 NOTES
-- No failure is in the Effects assemblies (Effects.Tests and Effects.PlayTests are fully green).
-- Test runs modified AddressableAssetSettings.asset and evidence/alloc-report.txt; both restored. Assets/__RoImportTests removed.
+- Effects.Tests (163) and Effects.PlayTests (78) are fully green.
+- Test runs modified AddressableAssetSettings.asset and evidence/alloc-report.txt; both restored with git checkout. Assets/__RoImportTests removed.
