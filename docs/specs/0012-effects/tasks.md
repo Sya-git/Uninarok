@@ -277,7 +277,7 @@
 - [x] **T10.3** [quick] (owner) Preview acceptance (FR-11) on a warp entry and the 10 reference files: filter, play looped, pause holds, step, scrubber to the end, speed 0.5 doubles one play, stop returns to frame 0, loop off plays once; each background; orbit 90° (camera-facing layer faces the camera, ground quad seen edge-on); inspector counts; a pink-keyed and a black-keyed texture show their key and transparency; delete one texture in a copy of the data and check the missing marker and its one warning. The owner confirms by eye; no image is saved.
   *Done when:* the owner's confirmation for the warp entries and the 10 reference files is recorded in str-reference.md under "Owner review".
 
-- [ ] **T10.4** [quick] (owner) Must-list look (FR-5, FR-7): each must-list entry (`firewall.str`, `fireball.act`, the sparkle, both rings, the trap model) plays with its real parts and no missing texture; the owner confirms the warp parts (rings shrinking and rising, sparkle moving and fading, additive blue) by eye in the preview window; no image is saved.
+- [x] **T10.4** [quick] (owner) Must-list look (FR-5, FR-7): each must-list entry (`firewall.str`, `fireball.act`, the sparkle, both rings, the trap model) plays with its real parts and no missing texture; the owner confirms the warp parts (rings shrinking and rising, sparkle moving and fading, additive blue) by eye in the preview window; no image is saved.
   *Done when:* the owner's confirmation is recorded in str-reference.md under "Owner review".
 
 - [ ] **T10.5** [quick] (owner) Speed in the preview (FR-4): `firewall.str` and a warp entry at speed 1 and speed 2; one cycle is halved. The owner confirms by eye in the preview window; no image is saved.
