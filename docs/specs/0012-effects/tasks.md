@@ -166,7 +166,7 @@
 - [x] **T6.2** [core] Implement `RoEffectDataCheck` (read only; counts for `.str`, images under `texture/effect/`, `.spr` and `.act` under `sprite/이팩트/`, `.lub` under `luafiles514/lua files/effecttool/`; missing lists; deterministic `ToText`) and menu `Tools/Ragnarok/Effects/Check Effect Data` (logs the text). Remove the Ignores. (FR-1)
   *Done when:* `RoEffectDataCheckTests` pass.
 
-- [ ] **T6.3** [quick] Import the trap model `model/외부소품/트랩01.rsm` with the SPEC-0003 model import, so a prefab exists for `ModelPart`. (FR-4, FR-5)
+- [x] **T6.3** [quick] Import the trap model `model/외부소품/트랩01.rsm` with the SPEC-0003 model import, so a prefab exists for `ModelPart`. (FR-4, FR-5)
   *Done when:* the prefab exists at the path RoImport.Model gives, with no warning in the report.
 
 - [ ] **T6.4** [quick] Author the three warp portal entries as `EffectAsset` data at `Assets/Data/Effects/Authored/texture/effect/_authored/warp_portal/`: `sparkle.quad`, `ring_outer.cylinder`, `ring_inner.cylinder`, with the values, curves, `Length`, texture names and `Doubtful` lines of plan §4.7. (FR-4, FR-5, FR-7)
