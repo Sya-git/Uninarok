@@ -1,0 +1,22 @@
+{
+    "entries": [
+        {
+            "Source": "texture/effect/pok1.tga",
+            "SourceHash": "4e49d27462e514ead1ad58d5601a5881f26d1ca8ccced1f86993547f7aa13025",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/texture/effect/pok1.tga.png"
+            ],
+            "Dependencies": []
+        },
+        {
+            "Source": "texture/effect/ring_blue.tga",
+            "SourceHash": "4afb6b406b03b119ca39579af295ab2a858123f95d93120f4d9e58f852225f54",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/effect/texture/effect/ring_blue.tga.png"
+            ],
+            "Dependencies": []
+        }
+    ]
+}

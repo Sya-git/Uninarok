@@ -27,6 +27,19 @@ namespace Uninarok.RoImport.Editor.Effects
             RoImportApi.EffectSprites(new RoImportOptions { Source = source });
         }
 
+        [MenuItem("Tools/Ragnarok/Effects/Convert Effect Folder", priority = 39)]
+        static void ConvertEffectFolder()
+        {
+            var source = new RoFolderSource(RoSourceLocation.Resolve());
+            const string prefixes = "texture/effect/\nsprite/이팩트/";
+            int strs = RoImportJobs.Expand(prefixes, RoJobKind.Effect, source).Jobs.Count;
+            int authored = RoEffectFolderImport.LoadAuthored(null).Sum(a => a.Names.Count);
+            if (!EditorUtility.DisplayDialog("Ragnarok import",
+                    $"Convert {strs} effect STRs and the {authored} texture names of the authored entries from {source.Root}?", "Convert", "Cancel"))
+                return;
+            RoEffectFolderImport.Run(new RoImportOptions { Source = source }, prefixes);
+        }
+
         [MenuItem("Tools/Ragnarok/Effects/Rebuild Effect Index", priority = 41)]
         static void RebuildEffectIndex() =>
             RoImportApi.EffectIndex(new RoImportOptions { Source = new RoFolderSource(RoSourceLocation.Resolve()) });

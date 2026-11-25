@@ -175,7 +175,7 @@
 - [x] **T6.5** [quick] Author the trap model entry at `Assets/Data/Effects/Authored/model/외부소품/트랩01.rsm.asset` (Kind Model, `Model` = the T6.3 prefab, `Length` authored and listed in `Doubtful`). (FR-4, FR-5)
   *Done when:* the asset's `Model` is not null, `Length` > 0, and `Doubtful` has its line.
 
-- [ ] **T6.6** [core] Extend Convert Effect Folder to convert the textures named by authored entries (`texture/effect/ring_blue.tga`, `texture/effect/pok1.tga`) through the `effecttexture` category (plan §4.10). (FR-2, FR-7)
+- [x] **T6.6** [core] Extend Convert Effect Folder to convert the textures named by authored entries (`texture/effect/ring_blue.tga`, `texture/effect/pok1.tga`) through the `effecttexture` category (plan §4.10). (FR-2, FR-7)
   *Done when:* after a run `Art/Imported/effect/texture/effect/ring_blue.tga.png` and `pok1.tga.png` exist, with ledger entries.
 
 - [ ] **T6.7** [quick] Assign the converted textures to the `Textures` slots of the three warp entries (texture names kept). (FR-7)
