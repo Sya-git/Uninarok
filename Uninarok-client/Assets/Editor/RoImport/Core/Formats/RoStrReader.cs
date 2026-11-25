@@ -134,6 +134,45 @@ namespace Uninarok.RoImport.Core.Formats
             }
         }
 
+        /// <summary>
+        /// Test support (a synthetic STR without touching bytes): GRF's own objects are filled (one layer per entry of
+        /// <paramref name="layerTextures"/>, each with those texture names and one key at frame 0) and GRF's <c>Save</c> writes
+        /// the file, which this returns.
+        /// </summary>
+        internal static byte[] BuildThroughGrf(string[][] layerTextures, int fps, int maxKeyFrame)
+        {
+            string temp = Path.GetTempFileName();
+            var previous = EncodingService.DisplayEncoding;
+            try
+            {
+                EncodingService.DisplayEncoding = EncodingService.Korean;
+                var grf = new GrfStr();
+                grf.Header.SetVersion(SupportedVersion, 0);
+                grf.Fps = fps;
+                grf.MaxKeyFrame = maxKeyFrame;
+                foreach (var names in layerTextures)
+                {
+                    var layer = new GRF.FileFormats.StrFormat.StrLayer(grf);
+                    layer.TextureNames.AddRange(names);
+                    var key = new GrfStrKeyFrame
+                    {
+                        FrameIndex = 0, Type = 0, TextureIndex = 0, AnimationType = GRF.FileFormats.StrFormat.AnimationType.Stop,
+                        UVs = new float[8], Positions = new float[8], Color = new float[] { 255, 255, 255, 255 },
+                        BezierPositions = new float[8], BlendSrc = 5, BlendDst = 7,
+                    };
+                    layer.KeyFrames.Add(key);
+                    grf.Layers.Add(layer);
+                }
+                grf.Save(temp);
+                return File.ReadAllBytes(temp);
+            }
+            finally
+            {
+                EncodingService.DisplayEncoding = previous;
+                try { File.Delete(temp); } catch (IOException) { }
+            }
+        }
+
         static RoStr Convert(GrfStr grf, int version)
         {
             if (grf.Layers == null) throw new InvalidOperationException("the layer list is missing");

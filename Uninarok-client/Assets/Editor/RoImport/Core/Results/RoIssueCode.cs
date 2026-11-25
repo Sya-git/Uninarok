@@ -68,6 +68,8 @@ namespace Uninarok.RoImport.Core.Results
         EffectKeyDuplicate,
         /// <summary>An authored effect asset whose Path disagrees with its file location Data/Effects/Authored/&lt;key&gt;.asset (PLAN-0012 4.4).</summary>
         EffectKeyPathMismatch,
+        /// <summary>An STR key whose blend factor pair has no known mapping; reported by the effect data check (PLAN-0012 4.5, 7).</summary>
+        EffectBlendUnknown,
         Unexpected
     }
 }
