@@ -172,7 +172,7 @@
 - [x] **T6.4** [quick] Author the three warp portal entries as `EffectAsset` data at `Assets/Data/Effects/Authored/texture/effect/_authored/warp_portal/`: `sparkle.quad`, `ring_outer.cylinder`, `ring_inner.cylinder`, with the values, curves, `Length`, texture names and `Doubtful` lines of plan §4.7. (FR-4, FR-5, FR-7)
   *Done when:* the three assets exist; each `Path` equals its key; the values equal plan §4.7; `Doubtful` lists every lead value with its source.
 
-- [ ] **T6.5** [quick] Author the trap model entry at `Assets/Data/Effects/Authored/model/외부소품/트랩01.rsm.asset` (Kind Model, `Model` = the T6.3 prefab, `Length` authored and listed in `Doubtful`). (FR-4, FR-5)
+- [x] **T6.5** [quick] Author the trap model entry at `Assets/Data/Effects/Authored/model/외부소품/트랩01.rsm.asset` (Kind Model, `Model` = the T6.3 prefab, `Length` authored and listed in `Doubtful`). (FR-4, FR-5)
   *Done when:* the asset's `Model` is not null, `Length` > 0, and `Doubtful` has its line.
 
 - [ ] **T6.6** [core] Extend Convert Effect Folder to convert the textures named by authored entries (`texture/effect/ring_blue.tga`, `texture/effect/pok1.tga`) through the `effecttexture` category (plan §4.10). (FR-2, FR-7)
