@@ -1,0 +1,148 @@
+T10.10 warnings of the effect work (SPEC-0012 FR-1, FR-5)
+
+1. Import warnings: TextureMissing, from import-report.txt (T3.14), grouped by STR file
+
+STR texture/effect/allbloom/allbloom_cast_bottm/allbloom_cast_bottom.str
+  all_flare_01.bmp (referenced by texture/effect/allbloom/allbloom_cast_bottm/allbloom_cast_bottom.str): texture 'all_flare_01.bmp' is in neither the STR's folder nor texture/effect
+
+STR texture/effect/allbloom/allbloom_cast_bottm/min_allbloom_cast_bottom.str
+  all_flare_01.bmp (referenced by texture/effect/allbloom/allbloom_cast_bottm/min_allbloom_cast_bottom.str): texture 'all_flare_01.bmp' is in neither the STR's folder nor texture/effect
+
+STR texture/effect/aura.str
+  14copy~1.bmp (referenced by texture/effect/aura.str): texture '14copy~1.bmp' is in neither the STR's folder nor texture/effect
+  15coip~1.bmp (referenced by texture/effect/aura.str): texture '15coip~1.bmp' is in neither the STR's folder nor texture/effect
+
+STR texture/effect/c_swirling_flame/vortexf.str
+  bFlame7.BMP (referenced by texture/effect/c_swirling_flame/vortexf.str): texture 'bFlame7.BMP' is in neither the STR's folder nor texture/effect
+
+STR texture/effect/from_the_abyss/from_the_abyss_hit/min_from_the_abyss_hit.str
+  fro_attack_00.tga (referenced by texture/effect/from_the_abyss/from_the_abyss_hit/min_from_the_abyss_hit.str): texture 'fro_attack_00.tga' is in neither the STR's folder nor texture/effect
+  fro_attack_01.tga (referenced by texture/effect/from_the_abyss/from_the_abyss_hit/min_from_the_abyss_hit.str): texture 'fro_attack_01.tga' is in neither the STR's folder nor texture/effect
+  fro_attack_02.tga (referenced by texture/effect/from_the_abyss/from_the_abyss_hit/min_from_the_abyss_hit.str): texture 'fro_attack_02.tga' is in neither the STR's folder nor texture/effect
+  fro_attack_03.tga (referenced by texture/effect/from_the_abyss/from_the_abyss_hit/min_from_the_abyss_hit.str): texture 'fro_attack_03.tga' is in neither the STR's folder nor texture/effect
+  fro_attack_04.tga (referenced by texture/effect/from_the_abyss/from_the_abyss_hit/min_from_the_abyss_hit.str): texture 'fro_attack_04.tga' is in neither the STR's folder nor texture/effect
+  fro_attack_05.tga (referenced by texture/effect/from_the_abyss/from_the_abyss_hit/min_from_the_abyss_hit.str): texture 'fro_attack_05.tga' is in neither the STR's folder nor texture/effect
+  fro_attack_06.tga (referenced by texture/effect/from_the_abyss/from_the_abyss_hit/min_from_the_abyss_hit.str): texture 'fro_attack_06.tga' is in neither the STR's folder nor texture/effect
+  fro_attack_07.tga (referenced by texture/effect/from_the_abyss/from_the_abyss_hit/min_from_the_abyss_hit.str): texture 'fro_attack_07.tga' is in neither the STR's folder nor texture/effect
+  fro_attack_00.bmp (referenced by texture/effect/from_the_abyss/from_the_abyss_hit/min_from_the_abyss_hit.str): texture 'fro_attack_00.bmp' is in neither the STR's folder nor texture/effect
+  fro_attack_01.bmp (referenced by texture/effect/from_the_abyss/from_the_abyss_hit/min_from_the_abyss_hit.str): texture 'fro_attack_01.bmp' is in neither the STR's folder nor texture/effect
+  fro_attack_02.bmp (referenced by texture/effect/from_the_abyss/from_the_abyss_hit/min_from_the_abyss_hit.str): texture 'fro_attack_02.bmp' is in neither the STR's folder nor texture/effect
+  fro_attack_03.bmp (referenced by texture/effect/from_the_abyss/from_the_abyss_hit/min_from_the_abyss_hit.str): texture 'fro_attack_03.bmp' is in neither the STR's folder nor texture/effect
+  fro_attack_04.bmp (referenced by texture/effect/from_the_abyss/from_the_abyss_hit/min_from_the_abyss_hit.str): texture 'fro_attack_04.bmp' is in neither the STR's folder nor texture/effect
+  fro_attack_05.bmp (referenced by texture/effect/from_the_abyss/from_the_abyss_hit/min_from_the_abyss_hit.str): texture 'fro_attack_05.bmp' is in neither the STR's folder nor texture/effect
+  fro_attack_06.bmp (referenced by texture/effect/from_the_abyss/from_the_abyss_hit/min_from_the_abyss_hit.str): texture 'fro_attack_06.bmp' is in neither the STR's folder nor texture/effect
+  fro_attack_07.bmp (referenced by texture/effect/from_the_abyss/from_the_abyss_hit/min_from_the_abyss_hit.str): texture 'fro_attack_07.bmp' is in neither the STR's folder nor texture/effect
+
+STR texture/effect/hawkrush/min_hawkrush.str
+  haw_slash_01.tga (referenced by texture/effect/hawkrush/min_hawkrush.str): texture 'haw_slash_01.tga' is in neither the STR's folder nor texture/effect
+  haw_slash_03.tga (referenced by texture/effect/hawkrush/min_hawkrush.str): texture 'haw_slash_03.tga' is in neither the STR's folder nor texture/effect
+  haw_slash_05.tga (referenced by texture/effect/hawkrush/min_hawkrush.str): texture 'haw_slash_05.tga' is in neither the STR's folder nor texture/effect
+  haw_slash_07.tga (referenced by texture/effect/hawkrush/min_hawkrush.str): texture 'haw_slash_07.tga' is in neither the STR's folder nor texture/effect
+  haw_slash_09.tga (referenced by texture/effect/hawkrush/min_hawkrush.str): texture 'haw_slash_09.tga' is in neither the STR's folder nor texture/effect
+
+STR texture/effect/mineffect/new_varetyrspear/new_varetyrspear_bottom/new_varetyrspear_bottom.str
+  var_elecbomb_06.bmp (referenced by texture/effect/mineffect/new_varetyrspear/new_varetyrspear_bottom/new_varetyrspear_bottom.str): texture 'var_elecbomb_06.bmp' is in neither the STR's folder nor texture/effect
+
+STR texture/effect/new_armscannon/new_armscannon_01_clock_down/new_armscannon_01_down.str
+  gun_fire_a2.tga (referenced by texture/effect/new_armscannon/new_armscannon_01_clock_down/new_armscannon_01_down.str): texture 'gun_fire_a2.tga' is in neither the STR's folder nor texture/effect
+  gun_fire_b2.tga (referenced by texture/effect/new_armscannon/new_armscannon_01_clock_down/new_armscannon_01_down.str): texture 'gun_fire_b2.tga' is in neither the STR's folder nor texture/effect
+  gun_fire_c2.tga (referenced by texture/effect/new_armscannon/new_armscannon_01_clock_down/new_armscannon_01_down.str): texture 'gun_fire_c2.tga' is in neither the STR's folder nor texture/effect
+  gun_fire_d2.tga (referenced by texture/effect/new_armscannon/new_armscannon_01_clock_down/new_armscannon_01_down.str): texture 'gun_fire_d2.tga' is in neither the STR's folder nor texture/effect
+
+STR texture/effect/spell_enchanting/min_spell_enchanting.str
+  sp_glow_02.bmp (referenced by texture/effect/spell_enchanting/min_spell_enchanting.str): texture 'sp_glow_02.bmp' is in neither the STR's folder nor texture/effect
+  sp_ex_ring.bmp (referenced by texture/effect/spell_enchanting/min_spell_enchanting.str): texture 'sp_ex_ring.bmp' is in neither the STR's folder nor texture/effect
+  sp_ex_mark.tga (referenced by texture/effect/spell_enchanting/min_spell_enchanting.str): texture 'sp_ex_mark.tga' is in neither the STR's folder nor texture/effect
+  sp_ex_markx.bmp (referenced by texture/effect/spell_enchanting/min_spell_enchanting.str): texture 'sp_ex_markx.bmp' is in neither the STR's folder nor texture/effect
+
+STR texture/effect/stormcannon/stormcannon_cast/min_stormcannon_cast.str
+  sto_cast_00.bmp (referenced by texture/effect/stormcannon/stormcannon_cast/min_stormcannon_cast.str): texture 'sto_cast_00.bmp' is in neither the STR's folder nor texture/effect
+  sto_cast_01.bmp (referenced by texture/effect/stormcannon/stormcannon_cast/min_stormcannon_cast.str): texture 'sto_cast_01.bmp' is in neither the STR's folder nor texture/effect
+  sto_cast_02.bmp (referenced by texture/effect/stormcannon/stormcannon_cast/min_stormcannon_cast.str): texture 'sto_cast_02.bmp' is in neither the STR's folder nor texture/effect
+  sto_cast_03.bmp (referenced by texture/effect/stormcannon/stormcannon_cast/min_stormcannon_cast.str): texture 'sto_cast_03.bmp' is in neither the STR's folder nor texture/effect
+  sto_cast_04.bmp (referenced by texture/effect/stormcannon/stormcannon_cast/min_stormcannon_cast.str): texture 'sto_cast_04.bmp' is in neither the STR's folder nor texture/effect
+  sto_cast_05.bmp (referenced by texture/effect/stormcannon/stormcannon_cast/min_stormcannon_cast.str): texture 'sto_cast_05.bmp' is in neither the STR's folder nor texture/effect
+  sto_cast_06.bmp (referenced by texture/effect/stormcannon/stormcannon_cast/min_stormcannon_cast.str): texture 'sto_cast_06.bmp' is in neither the STR's folder nor texture/effect
+  sto_cast_07.bmp (referenced by texture/effect/stormcannon/stormcannon_cast/min_stormcannon_cast.str): texture 'sto_cast_07.bmp' is in neither the STR's folder nor texture/effect
+
+STR texture/effect/stormcannon/stormcannon_cast_bottom/min_stormcannon_cast_bottom.str
+  sto_glow_01.tga (referenced by texture/effect/stormcannon/stormcannon_cast_bottom/min_stormcannon_cast_bottom.str): texture 'sto_glow_01.tga' is in neither the STR's folder nor texture/effect
+  sto_circle_00.bmp (referenced by texture/effect/stormcannon/stormcannon_cast_bottom/min_stormcannon_cast_bottom.str): texture 'sto_circle_00.bmp' is in neither the STR's folder nor texture/effect
+  sto_circle_01.bmp (referenced by texture/effect/stormcannon/stormcannon_cast_bottom/min_stormcannon_cast_bottom.str): texture 'sto_circle_01.bmp' is in neither the STR's folder nor texture/effect
+  sto_circle_02.bmp (referenced by texture/effect/stormcannon/stormcannon_cast_bottom/min_stormcannon_cast_bottom.str): texture 'sto_circle_02.bmp' is in neither the STR's folder nor texture/effect
+  sto_circle_03.bmp (referenced by texture/effect/stormcannon/stormcannon_cast_bottom/min_stormcannon_cast_bottom.str): texture 'sto_circle_03.bmp' is in neither the STR's folder nor texture/effect
+  sto_circle_04.bmp (referenced by texture/effect/stormcannon/stormcannon_cast_bottom/min_stormcannon_cast_bottom.str): texture 'sto_circle_04.bmp' is in neither the STR's folder nor texture/effect
+  sto_circle_05.bmp (referenced by texture/effect/stormcannon/stormcannon_cast_bottom/min_stormcannon_cast_bottom.str): texture 'sto_circle_05.bmp' is in neither the STR's folder nor texture/effect
+
+STR texture/effect/stormcannon/stormcannon_cast_bottom/stormcannon_cast_bottom.str
+  sto_glow_01.tga (referenced by texture/effect/stormcannon/stormcannon_cast_bottom/stormcannon_cast_bottom.str): texture 'sto_glow_01.tga' is in neither the STR's folder nor texture/effect
+  sto_circle_00.bmp (referenced by texture/effect/stormcannon/stormcannon_cast_bottom/stormcannon_cast_bottom.str): texture 'sto_circle_00.bmp' is in neither the STR's folder nor texture/effect
+  sto_circle_01.bmp (referenced by texture/effect/stormcannon/stormcannon_cast_bottom/stormcannon_cast_bottom.str): texture 'sto_circle_01.bmp' is in neither the STR's folder nor texture/effect
+  sto_circle_02.bmp (referenced by texture/effect/stormcannon/stormcannon_cast_bottom/stormcannon_cast_bottom.str): texture 'sto_circle_02.bmp' is in neither the STR's folder nor texture/effect
+  sto_circle_03.bmp (referenced by texture/effect/stormcannon/stormcannon_cast_bottom/stormcannon_cast_bottom.str): texture 'sto_circle_03.bmp' is in neither the STR's folder nor texture/effect
+  sto_circle_04.bmp (referenced by texture/effect/stormcannon/stormcannon_cast_bottom/stormcannon_cast_bottom.str): texture 'sto_circle_04.bmp' is in neither the STR's folder nor texture/effect
+  sto_circle_05.bmp (referenced by texture/effect/stormcannon/stormcannon_cast_bottom/stormcannon_cast_bottom.str): texture 'sto_circle_05.bmp' is in neither the STR's folder nor texture/effect
+
+STR texture/effect/stormcannon/stormcannon_hit/min_stormcannon_hit.str
+  sto_flare_01.bmp (referenced by texture/effect/stormcannon/stormcannon_hit/min_stormcannon_hit.str): texture 'sto_flare_01.bmp' is in neither the STR's folder nor texture/effect
+  sto_hit_00.bmp (referenced by texture/effect/stormcannon/stormcannon_hit/min_stormcannon_hit.str): texture 'sto_hit_00.bmp' is in neither the STR's folder nor texture/effect
+  sto_hit_01.bmp (referenced by texture/effect/stormcannon/stormcannon_hit/min_stormcannon_hit.str): texture 'sto_hit_01.bmp' is in neither the STR's folder nor texture/effect
+  sto_hit_02.bmp (referenced by texture/effect/stormcannon/stormcannon_hit/min_stormcannon_hit.str): texture 'sto_hit_02.bmp' is in neither the STR's folder nor texture/effect
+  sto_hit_03.bmp (referenced by texture/effect/stormcannon/stormcannon_hit/min_stormcannon_hit.str): texture 'sto_hit_03.bmp' is in neither the STR's folder nor texture/effect
+  sto_hit_04.bmp (referenced by texture/effect/stormcannon/stormcannon_hit/min_stormcannon_hit.str): texture 'sto_hit_04.bmp' is in neither the STR's folder nor texture/effect
+
+STR texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str
+  vlo_circle_01.tga (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_circle_01.tga' is in neither the STR's folder nor texture/effect
+  vlo_circle.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_circle.bmp' is in neither the STR's folder nor texture/effect
+  vlo_cast_00.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_cast_00.bmp' is in neither the STR's folder nor texture/effect
+  vlo_cast_01.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_cast_01.bmp' is in neither the STR's folder nor texture/effect
+  vlo_cast_02.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_cast_02.bmp' is in neither the STR's folder nor texture/effect
+  vlo_cast_03.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_cast_03.bmp' is in neither the STR's folder nor texture/effect
+  vlo_cast_04.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_cast_04.bmp' is in neither the STR's folder nor texture/effect
+  vlo_cast_05.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_cast_05.bmp' is in neither the STR's folder nor texture/effect
+  vlo_cast_06.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_cast_06.bmp' is in neither the STR's folder nor texture/effect
+  vlo_cast_07.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_cast_07.bmp' is in neither the STR's folder nor texture/effect
+  vlo_cast_08.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_cast_08.bmp' is in neither the STR's folder nor texture/effect
+  vlo_cast_09.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_cast_09.bmp' is in neither the STR's folder nor texture/effect
+  vlo_cast_10.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_cast_10.bmp' is in neither the STR's folder nor texture/effect
+  vlo_cast_11.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_cast_11.bmp' is in neither the STR's folder nor texture/effect
+  vlo_cast_12.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_cast_12.bmp' is in neither the STR's folder nor texture/effect
+  vlo_cast_13.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_cast_13.bmp' is in neither the STR's folder nor texture/effect
+  vlo_cast_14.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_cast_14.bmp' is in neither the STR's folder nor texture/effect
+  vlo_sand_00.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_sand_00.bmp' is in neither the STR's folder nor texture/effect
+  vlo_sand_01.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_sand_01.bmp' is in neither the STR's folder nor texture/effect
+  vlo_sand_02.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_sand_02.bmp' is in neither the STR's folder nor texture/effect
+  vlo_sand_03.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_sand_03.bmp' is in neither the STR's folder nor texture/effect
+  vlo_sand_04.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_sand_04.bmp' is in neither the STR's folder nor texture/effect
+  vlo_sand_05.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_sand_05.bmp' is in neither the STR's folder nor texture/effect
+  vlo_sand_06.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_sand_06.bmp' is in neither the STR's folder nor texture/effect
+  vlo_sand_07.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_sand_07.bmp' is in neither the STR's folder nor texture/effect
+  vlo_sand_08.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_sand_08.bmp' is in neither the STR's folder nor texture/effect
+  vlo_sand_09.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_sand_09.bmp' is in neither the STR's folder nor texture/effect
+  vlo_sand_10.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_sand_10.bmp' is in neither the STR's folder nor texture/effect
+  vlo_sand_11.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_sand_11.bmp' is in neither the STR's folder nor texture/effect
+  vlo_sand_12.bmp (referenced by texture/effect/violentquake/violentquake_bottom/violentquake_cast_bottom.str): texture 'vlo_sand_12.bmp' is in neither the STR's folder nor texture/effect
+
+STR texture/effect/violentquake/violentquake_hit/min_violentquake_hit.str
+  vlo_hit_a_00.bmp (referenced by texture/effect/violentquake/violentquake_hit/min_violentquake_hit.str): texture 'vlo_hit_a_00.bmp' is in neither the STR's folder nor texture/effect
+
+STR texture/effect/windsign/windtarget_loop/min_windsign_loop.str
+  win_target_loop.tga (referenced by texture/effect/windsign/windtarget_loop/min_windsign_loop.str): texture 'win_target_loop.tga' is in neither the STR's folder nor texture/effect
+
+Total TextureMissing lines: 95
+
+2. Data check: missing names
+
+The FR-1 check report (check-report.txt, two runs, identical, 10046 chars) lists 87 missing texture names, each with the STR that references it. The list is not repeated here: see check-report.txt.
+
+3. Runtime Warned lines, real catalog index (3223 keys), ~1 s of ticks (10 x 0.1 s, loop) in EffectPreviewStage with AssetDatabaseEffectSource
+
+texture/effect/firewall.str: none
+sprite/이팩트/fireball.act: 1 line (harness artefact, see note):
+  [Effects] Effect 'sprite/이팩트/fireball.act' has no sprite catalog (sprite 'fireball'); the placeholder is shown.
+texture/effect/_authored/warp_portal/sparkle.quad: none
+texture/effect/_authored/warp_portal/ring_outer.cylinder: none
+texture/effect/_authored/warp_portal/ring_inner.cylinder: none
+model/외부소품/트랩01.rsm: none
+
+Note: the preview stage was created without an effect SpriteCatalog (Addressables did not complete in the editor script run), so the sprite entry played its placeholder and warned once. This is a property of this check run, not of the effect. The sprite effect with the real sprite catalog is covered by the PlayMode tests (SpriteModelPartPlayTests, EffectDevRealCatalogPlayTests).

@@ -1,0 +1,48 @@
+T10.10 Doubtful values of the must-list (SPEC-0012 FR-5)
+
+These values are lead values taken from roBrowserLegacy (EffectTable EF_WARPZONE2) or estimated, not verified against the original client. They are pending owner review (gate T10.4); none is final.
+
+DOUBT texture/effect/firewall.str kind=Str count=0
+DOUBT sprite/이팩트/fireball.act kind=Sprite count=0
+DOUBT texture/effect/_authored/warp_portal/sparkle.quad kind=Quad count=10
+  texture/effect/_authored/warp_portal/sparkle.quad | SizePixels: 50 STR pixels, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/sparkle.quad | Tint: (0.9, 1, 0.9) rgb, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/sparkle.quad | MaxAlpha: 1, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/sparkle.quad | Alpha: 0 at t 0, 1 at t 0.25, 1 at t 0.75, 0 at t 1, linear segments, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/sparkle.quad | StartMin/StartMax: x and y in [-3, 3] cells, z 0, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/sparkle.quad | EndMin/EndMax: x and y 0, z in [0, 4] cells, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/sparkle.quad | Motion: linear, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/sparkle.quad | Length: 1 s, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/sparkle.quad | SrcBlend/DstBlend: SrcAlpha / One (5 / 2), the lead's blendMode 2 converted by hand, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/sparkle.quad | zIndex / renderBeforeEntities / attachedEntity: not modelled (draw order and placement data, plan R8) (lead)
+DOUBT texture/effect/_authored/warp_portal/ring_outer.cylinder kind=Cylinder count=13
+  texture/effect/_authored/warp_portal/ring_outer.cylinder | BottomRadius: 2 cells, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_outer.cylinder | TopRadius: 3.3 cells, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_outer.cylinder | Height: 1.1 cells, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_outer.cylinder | Sides: 20, lead default, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_outer.cylinder | RepeatU: 1, lead default, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_outer.cylinder | Tint: (0.5, 0.5, 1) rgb, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_outer.cylinder | MaxAlpha: 0.4, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_outer.cylinder | Alpha: 0 at t 0, 1 at t 0.25, 1 at t 0.75, 0 at t 1, linear segments, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_outer.cylinder | RadiusScale: 1 at t 0 to 0 at t 1, linear, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_outer.cylinder | HeightScale: 0 at t 0, 1 at t 0.5, 0 at t 1, linear segments, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_outer.cylinder | Length: 4 s, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_outer.cylinder | SrcBlend/DstBlend: SrcAlpha / One (5 / 2), the lead's blendMode 2 converted by hand, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_outer.cylinder | zIndex / renderBeforeEntities / attachedEntity: not modelled (draw order and placement data, plan R8) (lead)
+DOUBT texture/effect/_authored/warp_portal/ring_inner.cylinder kind=Cylinder count=13
+  texture/effect/_authored/warp_portal/ring_inner.cylinder | BottomRadius: 1.9 cells, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_inner.cylinder | TopRadius: 3.2 cells, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_inner.cylinder | Height: 1.1 cells, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_inner.cylinder | Sides: 20, lead default, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_inner.cylinder | RepeatU: 1, lead default, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_inner.cylinder | Tint: (0.5, 0.5, 1) rgb, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_inner.cylinder | MaxAlpha: 0.4, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_inner.cylinder | Alpha: 0 at t 0, 1 at t 0.25, 1 at t 0.75, 0 at t 1, linear segments, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_inner.cylinder | RadiusScale: 1 at t 0 to 0 at t 1, linear, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_inner.cylinder | HeightScale: 0 at t 0, 1 at t 0.5, 0 at t 1, linear segments, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_inner.cylinder | Length: 4 s, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_inner.cylinder | SrcBlend/DstBlend: SrcAlpha / One (5 / 2), the lead's blendMode 2 converted by hand, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)
+  texture/effect/_authored/warp_portal/ring_inner.cylinder | zIndex / renderBeforeEntities / attachedEntity: not modelled (draw order and placement data, plan R8) (lead)
+DOUBT model/외부소품/트랩01.rsm kind=Model count=1
+  model/외부소품/트랩01.rsm | Length: 1.44 s, length of the imported clip Assets/Art/Imported/model/외부소품/트랩01/트랩01.anim (T6.3 import, lead / unverified)
+firewall.str and fireball.act are imported assets and carry no Doubtful lines (count 0).

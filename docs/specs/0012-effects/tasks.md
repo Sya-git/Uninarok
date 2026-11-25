@@ -276,5 +276,5 @@
 - [ ] **T10.9** [quick] (owner) Profiler capture of the FR-9 load (300 effects; 1,000 start and stop cycles) on the owner's PC; capture and frame time saved to evidence.
   *Done when:* the capture is saved and its frame time is recorded in the evidence.
 
-- [ ] **T10.10** [quick] Save the final evidence: the FR-1 check report (Save check report, T8.4) as `docs/specs/0012-effects/evidence/check-report.txt` (run twice, same text; counts and missing list), the warning list and the `Doubtful` values of the must-list as `evidence/warnings.txt` and `evidence/doubtful.txt`. (FR-1, FR-5)
+- [x] **T10.10** [quick] Save the final evidence: the FR-1 check report (Save check report, T8.4) as `docs/specs/0012-effects/evidence/check-report.txt` (run twice, same text; counts and missing list), the warning list and the `Doubtful` values of the must-list as `evidence/warnings.txt` and `evidence/doubtful.txt`. (FR-1, FR-5)
   *Done when:* the three files exist and the check report's second run matches the first.
