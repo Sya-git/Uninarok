@@ -13,6 +13,9 @@
 // _Cutoff: texels whose texture alpha is below it are discarded (the colour-keyed background of the texture draws nothing, as in
 // the client). EffectMaterials sets 0.5 for pairs whose source factor is not SrcAlpha (for example One / Zero), where the
 // converted texture's RGB under a keyed texel would otherwise draw (plan D37); 0 keeps every texel.
+// _AlphaFloor: the texture alpha is remapped to saturate((a - f) / (1 - f)) before the cutoff and the blend, so a glow's long
+// low-alpha tail that the texture clips at its edge vanishes smoothly instead of showing a square in linear blending (plan D39).
+// 0 leaves the alpha as it is.
 Shader "Uninarok/RoEffect"
 {
     Properties
@@ -22,6 +25,7 @@ Shader "Uninarok/RoEffect"
         [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("Dst Blend", Float) = 10 // OneMinusSrcAlpha
         _DepthBias ("Depth Bias (world units toward the camera)", Float) = 0
         _Cutoff ("Alpha cutoff (texture alpha below it is discarded)", Range(0, 1)) = 0
+        _AlphaFloor ("Alpha floor (texture alpha remapped to (a - f) / (1 - f))", Range(0, 1)) = 0
     }
 
     SubShader
@@ -72,6 +76,7 @@ Shader "Uninarok/RoEffect"
                 float _DstBlend;
                 float _DepthBias;
                 float _Cutoff;
+                float _AlphaFloor;
             CBUFFER_END
 
             Varyings RoEffectVertex(Attributes input)
@@ -105,6 +110,7 @@ Shader "Uninarok/RoEffect"
             #else
                 half4 c = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, input.uv);
             #endif
+                if (_AlphaFloor > 0.0) c.a = saturate((c.a - _AlphaFloor) / max(1.0 - _AlphaFloor, 1e-5));
                 if (_Cutoff > 0.0) clip(c.a - _Cutoff);
                 return c * input.color;
             }

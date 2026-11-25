@@ -45,6 +45,30 @@ namespace Uninarok.Effects.Tests
             Assert.IsNotNull(real.Shader);
         }
 
+        // T8.10 (FR-7, plan D39): the floor remaps the alpha as (a - f) / (1 - f), clamped; 0 is neutral.
+        [Test]
+        public void RemapAlpha_FloorRemapsAndZeroIsNeutral_FR7()
+        {
+            Assert.AreEqual(0.37f, EffectMaterials.RemapAlpha(0.37f, 0f), 0f, "neutral");
+            Assert.AreEqual(0f, EffectMaterials.RemapAlpha(0.05f, 0.1f), 1e-6f, "below the floor");
+            Assert.AreEqual(0f, EffectMaterials.RemapAlpha(0.1f, 0.1f), 1e-6f, "at the floor");
+            Assert.AreEqual(0.5f, EffectMaterials.RemapAlpha(0.55f, 0.1f), 1e-6f);
+            Assert.AreEqual(1f, EffectMaterials.RemapAlpha(1f, 0.1f), 1e-6f);
+            Assert.AreEqual(0f, EffectMaterials.RemapAlpha(0.5f, 1f), "floor 1 draws nothing");
+        }
+
+        [Test]
+        public void AlphaFloor_IsPartOfTheKey_AndSetOnTheMaterial_FR7()
+        {
+            var plain = materials.Get(texA, 5, 2, EffectFacing.Camera, false);
+            var floored = materials.Get(texA, 5, 2, EffectFacing.Camera, false, 0.1f, out _);
+            Assert.AreNotSame(plain, floored);
+            Assert.AreEqual(0f, plain.GetFloat("_AlphaFloor"));
+            Assert.AreEqual(0.1f, floored.GetFloat("_AlphaFloor"), 1e-6f);
+            Assert.AreSame(floored, materials.Get(texA, 5, 2, EffectFacing.Camera, false, 0.1f, out _));
+            Assert.AreEqual(0f, new AuthoredData().AlphaFloor, "neutral default");
+        }
+
         [Test]
         public void SameKey_GivesSameInstance()
         {

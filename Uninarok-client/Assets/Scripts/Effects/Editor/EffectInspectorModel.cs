@@ -183,6 +183,7 @@ namespace Uninarok.Effects.Editor
             V("Blend", new BlendPair { Src = d.SrcBlend, Dst = d.DstBlend }.ToString());
             V("Tint", ColorUtility.ToHtmlStringRGBA(d.Tint));
             V("MaxAlpha", F(d.MaxAlpha));
+            if (d.AlphaFloor > 0f) V("AlphaFloor", F(d.AlphaFloor));
             V("Texture", d.Texture.ToString(inv));
             switch (m.Kind)
             {

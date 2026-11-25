@@ -55,13 +55,13 @@ namespace Uninarok.Effects
                 case EffectKind.Quad:
                     submesh = writer.AddQuads(1);
                     bounds = QuadBounds(data, runtime.Settings);
-                    material = materials.Get(texture, data.SrcBlend, data.DstBlend, data.Facing, false, out bool qk);
+                    material = materials.Get(texture, data.SrcBlend, data.DstBlend, data.Facing, false, data.AlphaFloor, out bool qk);
                     if (!qk) runtime.WarnBlendOnce(asset);
                     break;
                 case EffectKind.Cylinder:
                     submesh = writer.AddCylinder(data.Sides);
                     bounds = CylinderBounds(data);
-                    material = materials.Get(texture, data.SrcBlend, data.DstBlend, EffectFacing.Ground, data.RepeatU > 1f, out bool ck);
+                    material = materials.Get(texture, data.SrcBlend, data.DstBlend, EffectFacing.Ground, data.RepeatU > 1f, data.AlphaFloor, out bool ck);
                     if (!ck) runtime.WarnBlendOnce(asset);
                     break;
                 case EffectKind.Procedural:

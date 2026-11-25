@@ -12,6 +12,7 @@ namespace Uninarok.Effects
         public byte SrcBlend = 5, DstBlend = 6;                  // D3D codes, the one EffectBlend table
         public Color Tint = Color.white; public float MaxAlpha = 1f;
         public AnimationCurve Alpha;                             // x MaxAlpha; null = constant 1
+        public float AlphaFloor;                                 // texture alpha a is drawn as (a - f) / (1 - f), clamped; 0 = as is (plan D39)
         public AnimationCurve Rotation;                          // degrees (quad: in its plane; cylinder: about the vertical axis); null = 0
         // Quad
         public float SizePixels = 35f;                           // STR pixels, -> units by EffectSettings.PixelsPerCell

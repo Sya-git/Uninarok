@@ -166,6 +166,66 @@ namespace Uninarok.Effects.Tests
                 "the sparkle glow is drawn");
         }
 
+        // T8.10 (FR-7, plan D39): the sparkle's glow ends smoothly: the ring just outside the glow (the clipped alpha tail of
+        // pok1.tga) equals the backdrop, no square outline, while the centre is bright.
+        [Test]
+        public void WarpSparkleFrame38_NoSquareOutline_FR7()
+        {
+            var px = RenderPixels("texture/effect/_authored/warp_portal/sparkle.quad", 38, out int size);
+            var bg = px[0];
+            int cx = 0, cy = 0, best = -1;
+            for (int y = 0; y < size; y++) for (int x = 0; x < size; x++)
+            {
+                var p = px[y * size + x]; int v = p.r + p.g + p.b;
+                if (v > best) { best = v; cx = x; cy = y; }
+            }
+            Assert.That(best / 3 - (bg.r + bg.g + bg.b) / 3, Is.GreaterThan(60), "bright centre");
+            // quad edge = 50 px / 35 per cell at the stage's scale; scan a square ring of half side r around the peak: the tail
+            // outside the glow must stay within 3 levels of the backdrop at the far ring (where only the clipped tail lived)
+            int worst = 0;
+            for (int r = 20; r <= 40; r += 4)
+                for (int t = -r; t <= r; t += 2)
+                    foreach (var (x, y) in new[] { (cx + t, cy - r), (cx + t, cy + r), (cx - r, cy + t), (cx + r, cy + t) })
+                    {
+                        if (x < 0 || y < 0 || x >= size || y >= size) continue;
+                        var p = px[y * size + x];
+                        worst = Mathf.Max(worst, Mathf.Abs(p.r - bg.r) + Mathf.Abs(p.g - bg.g) + Mathf.Abs(p.b - bg.b));
+                    }
+            Debug.Log("[T8.10] worst ring deviation " + worst + " centre " + cx + "," + cy);
+            Assert.That(worst, Is.LessThanOrEqualTo(9), "backdrop-equal outside the glow");
+        }
+
+        Color32[] RenderPixels(string key, int frame, out int size)
+        {
+            var index = AssetDatabase.LoadAssetAtPath<EffectCatalogIndex>(EffectCatalog.IndexKey);
+            stage = new EffectPreviewStage(EffectCatalog.Create(index, new AssetDatabaseEffectSource()));
+            stage.Distance = 10f;
+            var handle = stage.Play(key, loop: true);
+            Assert.That(stage.Runtime.IsActive(handle), Is.True, key);
+            stage.Tick(0.01f);
+            stage.Runtime.Seek(handle, frame / 60f);
+            stage.Tick(0f);
+            var window = stage.Render(new Rect(0, 0, 256, 256));
+            size = window.width;
+            var rt = RenderTexture.GetTemporary(window.width, window.height, 0, RenderTextureFormat.ARGB32);
+            var tex = new Texture2D(window.width, window.height, TextureFormat.RGBA32, false);
+            var previous = RenderTexture.active;
+            try
+            {
+                Graphics.Blit(window, rt);
+                RenderTexture.active = rt;
+                tex.ReadPixels(new Rect(0, 0, window.width, window.height), 0, 0);
+                tex.Apply(false);
+                return tex.GetPixels32();
+            }
+            finally
+            {
+                RenderTexture.active = previous;
+                RenderTexture.ReleaseTemporary(rt);
+                Object.DestroyImmediate(tex);
+            }
+        }
+
         int CountNonBackdrop(string key, int frame)
         {
             var index = AssetDatabase.LoadAssetAtPath<EffectCatalogIndex>(EffectCatalog.IndexKey);

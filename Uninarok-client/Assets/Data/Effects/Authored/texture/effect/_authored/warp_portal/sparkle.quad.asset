@@ -29,6 +29,7 @@ MonoBehaviour:
     DstBlend: 2
     Tint: {r: 0.9, g: 1, b: 0.9, a: 1}
     MaxAlpha: 1
+    AlphaFloor: 0.1
     Alpha:
       serializedVersion: 2
       m_Curve:
@@ -144,4 +145,5 @@ MonoBehaviour:
   - 'Motion: linear, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)'
   - 'Length: 1 s, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)'
   - 'SrcBlend/DstBlend: SrcAlpha / One (5 / 2), the lead''s blendMode 2 converted by hand, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)'
+  - 'AlphaFloor: 0.1 (25/255), not a lead value: hides the clipped alpha tail of the lead''s pok1.tga under linear blending (plan D39, owner decision)'
   - 'zIndex / renderBeforeEntities / attachedEntity: not modelled (draw order and placement data, plan R8) (lead)'

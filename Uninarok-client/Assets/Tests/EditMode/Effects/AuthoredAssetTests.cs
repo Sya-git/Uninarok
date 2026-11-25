@@ -119,6 +119,13 @@ namespace Uninarok.Effects.Tests
         }
 
         [Test]
+        public void Sparkle_AlphaFloorIsTenthAndOthersNeutral_FR7()
+        {
+            Assert.AreEqual(0.1f, Load(Warp + "sparkle.quad").Authored.AlphaFloor, 1e-6f);
+            Assert.AreEqual(0f, Load(Warp + "ring_outer.cylinder").Authored.AlphaFloor);
+        }
+
+        [Test]
         public void Sparkle_CurvesCoverZeroToOne()
         {
             var d = Load(Warp + "sparkle.quad").Authored;
