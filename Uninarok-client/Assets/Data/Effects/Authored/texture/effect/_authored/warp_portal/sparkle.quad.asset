@@ -21,7 +21,7 @@ MonoBehaviour:
   TextureNames:
   - texture/effect/pok1.tga
   Textures:
-  - {fileID: 0}
+  - {fileID: 2800000, guid: a832a336eb86b7848a7f7e3b819414c8, type: 3}
   Authored:
     Facing: 0
     Texture: 0

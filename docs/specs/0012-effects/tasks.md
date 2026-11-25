@@ -178,7 +178,7 @@
 - [x] **T6.6** [core] Extend Convert Effect Folder to convert the textures named by authored entries (`texture/effect/ring_blue.tga`, `texture/effect/pok1.tga`) through the `effecttexture` category (plan §4.10). (FR-2, FR-7)
   *Done when:* after a run `Art/Imported/effect/texture/effect/ring_blue.tga.png` and `pok1.tga.png` exist, with ledger entries.
 
-- [ ] **T6.7** [quick] Assign the converted textures to the `Textures` slots of the three warp entries (texture names kept). (FR-7)
+- [x] **T6.7** [quick] Assign the converted textures to the `Textures` slots of the three warp entries (texture names kept). (FR-7)
   *Done when:* the `Textures` slots reference those two outputs and `TextureNames` is unchanged.
 
 - [ ] **T6.8** [core] `AuthoredAssetTests` (EditMode): each authored entry has a valid kind, `Length` > 0, a valid texture index whose `TextureNames` entry matches the converted texture, blend codes in the `EffectBlend` table, `Sides` ≥ 3, curves covering t 0 to 1, and `Doubtful` lines for every lead value; the three warp keys are present, both rings on `ring_blue.tga`, the sparkle on `pok1.tga` (not `pok1.bmp`). (FR-4, FR-5, FR-7)
