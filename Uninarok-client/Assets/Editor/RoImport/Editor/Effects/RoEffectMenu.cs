@@ -1,4 +1,7 @@
+using System.Linq;
 using UnityEditor;
+using Uninarok.Effects;
+using Uninarok.RoImport.Core.Effects;
 using Uninarok.RoImport.Core.Source;
 using Uninarok.RoImport.Editor.Pipeline;
 using Uninarok.RoImport.Editor.Ui;
@@ -27,5 +30,22 @@ namespace Uninarok.RoImport.Editor.Effects
         [MenuItem("Tools/Ragnarok/Effects/Rebuild Effect Index", priority = 41)]
         static void RebuildEffectIndex() =>
             RoImportApi.EffectIndex(new RoImportOptions { Source = new RoFolderSource(RoSourceLocation.Resolve()) });
+
+        [MenuItem("Tools/Ragnarok/Effects/Check Effect Data", priority = 42)]
+        static void CheckEffectData() => UnityEngine.Debug.Log(RunEffectDataCheck().ToText());
+
+        /// <summary>The effect data check on the project's data source, the generated index and the authored assets (PLAN-0012 4.9). Reads only.</summary>
+        public static RoEffectDataReport RunEffectDataCheck()
+        {
+            var source = new RoFolderSource(RoSourceLocation.Resolve());
+            var index = AssetDatabase.LoadAssetAtPath<EffectCatalogIndex>("Assets/Art/Imported/effect/_index.asset")
+                        ?? UnityEngine.ScriptableObject.CreateInstance<EffectCatalogIndex>();
+            var authored = AssetDatabase.FindAssets("t:EffectAsset", new[] { "Assets/Data/Effects/Authored" })
+                .Select(g => AssetDatabase.LoadAssetAtPath<EffectAsset>(AssetDatabase.GUIDToAssetPath(g)))
+                .Where(a => a != null)
+                .ToList();
+            return RoEffectDataCheck.Run(source, index,
+                r => AssetDatabase.LoadAssetAtPath<EffectAsset>(AssetDatabase.GUIDToAssetPath(r.Guid)), authored);
+        }
     }
 }

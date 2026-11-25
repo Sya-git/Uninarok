@@ -18,7 +18,6 @@ namespace Uninarok.RoImport.Tests.Effects
     /// </summary>
     public class RoEffectDataCheckTests
     {
-        const string Pending = "pending T6.2";
         const string SparkleKey = "texture/effect/_authored/warp_portal/sparkle.quad";
         const string OuterKey = "texture/effect/_authored/warp_portal/ring_outer.cylinder";
         const string InnerKey = "texture/effect/_authored/warp_portal/ring_inner.cylinder";
@@ -93,7 +92,7 @@ namespace Uninarok.RoImport.Tests.Effects
             }
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void Counts_PerKind_OnATempFolder()
         {
             // FR-1: .str anywhere; images under texture/effect/; .spr + .act under sprite/이팩트/; .lub under the effect tool folder.
@@ -110,7 +109,7 @@ namespace Uninarok.RoImport.Tests.Effects
             Assert.AreEqual(2, report.ToolTables, "lub");
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void MissingTexture_NamedByTwoStrs_IsListedOnce_WithTheFirstReferrerInOrder()
         {
             var src = Source("texture/effect/b.str", "texture/effect/c.str", "texture/effect/ok.tga");
@@ -121,7 +120,7 @@ namespace Uninarok.RoImport.Tests.Effects
             Assert.AreEqual(("nope.tga", "texture/effect/b.str"), report.Missing[0]);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void Missing_IsSortedOrdinally_ByFileThenReferrer()
         {
             var src = Source("texture/effect/b.str", "texture/effect/a.str");
@@ -131,7 +130,7 @@ namespace Uninarok.RoImport.Tests.Effects
             CollectionAssert.AreEqual(new[] { "aa.tga", "mm.tga", "zz.tga" }, report.Missing.Select(m => m.File).ToArray());
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void DeletingOneStr_ListsItAsMissing_WithTheIndexAsReferrer()
         {
             // D30: computed from the source (TryGetFile), not from index.SourceMissing.
@@ -147,7 +146,7 @@ namespace Uninarok.RoImport.Tests.Effects
             Assert.AreEqual(("texture/effect/b.str", "(index)"), report.Missing[0]);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void StrTexture_IsResolvedLikeTheLookup_OwnFolderThenRoot_BareNameTga()
         {
             var src = Source("texture/effect/sub/a.str", "texture/effect/sub/own.tga", "texture/effect/root.bmp");
@@ -155,7 +154,7 @@ namespace Uninarok.RoImport.Tests.Effects
             Assert.IsEmpty(Run(src).Missing);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void SpriteKind_NeedsTheActAndTheSpr()
         {
             var src = Source("sprite/이팩트/has.act", "sprite/이팩트/has.spr", "sprite/이팩트/half.act");
@@ -170,7 +169,7 @@ namespace Uninarok.RoImport.Tests.Effects
             Assert.AreEqual(("sprite/이팩트/half.spr", "texture/effect/_authored/half.sprite"), report.Missing[0]);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void ModelKind_NeedsItsPathFile()
         {
             var src = Source("model/ok.rsm");
@@ -180,7 +179,7 @@ namespace Uninarok.RoImport.Tests.Effects
             Assert.AreEqual(("model/gone.rsm", "model/gone.rsm"), report.Missing.Single());
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void AuthoredAsset_TexturesResolveFromTheEffectRoot_AndNeedNoSourceFile()
         {
             var src = Source("texture/effect/glow.tga");
@@ -190,7 +189,7 @@ namespace Uninarok.RoImport.Tests.Effects
             Assert.AreEqual(("nope.tga", "texture/effect/_authored/bad.quad"), report.Missing.Single());
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void AssetInTheIndexAndInAuthored_IsExaminedOnce()
         {
             var src = Source("texture/effect/ok.tga");
@@ -199,14 +198,14 @@ namespace Uninarok.RoImport.Tests.Effects
             Assert.AreEqual(1, report.Missing.Count);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void AuthoredNull_IsAccepted()
         {
             var src = Source("texture/effect/ok.tga");
             Assert.DoesNotThrow(() => Run(src, null));
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void WarpPortal_ListsTheThreeKeys_PresentOnlyWhenFoundWithAllTextures()
         {
             var src = Source("texture/effect/ok.tga");
@@ -222,7 +221,7 @@ namespace Uninarok.RoImport.Tests.Effects
             Assert.AreEqual(1, report.Missing.Count, "the warp portal lines are not in Missing; only the unresolved texture is");
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void ToText_Order_IsCountsThenMissingThenWarpPortal_WithLfLineEnds()
         {
             var src = Source("texture/effect/a.str");
@@ -235,7 +234,26 @@ namespace Uninarok.RoImport.Tests.Effects
             Assert.Greater(warp, missing);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
+        public void ToText_ExactFormat_IsPinned()
+        {
+            var src = Source("texture/effect/a.str", "texture/effect/ok.tga");
+            Indexed(Asset("texture/effect/a.str", EffectKind.Str, "nope.tga", "ok.tga"));
+            Indexed(Asset(SparkleKey, EffectKind.Quad, "ok.tga"));
+            string expected =
+                "str: 1\n" +
+                "textures: 1\n" +
+                "sprite/act: 0\n" +
+                "tool tables: 0\n" +
+                "missing: 1\n" +
+                "missing nope.tga (referenced by texture/effect/a.str)\n" +
+                "warp portal " + SparkleKey + ": present\n" +
+                "warp portal " + OuterKey + ": missing\n" +
+                "warp portal " + InnerKey + ": missing\n";
+            Assert.AreEqual(expected, Run(src).ToText());
+        }
+
+        [Test]
         public void TwoRuns_GiveEqualText()
         {
             var src = Source("texture/effect/a.str", "texture/effect/ok.tga");
@@ -247,7 +265,7 @@ namespace Uninarok.RoImport.Tests.Effects
             Assert.IsNotEmpty(first);
         }
 
-        [Test, Ignore(Pending)]
+        [Test]
         public void FolderHashes_AreUnchangedAfterARun_ReadOnly()
         {
             var src = Source("texture/effect/a.str", "texture/effect/ok.tga", "sprite/이팩트/e.spr");
