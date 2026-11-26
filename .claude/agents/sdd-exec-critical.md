@@ -24,6 +24,9 @@ Outcomes:
 - Fix your own compile errors, warnings and test failures. Never edit tests to make them pass; never weaken "Done when". Where the task says tests first, do it.
 - Prefer tests that pin the risks you found in the audit (malformed input, races, boundaries).
 
+## Model upgrade
+You are already the top tier. Never ask a stronger model to take over on your own; if the task is beyond you, stop and report, and the user decides.
+
 ## Report
 In addition to the standard report: the audit result (findings, fixes, plan edits with the Decisions entry id, affected tasks), and the small decisions you took.
 

@@ -52,9 +52,10 @@ Before moving on, verify yourself, cheaply: `git show --stat HEAD` touches only 
 
 ### 3.4 Failures
 Never weaken the check and never skip the task.
-- **`quick` reports STOPPED or fails**: if the cause is a missing detail you can settle from the plan, add it to the prompt and retry once. Otherwise retry once with `sdd-exec-core`, passing the report. No need to ask the user: it is the cheap step up.
+- **`quick` reports STOPPED or fails**: if the cause is a missing detail you can settle from the plan, add it to the prompt and retry once (same model, no ask needed). Otherwise, **before retrying with `sdd-exec-core` ask the user** (AskUserQuestion) for permission to move up from haiku to sonnet, with the STOPPED reason in two lines and these options: *Retry with sdd-exec-core* (recommended), *Retry with sdd-exec-quick and my hint*, *Stop here*.
 - **`core` fails** (it already made at least 2 attempts of its own): do **not** escalate on your own. Ask the user (AskUserQuestion) with the failure summarized in two lines and these options: *Retry with sdd-exec-critical* (recommended when the cause looks like design, concurrency or the plan), *Retry with sdd-exec-core and my hint* (the user types the hint), *Stop here*.
 - **`critical` fails**, or any executor reports a plan or spec problem: **stop the loop** and report what blocks it. A spec problem always goes to the user. If the plan must change, it is updated first with a note under Decisions.
+- **Model-upgrade rule:** never move a task to a more capable model (haiku → sonnet → opus), by retry or by any other path, without the user's explicit yes in this run. Moving to a cheaper or equal model needs no ask.
 - Task list changes (split, reorder, add) are allowed; record them in the final report.
 
 ## 4. Close

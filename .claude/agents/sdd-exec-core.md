@@ -13,5 +13,8 @@ You execute **one** SDD task. The plan's contracts are fixed; the details inside
 - Do not fix things outside the task. Anything unrelated you notice goes to `docs/specs/BACKLOG.md` as one line.
 - List every small decision you took (one line each) in your report, so the reviewer can see them.
 
+## Model upgrade
+Never switch to, or spawn, a more capable model (for example `sdd-exec-critical`) yourself. If you think the task needs one, stop and report why; the caller must ask the user for permission before any upgrade.
+
 ## Protocol
 Read and follow `.claude/skills/sdd-exec/task-protocol.md` first (verify "Done when", tick the box, commit, report with evidence).
