@@ -253,6 +253,10 @@
   *Done when:* `EffectAllocationTests` (PlayMode) passes with no unexpected log; a mesh writer test runs layout changes after `HideAll` under `LogAssert.NoUnexpectedReceived` and checks finite bounds; touched test classes green; no new warnings.
   *Status:* completed 2026-11-25: root cause in `Commit` (stack: `Mesh.set_subMeshCount` from `EndLayout` from `StrPart.Bind`), fix one line; `EffectAllocationTests` 1/1 (PlayMode), `EffectMeshWriterTests` 13/13, `EffectPreviewStageTests` 15/15, `EffectPreviewControllerTests` 9/9, `EffectSystemPlayTests` 16/16, `EffectPlayTests` 25/25, `AuthoredPartPlayTests` 8/8. The new EditMode test does not fail without the fix (the assert appears only in the PlayMode load); the PlayMode test is the regression gate.
 
+- [x] **T8.13** [core] Align `EffectSampler` with the owner's interpolation decisions (T10.2, O1 to O5): anitype 0 holds the base key's aniframe, anitypes 2 to 4 use the base key's delay, anitypes 5 and 6 hold the base aniframe and `StrPart` logs one warning per effect (no per-frame allocation); length frame count / fps unchanged. (FR-3, FR-9, FR-10)
+  *Done when:* `EffectSamplerTests` (anitype 0 with base aniframe 3 draws texture 3; delays from the base key; 5 and 6 hold), `EffectSamplerReferenceTests` (O3 and O4 no longer skipped), `EffectPlayTests` (one warning for anitype 6 over many frames and two plays), `EffectPreviewStageTests` and `EffectAllocationTests` (PlayMode) pass; no new warnings.
+  *Status:* completed 2026-11-25: before this task the code had anitype 0 give texture 0, the delta key's delay, and no warning for 5 and 6.
+
 ## Phase 9: Play, cost and architecture tests
 
 - [x] **T9.1** [core] `EffectSpeedPlayTests` (PlayMode): an STR entry and an authored cylinder at speed 2 each end at half the wall time of speed 1 (±1 frame); a looped entry's cycle index after T at speed 2 equals its index after 2T at speed 1; the picture at speed 2 and time T equals speed 1 at 2T; speed 0.5 doubles one play; `TimeScale` 0 freezes `Age`; a sprite entry at speed 2 steps its `SpriteActor` twice as fast (NeedsData). (FR-4, FR-6, FR-11)

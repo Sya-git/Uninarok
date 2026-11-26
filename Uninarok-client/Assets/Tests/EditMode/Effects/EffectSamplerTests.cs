@@ -4,10 +4,9 @@ using UnityEngine;
 namespace Uninarok.Effects.Tests
 {
     /// <summary>
-    /// Pins the STR sampling rule of plan 4.2 (SPEC-0012 FR-3, FR-10; lead D17). Owner questions of
-    /// str-reference.md section 8 are not pinned: O2 (last frame / length), O3 (anitype 0 with a non-zero base
-    /// aniframe), O4 (whose delay anitypes 2..4 use), O5 (anitypes 5 and 6). Cases below avoid them;
-    /// EffectSampler.Length (FrameCount / Fps) is not pinned here because of O2.
+    /// Pins the STR sampling rule of plan 4.2 (SPEC-0012 FR-3, FR-10; D17) with the owner decisions of 2026-11-25
+    /// (str-reference.md section 8): O2 length = FrameCount / Fps, O3 anitype 0 holds the base aniframe, O4 anitypes
+    /// 2..4 use the base key's delay, O5 anitypes 5 and 6 hold the base aniframe.
     /// Angle: the sampler takes EffectSettings (plan D23); the tests use its defaults (1024 units per turn).
     /// </summary>
     public class EffectSamplerTests
@@ -119,15 +118,69 @@ namespace Uninarok.Effects.Tests
             Assert.IsFalse(Sample(a, 11f, out _), "after the last key");
         }
 
-        // Anitype cases use base aniframe 0 and the delta key's delay (O3, O4 undecided); n = 4 textures.
-        // d = f - base.Frame.
+        // Anitype cases use base aniframe 0 and the base key's delay (O4); n = 4 textures. d = f - base.Frame.
 
         [Test]
-        public void AniType0_ShowsTextureZero()
+        public void AniType0_HoldsTheBaseAniFrame_OfTheBaseKey()
         {
-            var a = Make(4, Base(0, Vector2.zero), Delta(0, Vector2.zero, aniType: 0, aniFrame: 3f, delay: 1f));
+            // O3: base aniframe 3, the delta's own aniframe and delay are ignored.
+            var a = Make(4, Base(0, Vector2.zero, aniFrame: 3f), Delta(0, Vector2.zero, aniType: 0, aniFrame: 1f, delay: 1f));
             Assert.IsTrue(Sample(a, 5f, out var q));
-            Assert.AreEqual(0, q.Texture);
+            Assert.AreEqual(3, q.Texture);
+            var zero = Make(4, Base(0, Vector2.zero), Delta(0, Vector2.zero, aniType: 0, aniFrame: 3f, delay: 1f));
+            Assert.IsTrue(Sample(zero, 5f, out q));
+            Assert.AreEqual(0, q.Texture, "base aniframe 0 stays texture 0");
+        }
+
+        [Test]
+        public void AniTypes2To4_UseTheBaseKeysDelay_NotTheDeltas()
+        {
+            // O4: base delay 1, delta delay 3 (and +inf); the texture follows the base delay.
+            foreach (float deltaDelay in new[] { 3f, float.PositiveInfinity })
+            {
+                var two = Make(4, BaseWithDelay(1f), Delta(0, Vector2.zero, aniType: 2, delay: deltaDelay));
+                Assert.IsTrue(Sample(two, 2f, out var q));
+                Assert.AreEqual(2, q.Texture, "anitype 2, base delay 1: min(0 + 1 * 2, 3)");
+                var three = Make(4, BaseWithDelay(1f), Delta(0, Vector2.zero, aniType: 3, delay: deltaDelay));
+                Assert.IsTrue(Sample(three, 6f, out q));
+                Assert.AreEqual(2, q.Texture, "anitype 3: 6 mod 4");
+                var four = Make(4, BaseWithDelay(1f), Delta(0, Vector2.zero, aniType: 4, delay: deltaDelay));
+                Assert.IsTrue(Sample(four, 1f, out q));
+                Assert.AreEqual(3, q.Texture, "anitype 4: -1 wraps to 3");
+            }
+            var zeroBase = Make(4, BaseWithDelay(0f), Delta(0, Vector2.zero, aniType: 3, delay: 1f));
+            Assert.IsTrue(Sample(zeroBase, 6f, out var z));
+            Assert.AreEqual(0, z.Texture, "base delay 0 holds the base aniframe whatever the delta says");
+        }
+
+        static EffectAsset.KeyData BaseWithDelay(float delay)
+        {
+            var k = Base(0, Vector2.zero);
+            k.Delay = delay;
+            return k;
+        }
+
+        [Test]
+        public void AniTypes5And6_HoldTheBaseAniFrame_AndAreReported()
+        {
+            foreach (byte type in new byte[] { 5, 6 })
+            {
+                var a = Make(4, Base(0, Vector2.zero, aniFrame: 2f), Delta(0, Vector2.zero, aniType: type, aniFrame: 1f, delay: 1f));
+                Assert.IsTrue(Sample(a, 7f, out var q));
+                Assert.AreEqual(2, q.Texture, "anitype " + type + " holds the base aniframe");
+                Assert.IsTrue(EffectSampler.HasUnsupportedAniType(a));
+            }
+            Assert.IsFalse(EffectSampler.HasUnsupportedAniType(Make(4, Base(0, Vector2.zero), Delta(0, Vector2.zero, aniType: 4))));
+        }
+
+        [Test]
+        public void Length_IsFrameCountOverFps_AndLastFrameIsFrameCountMinusOne()
+        {
+            // O2: 100 frames at 60 fps.
+            var a = Make(1, Base(0, Vector2.zero), Base(99, Vector2.one));
+            Assert.AreEqual(100f / 60f, EffectSampler.Length(a), Tol);
+            Assert.IsTrue(Sample(a, 99f, out var q), "frame count - 1 is drawn");
+            Assert.AreEqual(1f, q.Position.x, Tol);
         }
 
         [Test]
@@ -141,7 +194,7 @@ namespace Uninarok.Effects.Tests
         [Test]
         public void AniType2_AdvancesThenClampsToLast()
         {
-            var a = Make(4, Base(0, Vector2.zero), Delta(0, Vector2.zero, aniType: 2, delay: 1f));
+            var a = Make(4, BaseWithDelay(1f), Delta(0, Vector2.zero, aniType: 2));
             Assert.IsTrue(Sample(a, 2f, out var q));
             Assert.AreEqual(2, q.Texture);
             Assert.IsTrue(Sample(a, 9f, out q));
@@ -151,7 +204,7 @@ namespace Uninarok.Effects.Tests
         [Test]
         public void AniType3_WrapsModuloCount()
         {
-            var a = Make(4, Base(0, Vector2.zero), Delta(0, Vector2.zero, aniType: 3, delay: 1f));
+            var a = Make(4, BaseWithDelay(1f), Delta(0, Vector2.zero, aniType: 3));
             Assert.IsTrue(Sample(a, 6f, out var q));
             Assert.AreEqual(2, q.Texture);
         }
@@ -159,7 +212,7 @@ namespace Uninarok.Effects.Tests
         [Test]
         public void AniType4_RunsBackwardsWrappedPositive()
         {
-            var a = Make(4, Base(0, Vector2.zero), Delta(0, Vector2.zero, aniType: 4, delay: 1f));
+            var a = Make(4, BaseWithDelay(1f), Delta(0, Vector2.zero, aniType: 4));
             Assert.IsTrue(Sample(a, 1f, out var q));
             Assert.AreEqual(3, q.Texture, "0 - 1 wraps to n - 1");
             Assert.IsTrue(Sample(a, 5f, out q));

@@ -13,7 +13,7 @@ namespace Uninarok.Effects.PlayTests
     public class EffectPlayTests
     {
         const float Dt = 1f / 60f;
-        const int Str1s = 0, Cylinder05s = 1, Deferred = 2, Sprite = 3, Missing = 4, ThreeLayers = 5, Procedural = 6;
+        const int Str1s = 0, Cylinder05s = 1, Deferred = 2, Sprite = 3, Missing = 4, ThreeLayers = 5, Procedural = 6, AniTypeSix = 7;
 
         sealed class FakeSource : IEffectAssetSource
         {
@@ -80,9 +80,19 @@ namespace Uninarok.Effects.PlayTests
             procedural.Path = "texture/effect/_authored/test.proc"; procedural.Kind = EffectKind.Procedural; procedural.Length = 1f;
             procedural.Authored = new AuthoredData { Procedure = "nope" };       // the registry is empty in this spec (D20)
 
-            var assets = new[] { str, cyl, late, sprite, null, three, procedural };
+            // One layer, three textures, one base key plus a delta key whose anitype is 6 (outside 0..4): the base aniframe is held (O5).
+            var six = Make<EffectAsset>();
+            six.Path = "texture/effect/anitype6.str"; six.Kind = EffectKind.Str; six.Fps = 10f; six.FrameCount = 10;
+            six.Textures = new Texture2D[3]; six.TextureNames = new[] { "a", "b", "c" };
+            six.Layers = new[] { new EffectAsset.LayerData { FirstKey = 0, KeyCount = 2, FirstTexture = 0, TextureCount = 3 } };
+            var sixBase = StrKey(0, new Vector2(320f, 320f), 0f, 5, 6);
+            sixBase.AniFrame = 2f;
+            var sixDelta = new EffectAsset.KeyData { Frame = 0, Type = 1, AniType = 6, Delay = 1f };
+            six.Keys = new[] { sixBase, sixDelta };
+
+            var assets = new[] { str, cyl, late, sprite, null, three, procedural, six };
             var index = Make<EffectCatalogIndex>();
-            index.Keys = new[] { str.Path, cyl.Path, late.Path, sprite.Path, "texture/effect/missing.str", three.Path, procedural.Path };
+            index.Keys = new[] { str.Path, cyl.Path, late.Path, sprite.Path, "texture/effect/missing.str", three.Path, procedural.Path, six.Path };
             index.Assets = new EffectAssetRef[assets.Length];
             index.SourceMissing = new bool[assets.Length];
             for (int i = 0; i < assets.Length; i++)
@@ -443,6 +453,23 @@ namespace Uninarok.Effects.PlayTests
             StringAssert.Contains("ghost", log.Keys[0]);
             Assert.That(TicksUntilInactive(h), Is.InRange(14, 16), "ends after PlaceholderSeconds");
             Assert.IsFalse(runtime.IsActive(again));
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [Test]
+        public void Str_AniType6_HoldsTheBaseFrame_WithOneWarning_NotPerFrameOrPlay()
+        {
+            var log = new WarnedLog();
+            runtime.Warned += log.On;
+            ExpectWarning("anitype6.str.*outside 0..4");
+
+            var a = runtime.Play(Ref(AniTypeSix), Vector3.zero, loop: true);
+            for (int i = 0; i < 20; i++) runtime.Tick(Dt);                  // many frames: still one warning
+            var b = runtime.Play(Ref(AniTypeSix), Vector3.zero, loop: true); // a second play: no second warning
+
+            Assert.IsInstanceOf<StrPart>(runtime.InstanceOf(a).Part);
+            Assert.AreEqual(new[] { "texture/effect/anitype6.str" }, log.Keys.ToArray());
+            Assert.IsTrue(runtime.IsActive(b));
             LogAssert.NoUnexpectedReceived();
         }
 

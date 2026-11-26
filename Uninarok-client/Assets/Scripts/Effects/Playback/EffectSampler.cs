@@ -97,7 +97,7 @@ namespace Uninarok.Effects
             return true;
         }
 
-        /// <summary>FrameCount / Fps seconds (plan 4.2); 0 when Fps is not positive. Unpinned by tests: str-reference.md O2 (length and last frame) is open.</summary>
+        /// <summary>FrameCount / Fps seconds (plan 4.2, owner decision O2: the last frame is FrameCount - 1); 0 when Fps is not positive.</summary>
         public static float Length(EffectAsset asset)
         {
             if (asset == null || !(asset.Fps > 0f) || asset.FrameCount <= 0) return 0f;
@@ -114,18 +114,27 @@ namespace Uninarok.Effects
         /// <summary>Texture frame (unclamped, may be fractional) by the delta key's anitype; d = frame - base.Frame.</summary>
         static float AniFrame(in EffectAsset.KeyData bk, in EffectAsset.KeyData dk, float d, int n)
         {
-            // Delay: the delta key's (as the T2.1 tests pin); str-reference.md O4 (base or delta delay) is open.
-            // A non-finite delay (+inf in 8,716 file delta keys) reads as 0, as GRF reads it.
-            float delay = float.IsNaN(dk.Delay) || float.IsInfinity(dk.Delay) ? 0f : dk.Delay;
+            // Delay: the BASE key's (owner decision O4); a non-finite delay reads as 0, as GRF reads the +inf of delta keys.
+            float delay = float.IsNaN(bk.Delay) || float.IsInfinity(bk.Delay) ? 0f : bk.Delay;
             switch (dk.AniType)
             {
-                case 0: return 0f;                                // plan "0 -> 0"; str-reference.md O3 (or hold base) is open
+                case 0: return bk.AniFrame;                       // hold the base key's aniframe (owner decision O3)
                 case 1: return bk.AniFrame + dk.AniFrame * d;
                 case 2: return Math.Min(bk.AniFrame + delay * d, n - 1);
                 case 3: return Wrap(bk.AniFrame + delay * d, n);
                 case 4: return Wrap(bk.AniFrame - delay * d, n);  // reverse, wrapped positive (owner)
-                default: return bk.AniFrame;                      // 5, 6 and unknown: hold the base aniframe; str-reference.md O5 is open
+                default: return bk.AniFrame;                      // 5, 6 and unknown: hold the base aniframe (owner decision O5; StrPart warns once)
             }
+        }
+
+        /// <summary>True when a key's anitype is outside 0..4 (5, 6 or unknown): <see cref="Sample"/> holds the base aniframe for it.</summary>
+        public static bool HasUnsupportedAniType(EffectAsset asset)
+        {
+            if (asset == null || asset.Keys == null) return false;
+            var keys = asset.Keys;
+            for (int i = 0; i < keys.Length; i++)
+                if (keys[i].AniType > 4) return true;
+            return false;
         }
 
         static float Wrap(float v, int n)

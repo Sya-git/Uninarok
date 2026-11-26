@@ -43,6 +43,10 @@ namespace Uninarok.Effects
             }
             Array.Clear(cursors, 0, layers);
 
+            // Anitypes 5 and 6 (and unknown) hold the base aniframe (str-reference.md O5): one warning per effect, never per frame.
+            if (asset != null && !runtime.HasWarned(asset.Path) && EffectSampler.HasUnsupportedAniType(asset))
+                runtime.Warn(asset.Path, $"[Effects] Effect '{asset.Path}': a key has a texture animation type outside 0..4 (5 or 6); the base key's texture frame is held.");
+
             var writer = instance.GetWriter();
             writer.BeginLayout();
             for (int l = 0; l < layers; l++) submeshOfLayer[l] = writer.AddQuads(1);

@@ -18,13 +18,12 @@ namespace Uninarok.RoImport.Tests.Effects
     /// from the <see cref="RoStr"/> keys with the str-reference.md section 6 formulas (owner decision O1: GRF's interpolation
     /// does not apply delta keys, so the formulas on RoStr are the oracle). The oracle does not call EffectSampler.
     ///
-    /// Open owner questions are avoided, not decided:
-    ///  - O2: "last frame" is the frame of the layer's last key strictly below FrameCount (never FrameCount itself);
-    ///    Length is asserted as the plan's FrameCount / Fps only.
-    ///  - O3: the texture frame is not compared where a delta key has anitype 0 and its base key holds a non-zero aniframe.
-    ///  - O4: the texture frame is not compared for anitypes 2..4 where the delta key's delay differs from the base key's
-    ///    or is not finite.
-    ///  - O5: layers with a key of anitype 5 or 6 are skipped (none exists in the reference files).
+    /// Owner decisions of 2026-11-25 (str-reference.md section 8):
+    ///  - O2: length is FrameCount / Fps and the last frame is FrameCount - 1; a layer's last compared frame is the frame
+    ///    of its last key strictly below FrameCount.
+    ///  - O3: anitype 0 holds the base key's aniframe.
+    ///  - O4: anitypes 2..4 use the base key's delay.
+    ///  - O5: anitypes 5 and 6 hold the base key's aniframe (none exists in the reference files, so those layers are skipped).
     /// </summary>
     [Category(SpriteTestFiles.Category)]
     public class EffectSamplerReferenceTests
@@ -148,19 +147,14 @@ namespace Uninarok.RoImport.Tests.Effects
                 Assert.AreEqual(ld.FirstTexture + TextureIndex(bk.AniFrame, n), q.Texture, where + " texture (held)");
                 return;
             }
-            bool o3 = dk.AniType == 0 && bk.AniFrame != 0f;                               // O3
-            bool o4 = dk.AniType >= 2 && dk.AniType <= 4
-                      && (float.IsNaN(dk.Delay) || float.IsInfinity(dk.Delay) || dk.Delay != bk.Delay);   // O4
-            if (o3 || o4) return;
-
             double ani;
             switch (dk.AniType)
             {
-                case 0: ani = 0; break;
+                case 0: ani = bk.AniFrame; break;                                   // O3
                 case 1: ani = bk.AniFrame + dk.AniFrame * d; break;
-                case 2: ani = Math.Min(bk.AniFrame + dk.Delay * d, n - 1); break;
-                case 3: ani = FloorMod(bk.AniFrame + dk.Delay * d, n); break;
-                case 4: ani = FloorMod(bk.AniFrame - dk.Delay * d, n); break;
+                case 2: ani = Math.Min(bk.AniFrame + bk.Delay * d, n - 1); break;     // O4: the base key's delay
+                case 3: ani = FloorMod(bk.AniFrame + bk.Delay * d, n); break;
+                case 4: ani = FloorMod(bk.AniFrame - bk.Delay * d, n); break;
                 default: return;                                                          // O5 (unknown type)
             }
             Assert.AreEqual(ld.FirstTexture + TextureIndex(ani, n), q.Texture, where + " texture");
