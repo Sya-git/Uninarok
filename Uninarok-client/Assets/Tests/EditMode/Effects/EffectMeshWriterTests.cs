@@ -5,6 +5,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.TestTools;
 
 namespace Uninarok.Effects.Tests
 {
@@ -214,6 +215,25 @@ namespace Uninarok.Effects.Tests
             writer.BeginLayout(); writer.AddQuads(); writer.AddCylinder(9); writer.EndLayout(bounds);
             Assert.AreEqual(2, writer.LayoutUploads);
             Assert.AreEqual(4 + 20, writer.Mesh.vertexCount);
+        }
+
+        // T8.12: a layout change on a reused mesh (after HideAll / Clear) logged '[Assert] Converting invalid MinMaxAABB'
+        [Test]
+        public void LayoutChangeAfterHideAll_LogsNothingAndBoundsAreFinite_FR6()
+        {
+            writer.BeginLayout(); writer.AddQuads(); writer.AddCylinder(8); writer.EndLayout(bounds);
+            writer.HideAll();
+            for (int i = 0; i < 3; i++)
+            {
+                writer.BeginLayout(); writer.AddQuads(); writer.AddQuads(); writer.AddCylinder(9 + i); Assert.IsTrue(writer.EndLayout(bounds));
+                writer.HideAll();
+                writer.BeginLayout(); writer.AddCylinder(6); Assert.IsTrue(writer.EndLayout(bounds));
+                writer.HideAll();
+            }
+            var b = writer.Mesh.bounds;
+            Assert.IsTrue(!float.IsNaN(b.size.x) && !float.IsInfinity(b.size.x) && b.size.x > 0f, "bounds valid");
+            Assert.AreEqual(bounds.size, b.size);
+            LogAssert.NoUnexpectedReceived();
         }
 
         // T8.11 (FR-6, plan D40): HideAll zeroes the uploaded vertices and keeps the layout

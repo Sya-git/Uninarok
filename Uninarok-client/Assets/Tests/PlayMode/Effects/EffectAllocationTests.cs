@@ -335,7 +335,7 @@ namespace Uninarok.Effects.PlayTests
                 sb.AppendLine("  Tick, " + Instances + " instances    " + Stats(effTickMs));
                 sb.AppendLine();
                 sb.AppendLine("Editor numbers (Unity's editor loop, the test runner and this machine); frame time is held near 16.7 ms by the");
-                sb.AppendLine("editor's frame pacing, so the Tick time is the effect cost. The owner's player Profiler capture is T10.9.");
+                sb.AppendLine("editor's frame pacing, so the Tick time is the effect cost. T10.9 is this measurement run again on the owner's request.");
                 string report = sb.ToString();
                 string path = Path.GetFullPath(Path.Combine(Application.dataPath, "..", "..", "docs", "specs", "0012-effects", "evidence", "alloc-report.txt"));
                 Directory.CreateDirectory(Path.GetDirectoryName(path));

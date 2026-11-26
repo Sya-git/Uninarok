@@ -249,6 +249,10 @@
   *Done when:* tests render STR then sprite, authored then sprite, sprite then STR and authored then STR on one stage and equal a fresh stage's render of the last effect (the first two fail without the fix); a controller test does the same through the play state; a mesh writer test pins `HideAll`; plan D40 written.
   *Status:* completed: before the fix 1,150 and 944 pixels of the previous effect remained (STR to sprite, authored to sprite), 0 after; `EffectPreviewStageTests` 15/15, `EffectPreviewControllerTests` 9/9, `EffectMeshWriterTests` 12/12, PlayMode `EffectAllocationTests` 1/1.
 
+- [x] **T8.12** [core] Fix `[Assert] Converting invalid MinMaxAABB` that made the PlayMode `EffectAllocationTests` fail after T8.11: `EffectMeshWriter.Commit` (layout change on a reused mesh) set `subMeshCount` after `mesh.Clear()` left the bounds invalid. Commit now sets finite bounds before `subMeshCount`; `EndLayout` still sets the real ones. (FR-6, FR-9)
+  *Done when:* `EffectAllocationTests` (PlayMode) passes with no unexpected log; a mesh writer test runs layout changes after `HideAll` under `LogAssert.NoUnexpectedReceived` and checks finite bounds; touched test classes green; no new warnings.
+  *Status:* completed 2026-11-25: root cause in `Commit` (stack: `Mesh.set_subMeshCount` from `EndLayout` from `StrPart.Bind`), fix one line; `EffectAllocationTests` 1/1 (PlayMode), `EffectMeshWriterTests` 13/13, `EffectPreviewStageTests` 15/15, `EffectPreviewControllerTests` 9/9, `EffectSystemPlayTests` 16/16, `EffectPlayTests` 25/25, `AuthoredPartPlayTests` 8/8. The new EditMode test does not fail without the fix (the assert appears only in the PlayMode load); the PlayMode test is the regression gate.
+
 ## Phase 9: Play, cost and architecture tests
 
 - [x] **T9.1** [core] `EffectSpeedPlayTests` (PlayMode): an STR entry and an authored cylinder at speed 2 each end at half the wall time of speed 1 (±1 frame); a looped entry's cycle index after T at speed 2 equals its index after 2T at speed 1; the picture at speed 2 and time T equals speed 1 at 2T; speed 0.5 doubles one play; `TimeScale` 0 freezes `Age`; a sprite entry at speed 2 steps its `SpriteActor` twice as fast (NeedsData). (FR-4, FR-6, FR-11)
@@ -293,8 +297,9 @@
 - [ ] **T10.7** [quick] (owner) Dev tools in game (FR-8): the F11 list shows a playing effect with path, place, part count and age; with two looped effects playing, `/effect stop` leaves the list empty. The owner confirms in the game; no screenshot is saved.
   *Done when:* the owner's confirmation is recorded in str-reference.md under "Owner review".
 
-- [ ] **T10.9** [quick] (owner) Profiler capture of the FR-9 load (300 effects; 1,000 start and stop cycles) on the owner's PC; capture and frame time saved to evidence.
+- [x] **T10.9** [quick] (owner) Profiler capture of the FR-9 load (300 effects; 1,000 start and stop cycles) on the owner's PC; capture and frame time saved to evidence.
   *Done when:* the capture is saved and its frame time is recorded in the evidence.
+  *Status:* completed 2026-11-25 at the owner's request: EffectAllocationTests (ProfilerRecorder GC Allocated In Frame and GC.Alloc marker, 300 effects, 1000 start/stop cycles, frame time) run in the Unity editor on the owner's PC, report evidence/alloc-report.txt; no Profiler window capture was taken. Tick mean 0.525 ms (median 0.489, p95 0.708, max 0.947) for 300 instances; main-thread allocations around Tick 0, over 1000 start/stop cycles 0, per kind 0, runtime warnings 0.
 
 - [x] **T10.10** [quick] Save the final evidence: the FR-1 check report (Save check report, T8.4) as `docs/specs/0012-effects/evidence/check-report.txt` (run twice, same text; counts and missing list), the warning list and the `Doubtful` values of the must-list as `evidence/warnings.txt` and `evidence/doubtful.txt`. (FR-1, FR-5)
   *Done when:* the three files exist and the check report's second run matches the first.

@@ -198,6 +198,7 @@ namespace Uninarok.Effects
             mesh.SetVertexBufferParams(usedVertices, attributes);
             mesh.SetIndexBufferParams(usedIndices, IndexFormat.UInt16);
             mesh.SetIndexBufferData(indices, 0, 0, usedIndices, BindFlags);
+            mesh.bounds = new Bounds(Vector3.zero, Vector3.one);   // Clear() leaves the bounds invalid; subMeshCount converts them (EndLayout sets the real ones)
             mesh.subMeshCount = subMeshes;
             idx = 0;
             for (int s = 0; s < subMeshes; s++)
