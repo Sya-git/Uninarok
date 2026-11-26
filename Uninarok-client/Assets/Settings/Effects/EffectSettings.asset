@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35f279f97a59f3c4a9aeaa3edaf54db8, type: 3}
+  m_Name: EffectSettings
+  m_EditorClassIdentifier: Uninarok.Effects::Uninarok.Effects.EffectSettings
+  Shader: {fileID: 4800000, guid: 6374181f31e0b9a4fb0cc283cbb054e6, type: 3}
+  PixelsPerCell: 35
+  Pivot: {x: 320, y: 320}
+  VerticalBaseCells: 0.5
+  AngleUnitsPerTurn: 1024
+  DepthBias: 0.5
+  PlaceholderTexture: {fileID: 2800000, guid: ef08abda014ed894dab52a96c96b8292, type: 3}
+  PlaceholderSeconds: 1
+  AuthoredFrameRate: 60

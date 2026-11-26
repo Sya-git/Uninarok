@@ -62,6 +62,14 @@ namespace Uninarok.RoImport.Core.Results
         CatalogOrphanSpr,
         /// <summary>A legacy, misspelt or out-of-pattern file or folder in a catalog folder (SPEC-0008 FR-10, OQ-6).</summary>
         CatalogStrayFile,
+        /// <summary>An STR whose magic GRF accepts but whose version is not 0x94; nothing is written (PLAN-0012 4.1, SPEC-0012 FR-2).</summary>
+        UnsupportedStrVersion,
+        /// <summary>Two effect assets with one catalog key; the ordinal-first asset path wins (PLAN-0012 4.4, SPEC-0012 FR-5).</summary>
+        EffectKeyDuplicate,
+        /// <summary>An authored effect asset whose Path disagrees with its file location Data/Effects/Authored/&lt;key&gt;.asset (PLAN-0012 4.4).</summary>
+        EffectKeyPathMismatch,
+        /// <summary>An STR key whose blend factor pair has no known mapping; reported by the effect data check (PLAN-0012 4.5, 7).</summary>
+        EffectBlendUnknown,
         Unexpected
     }
 }

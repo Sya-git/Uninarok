@@ -12,6 +12,7 @@
         "Uninarok.World.View",
         "Uninarok.Sprites",
         "Uninarok.World.Dev",
+        "Uninarok.Effects",
         "Uninarok.Units",
         "Uninarok.Units.Editor",
         "Uninarok.SpriteCatalog",

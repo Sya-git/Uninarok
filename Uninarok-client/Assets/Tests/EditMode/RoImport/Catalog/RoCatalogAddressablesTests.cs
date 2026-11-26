@@ -63,7 +63,27 @@ namespace Uninarok.RoImport.Tests.Catalog
             Assert.That(monsters.address, Is.EqualTo(monsters.AssetPath), "address = project path");
             Assert.That(_settings.FindGroup("sprite-sheets").entries.Single().AssetPath, Is.EqualTo(Art + "/sprite/_sheets"));
             Assert.That(_settings.FindGroup("sprites-npc").entries, Is.Empty, "a sprite folder not written yet has no entry");
-            Assert.That(_settings.groups.Sum(g => g == null ? 0 : g.entries.Count), Is.EqualTo(15), "12 categories, 2 tables, the sheets: folder entries only");
+            Assert.That(_settings.groups.Sum(g => g == null ? 0 : g.entries.Count), Is.EqualTo(16), "12 categories, 2 tables, the sheets, the authored effect data: folder entries only");
+            var effects = _settings.FindGroup("effects");
+            Assert.That(effects, Is.Not.Null, "FR-5: the effects group");
+            Assert.That(effects.entries.Select(e => e.AssetPath).ToArray(), Is.EqualTo(new[] { _roots.Data.TrimEnd('/') + "/Effects" }), "D27: the authored folder is ours, the generated effect folder is absent until its importer writes it");
+            Assert.That(effects.entries.Single().address, Is.EqualTo(effects.entries.Single().AssetPath), "address = project path");
+        }
+
+        [Test]
+        public void Ensure_AddsTheGeneratedEffectFolderEntryOnlyOnceItsFolderExists()
+        {
+            RoCatalogAddressables.Ensure(_settings, _roots);
+            Assert.That(_settings.FindGroup("effects").entries.Count, Is.EqualTo(1), "Art/Imported/effect is absent, so it has no entry");
+
+            AssetDatabase.CreateFolder(Art, "effect");
+            Assert.That(RoCatalogAddressables.Ensure(_settings, _roots), Is.GreaterThan(0));
+            Assert.That(RoCatalogAddressables.Ensure(_settings, _roots), Is.EqualTo(0), "idempotent");
+
+            var effects = _settings.FindGroup("effects").entries.Select(e => e.AssetPath).ToArray();
+            Assert.That(effects, Does.Contain(Art + "/effect"));
+            Assert.That(effects, Does.Contain(_roots.Data.TrimEnd('/') + "/Effects"));
+            Assert.That(_settings.FindGroup("effects").entries.Single(e => e.AssetPath == Art + "/effect").address, Is.EqualTo(Art + "/effect"));
         }
 
         [Test]

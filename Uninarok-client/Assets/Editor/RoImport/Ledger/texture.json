@@ -1657,6 +1657,15 @@
             "Dependencies": []
         },
         {
+            "Source": "texture/외부소품/trap1.bmp",
+            "SourceHash": "c96465cda367e1b9b9256ca4742983181530a040bef98e321f2d4a031fdcf5b1",
+            "Rules": 2,
+            "Outputs": [
+                "Assets/Art/Imported/texture/외부소품/trap1.png"
+            ],
+            "Dependencies": []
+        },
+        {
             "Source": "texture/프론테라/al-hou-r1.bmp",
             "SourceHash": "4343d98146a279bd5a54ca016c5bb177f2497b211a69442d28a628a6d0dd1008",
             "Rules": 2,

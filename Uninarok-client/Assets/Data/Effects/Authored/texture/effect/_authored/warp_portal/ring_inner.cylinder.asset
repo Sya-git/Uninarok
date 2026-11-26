@@ -1,0 +1,177 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e14cb2f679a93a4499b65ae6c76dcc8, type: 3}
+  m_Name: ring_inner.cylinder
+  m_EditorClassIdentifier: Uninarok.Effects::Uninarok.Effects.EffectAsset
+  Path: texture/effect/_authored/warp_portal/ring_inner.cylinder
+  Kind: 3
+  Fps: 0
+  FrameCount: 0
+  Layers: []
+  Keys: []
+  TextureNames:
+  - texture/effect/ring_blue.tga
+  Textures:
+  - {fileID: 2800000, guid: f29da6471c8a0df4f98ad13c9f9636d9, type: 3}
+  Authored:
+    Facing: 1
+    Texture: 0
+    SrcBlend: 5
+    DstBlend: 2
+    Tint: {r: 0.5, g: 0.5, b: 1, a: 1}
+    MaxAlpha: 0.4
+    Alpha:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 4
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.25
+        value: 1
+        inSlope: 4
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.75
+        value: 1
+        inSlope: 0
+        outSlope: -4
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: -4
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    Rotation:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    SizePixels: 35
+    SizeScale:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    StartMin: {x: 0, y: 0, z: 0}
+    StartMax: {x: 0, y: 0, z: 0}
+    EndMin: {x: 0, y: 0, z: 0}
+    EndMax: {x: 0, y: 0, z: 0}
+    Motion:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    BottomRadius: 1.9
+    TopRadius: 3.2
+    Height: 1.1
+    Sides: 20
+    RepeatU: 1
+    RadiusScale:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: -1
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: -1
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    HeightScale:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 2
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.5
+        value: 1
+        inSlope: 2
+        outSlope: -2
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: -2
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    Procedure: 
+  Length: 4
+  SpriteName: 
+  SpriteAction: 0
+  Model: {fileID: 0}
+  Doubtful:
+  - 'BottomRadius: 1.9 cells, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)'
+  - 'TopRadius: 3.2 cells, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)'
+  - 'Height: 1.1 cells, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)'
+  - 'Sides: 20, lead default, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)'
+  - 'RepeatU: 1, lead default, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)'
+  - 'Tint: (0.5, 0.5, 1) rgb, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)'
+  - 'MaxAlpha: 0.4, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)'
+  - 'Alpha: 0 at t 0, 1 at t 0.25, 1 at t 0.75, 0 at t 1, linear segments, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)'
+  - 'RadiusScale: 1 at t 0 to 0 at t 1, linear, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)'
+  - 'HeightScale: 0 at t 0, 1 at t 0.5, 0 at t 1, linear segments, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)'
+  - 'Length: 4 s, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)'
+  - 'SrcBlend/DstBlend: SrcAlpha / One (5 / 2), the lead''s blendMode 2 converted by hand, source roBrowserLegacy EffectTable EF_WARPZONE2 (lead)'
+  - 'zIndex / renderBeforeEntities / attachedEntity: not modelled (draw order and placement data, plan R8) (lead)'

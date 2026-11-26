@@ -1906,6 +1906,25 @@
             ]
         },
         {
+            "Source": "model/외부소품/트랩01.rsm",
+            "SourceHash": "68503201c7276ff191a0ae6ddf41e39d8f848c79af3cdcb68234ccb670a46b77",
+            "Rules": 1,
+            "Outputs": [
+                "Assets/Art/Imported/model/외부소품/트랩01.prefab",
+                "Assets/Art/Imported/model/외부소품/트랩01/Object01.asset",
+                "Assets/Art/Imported/model/외부소품/트랩01/Object02.asset",
+                "Assets/Art/Imported/model/외부소품/트랩01/polySurf03.asset",
+                "Assets/Art/Imported/model/외부소품/트랩01/트랩01.anim",
+                "Assets/Art/Imported/model/외부소품/트랩01/트랩01.controller"
+            ],
+            "Dependencies": [
+                {
+                    "Source": "texture/외부소품/trap1.bmp",
+                    "Hash": "c96465cda367e1b9b9256ca4742983181530a040bef98e321f2d4a031fdcf5b1"
+                }
+            ]
+        },
+        {
             "Source": "model/외부소품/프론아레나.rsm",
             "SourceHash": "10c5fb30da65cb36c8fea529212d77124409c7b2df3db3b1fe5f9535b05a14ea",
             "Rules": 1,

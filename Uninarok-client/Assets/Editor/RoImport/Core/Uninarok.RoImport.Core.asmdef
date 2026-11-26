@@ -6,7 +6,8 @@
         "Uninarok.Sprites",
         "Uninarok.Networking",
         "Uninarok.SpriteCatalog",
-        "Uninarok.Units"
+        "Uninarok.Units",
+        "Uninarok.Effects"
     ],
     "includePlatforms": [
         "Editor"

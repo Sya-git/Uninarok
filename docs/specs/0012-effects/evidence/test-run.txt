@@ -1,0 +1,53 @@
+Test run (SPEC-0012), 2026-11-25, Unity 6000.7.0b7, Unity-MCP tests-run, working RO data present.
+RESULT: the Effects assemblies pass: Uninarok.Effects.Tests 163 of 163, Uninarok.Effects.PlayTests 78 of 78, and the Effects namespace of
+Uninarok.RoImport.Tests 134 of 134 (12 classes). 0 ignored. No 'pending T' Ignore remains.
+
+EDITMODE (per assembly)
+Assembly                                   Total  Passed  Failed  Ignored
+Uninarok.Effects.Tests                       163     163       0       0
+Uninarok.Networking.Tests                    518     516       2       0
+Uninarok.Map.Tests                            41      41       0       0
+Uninarok.Sprites.Tests                        38      38       0       0
+Uninarok.SpriteCatalog.Tests                  25      25       0       0
+Uninarok.CameraRig.Tests                      17      17       0       0
+Uninarok.Units.Tests                         144     144       0       0
+Uninarok.World.Tests                         310     310       0       0   (sum of per-class runs, 26 classes)
+Uninarok.RoImport.Tests                     1302   1298       4       0   (see the split below)
+
+RoImport.Tests split (run by namespace, and by class for the root and Effects namespaces)
+Uninarok.RoImport.Tests (root, 24 classes, one by one)         343   343   0   0
+Uninarok.RoImport.Tests.Effects (12 classes, one by one)       134   134   0   0
+Uninarok.RoImport.Tests.Catalog                                190   190   0   0   (first run 187 passed, 3 failed; see 'Rerun passed')
+Uninarok.RoImport.Tests.Gat                                     76    76   0   0
+Uninarok.RoImport.Tests.Gnd                                    105   105   0   0
+Uninarok.RoImport.Tests.Sprites                                116   116   0   0
+Uninarok.RoImport.Tests.Rsm                                    254   251   3   0
+Uninarok.RoImport.Tests.Rsw                                     84    83   1   0
+Sum                                                           1302  1298   4   0
+(1302 tests run in this assembly.)
+Effects namespace classes (passed): EffectCatalogIndexTests 7, EffectPathAgreementTests 21, EffectSamplerReferenceTests 10,
+RoEffectColorKeyTests 18 (the 'pending T3.8' Ignore is gone: Rules_ReadFromJson now runs and passes), RoEffectDataCheckTests 16,
+RoEffectFolderImportTests 3, RoEffectSpriteEntryConverterTests 6, RoEffectTextureConverterTests 5, RoEffectTextureLookupTests 10,
+RoStrCompilerTests 10, RoStrConverterTests 8, RoStrReaderTests 20.
+
+PLAYMODE (per assembly)
+Assembly                          Total  Passed  Failed  Ignored
+Uninarok.Effects.PlayTests           78      78       0       0
+Uninarok.World.PlayTests             59      59       0       0
+Uninarok.Units.PlayTests             23      23       0       0
+Uninarok.SpriteCatalog.PlayTests      1       1       0       0
+
+RERUN PASSED
+Catalog namespace first run had 3 failures, all "Unhandled log message" from the Unity-MCP plugin's own SignalR connection (SocketException /
+WebSocketException) logged during the 16 minute run: RoCatalogImporterTests.TheSecondRun_IsSkipped_AndReportsTheSameNumbers,
+RoCatalogIndexTests.ASecondRun_RewritesNoIndex, RoCatalogIndexTests.TheEquipmentIndex_AndTheClassTable. Each passed when rerun alone.
+Environmental (editor to MCP server connection), not a product failure.
+
+IGNORED
+- None. 0 ignored in every assembly run. Check: grep -rn "pending T" Uninarok-client/Assets/Tests returns no hit. The Assert.Ignore('NeedsData')
+  calls in Effects PlayTests did not trigger (data present).
+  The one previous 'pending T3.8' Ignore (RoEffectColorKeyTests.Rules_ReadFromJson) was removed by T3.8 (f7c0952d3) and passes.
+
+NOTES
+- Effects.Tests (163) and Effects.PlayTests (78) are fully green.
+- Test runs modified AddressableAssetSettings.asset and evidence/alloc-report.txt; both restored with git checkout. Assets/__RoImportTests removed.

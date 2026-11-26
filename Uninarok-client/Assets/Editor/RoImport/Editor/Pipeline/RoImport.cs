@@ -160,6 +160,50 @@ namespace Uninarok.RoImport.Editor.Pipeline
                 return RoConverterRegistry.For(RoJobKind.Sprite).Convert(session.Context, path);
         }
 
+        /// <summary>
+        /// Converts one STR (or skips it when current) and returns its effect asset (PLAN-0012 4.10; SPEC-0012 FR-2). A corrupt or
+        /// unsupported STR is <see cref="RoStatus.Failed"/> with no value and its reason.
+        /// </summary>
+        public static RoResult<UnityEngine.Object> Effect(string strPath, RoImportOptions options = null)
+        {
+            if (!RoPath.TryParse(strPath, out var path))
+                return RoResult<UnityEngine.Object>.Failed(new RoIssue(RoIssueCode.SourceMissing, strPath, null, "not a valid Ragnarok path"));
+            using (var session = new Session(options))
+                return RoConverterRegistry.For(RoJobKind.Effect).Convert(session.Context, path);
+        }
+
+        /// <summary>
+        /// Converts every STR under the prefix lines (folders end with <c>/</c>, as the import window's); null or empty: the
+        /// default folders <c>texture/effect/</c> and <c>sprite/이팩트/</c> (PLAN-0012 4.10).
+        /// </summary>
+        public static RoReport EffectFolder(string prefixes = null, RoImportOptions options = null)
+        {
+            var source = options?.Source ?? new RoFolderSource(RoSourceLocation.Resolve());
+            if (string.IsNullOrWhiteSpace(prefixes)) prefixes = "texture/effect/\nsprite/이팩트/";
+            return Run(RoImportJobs.Expand(prefixes, RoJobKind.Effect, source).Jobs, options ?? new RoImportOptions { Source = source });
+        }
+
+        /// <summary>
+        /// Makes the effect entry of every ACT under <c>sprite/이팩트/</c> (PLAN-0012 4.4; SPEC-0012 FR-4): one
+        /// <c>EffectAsset</c> each, nothing imported. The source is the options' or the project's data folder.
+        /// </summary>
+        public static RoReport EffectSprites(RoImportOptions options = null)
+        {
+            var source = options?.Source ?? new RoFolderSource(RoSourceLocation.Resolve());
+            return Run(Effects.RoEffectSpriteEntryConverter.Jobs(source), options ?? new RoImportOptions { Source = source });
+        }
+
+        /// <summary>
+        /// Rebuilds the effect catalog index (PLAN-0012 4.4; SPEC-0012 FR-5): every <c>EffectAsset</c> under the generated effect
+        /// folder and <c>Data/Effects/Authored</c>, one key each. Rewritten only when it changes. The source tells which generated
+        /// assets have lost their file.
+        /// </summary>
+        public static RoReport EffectIndex(RoImportOptions options = null)
+        {
+            var source = options?.Source ?? new RoFolderSource(RoSourceLocation.Resolve());
+            return Run(new[] { new RoJob(RoJobKind.EffectIndex, Effects.RoEffectCatalogIndexConverter.JobPath) }, options ?? new RoImportOptions { Source = source });
+        }
+
         /// <summary>Converts one PAL (or skips it when current) and returns its 256 × 1 palette texture (PLAN-0007 4.4, FR-7).</summary>
         public static RoResult<Texture2D> Palette(string palPath, RoImportOptions options = null)
         {
@@ -236,6 +280,9 @@ namespace Uninarok.RoImport.Editor.Pipeline
                 // The map scenes of the project are loadable without another step (PLAN-0010 D33); another output folder is not the game's.
                 if (Context.MapsConverted && (_options.Roots == null || _options.CatalogAddressables != null))
                     global::Uninarok.RoImport.Editor.Map.RoMapSceneAddressables.Ensure(_options.CatalogAddressables ?? UnityEditor.AddressableAssets.AddressableAssetSettingsDefaultObject.GetSettings(true), Context.Roots);
+                // The generated effect folder exists once an effect asset is written, so its folder entry is made now (PLAN-0012 4.10, D27).
+                if (Context.EffectsConverted && (_options.Roots == null || _options.CatalogAddressables != null))
+                    global::Uninarok.RoImport.Editor.Catalog.RoCatalogAddressables.Ensure(_options.CatalogAddressables ?? global::Uninarok.RoImport.Editor.Catalog.RoCatalogAddressables.ProjectSettings(), Context.Roots);
             }
         }
     }

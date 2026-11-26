@@ -1,0 +1,31 @@
+{
+    "name": "Uninarok.Effects.PlayTests",
+    "rootNamespace": "Uninarok.Effects.PlayTests",
+    "references": [
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "Uninarok.Effects",
+        "Uninarok.Map",
+        "Uninarok.Sprites",
+        "Uninarok.SpriteCatalog",
+        "Uninarok.Units",
+        "Uninarok.Networking",
+        "Unity.Addressables",
+        "Unity.ResourceManager",
+        "Unity.Addressables.Editor"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS",
+        "UNITY_EDITOR"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Uninarok.RoImport.Core.Effects;
 
 namespace Uninarok.RoImport.Core.Imaging
 {
@@ -52,6 +53,32 @@ namespace Uninarok.RoImport.Core.Imaging
                 if (a == 0) transparent = true;
             }
             return transparent ? RoTextureAlpha.Keyed : RoTextureAlpha.None;
+        }
+
+        /// <summary>
+        /// Gives alpha 0 to every pixel within the key set's tolerance of its pink (255, 0, 255) and/or black (0, 0, 0) on each
+        /// channel, whether or not the source had alpha (the rule selection already used <see cref="RoImage.SourceHadAlpha"/>).
+        /// Returns <see cref="RoTextureAlpha.Keyed"/> when any pixel was keyed, else <see cref="RoTextureAlpha.None"/>.
+        /// </summary>
+        public static RoTextureAlpha Apply(RoImage image, RoKeySet keys)
+        {
+            if (image == null) throw new ArgumentNullException(nameof(image));
+            bool pink = keys.Key == RoEffectKey.Pink || keys.Key == RoEffectKey.PinkAndBlack;
+            bool black = keys.Key == RoEffectKey.Black || keys.Key == RoEffectKey.PinkAndBlack;
+            if (!pink && !black) return RoTextureAlpha.None;
+
+            byte[] p = image.Rgba32;
+            bool keyed = false;
+            for (int i = 0; i < p.Length; i += 4)
+            {
+                int r = p[i], g = p[i + 1], b = p[i + 2];
+                bool hit = (pink && Math.Abs(r - 255) <= keys.PinkTolerance && g <= keys.PinkTolerance && Math.Abs(b - 255) <= keys.PinkTolerance)
+                        || (black && r <= keys.BlackTolerance && g <= keys.BlackTolerance && b <= keys.BlackTolerance);
+                if (!hit) continue;
+                p[i + 3] = 0;
+                keyed = true;
+            }
+            return keyed ? RoTextureAlpha.Keyed : RoTextureAlpha.None;
         }
 
         /// <summary>

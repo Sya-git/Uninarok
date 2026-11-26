@@ -22,6 +22,9 @@ namespace Uninarok.RoImport.Editor.Pipeline
             new Catalog.RoCatalogEntryConverter(),
             new Catalog.RoCatalogIndexConverter(),
             new Catalog.RoCompositionTablesConverter(),
+            new Effects.RoStrConverter(),
+            new Effects.RoEffectSpriteEntryConverter(),
+            new Effects.RoEffectCatalogIndexConverter(),
         };
 
         public static IRoConverter For(RoJobKind kind)

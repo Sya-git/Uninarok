@@ -1,0 +1,23 @@
+{
+    "name": "Uninarok.Effects.Editor",
+    "rootNamespace": "Uninarok.Effects.Editor",
+    "references": [
+        "Uninarok.Effects",
+        "Uninarok.Sprites",
+        "Uninarok.SpriteCatalog",
+        "Uninarok.RoImport.Core",
+        "Uninarok.RoImport.Editor",
+        "Unity.Addressables"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
