@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Implements** | [plan.md](plan.md) → [spec.md](spec.md) |
-| **Status** | Implementing |
+| **Status** | Implemented |
 
 **How to use this file**
 - Branch: `feature/0012-effects`, merged to main with `--no-ff` when the spec is done.

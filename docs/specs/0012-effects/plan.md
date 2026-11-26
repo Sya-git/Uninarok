@@ -1,6 +1,6 @@
 # PLAN-0012: Effects
 
-| Implements | [spec.md](spec.md) (SPEC-0012, approved) | Status | Implementing | Audience | Architects, senior devs, AI |
+| Implements | [spec.md](spec.md) (SPEC-0012, approved) | Status | Implemented | Audience | Architects, senior devs, AI |
 |---|---|---|---|---|---|
 
 > This file defines **how**. Requirement IDs (`FR-n`) refer to `spec.md`. Shared import rules (paths, source, writer, ledger, report, batch, menu, placeholders) are [PLAN-0002](../0002-ro-import-foundation/plan.md); the one-asset-per-file pattern, `SpriteActor`/`SpriteSystem` and the preview pattern are [PLAN-0007](../0007-spr-act-pal-sprites/plan.md); effect sprites by name are [PLAN-0008](../0008-sprite-catalog/plan.md) (`SpriteCatalog.TryGetEffect`); models are [PLAN-0003](../0003-rsm-models/plan.md) (`RoImport.Model`); camera facing and the composer's preview stage are [PLAN-0009](../0009-unit-display/plan.md); the dev command line and dev tools attachment are [PLAN-0010](../0010-world-session/plan.md) §4.12. STR format facts, sampling semantics, blend codes, scale and the authored-entry rules (quad and cylinder sampling, §4.2) are documented in **[str-reference.md](str-reference.md)** (written in T0.1, normative for its topic, updated in the same commit as the code it describes).

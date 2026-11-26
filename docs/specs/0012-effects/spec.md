@@ -2,13 +2,13 @@
 
 | | |
 |---|---|
-| **Status** | Implementing |
+| **Status** | Implemented |
 | **Created** | 2026-11-24 |
 | **Owner** | Jhonnatan |
 | **Depends on** | [SPEC-0002](../0002-ro-import-foundation/spec.md) (importer family, working game data), [SPEC-0003](../0003-rsm-models/spec.md) (models), [SPEC-0007](../0007-spr-act-pal-sprites/spec.md) and [SPEC-0008](../0008-sprite-catalog/spec.md) (effect sprites by name), [SPEC-0009](../0009-unit-display/spec.md) (unit anchors), [SPEC-0010](../0010-world-session/spec.md) (world model, cells, map change, dev command line) |
 | **Used by** | [SPEC-0014](../0014-skill-data/spec.md) Skill data (builds the effect table by numeric id, whose parts reference the effect assets of FR-5 by path, and the skill-to-effect mapping), [SPEC-0015](../0015-skills/spec.md) (plays effects at its moments, with its own placement and lifetime rules) |
-| **Plan** | [plan.md](plan.md) (Implementing) |
-| **Tasks** | [tasks.md](tasks.md) (Implementing) |
+| **Plan** | [plan.md](plan.md) (Implemented) |
+| **Tasks** | [tasks.md](tasks.md) (Implemented) |
 
 ## 1. Why
 
