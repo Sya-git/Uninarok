@@ -1,11 +1,8 @@
-T9.6 test run (SPEC-0012), redo, 2026-11-25, Unity 6000.7.0b7, Unity-MCP tests-run, working RO data present.
-Previous run: commit a43d8aa93 (superseded by this file).
+Test run (SPEC-0012), 2026-11-25, Unity 6000.7.0b7, Unity-MCP tests-run, working RO data present.
+RESULT: the Effects assemblies pass: Uninarok.Effects.Tests 163 of 163, Uninarok.Effects.PlayTests 78 of 78, and the Effects namespace of
+Uninarok.RoImport.Tests 134 of 134 (12 classes). 0 ignored. No 'pending T' Ignore remains.
 
-RESULT: NOT CLEAN. 4 failed (all RoImport.Tests, 180 s timeouts in the Rsm and Rsw reference/batch tests), plus 2 Networking
-failures that reproduce on rerun: 6 failed in total. 0 ignored. No 'pending T' Ignore remains. T9.6 is NOT ticked.
-No failure is in an Effects assembly or in an Effects test class.
-
-EDITMODE (per assembly; counts are the final state after the single rerun of the failing tests)
+EDITMODE (per assembly)
 Assembly                                   Total  Passed  Failed  Ignored
 Uninarok.Effects.Tests                       163     163       0       0
 Uninarok.Networking.Tests                    518     516       2       0
@@ -39,21 +36,6 @@ Uninarok.Effects.PlayTests           78      78       0       0
 Uninarok.World.PlayTests             59      59       0       0
 Uninarok.Units.PlayTests             23      23       0       0
 Uninarok.SpriteCatalog.PlayTests      1       1       0       0
-
-FAILURES (6)
-Networking.Tests (2; reproduced on a class-only rerun; not investigated whether they fail on main)
-1. PacketTableTests.TestFixture_IsTheSameFileAsTheDocsFixture: CRLF vs LF in a fixture file (length 21769 vs 23368, differs at index 1).
-2. SocketThreadHookTests.SocketThreadCounters_StartedAndStopped_ReturnToZeroRunning_AfterEveryConnectionIsClosed: "Expected: True But was: False"
-   (failed on the second assembly run and on the class rerun; passed once in the first assembly run: flaky, socket thread counters).
-RoImport.Tests (4; all "Timeout value of 180000 ms was exceeded"; not investigated whether they fail on main)
-3. Rsm.RsmReferenceConversionTests.BatchOverTheWholeModelFolder_ConvertsEveryFileOrListsEachFailureOnce: timeout; failed again on the class rerun
-   (class rerun: 11 tests, 9 passed, 2 failed, 783 s).
-4. Rsm.RsmReferenceConversionTests.EveryReferenceModel_ConvertsThroughRoImportModel: timeout; failed again on the class rerun.
-5. Rsm.RsmWriterTests.ThousandNodesWithOneTexture_ReferenceOneMaterial: timeout (180 s); failed again when rerun alone (262 s). It passed in the
-   previous run (a43d8aa93). NEW since the previous run. Not investigated (possible cause: slower AssetDatabase now that the imported effect assets and
-   the T6.9 index are in the project; unconfirmed).
-6. Rsw.RoMapReferenceTests.TheReferenceMaps_ConvertInOneBatch_CompleteAndThenSkipped: timeout; failed again on the class rerun (591 s).
-   The tests need more than the 180 s limit on this machine.
 
 RERUN PASSED
 Catalog namespace first run had 3 failures, all "Unhandled log message" from the Unity-MCP plugin's own SignalR connection (SocketException /

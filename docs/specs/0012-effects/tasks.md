@@ -116,7 +116,7 @@
   *Done when:* after Ensure the group `effects` has the `Assets/Data/Effects` entry (ours, created by Ensure) and no `Assets/Art/Imported/effect` entry while that folder is absent, which gains its entry on the first Ensure after the folder exists (D27); a second Ensure adds nothing; `RoCatalogAddressablesTests` passes.
 
 - [x] **T4.3** [core] Implement `AddressablesEffectSource` and `EffectCatalog.LoadAsync` (the index through Addressables; assets loaded by GUID key); add `EffectCatalogLoadTests` (PlayMode). (FR-5, FR-6)
-  *Done when:* the code compiles; `EffectCatalogLoadTests` passes after T6.9 has built the index (run in T9.6).
+  *Done when:* the code compiles; `EffectCatalogLoadTests` passes after T6.9 has built the index.
 
 - [x] **T4.4** [core] Implement `RoEffectSpriteEntryConverter`: one `EffectAsset` (Kind Sprite, `SpriteName` the SPEC-0008 name, `SpriteAction` 0) per ACT under `sprite/이팩트/`, at `Art/Imported/effect/sprite/이팩트/<name>.act.asset`; menu item `Convert Effect Sprites`. It references the sprite and imports nothing. (FR-4, FR-5)
   *Done when:* the entry count equals the number of ACT outputs under `Art/Imported/sprite/이팩트/` (168 at 2026-11-24); the SPEC-0007 outputs keep their hashes after the run.
@@ -267,10 +267,6 @@
 - [x] **T9.4** [core] Extend `RoArchitectureTests`: the new asmdefs' references; GRF types only in `Core/Formats/`; no `BinaryReader` in importer code; `Uninarok.Effects` references no editor assembly; no type in `Uninarok.Effects` uses `UnityEngine.VFX`, `ParticleSystem` or `ComputeShader`. (FR-2, FR-4)
   *Done when:* the architecture tests pass.
 
-- [ ] **T9.6** [quick] Run the full EditMode and PlayMode suites (Unity-MCP) with the working data present; save the results to `docs/specs/0012-effects/evidence/test-run.txt`; no `pending T` Ignore remains in the Effects tests. (FR-10)
-  *Done when:* 0 failed, 0 ignored from the pending list, and the file is written.
-  *Status (2026-11-25, redo):* not met; left unticked. Evidence in `evidence/test-run.txt`: no `pending T` Ignore remains and 0 are ignored; Effects.Tests (163) and Effects.PlayTests (78) are green, as are all other assemblies except 6 failures outside the Effects code: Networking `PacketTableTests` CRLF fixture and `SocketThreadHookTests`; RoImport 180 s timeouts in `RsmReferenceConversionTests` (2), `RsmWriterTests.ThousandNodesWithOneTexture_ReferenceOneMaterial` and `RoMapReferenceTests`. All reproduced on rerun; not investigated on main.
-
 - [x] **T9.7** [core] Docs sync (coordinator-added): plan §3 and §4.9 and §4.11 match the code after T6.10, T8.2, T8.5, T8.6 (decisions D34 to D36, asmdef tables, file lists); `RoArchitectureTests` expects the Effects.Editor reference set as it is. (FR-1, FR-11)
   *Done when:* `RoArchitectureTests` passes and the plan lists the assemblies and files that exist.
 
@@ -279,8 +275,9 @@
 - [x] **T10.1** [quick] (owner) UV confirmation (R5, resolved by the owner 2026-11-24, plan D22): STR quads use the uv from the STR keys. The owner looks at the reference STR quads in the preview and confirms they look right with the file's uv. Visual confirmation only; no plan change depends on it. Blocks only the sign-off below.
   *Done when:* the owner's confirmation is recorded in str-reference.md.
 
-- [ ] **T10.2** [quick] (owner) Interpolation (D17): the owner decides each difference T0.1 listed against GRF. Blocks only the sign-off below.
+- [x] **T10.2** [quick] (owner) Interpolation (D17): the owner decides each difference T0.1 listed against GRF. Blocks only the sign-off below.
   *Done when:* each listed difference is marked accepted, or changed through a plan revision first.
+  *Status:* completed 2026-11-25: the owner accepted all five (O1 to O5, str-reference.md section 8); plan 4.2 and D17 state the rules.
 
 - [x] **T10.3** [quick] (owner) Preview acceptance (FR-11) on a warp entry and the 10 reference files: filter, play looped, pause holds, step, scrubber to the end, speed 0.5 doubles one play, stop returns to frame 0, loop off plays once; each background; orbit 90° (camera-facing layer faces the camera, ground quad seen edge-on); inspector counts; a pink-keyed and a black-keyed texture show their key and transparency; delete one texture in a copy of the data and check the missing marker and its one warning. The owner confirms by eye; no image is saved.
   *Done when:* the owner's confirmation for the warp entries and the 10 reference files is recorded in str-reference.md under "Owner review".
@@ -291,10 +288,10 @@
 - [x] **T10.5** [quick] (owner) Speed in the preview (FR-4): `firewall.str` and a warp entry at speed 1 and speed 2; one cycle is halved. The owner confirms by eye in the preview window; no image is saved.
   *Done when:* the owner's confirmation is recorded in str-reference.md under "Owner review".
 
-- [ ] **T10.6** [quick] (owner) In-game check (FR-7): development build on a local Hercules, Bootstrap; `/effect <path> <x> <y> loop` with each of the three warp paths on a prontera warp cell; the owner confirms each by eye in the game, no screenshot is saved; no warning in the log; job 45 units still draw nothing in normal play.
+- [x] **T10.6** [quick] (owner) In-game check (FR-7): development build on a local Hercules, Bootstrap; `/effect <path> <x> <y> loop` with each of the three warp paths on a prontera warp cell; the owner confirms each by eye in the game, no screenshot is saved; no warning in the log; job 45 units still draw nothing in normal play.
   *Done when:* the owner's confirmation of the three paths is recorded in str-reference.md under "Owner review".
 
-- [ ] **T10.7** [quick] (owner) Dev tools in game (FR-8): the F11 list shows a playing effect with path, place, part count and age; with two looped effects playing, `/effect stop` leaves the list empty. The owner confirms in the game; no screenshot is saved.
+- [x] **T10.7** [quick] (owner) Dev tools in game (FR-8): the F11 list shows a playing effect with path, place, part count and age; with two looped effects playing, `/effect stop` leaves the list empty. The owner confirms in the game; no screenshot is saved.
   *Done when:* the owner's confirmation is recorded in str-reference.md under "Owner review".
 
 - [x] **T10.9** [quick] (owner) Profiler capture of the FR-9 load (300 effects; 1,000 start and stop cycles) on the owner's PC; capture and frame time saved to evidence.

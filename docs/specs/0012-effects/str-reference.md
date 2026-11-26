@@ -14,7 +14,7 @@ Status of each claim: **Confirmed** (checked on every file of the data set), **C
 - One version in the data: `0x94`, all 2,995 files. Frame rate 60 in every file.
 - GRF reads every file. It agrees with the byte read on every field of every key, except three things the adapter must handle (§3): the angle comes in degrees, a `+inf` delay comes as 0, and texture names need the Korean encoding.
 - No file has texture coordinates other than the full rectangle (R5: 0 of 2,995 files).
-- GRF's interpolation API does **not** apply the file's per-frame delta keys, so it cannot be the offline oracle. The differences are listed in §8 for the owner, not resolved.
+- GRF's interpolation API does **not** apply the file's per-frame delta keys, so it cannot be the offline oracle. The differences were decided by the owner in §8 (O1 to O5).
 - The data confirms the lead's meaning of delta keys: for each of the 49,383 delta keys, base + delta × (next base frame − base frame) gives the next base key's position, corners, angle, colour and uv.
 
 ## 2. File layout (version 0x94) — Confirmed
@@ -111,9 +111,9 @@ The rule is the plan's (lead, accepted by the owner, D17). What the data and GRF
 | Blend = the base key's codes (delta keys hold 0 / 0) | Confirmed (§5) |
 | Angle → degrees: raw × 360 / `AngleUnitsPerTurn` (1024) | Candidate: GRF and the lead agree on 1024 |
 | Colour / 255 | Candidate (raw range 0..255 confirmed) |
-| Texture frame by anitype: 0 → 0, 1 → base + delta.aniframe × d, 2 → min(base + delay × d, n − 1), 3 → wrap modulo n, 4 → reverse, wrapped positive | Lead; wording open on anitype 0, the delay used and anitypes 5 and 6 (§8 O3 to O5) |
+| Texture frame by anitype: 0 → the base key's aniframe, 1 → base + delta.aniframe × d, 2 → min(base + delay × d, n − 1), 3 → wrap modulo n, 4 → reverse, wrapped positive | Lead, with the owner decisions of 2026-11-25: anitype 0 holds the base key's aniframe, anitypes 2 to 4 use the base key's delay, anitypes 5 and 6 hold the base key's aniframe and log one warning (§8 O3 to O5) |
 
-`EffectSampler` (T2.2) applies the plan rule as written until the owner decides O2 to O5: anitype 0 gives texture frame 0 (O3); anitypes 2 to 4 use the delta key's delay (O4), and a non-finite delay (the `+inf` file values) reads as 0, as GRF reads it; anitypes 5, 6 and unknown hold the base key's aniframe (O5); length is frame count / fps (O2). The texture frame is floored and clamped to the layer's textures (anitype 4 wraps positive first: n = 4, d = 1 gives 3); a layer with no texture gives texture index −1.
+`EffectSampler` applies the rules of the owner decisions of 2026-11-25 (§8): anitype 0 gives the base key's aniframe (O3); anitypes 2 to 4 use the **base** key's delay (O4), and a non-finite delay reads as 0; anitypes 5, 6 and unknown hold the base key's aniframe and `StrPart` logs one warning per effect (O5); length is frame count / fps and the last frame is frame count − 1 (O2). The texture frame is floored and clamped to the layer's textures (anitype 4 wraps positive first: n = 4, d = 1 gives 3); a layer with no texture gives texture index −1.
 
 Corner placement and uv (Candidate, from §3): corner i of the quad is `Xy_i` (0 top-left, 1 top-right, 2 bottom-right, 3 bottom-left, pixels, y down) placed relative to `Position`. The stored uv is a rectangle from `Uv0` (top-left) to `Uv1` (bottom-right), so the corner uvs are top-left `(Uv0.x, Uv0.y)`, top-right `(Uv1.x, Uv0.y)`, bottom-right `(Uv1.x, Uv1.y)`, bottom-left `(Uv0.x, Uv1.y)`, with v counted from the image's top row. `Uv2` and `Uv3` are kept raw and not used. Every file holds the full rectangle (§5), so the data cannot tell this from another layout; the owner's visual check stands.
 
@@ -129,17 +129,17 @@ Called: `InterpolatedKeyFrame.Interpolate(str, layer, frame, false)` (static) on
 
 On a frame covered by a delta key, GRF returns **the delta key's own raw values** (the per-frame change, with blend 0 / 0), not base + delta × d. Example, `firewall.str` layer 1 frame 0: plan position (320, 329), GRF (−0.4, −4); plan blend (5, 7), GRF (0, 0). GRF's own interpolation (biases, Bézier, `IsInterpolated`) is GRF Editor's model for keys it marks itself; no key of the data is marked. GRF also maps frames 0..frame count inclusive (`FrameIndex2KeyIndex` has `MaxKeyFrame + 1` entries).
 
-Consequence for plan §6: GRF's interpolation is not validated as the oracle of `EffectSamplerReferenceTests`; the plan's other branch applies unless the owner decides otherwise (§8 O1).
+Consequence for plan §6: GRF's interpolation is not validated as the oracle of `EffectSamplerReferenceTests`; the plan's other branch applies, as the owner decided (§8 O1).
 
 ## 8. Owner decision
 
-Differences found by T0.1, listed for the owner and **not resolved** here. The plan rule (D17) stays as written until the owner decides.
+Differences found by T0.1. The owner decided all five on 2026-11-25 (task T10.2); each facts paragraph below is kept as T0.1 found it, and plan 4.2 and D17 state the rules.
 
-- **O1 Oracle of the reference sampling test.** GRF's `Interpolate` does not apply delta keys (§7: 4,589 of the 6,183 shown layer-frames differ; visibility and held frames agree). The plan's fallback is the formulas of §6 applied to `RoStr`. Owner: confirm that fallback as the oracle of `EffectSamplerReferenceTests`, or name another.
-- **O2 Last frame and length.** GRF treats frames 0..frame count as frames (frame count + 1 of them); the plan's length is frame count / fps, and a one-shot ends when `Age ≥` that length. 6,066 keys in 2,753 files sit exactly on frame = frame count, so under the plan they are drawn only if a tick lands exactly on the end. Owner: length frame count / fps or (frame count + 1) / fps, and whether "the last frame" of the FR-3 test is frame count − 1 or frame count (FR-3 allows ±1 frame).
-- **O3 Anitype 0.** The plan says "0 → 0". GRF names 0 `Stop`. 625 base keys with an anitype-0 delta key hold an aniframe other than 0: under "0 → 0" they draw texture 0, under "hold the base aniframe" they draw their own. Owner: which.
-- **O4 Delay used by anitypes 2, 3, 4.** The plan does not say whose delay. A delta key's delay equals its base key's everywhere except 8,716 delta keys whose file value is `+inf` (base 0; 921 of them with anitype 2 or 3); GRF reads that `+inf` as 0, so through GRF both choices give 0. Owner: base key's delay or delta key's delay.
-- **O5 Anitypes 5 and 6.** Outside the lead's 0..4: 5 (GRF `BiLoop`) in 4 base keys of `texture/effect/_devil.str` and `texture/effect/devil.str`; 6 (no GRF name) in 10 base and 5 delta keys of `texture/effect/efst_kung_fu_panda/redyoumei2.str`. Owner: how they draw (for example as one of 0..4, or hold, with one warning).
+- **O1 Oracle of the reference sampling test.** GRF's `Interpolate` does not apply delta keys (§7: 4,589 of the 6,183 shown layer-frames differ; visibility and held frames agree). The plan's fallback is the formulas of §6 applied to `RoStr`. **Owner decision 2026-11-25:** the formulas of §6 applied to `RoStr` are the oracle of `EffectSamplerReferenceTests` (GRF's `Interpolate` is not).
+- **O2 Last frame and length.** GRF treats frames 0..frame count as frames (frame count + 1 of them); the plan's length is frame count / fps, and a one-shot ends when `Age ≥` that length. 6,066 keys in 2,753 files sit exactly on frame = frame count, so under the plan they are drawn only if a tick lands exactly on the end. **Owner decision 2026-11-25:** length = frame count / fps; the last frame is frame count − 1 (as GRF's counter shows `frame n / N`).
+- **O3 Anitype 0.** The plan says "0 → 0". GRF names 0 `Stop`. 625 base keys with an anitype-0 delta key hold an aniframe other than 0: under "0 → 0" they draw texture 0, under "hold the base aniframe" they draw their own. **Owner decision 2026-11-25:** anitype 0 holds the base key's aniframe (not always texture 0).
+- **O4 Delay used by anitypes 2, 3, 4.** The plan does not say whose delay. A delta key's delay equals its base key's everywhere except 8,716 delta keys whose file value is `+inf` (base 0; 921 of them with anitype 2 or 3); GRF reads that `+inf` as 0, so through GRF both choices give 0. **Owner decision 2026-11-25:** anitypes 2, 3 and 4 use the base key's delay.
+- **O5 Anitypes 5 and 6.** Outside the lead's 0..4: 5 (GRF `BiLoop`) in 4 base keys of `texture/effect/_devil.str` and `texture/effect/devil.str`; 6 (no GRF name) in 10 base and 5 delta keys of `texture/effect/efst_kung_fu_panda/redyoumei2.str`. **Owner decision 2026-11-25:** anitypes 5 and 6 hold the base key's aniframe and log one warning per effect (not per frame).
 
 ## 9. Malformed input through GRF (for `RoStrReader`)
 
@@ -201,3 +201,6 @@ The client draws into a backbuffer with no alpha channel, so Direct3D reads dest
 - **T10.3, preview acceptance (2026-11-25):** the owner checked the 12 items (filter, play looped, pause, step, scrubber to the end, speed 0.5, stop, loop off, backgrounds, orbit 90 degrees, inspector counts, pink and black keyed textures, missing texture marker) on the warp entries and the 10 reference files: all fine.
 - **T10.4, must-list look (2026-11-25):** the owner checked each must-list entry (`firewall.str`, `fireball.act`, the sparkle, both rings, the trap model) in the preview window: real parts, no missing texture, the warp parts look right. A stale frame shown after switching to a sprite act was reported at the same time (T8.11).
 - **T10.5, speed in the preview (2026-11-25):** the owner checked `firewall.str` and a warp entry at speed 1 and speed 2 in the preview window: one cycle is halved in both.
+- **T10.2, interpolation decisions (2026-11-25):** the owner accepted all five suggestions of §8 (O1 to O5): the §6 formulas on `RoStr` are the reference oracle; length is frame count / fps with the last frame frame count − 1; anitype 0 holds the base aniframe; anitypes 2 to 4 use the base key's delay; anitypes 5 and 6 hold the base aniframe with one warning.
+- **T10.6, in-game warp paths (2026-11-25):** the owner checked the three warp paths with `/effect <path> <x> <y> loop` in the game: all fine ("tudo certo"). Confirmed in the game by the owner; no screenshots saved.
+- **T10.7, dev tools in game (2026-11-25):** the owner checked the F11 list with playing effects and `/effect stop` in the game: all fine ("tudo certo"). Confirmed in the game by the owner; no screenshots saved.
